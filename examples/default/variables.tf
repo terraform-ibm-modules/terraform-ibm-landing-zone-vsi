@@ -29,6 +29,7 @@ variable "resource_tags" {
 }
 
 variable "image_id" {
+  # Run 'ibmcloud is images' to find available images
   description = "Image ID used for VSI"
   type        = string
   default     = "r026-5c656a84-ce27-4cdd-9345-f11dfab6d12b"
@@ -67,5 +68,5 @@ variable "ssh_key_ids" {
 variable "vsi_per_subnet" {
   description = "Number of VSI instances for each subnet"
   type        = number
-  default     = 2
+  default     = 1
 }
