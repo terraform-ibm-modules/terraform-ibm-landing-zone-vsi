@@ -1,4 +1,9 @@
-output "vsi_security_group_id" {
+output "slz_vpc" {
+  value       = module.slz_vpc
+  description = "VPC module values"
+}
+
+output "slz_vsi" {
   value       = module.slz_vsi
-  description = "Security group id for the VSI"
+  description = "VSI module values"
 }
