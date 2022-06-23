@@ -32,13 +32,13 @@ variable "image_id" {
   # Run 'ibmcloud is images' to find available images
   description = "Image ID used for VSI"
   type        = string
-  default     = "r026-5c656a84-ce27-4cdd-9345-f11dfab6d12b"
+  default     = "r006-1366d3e6-bf5b-49a0-b69a-8efd93cc225f"
 }
 
 variable "machine_type" {
   description = "VSI machine type"
   type        = string
-  default     = "cx2d-48x96"
+  default     = "cx2-2x4"
 }
 
 variable "create_security_group" {
@@ -56,12 +56,6 @@ variable "user_data" {
 variable "boot_volume_encryption_key" {
   description = "CRN of boot volume encryption key"
   type        = string
-  default     = null
-}
-
-variable "ssh_key_ids" {
-  description = "SSH key ids to use in creating vsi"
-  type        = list(string)
   default     = null
 }
 

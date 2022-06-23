@@ -22,6 +22,19 @@ data "ibm_resource_group" "existing_resource_group" {
   name  = var.resource_group
 }
 
+##############################################################################
+# Create new SSH key
+##############################################################################
+resource "tls_private_key" "tls_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "ibm_is_ssh_key" "ssh_key" {
+  name       = var.prefix
+  public_key = resource.tls_private_key.tls_key.public_key_openssh
+}
+
 #############################################################################
 # Provision VPC
 #############################################################################
@@ -47,12 +60,12 @@ module "slz_vsi" {
   create_security_group = false
   security_group = null
   tags = var.resource_tags
-  subnets = []
+  subnets = module.slz_vpc.subnet_zone_list
   vpc_id = module.slz_vpc.vpc_id
   prefix = var.prefix
   machine_type = var.machine_type
   user_data = var.user_data
   boot_volume_encryption_key = var.boot_volume_encryption_key
   vsi_per_subnet = var.vsi_per_subnet
-  ssh_key_ids = var.ssh_key_ids
+  ssh_key_ids = [resource.ibm_is_ssh_key.ssh_key.id]
 }
