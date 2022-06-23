@@ -40,7 +40,6 @@ resource "ibm_is_ssh_key" "ssh_key" {
 #############################################################################
 
 module "slz_vpc" {
-  # TODO: set the release version once it is ready
   source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v1.0.0"
   resource_group_id = local.resource_group_id
   region            = var.region
