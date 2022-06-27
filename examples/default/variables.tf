@@ -13,13 +13,13 @@ variable "resource_group" {
 variable "region" {
   description = "The region to which to deploy the VPC"
   type        = string
-  default = "us-south"
+  default     = "us-south"
 }
 
 variable "prefix" {
   description = "The prefix that you would like to append to your resources"
   type        = string
-  default = "test-landing-zone-vsi"
+  default     = "test-landing-zone-vsi"
 }
 
 variable "resource_tags" {
@@ -44,6 +44,39 @@ variable "create_security_group" {
   description = "Create security group for VSI"
   type        = string
   default     = true
+}
+
+variable "security_group" {
+  description = "Security group created for VSI"
+  type = object({
+    name = string
+    rules = list(
+      object({
+        name      = string
+        direction = string
+        source    = string
+        tcp = optional(
+          object({
+            port_max = number
+            port_min = number
+          })
+        )
+        udp = optional(
+          object({
+            port_max = number
+            port_min = number
+          })
+        )
+        icmp = optional(
+          object({
+            type = number
+            code = number
+          })
+        )
+      })
+    )
+  })
+  default = null
 }
 
 variable "user_data" {
