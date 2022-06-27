@@ -4,6 +4,7 @@
 
 locals {
   resource_group_id = var.resource_group != null ? data.ibm_resource_group.existing_resource_group[0].id : ibm_resource_group.resource_group[0].id
+  ssh_key_id        = data.ibm_is_ssh_key.existing_ssh_group != null ? data.ibm_is_ssh_key.existing_ssh_group.id : resource.ibm_is_ssh_key.ssh_key[0].id
 }
 
 ##############################################################################
@@ -31,8 +32,13 @@ resource "tls_private_key" "tls_key" {
 }
 
 resource "ibm_is_ssh_key" "ssh_key" {
+  count      = data.ibm_is_ssh_key.existing_ssh_group != null ? 0 : 1
   name       = var.prefix
   public_key = resource.tls_private_key.tls_key.public_key_openssh
+}
+
+data "ibm_is_ssh_key" "existing_ssh_group" {
+  name = var.prefix
 }
 
 #############################################################################
@@ -66,5 +72,5 @@ module "slz_vsi" {
   user_data                  = var.user_data
   boot_volume_encryption_key = var.boot_volume_encryption_key
   vsi_per_subnet             = var.vsi_per_subnet
-  ssh_key_ids                = [resource.ibm_is_ssh_key.ssh_key.id]
+  ssh_key_ids                = [local.ssh_key_id]
 }
