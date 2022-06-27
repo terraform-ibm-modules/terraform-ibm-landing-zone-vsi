@@ -35,7 +35,7 @@ func TestRunBasicExample(t *testing.T) {
 //func TestRunUpgradeBasicExample(t *testing.T) {
 //	t.Parallel()
 //
-//	options := setupOptions(t, "slz-vpc-upg")
+//	options := setupOptions(t, "slz-vsi-upg")
 //
 //	output, err := options.RunTestUpgrade()
 //	if !options.UpgradeTestSkipped {
