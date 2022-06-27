@@ -56,7 +56,7 @@ resource "ibm_is_volume" "volume" {
 ##############################################################################
 
 locals {
-  # Create a map that groups lists of volumes by VSI name to be referenced in 
+  # Create a map that groups lists of volumes by VSI name to be referenced in
   # instance creation
   volume_by_vsi = {
     # For each distinct server name

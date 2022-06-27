@@ -102,7 +102,7 @@ resource "ibm_is_instance" "vsi" {
 resource "ibm_is_floating_ip" "vsi_fip" {
   for_each = var.enable_floating_ip ? ibm_is_instance.vsi : {}
   name     = "${each.value.name}-fip"
-  target   = each.value.primary_network_interface.0.id
+  target   = each.value.primary_network_interface[0].id
 }
 
 resource "ibm_is_floating_ip" "secondary_fip" {
