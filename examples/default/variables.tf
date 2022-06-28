@@ -43,7 +43,7 @@ variable "machine_type" {
 variable "create_security_group" {
   description = "Create security group for VSI"
   type        = string
-  default     = true
+  default     = false
 }
 
 variable "security_group" {
@@ -95,4 +95,10 @@ variable "vsi_per_subnet" {
   description = "Number of VSI instances for each subnet"
   type        = number
   default     = 1
+}
+
+variable "ssh_key" {
+  type        = string
+  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
+  default     = null
 }
