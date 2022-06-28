@@ -9,6 +9,7 @@ import (
 
 const defaultExampleTerraformDir = "examples/default"
 const resourceGroup = "geretain-test-slz-vsi"
+const region = "us-south"
 
 func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -16,6 +17,7 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		TerraformDir:  defaultExampleTerraformDir,
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
+		Region:        region,
 	})
 
 	return options
