@@ -96,3 +96,9 @@ variable "vsi_per_subnet" {
   type        = number
   default     = 1
 }
+
+variable "ssh_key" {
+  type        = string
+  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
+  default     = null
+}
