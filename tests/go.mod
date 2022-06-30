@@ -3,8 +3,8 @@ module github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi
 go 1.18
 
 require (
-	github.com/stretchr/testify v1.7.5
-	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.0.8
+	github.com/stretchr/testify v1.8.0
+	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.0.9
 )
 
 require (
@@ -12,6 +12,7 @@ require (
 	cloud.google.com/go/storage v1.10.0 // indirect
 	github.com/IBM/go-sdk-core/v5 v5.10.1 // indirect
 	github.com/IBM/vpc-go-sdk v1.0.2 // indirect
+	github.com/Microsoft/go-winio v0.4.16 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect

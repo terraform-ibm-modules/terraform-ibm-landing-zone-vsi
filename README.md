@@ -4,20 +4,9 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-This module allows users to create any number of VSI across multple subnets with any number of block storage volumes, connected by any number of load balancers.
+This module allows users to create any number of VSI across multiple subnets with any number of block storage volumes, connected by any number of load balancers.
 
 ![vsi-module](./.docs/vsi-lb.png)
-
-## Table of Contents
-
-1. [Prerequisites](##Prerequisites)s
-2. [Virtual Servers](##Virtual-Servers)
-3. [Block Storage](##Block-Storage)
-4. [Floating IPs](##Floating-IPs)
-5. [Load Balancers](##Load-Balancers)
-6. [Module Variables](##module-vairables)
-7. [Module Outputs](##module-outputs)
-8. [As A Module in a Larger Architecture](##As-A-Module-in-a-Larger-Architecture)
 
 ---
 
@@ -65,53 +54,11 @@ This module allows users to create any number of application Load Balancers to b
 
 ---
 
-## Module Variables
-
-Name                             | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Description
--------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------
-resource_group_id                | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | id of resource group to create VPC
-prefix                           | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | The IBM Cloud platform API key needed to deploy IAM enabled resources
-tags                             | list(string)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | List of tags to apply to resources created by this module.
-vpc_id                           | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | ID of VPC
-subnets                          | list( object({ name = string id = string zone = string cidr = string }) )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | A list of subnet IDs where VSI will be deployed
-image_id                         | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region
-ssh_key_ids                      | list(string)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | ssh key ids to use in creating vsi
-machine_type                     | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles
-vsi_per_subnet                   | number                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Number of VSI instances for each subnet
-user_data                        | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | User data to initialize VSI deployment
-boot_volume_encryption_key       | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | CRN of boot volume encryption key
-enable_floating_ip               | bool                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Create a floating IP for each virtual server created
-allow_ip_spoofing                | bool                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Allow IP spoofing on the primary network interface
-create_security_group            | bool                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Create security group for VSI. If this is passed as false, the default will be used
-security_group                   | object({ name = string rules = list( object({ name = string direction = string source = string tcp = optional( object({ port_max = number port_min = number }) ) udp = optional( object({ port_max = number port_min = number }) ) icmp = optional( object({ type = number code = number }) ) }) ) })                                                                                                                                                                                                                                                                                                                    | Security group created for VSI
-security_group_ids               | list(string)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups.
-block_storage_volumes            | list( object({ name = string profile = string capacity = optional(number) iops = optional(number) encryption_key = optional(string) }) )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | List describing the block storage volumes that will be attached to each vsi
-load_balancers                   | list( object({ name = string type = string listener_port = number listener_protocol = string connection_limit = number algorithm = string protocol = string health_delay = number health_retries = number health_timeout = number health_type = string pool_member_port = string security_group = optional( object({ name = string rules = list( object({ name = string direction = string source = string tcp = optional( object({ port_max = number port_min = number }) ) udp = optional( object({ port_max = number port_min = number }) ) icmp = optional( object({ type = number code = number }) ) }) ) }) ) }) ) | Load balancers to add to VSI
-secondary_subnets                | list( object({ name = string id = string zone = string cidr = string }) )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI.
-secondary_use_vsi_security_group | bool                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Use the security group created by this module in the secondary interface
-secondary_security_group_ids     | list(string)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups.
-secondary_allow_ip_spoofing      | bool                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Allow IP spoofing on additional network interfaces
-
----
-
-## Module Outputs
-
-Name                 | Description
--------------------- | -----------------------------------------------------------
-ids                | The IDs of the VSI
-vsi_security_group | Security group for the VSI
-list               | A list of VSI with name, id, zone, and primary ipv4 address
-lb_hostnames       | Hostnames for the Load Balancer created
-lb_security_groups | Load Balancer security groups
-
----
-
-## As A Module in a Larger Architecture
-
 ## Usage
 ```terraform
 module vsi {
-  source                           = "github.com/Cloud-Schematics/vsi-module.git"
+  # Replace "master" with a GIT release version to lock into a specific release
+  source                           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi.git?ref=master"
   resource_group_id                = var.resource_group_id
   prefix                           = var.prefix
   tags                             = var.tags
@@ -136,3 +83,92 @@ module vsi {
   secondary_allow_ip_spoofing      = var.secondary_allow_ip_spoofing
 }
 ```
+
+---
+
+## Required IAM access policies
+You need the following permissions to run this module.
+
+<!--
+Update these sample permissions, following this format. Replace the sample
+Cloud service name and roles with the information in the console at
+Manage > Access (IAM) > Access groups > Access policies.
+ -->
+
+---
+
+## Examples
+
+- [End to end example with default values](examples/default)
+
+---
+
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.41.1 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [ibm_is_floating_ip.secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
+| [ibm_is_floating_ip.vsi_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
+| [ibm_is_instance.vsi](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_instance) | resource |
+| [ibm_is_lb.lb](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_lb) | resource |
+| [ibm_is_lb_listener.listener](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_lb_listener) | resource |
+| [ibm_is_lb_pool.pool](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_lb_pool) | resource |
+| [ibm_is_lb_pool_member.pool_members](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_lb_pool_member) | resource |
+| [ibm_is_security_group.security_group](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group) | resource |
+| [ibm_is_security_group_rule.security_group_rules](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_security_group_rule) | resource |
+| [ibm_is_volume.volume](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_volume) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_allow_ip_spoofing"></a> [allow\_ip\_spoofing](#input\_allow\_ip\_spoofing) | Allow IP spoofing on the primary network interface | `bool` | `false` | no |
+| <a name="input_block_storage_volumes"></a> [block\_storage\_volumes](#input\_block\_storage\_volumes) | List describing the block storage volumes that will be attached to each vsi | <pre>list(<br>    object({<br>      name           = string<br>      profile        = string<br>      capacity       = optional(number)<br>      iops           = optional(number)<br>      encryption_key = optional(string)<br>    })<br>  )</pre> | `[]` | no |
+| <a name="input_boot_volume_encryption_key"></a> [boot\_volume\_encryption\_key](#input\_boot\_volume\_encryption\_key) | CRN of boot volume encryption key | `string` | n/a | yes |
+| <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Create security group for VSI. If this is passed as false, the default will be used | `bool` | n/a | yes |
+| <a name="input_enable_floating_ip"></a> [enable\_floating\_ip](#input\_enable\_floating\_ip) | Create a floating IP for each virtual server created | `bool` | `false` | no |
+| <a name="input_image_id"></a> [image\_id](#input\_image\_id) | Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region | `string` | n/a | yes |
+| <a name="input_load_balancers"></a> [load\_balancers](#input\_load\_balancers) | Load balancers to add to VSI | <pre>list(<br>    object({<br>      name              = string<br>      type              = string<br>      listener_port     = number<br>      listener_protocol = string<br>      connection_limit  = number<br>      algorithm         = string<br>      protocol          = string<br>      health_delay      = number<br>      health_retries    = number<br>      health_timeout    = number<br>      health_type       = string<br>      pool_member_port  = string<br>      security_group = optional(<br>        object({<br>          name = string<br>          rules = list(<br>            object({<br>              name      = string<br>              direction = string<br>              source    = string<br>              tcp = optional(<br>                object({<br>                  port_max = number<br>                  port_min = number<br>                })<br>              )<br>              udp = optional(<br>                object({<br>                  port_max = number<br>                  port_min = number<br>                })<br>              )<br>              icmp = optional(<br>                object({<br>                  type = number<br>                  code = number<br>                })<br>              )<br>            })<br>          )<br>        })<br>      )<br>    })<br>  )</pre> | `[]` | no |
+| <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles | `string` | n/a | yes |
+| <a name="input_prefix"></a> [prefix](#input\_prefix) | The IBM Cloud platform API key needed to deploy IAM enabled resources | `string` | n/a | yes |
+| <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | id of resource group to create VPC | `string` | n/a | yes |
+| <a name="input_secondary_allow_ip_spoofing"></a> [secondary\_allow\_ip\_spoofing](#input\_secondary\_allow\_ip\_spoofing) | Allow IP spoofing on additional network interfaces | `bool` | `false` | no |
+| <a name="input_secondary_floating_ips"></a> [secondary\_floating\_ips](#input\_secondary\_floating\_ips) | List of secondary interfaces to add floating ips | `list(string)` | `[]` | no |
+| <a name="input_secondary_security_groups"></a> [secondary\_security\_groups](#input\_secondary\_security\_groups) | IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups. | <pre>list(<br>    object({<br>      security_group_id = string<br>      interface_name    = string<br>    })<br>  )</pre> | `[]` | no |
+| <a name="input_secondary_subnets"></a> [secondary\_subnets](#input\_secondary\_subnets) | List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI. | <pre>list(<br>    object({<br>      name = string<br>      id   = string<br>      zone = string<br>      cidr = string<br>    })<br>  )</pre> | `[]` | no |
+| <a name="input_secondary_use_vsi_security_group"></a> [secondary\_use\_vsi\_security\_group](#input\_secondary\_use\_vsi\_security\_group) | Use the security group created by this module in the secondary interface | `bool` | `false` | no |
+| <a name="input_security_group"></a> [security\_group](#input\_security\_group) | Security group created for VSI | <pre>object({<br>    name = string<br>    rules = list(<br>      object({<br>        name      = string<br>        direction = string<br>        source    = string<br>        tcp = optional(<br>          object({<br>            port_max = number<br>            port_min = number<br>          })<br>        )<br>        udp = optional(<br>          object({<br>            port_max = number<br>            port_min = number<br>          })<br>        )<br>        icmp = optional(<br>          object({<br>            type = number<br>            code = number<br>          })<br>        )<br>      })<br>    )<br>  })</pre> | n/a | yes |
+| <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups. | `list(string)` | `[]` | no |
+| <a name="input_ssh_key_ids"></a> [ssh\_key\_ids](#input\_ssh\_key\_ids) | ssh key ids to use in creating vsi | `list(string)` | n/a | yes |
+| <a name="input_subnets"></a> [subnets](#input\_subnets) | A list of subnet IDs where VSI will be deployed | <pre>list(<br>    object({<br>      name = string<br>      id   = string<br>      zone = string<br>      cidr = string<br>    })<br>  )</pre> | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | List of tags to apply to resources created by this module. | `list(string)` | `[]` | no |
+| <a name="input_user_data"></a> [user\_data](#input\_user\_data) | User data to initialize VSI deployment | `string` | n/a | yes |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of VPC | `string` | n/a | yes |
+| <a name="input_vsi_per_subnet"></a> [vsi\_per\_subnet](#input\_vsi\_per\_subnet) | Number of VSI instances for each subnet | `number` | n/a | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_ids"></a> [ids](#output\_ids) | The IDs of the VSI |
+| <a name="output_lb_hostnames"></a> [lb\_hostnames](#output\_lb\_hostnames) | Hostnames for the Load Balancer created |
+| <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
+| <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
+| <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+<!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
+## Developing
+To set up your local development environment, see steps [coming soon]
