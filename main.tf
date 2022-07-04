@@ -41,7 +41,20 @@ locals {
 }
 
 ##############################################################################
+# Lookup default security group id in the vpc
+##############################################################################
 
+data "ibm_is_vpcs" "vpcs" {
+}
+
+data "ibm_is_vpc" "vpc" {
+  name = local.vpc_by_id[var.vpc_id].name
+}
+
+locals {
+  vpc_by_id                 = { for vpc in data.ibm_is_vpcs.vpcs.vpcs : vpc.id => vpc }
+  default_security_group_id = data.ibm_is_vpc.vpc.default_security_group
+}
 
 ##############################################################################
 # Create Virtual Servers
@@ -61,7 +74,7 @@ resource "ibm_is_instance" "vsi" {
   primary_network_interface {
     subnet = each.value.subnet_id
     security_groups = flatten([
-      (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+      (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : [local.default_security_group_id]),
       var.security_group_ids
     ])
     allow_ip_spoofing = var.allow_ip_spoofing
