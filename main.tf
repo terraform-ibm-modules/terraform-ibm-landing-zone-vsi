@@ -45,6 +45,9 @@ locals {
 ##############################################################################
 
 data "ibm_is_vpcs" "vpcs" {
+  depends_on = [
+    var.vpc_id
+  ]
 }
 
 data "ibm_is_vpc" "vpc" {
