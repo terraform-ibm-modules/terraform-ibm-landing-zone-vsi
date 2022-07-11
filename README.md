@@ -89,11 +89,12 @@ module vsi {
 ## Required IAM access policies
 You need the following permissions to run this module.
 
-<!--
-Update these sample permissions, following this format. Replace the sample
-Cloud service name and roles with the information in the console at
-Manage > Access (IAM) > Access groups > Access policies.
- -->
+- Account Management
+    - **Resource Group** service
+        - `Viewer` platform access
+- IAM Services
+    - **VPC Infrastructure Services** service
+        - `Editor` platform access
 
 ---
 
