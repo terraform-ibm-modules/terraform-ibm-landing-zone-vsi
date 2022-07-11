@@ -4,7 +4,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
-This module allows users to create any number of VSI across multiple subnets with any number of block storage volumes, connected by any number of load balancers.
+This module creates virtual server instances (VSI) across multiple subnets with any number of block storage volumes that are connected by any number of load balancers.
 
 ![vsi-module](./.docs/vsi-lb.png)
 
@@ -12,13 +12,14 @@ This module allows users to create any number of VSI across multiple subnets wit
 
 ## Prerequisites
 
-An existing VPC and VPC SSH Key
+- A VPC
+- A VPC SSH key
 
 ---
 
-## Virtual Servers
+## Virtual servers
 
-This module creates Virtual servers across any number of subnets in a single VPC connected by a single security group. Users can specify how many virtual servers to provision on each subnet by using the `vsi_per_subnet` variable. Virtual servers use the prefix to dynamically create names. These names are also used as the terraform address for each Virtual Server, allowing for easy reference:
+This module creates virtual servers across any number of subnets in a single VPC that is connected by a single security group. You can specify the number of virtual servers to provision on each subnet by using the `vsi_per_subnet` variable. Virtual servers use the `prefix` variable to dynamically create names. These names are also used as the Terraform address for each virtual server, which allows for easy reference.
 
 ```terraform
 module.vsi["test-vsi"].ibm_is_instance.vsi["test-vsi-1"]
@@ -27,9 +28,9 @@ module.vsi["test-vsi"].ibm_is_instance.vsi["test-vsi-3"]
 ```
 ---
 
-## Block Storage Volumes
+## Block storage volumes
 
-This module allows users to create any number of identical block storage volumes. One of each storage volume specified in the `volumes` variable will be created and attached to each virtual server. These block storage volumes use the Virtual Server name and the volume name to create easily identifiable and manageble addressess within terraform:
+This module creates any number of identical block storage volumes. One storage volume that is specified in the `volumes` variable is created and attached to each virtual server. These block storage volumes use the virtual server name and the volume name to create easily identifiable and manageable addresses within Terraform:
 
 ```terraform
 module.vsi["test-vsi"].ibm_is_volume.volume["test-vsi-1-one"]
@@ -42,23 +43,24 @@ module.vsi["test-vsi"].ibm_is_volume.volume["test-vsi-3-two"]
 
 ---
 
-## Floating IPs
+## Floating IP addresses
 
-By using the `enable_floating_ip` a floating IP will be assigned to each VSI created by this module. This floating IP will be displayed in the output if provisioned.
+By using the `enable_floating_ip`, a floating IP address is assigned to each VSI created by this module. This floating IP address is displayed in the output, if provisioned.
 
 ---
 
-## Load Balancers
+## Load balancers
 
-This module allows users to create any number of application Load Balancers to balance traffic between all Virtual Servers created by this module. Each Load Balancer can optionally be added to it's own security group. The `load_balancers` variable allows users to configure the back end pool and front end listener for each load balancer.
+This module creates any number of application load balancers to balance traffic between all virtual servers that are created by this module. Each load balancer can optionally be added to its own security group. Use the `load_balancers` variable to configure the back-end pool and front-end listener for each load balancer.
 
 ---
 
 ## Usage
+
 ```terraform
 module vsi {
-  # Replace "master" with a GIT release version to lock into a specific release
-  source                           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi.git?ref=master"
+  # Replace "main" with a GIT release version to lock into a specific release
+  source                           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi.git?ref=main"
   resource_group_id                = var.resource_group_id
   prefix                           = var.prefix
   tags                             = var.tags
@@ -173,5 +175,9 @@ No modules.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 <!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
-## Developing
-To set up your local development environment, see steps [coming soon]
+
+## Contributing
+
+You can report issues and request features for this module in the [terraform-ibm-issue-tracker](https://github.com/terraform-ibm-modules/terraform-ibm-issue-tracker/issues) repo. See [Report an issue or request a feature](https://github.com/terraform-ibm-modules/.github/blob/main/.github/SUPPORT.md).
+
+To set up your local development environment, see [Local development setup](https://terraform-ibm-modules.github.io/documentation/#/local-dev-setup) in the project documentation.
