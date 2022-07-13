@@ -53,7 +53,7 @@ module "slz_vpc" {
   region            = var.region
   prefix            = var.prefix
   tags              = var.resource_tags
-  vpc_name          = var.prefix
+  name              = var.prefix
 }
 
 #############################################################################
