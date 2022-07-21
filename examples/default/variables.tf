@@ -142,3 +142,9 @@ variable "ssh_key" {
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
   default     = null
 }
+
+variable "vpc_name" {
+  type        = string
+  description = "Name for VPC"
+  default     = "vpc"
+}
