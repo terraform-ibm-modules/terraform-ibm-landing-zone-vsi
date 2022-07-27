@@ -43,7 +43,7 @@ variable "machine_type" {
 variable "create_security_group" {
   description = "Create security group for VSI"
   type        = string
-  default     = true
+  default     = false
 }
 
 variable "security_group" {
@@ -76,47 +76,7 @@ variable "security_group" {
       })
     )
   })
-  default = {
-    name = "landing-zone-example-sg"
-    rules = [
-      {
-        name      = "lz-rule-inbound-tcp"
-        direction = "inbound"
-        source    = "0.0.0.0/0"
-        tcp = {
-          port_min = 1
-          port_max = 65535
-        }
-      },
-      {
-        name      = "lz-rule-inbound-udp"
-        direction = "inbound"
-        source    = "0.0.0.0/0"
-        udp = {
-          port_min = 1
-          port_max = 65535
-        }
-      },
-      {
-        name      = "lz-rule-outbound-tcp"
-        direction = "outbound"
-        source    = "0.0.0.0/0"
-        tcp = {
-          port_min = 1
-          port_max = 65535
-        }
-      },
-      {
-        name      = "lz-rule-outbound-udp"
-        direction = "outbound"
-        source    = "0.0.0.0/0"
-        udp = {
-          port_min = 1
-          port_max = 65535
-        }
-      }
-    ]
-  }
+  default = null
 }
 
 variable "user_data" {
