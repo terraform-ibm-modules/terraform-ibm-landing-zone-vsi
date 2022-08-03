@@ -185,5 +185,5 @@ To set up your local development environment, see [Local development setup](http
 <!-- BEGIN EXAMPLES HOOK -->
 ## Examples
 
-- [# Default Example](examples/default)
+- [ Default Example](examples/default)
 <!-- END EXAMPLES HOOK -->
