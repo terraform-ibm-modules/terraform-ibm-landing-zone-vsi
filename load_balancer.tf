@@ -50,7 +50,7 @@ locals {
     [
       for ipv4_address in [
         for server in ibm_is_instance.vsi :
-        lookup(server, "primary_network_interface", null) == null ? null : server.primary_network_interface.0.primary_ipv4_address
+        lookup(server, "primary_network_interface", null) == null ? null : server.primary_network_interface[0].primary_ipv4_address
       ] :
       {
         port           = load_balancer.pool_member_port
