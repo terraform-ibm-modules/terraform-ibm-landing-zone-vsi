@@ -169,6 +169,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_fip_list"></a> [fip\_list](#output\_fip\_list) | A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached. |
 | <a name="output_ids"></a> [ids](#output\_ids) | The IDs of the VSI |
 | <a name="output_lb_hostnames"></a> [lb\_hostnames](#output\_lb\_hostnames) | Hostnames for the Load Balancer created |
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
