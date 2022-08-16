@@ -4,13 +4,14 @@
 locals {
 
   # Create list of VSI using subnets and VSI per subnet
+  # Create list of VSI using subnets and VSI per subnet
   vsi_list = flatten([
-    # For each subnet
-    for subnet in range(length(var.subnets)) : [
-      # For each number in a range from 0 to VSI per subnet
-      for count in range(var.vsi_per_subnet) :
+    # For each number in a range from 0 to VSI per subnet
+    for count in range(var.vsi_per_subnet) : [
+      # For each subnet
+      for subnet in range(length(var.subnets)) :
       {
-        name        = "${var.prefix}-${(subnet) * (var.vsi_per_subnet) + count + 1}"
+        name        = "${var.prefix}-${(count) * length(var.subnets) + subnet + 1}"
         subnet_id   = var.subnets[subnet].id
         zone        = var.subnets[subnet].zone
         subnet_name = var.subnets[subnet].name
