@@ -1,0 +1,483 @@
+{
+  "path": ".",
+  "variables": {
+    "allow_ip_spoofing": {
+      "name": "allow_ip_spoofing",
+      "type": "bool",
+      "description": "Allow IP spoofing on the primary network interface",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 93
+      }
+    },
+    "block_storage_volumes": {
+      "name": "block_storage_volumes",
+      "type": "list(\n    object({\n      name           = string\n      profile        = string\n      capacity       = optional(number)\n      iops           = optional(number)\n      encryption_key = optional(string)\n    })\n  )",
+      "description": "List describing the block storage volumes that will be attached to each vsi",
+      "default": [],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 191
+      }
+    },
+    "boot_volume_encryption_key": {
+      "name": "boot_volume_encryption_key",
+      "type": "string",
+      "description": "CRN of boot volume encryption key",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 82
+      }
+    },
+    "create_security_group": {
+      "name": "create_security_group",
+      "type": "bool",
+      "description": "Create security group for VSI. If this is passed as false, the default will be used",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 99
+      }
+    },
+    "enable_floating_ip": {
+      "name": "enable_floating_ip",
+      "type": "bool",
+      "description": "Create a floating IP for each virtual server created",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 87
+      }
+    },
+    "image_id": {
+      "name": "image_id",
+      "type": "string",
+      "description": "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 57
+      }
+    },
+    "load_balancers": {
+      "name": "load_balancers",
+      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              source    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
+      "description": "Load balancers to add to VSI",
+      "default": [],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 210
+      }
+    },
+    "machine_type": {
+      "name": "machine_type",
+      "type": "string",
+      "description": "VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 67
+      }
+    },
+    "prefix": {
+      "name": "prefix",
+      "type": "string",
+      "description": "The IBM Cloud platform API key needed to deploy IAM enabled resources",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 10
+      }
+    },
+    "resource_group_id": {
+      "name": "resource_group_id",
+      "type": "string",
+      "description": "id of resource group to create VPC",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 5
+      }
+    },
+    "secondary_allow_ip_spoofing": {
+      "name": "secondary_allow_ip_spoofing",
+      "type": "bool",
+      "description": "Allow IP spoofing on additional network interfaces",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 376
+      }
+    },
+    "secondary_floating_ips": {
+      "name": "secondary_floating_ips",
+      "type": "list(string)",
+      "description": "List of secondary interfaces to add floating ips",
+      "default": [],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 365
+      }
+    },
+    "secondary_security_groups": {
+      "name": "secondary_security_groups",
+      "type": "list(\n    object({\n      security_group_id = string\n      interface_name    = string\n    })\n  )",
+      "description": "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups.",
+      "default": [],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 344
+      }
+    },
+    "secondary_subnets": {
+      "name": "secondary_subnets",
+      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
+      "description": "List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI.",
+      "default": [],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 325
+      }
+    },
+    "secondary_use_vsi_security_group": {
+      "name": "secondary_use_vsi_security_group",
+      "type": "bool",
+      "description": "Use the security group created by this module in the secondary interface",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 338
+      }
+    },
+    "security_group": {
+      "name": "security_group",
+      "type": "object({\n    name = string\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        source    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
+      "description": "Security group created for VSI",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 104
+      }
+    },
+    "security_group_ids": {
+      "name": "security_group_ids",
+      "type": "list(string)",
+      "description": "IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups.",
+      "default": [],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 175
+      }
+    },
+    "ssh_key_ids": {
+      "name": "ssh_key_ids",
+      "type": "list(string)",
+      "description": "ssh key ids to use in creating vsi",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 62
+      }
+    },
+    "subnets": {
+      "name": "subnets",
+      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
+      "description": "A list of subnet IDs where VSI will be deployed",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 38
+      }
+    },
+    "tags": {
+      "name": "tags",
+      "type": "list(string)",
+      "description": "List of tags to apply to resources created by this module.",
+      "default": [],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 20
+      }
+    },
+    "user_data": {
+      "name": "user_data",
+      "type": "string",
+      "description": "User data to initialize VSI deployment",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 77
+      }
+    },
+    "vpc_id": {
+      "name": "vpc_id",
+      "type": "string",
+      "description": "ID of VPC",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 33
+      }
+    },
+    "vsi_per_subnet": {
+      "name": "vsi_per_subnet",
+      "type": "number",
+      "description": "Number of VSI instances for each subnet",
+      "required": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 72
+      }
+    }
+  },
+  "outputs": {
+    "fip_list": {
+      "name": "fip_list",
+      "description": "A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached.",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 33
+      }
+    },
+    "ids": {
+      "name": "ids",
+      "description": "The IDs of the VSI",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 5
+      }
+    },
+    "lb_hostnames": {
+      "name": "lb_hostnames",
+      "description": "Hostnames for the Load Balancer created",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 54
+      }
+    },
+    "lb_security_groups": {
+      "name": "lb_security_groups",
+      "description": "Load Balancer security groups",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 62
+      }
+    },
+    "list": {
+      "name": "list",
+      "description": "A list of VSI with name, id, zone, and primary ipv4 address",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 18
+      }
+    },
+    "vsi_security_group": {
+      "name": "vsi_security_group",
+      "description": "Security group for the VSI",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 13
+      }
+    }
+  },
+  "required_core": [
+    "\u003e= 1.0.0"
+  ],
+  "required_providers": {
+    "ibm": {
+      "source": "IBM-Cloud/ibm",
+      "version_constraints": [
+        "\u003e= 1.41.1"
+      ]
+    }
+  },
+  "managed_resources": {
+    "ibm_is_floating_ip.secondary_fip": {
+      "mode": "managed",
+      "type": "ibm_is_floating_ip",
+      "name": "secondary_fip",
+      "attributes": {
+        "for_each": "secondary_floating_ips",
+        "tags": "tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 127
+      }
+    },
+    "ibm_is_floating_ip.vsi_fip": {
+      "mode": "managed",
+      "type": "ibm_is_floating_ip",
+      "name": "vsi_fip",
+      "attributes": {
+        "for_each": "enable_floating_ip",
+        "tags": "tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 120
+      }
+    },
+    "ibm_is_instance.vsi": {
+      "mode": "managed",
+      "type": "ibm_is_instance",
+      "name": "vsi",
+      "attributes": {
+        "image": "image_id",
+        "keys": "ssh_key_ids",
+        "profile": "machine_type",
+        "resource_group": "resource_group_id",
+        "tags": "tags",
+        "user_data": "user_data",
+        "volumes": "block_storage_volumes",
+        "vpc": "vpc_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 67
+      }
+    },
+    "ibm_is_lb.lb": {
+      "mode": "managed",
+      "type": "ibm_is_lb",
+      "name": "lb",
+      "attributes": {
+        "name": "prefix",
+        "resource_group": "resource_group_id",
+        "subnets": "subnets",
+        "tags": "tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "load_balancer.tf",
+        "line": 12
+      }
+    },
+    "ibm_is_lb_listener.listener": {
+      "mode": "managed",
+      "type": "ibm_is_lb_listener",
+      "name": "listener",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "load_balancer.tf",
+        "line": 80
+      }
+    },
+    "ibm_is_lb_pool.pool": {
+      "mode": "managed",
+      "type": "ibm_is_lb_pool",
+      "name": "pool",
+      "attributes": {
+        "name": "prefix"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "load_balancer.tf",
+        "line": 29
+      }
+    },
+    "ibm_is_lb_pool_member.pool_members": {
+      "mode": "managed",
+      "type": "ibm_is_lb_pool_member",
+      "name": "pool_members",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "load_balancer.tf",
+        "line": 64
+      }
+    },
+    "ibm_is_security_group.security_group": {
+      "mode": "managed",
+      "type": "ibm_is_security_group",
+      "name": "security_group",
+      "attributes": {
+        "resource_group": "resource_group_id",
+        "tags": "tags",
+        "vpc": "vpc_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "security_group.tf",
+        "line": 26
+      }
+    },
+    "ibm_is_security_group_rule.security_group_rules": {
+      "mode": "managed",
+      "type": "ibm_is_security_group_rule",
+      "name": "security_group_rules",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "security_group.tf",
+        "line": 62
+      }
+    },
+    "ibm_is_volume.volume": {
+      "mode": "managed",
+      "type": "ibm_is_volume",
+      "name": "volume",
+      "attributes": {
+        "tags": "tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "storage.tf",
+        "line": 41
+      }
+    }
+  },
+  "data_resources": {
+    "data.ibm_is_vpc.vpc": {
+      "mode": "data",
+      "type": "ibm_is_vpc",
+      "name": "vpc",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 54
+      }
+    },
+    "data.ibm_is_vpcs.vpcs": {
+      "mode": "data",
+      "type": "ibm_is_vpcs",
+      "name": "vpcs",
+      "attributes": {
+        "depends_on": "vpc_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 48
+      }
+    }
+  },
+  "module_calls": {}
+}
