@@ -10,7 +10,7 @@ terraform {
     # The tls provider is not actually required by the module itself, just this example, so OK to use ">=" here instead of locking into a version
     tls = {
       source  = "hashicorp/tls"
-      version = ">= 3.4.0"
+      version = ">= 4.0.2"
     }
   }
 }
