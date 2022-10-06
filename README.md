@@ -1,7 +1,5 @@
 # IBM Secure Landing Zone VSI Module
 
-https://img.shields.io/badge/Status-Certified%20(GA)-brightgreen?style=plastic
-
 [![Graduated (Supported)](https://img.shields.io/badge/status-Graduated%20(Supported)-brightgreen?style=plastic)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
 [![build status](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/actions/workflows/ci.yml/badge.svg)](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/actions/workflows/ci.yml)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
