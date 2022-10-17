@@ -26,6 +26,7 @@ module.vsi["test-vsi"].ibm_is_instance.vsi["test-vsi-1"]
 module.vsi["test-vsi"].ibm_is_instance.vsi["test-vsi-2"]
 module.vsi["test-vsi"].ibm_is_instance.vsi["test-vsi-3"]
 ```
+
 ---
 
 ## Block storage volumes
