@@ -12,7 +12,7 @@ locals {
 resource "ibm_is_lb" "lb" {
   for_each        = local.load_balancer_map
   name            = "${var.prefix}-${each.value.name}-lb"
-  subnets         = var.subnets.*.id
+  subnets         = var.subnets[*].id
   type            = each.value.type
   security_groups = each.value.security_group == null ? null : [ibm_is_security_group.security_group[each.value.security_group.name].id]
   resource_group  = var.resource_group_id
