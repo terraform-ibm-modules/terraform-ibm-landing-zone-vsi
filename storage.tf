@@ -61,7 +61,7 @@ locals {
   # instance creation
   volume_by_vsi = {
     # For each distinct server name
-    for virtual_server in distinct(local.volume_list.*.vsi_name) :
+    for virtual_server in distinct(local.volume_list[*].vsi_name) :
     # Create an object where the key is the name of the server
     (virtual_server) => [
       # That includes the ids of only volumes with the matching `vsi_name`

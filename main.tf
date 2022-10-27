@@ -35,7 +35,7 @@ locals {
         # fip name
         name = "${instance.name}-${interface}-fip"
         # target interface at the same index as subnet name
-        target = instance.network_interfaces[index(var.secondary_subnets.*.name, interface)].id
+        target = instance.network_interfaces[index(var.secondary_subnets[*].name, interface)].id
       }
     ]
   ])

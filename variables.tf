@@ -137,7 +137,7 @@ variable "security_group" {
     condition = (
       var.security_group == null
       ? true
-      : length(distinct(var.security_group.rules.*.name)) == length(var.security_group.rules.*.name)
+      : length(distinct(var.security_group.rules[*].name)) == length(var.security_group.rules[*].name)
     )
   }
 
@@ -203,7 +203,7 @@ variable "block_storage_volumes" {
 
   validation {
     error_message = "Each block storage volume must have a unique name."
-    condition     = length(distinct(var.block_storage_volumes.*.name)) == length(var.block_storage_volumes)
+    condition     = length(distinct(var.block_storage_volumes[*].name)) == length(var.block_storage_volumes)
   }
 }
 
@@ -311,7 +311,7 @@ variable "load_balancers" {
 
   validation {
     error_message = "Each load balancer must have a unique name."
-    condition     = length(distinct(var.load_balancers.*.name)) == length(var.load_balancers.*.name)
+    condition     = length(distinct(var.load_balancers[*].name)) == length(var.load_balancers[*].name)
   }
 }
 
