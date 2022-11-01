@@ -16,6 +16,9 @@
       "type": "list(\n    object({\n      name           = string\n      profile        = string\n      capacity       = optional(number)\n      iops           = optional(number)\n      encryption_key = optional(string)\n    })\n  )",
       "description": "List describing the block storage volumes that will be attached to each vsi",
       "default": [],
+      "source": [
+        "ibm_is_instance.vsi.volumes"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 191
@@ -46,6 +49,9 @@
       "type": "bool",
       "description": "Create a floating IP for each virtual server created",
       "default": false,
+      "source": [
+        "ibm_is_floating_ip.vsi_fip.for_each"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 87
@@ -56,10 +62,15 @@
       "type": "string",
       "description": "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region",
       "required": true,
+      "source": [
+        "ibm_is_instance.vsi.image"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 57
-      }
+      },
+      "immutable": true,
+      "computed": true
     },
     "load_balancers": {
       "name": "load_balancers",
@@ -76,30 +87,49 @@
       "type": "string",
       "description": "VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles",
       "required": true,
+      "source": [
+        "ibm_is_instance.vsi.profile"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 67
-      }
+      },
+      "computed": true
     },
     "prefix": {
       "name": "prefix",
       "type": "string",
       "description": "The IBM Cloud platform API key needed to deploy IAM enabled resources",
       "required": true,
+      "source": [
+        "ibm_is_lb.lb.name",
+        "ibm_is_lb_pool.pool.name"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 10
-      }
+      },
+      "min_length": 1,
+      "max_length": 63,
+      "matches": "^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$"
     },
     "resource_group_id": {
       "name": "resource_group_id",
       "type": "string",
       "description": "id of resource group to create VPC",
       "required": true,
+      "source": [
+        "ibm_is_instance.vsi.resource_group",
+        "ibm_is_lb.lb.resource_group",
+        "ibm_is_security_group.security_group.resource_group"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 5
-      }
+      },
+      "cloud_data_type": "resource_group",
+      "immutable": true,
+      "computed": true
     },
     "secondary_allow_ip_spoofing": {
       "name": "secondary_allow_ip_spoofing",
@@ -116,6 +146,9 @@
       "type": "list(string)",
       "description": "List of secondary interfaces to add floating ips",
       "default": [],
+      "source": [
+        "ibm_is_floating_ip.secondary_fip.for_each"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 365
@@ -176,9 +209,15 @@
       "type": "list(string)",
       "description": "ssh key ids to use in creating vsi",
       "required": true,
+      "source": [
+        "ibm_is_instance.vsi.keys"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 62
+      },
+      "elem": {
+        "type": "TypeString"
       }
     },
     "subnets": {
@@ -186,6 +225,9 @@
       "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
       "description": "A list of subnet IDs where VSI will be deployed",
       "required": true,
+      "source": [
+        "ibm_is_lb.lb.subnets"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 38
@@ -196,9 +238,24 @@
       "type": "list(string)",
       "description": "List of tags to apply to resources created by this module.",
       "default": [],
+      "source": [
+        "ibm_is_floating_ip.secondary_fip.tags",
+        "ibm_is_floating_ip.vsi_fip.tags",
+        "ibm_is_instance.vsi.tags",
+        "ibm_is_lb.lb.tags",
+        "ibm_is_security_group.security_group.tags",
+        "ibm_is_volume.volume.tags"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 20
+      },
+      "min_length": 1,
+      "max_length": 128,
+      "matches": "^[A-Za-z0-9:_ .-]+$",
+      "computed": true,
+      "elem": {
+        "type": "TypeString"
       }
     },
     "user_data": {
@@ -206,20 +263,31 @@
       "type": "string",
       "description": "User data to initialize VSI deployment",
       "required": true,
+      "source": [
+        "ibm_is_instance.vsi.user_data"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 77
-      }
+      },
+      "immutable": true
     },
     "vpc_id": {
       "name": "vpc_id",
       "type": "string",
       "description": "ID of VPC",
       "required": true,
+      "source": [
+        "data.ibm_is_vpcs.vpcs.depends_on",
+        "ibm_is_instance.vsi.vpc",
+        "ibm_is_security_group.security_group.vpc"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 33
-      }
+      },
+      "immutable": true,
+      "computed": true
     },
     "vsi_per_subnet": {
       "name": "vsi_per_subnet",
