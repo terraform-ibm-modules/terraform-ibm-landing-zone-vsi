@@ -21,7 +21,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 191
+        "line": 174
       }
     },
     "boot_volume_encryption_key": {
@@ -79,7 +79,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 210
+        "line": 193
       }
     },
     "machine_type": {
@@ -138,7 +138,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 376
+        "line": 359
       }
     },
     "secondary_floating_ips": {
@@ -151,7 +151,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 365
+        "line": 348
       }
     },
     "secondary_security_groups": {
@@ -161,7 +161,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 344
+        "line": 327
       }
     },
     "secondary_subnets": {
@@ -171,7 +171,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 325
+        "line": 308
       }
     },
     "secondary_use_vsi_security_group": {
@@ -181,7 +181,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 338
+        "line": 321
       }
     },
     "security_group": {
@@ -201,7 +201,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 175
+        "line": 158
       }
     },
     "ssh_key_ids": {
