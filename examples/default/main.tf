@@ -48,7 +48,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 #############################################################################
 
 module "slz_vpc" {
-  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v2.3.5"
+  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v3.0.0"
   resource_group_id = local.resource_group_id
   region            = var.region
   prefix            = var.prefix
