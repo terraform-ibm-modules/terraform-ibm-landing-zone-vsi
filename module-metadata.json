@@ -1,19 +1,6 @@
 {
   "path": ".",
   "variables": {
-    "add_ibm_cloud_internal_rules": {
-      "name": "add_ibm_cloud_internal_rules",
-      "type": "bool",
-      "description": "Add IBM Cloud Internal rules to security group rules",
-      "default": false,
-      "source": [
-        "module.security_group_rules"
-      ],
-      "pos": {
-        "filename": "variables.tf",
-        "line": 104
-      }
-    },
     "allow_ip_spoofing": {
       "name": "allow_ip_spoofing",
       "type": "bool",
@@ -34,7 +21,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 180
+        "line": 176
       }
     },
     "boot_volume_encryption_key": {
@@ -87,12 +74,12 @@
     },
     "load_balancers": {
       "name": "load_balancers",
-      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              remote    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
+      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name                         = string\n          add_ibm_cloud_internal_rules = bool\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              remote    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
       "description": "Load balancers to add to VSI",
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 199
+        "line": 195
       }
     },
     "machine_type": {
@@ -151,7 +138,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 365
+        "line": 362
       }
     },
     "secondary_floating_ips": {
@@ -164,7 +151,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 354
+        "line": 351
       }
     },
     "secondary_security_groups": {
@@ -174,7 +161,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 333
+        "line": 330
       }
     },
     "secondary_subnets": {
@@ -184,7 +171,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 314
+        "line": 311
       }
     },
     "secondary_use_vsi_security_group": {
@@ -194,17 +181,17 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 327
+        "line": 324
       }
     },
     "security_group": {
       "name": "security_group",
-      "type": "object({\n    name = string\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        remote    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
+      "type": "object({\n    name                         = string\n    add_ibm_cloud_internal_rules = bool\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        remote    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
       "description": "Security group created for VSI",
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 110
+        "line": 105
       }
     },
     "security_group_ids": {
@@ -214,7 +201,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 164
+        "line": 160
       }
     },
     "ssh_key_ids": {
@@ -535,7 +522,6 @@
       "name": "security_group_rules",
       "source": "git::https://github.com/terraform-ibm-modules/terraform-ibm-security-group.git?ref=v1.0.0",
       "attributes": {
-        "add_ibm_cloud_internal_rules": "add_ibm_cloud_internal_rules",
         "resource_group": "resource_group_id",
         "vpc_id": "vpc_id"
       },
@@ -639,7 +625,7 @@
       },
       "pos": {
         "filename": "security_group.tf",
-        "line": 29
+        "line": 26
       }
     }
   }

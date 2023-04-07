@@ -25,6 +25,24 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		IgnoreUpdates: testhelper.Exemptions{
 			List: ignoreUpdates,
 		},
+		TerraformVars: map[string]interface{}{
+			"create_security_group": true,
+			"security_group": map[string]interface{}{
+				"name":                         "test-lb-sg",
+				"add_ibm_cloud_internal_rules": true,
+				"rules": []map[string]interface{}{
+					{
+						"name":      "sgr-tcp",
+						"direction": "inbound",
+						"remote":    "0.0.0.0/0",
+						"tcp": map[string]interface{}{
+							"port_min": 8080,
+							"port_max": 8080,
+						},
+					},
+				},
+			},
+		},
 	})
 
 	return options

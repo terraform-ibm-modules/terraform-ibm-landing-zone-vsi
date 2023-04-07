@@ -101,16 +101,12 @@ variable "create_security_group" {
   type        = bool
 }
 
-variable "add_ibm_cloud_internal_rules" {
-  description = "Add IBM Cloud Internal rules to security group rules"
-  type        = bool
-  default     = false
-}
 
 variable "security_group" {
   description = "Security group created for VSI"
   type = object({
-    name = string
+    name                         = string
+    add_ibm_cloud_internal_rules = bool
     rules = list(
       object({
         name      = string
@@ -214,7 +210,8 @@ variable "load_balancers" {
       pool_member_port  = string
       security_group = optional(
         object({
-          name = string
+          name                         = string
+          add_ibm_cloud_internal_rules = bool
           rules = list(
             object({
               name      = string
