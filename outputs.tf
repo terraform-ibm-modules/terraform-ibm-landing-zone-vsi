@@ -12,7 +12,7 @@ output "ids" {
 
 output "vsi_security_group" {
   description = "Security group for the VSI"
-  value       = var.security_group == null ? null : ibm_is_security_group.security_group[var.security_group.name]
+  value       = var.security_group == null ? null : module.security_group_rules[var.security_group.name]
 }
 
 output "list" {
@@ -63,7 +63,7 @@ output "lb_security_groups" {
   description = "Load Balancer security groups"
   value = {
     for load_balancer in var.load_balancers :
-    (load_balancer.name) => ibm_is_security_group.security_group[load_balancer.security_group.name] if load_balancer.security_group != null
+    (load_balancer.name) => module.security_group_rules[load_balancer.security_group.name] if load_balancer.security_group != null
   }
 }
 

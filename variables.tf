@@ -101,6 +101,12 @@ variable "create_security_group" {
   type        = bool
 }
 
+variable "add_ibm_cloud_internal_rules" {
+  description = "Add IBM Cloud Internal rules to security group rules"
+  type        = bool
+  default     = false
+}
+
 variable "security_group" {
   description = "Security group created for VSI"
   type = object({
@@ -109,7 +115,7 @@ variable "security_group" {
       object({
         name      = string
         direction = string
-        source    = string
+        remote    = string
         tcp = optional(
           object({
             port_max = number
@@ -213,7 +219,7 @@ variable "load_balancers" {
             object({
               name      = string
               direction = string
-              source    = string
+              remote    = string
               tcp = optional(
                 object({
                   port_max = number

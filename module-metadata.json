@@ -1,6 +1,19 @@
 {
   "path": ".",
   "variables": {
+    "add_ibm_cloud_internal_rules": {
+      "name": "add_ibm_cloud_internal_rules",
+      "type": "bool",
+      "description": "Add IBM Cloud Internal rules to security group rules",
+      "default": false,
+      "source": [
+        "module.security_group_rules"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 104
+      }
+    },
     "allow_ip_spoofing": {
       "name": "allow_ip_spoofing",
       "type": "bool",
@@ -21,7 +34,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 174
+        "line": 180
       }
     },
     "boot_volume_encryption_key": {
@@ -74,12 +87,12 @@
     },
     "load_balancers": {
       "name": "load_balancers",
-      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              source    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
+      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              remote    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
       "description": "Load balancers to add to VSI",
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 193
+        "line": 199
       }
     },
     "machine_type": {
@@ -121,7 +134,7 @@
       "source": [
         "ibm_is_instance.vsi.resource_group",
         "ibm_is_lb.lb.resource_group",
-        "ibm_is_security_group.security_group.resource_group"
+        "module.security_group_rules.ibm_is_security_group.sg.resource_group"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -138,7 +151,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 359
+        "line": 365
       }
     },
     "secondary_floating_ips": {
@@ -151,7 +164,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 348
+        "line": 354
       }
     },
     "secondary_security_groups": {
@@ -161,7 +174,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 327
+        "line": 333
       }
     },
     "secondary_subnets": {
@@ -171,7 +184,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 308
+        "line": 314
       }
     },
     "secondary_use_vsi_security_group": {
@@ -181,17 +194,17 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 321
+        "line": 327
       }
     },
     "security_group": {
       "name": "security_group",
-      "type": "object({\n    name = string\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        source    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
+      "type": "object({\n    name = string\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        remote    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
       "description": "Security group created for VSI",
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 104
+        "line": 110
       }
     },
     "security_group_ids": {
@@ -201,7 +214,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 158
+        "line": 164
       }
     },
     "ssh_key_ids": {
@@ -243,7 +256,6 @@
         "ibm_is_floating_ip.vsi_fip.tags",
         "ibm_is_instance.vsi.tags",
         "ibm_is_lb.lb.tags",
-        "ibm_is_security_group.security_group.tags",
         "ibm_is_volume.volume.tags"
       ],
       "pos": {
@@ -280,7 +292,7 @@
       "source": [
         "data.ibm_is_vpcs.vpcs.depends_on",
         "ibm_is_instance.vsi.vpc",
-        "ibm_is_security_group.security_group.vpc"
+        "module.security_group_rules.ibm_is_security_group.sg.vpc"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -357,7 +369,7 @@
     "ibm": {
       "source": "IBM-Cloud/ibm",
       "version_constraints": [
-        "\u003e= 1.49.0"
+        "\u003e= 1.51.0"
       ]
     }
   },
@@ -473,35 +485,6 @@
         "line": 64
       }
     },
-    "ibm_is_security_group.security_group": {
-      "mode": "managed",
-      "type": "ibm_is_security_group",
-      "name": "security_group",
-      "attributes": {
-        "resource_group": "resource_group_id",
-        "tags": "tags",
-        "vpc": "vpc_id"
-      },
-      "provider": {
-        "name": "ibm"
-      },
-      "pos": {
-        "filename": "security_group.tf",
-        "line": 26
-      }
-    },
-    "ibm_is_security_group_rule.security_group_rules": {
-      "mode": "managed",
-      "type": "ibm_is_security_group_rule",
-      "name": "security_group_rules",
-      "provider": {
-        "name": "ibm"
-      },
-      "pos": {
-        "filename": "security_group.tf",
-        "line": 62
-      }
-    },
     "ibm_is_volume.volume": {
       "mode": "managed",
       "type": "ibm_is_volume",
@@ -547,5 +530,117 @@
       }
     }
   },
-  "module_calls": {}
+  "module_calls": {
+    "security_group_rules": {
+      "name": "security_group_rules",
+      "source": "git::https://github.com/terraform-ibm-modules/terraform-ibm-security-group.git?ref=v1.0.0",
+      "attributes": {
+        "add_ibm_cloud_internal_rules": "add_ibm_cloud_internal_rules",
+        "resource_group": "resource_group_id",
+        "vpc_id": "vpc_id"
+      },
+      "managed_resources": {
+        "ibm_is_security_group.sg": {
+          "mode": "managed",
+          "type": "ibm_is_security_group",
+          "name": "sg",
+          "attributes": {
+            "count": "existing_security_group_name",
+            "name": "security_group_name",
+            "resource_group": "resource_group",
+            "vpc": "vpc_id"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "line": 7
+          }
+        },
+        "ibm_is_security_group_rule.security_group_rule": {
+          "mode": "managed",
+          "type": "ibm_is_security_group_rule",
+          "name": "security_group_rule",
+          "attributes": {
+            "group": "existing_security_group_name"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "line": 34
+          }
+        },
+        "ibm_is_security_group_target.sg_target": {
+          "mode": "managed",
+          "type": "ibm_is_security_group_target",
+          "name": "sg_target",
+          "attributes": {
+            "count": "target_ids",
+            "security_group": "existing_security_group_name",
+            "target": "target_ids"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "line": 24
+          }
+        }
+      },
+      "data_resources": {
+        "data.ibm_is_security_group.existing_sg": {
+          "mode": "data",
+          "type": "ibm_is_security_group",
+          "name": "existing_sg",
+          "attributes": {
+            "count": "existing_security_group_name",
+            "name": "existing_security_group_name"
+          },
+          "provider": {
+            "name": "ibm"
+          },
+          "pos": {
+            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "line": 14
+          }
+        }
+      },
+      "outputs": {
+        "security_group_id": {
+          "name": "security_group_id",
+          "description": "The ID of the security group where the rules are added",
+          "pos": {
+            "filename": ".terraform/modules/security_group_rules/outputs.tf",
+            "line": 10
+          }
+        },
+        "security_group_rule": {
+          "name": "security_group_rule",
+          "description": "Security group rules",
+          "value": "ibm_is_security_group_rule.security_group_rule",
+          "pos": {
+            "filename": ".terraform/modules/security_group_rules/outputs.tf",
+            "line": 15
+          }
+        },
+        "security_target": {
+          "name": "security_target",
+          "description": "Resources added to the security group",
+          "value": "ibm_is_security_group_target.sg_target",
+          "pos": {
+            "filename": ".terraform/modules/security_group_rules/outputs.tf",
+            "line": 5
+          }
+        }
+      },
+      "pos": {
+        "filename": "security_group.tf",
+        "line": 29
+      }
+    }
+  }
 }
