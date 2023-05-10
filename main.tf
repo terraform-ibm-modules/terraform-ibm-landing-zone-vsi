@@ -75,6 +75,11 @@ resource "ibm_is_instance" "vsi" {
   user_data      = var.user_data
   keys           = var.ssh_key_ids
   tags           = var.tags
+  lifecycle {
+    ignore_changes = [
+      image
+    ]
+  }
 
   primary_network_interface {
     subnet = each.value.subnet_id
