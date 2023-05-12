@@ -11,10 +11,6 @@ const defaultExampleTerraformDir = "examples/default"
 const resourceGroup = "geretain-test-resources"
 const region = "us-south"
 
-// Remove this line after PR merge
-// This is included to ignore changes to network-acls
-var ignoreUpdates = []string{"module.slz_vpc.ibm_is_network_acl.network_acl[\"vpc-acl\"]"}
-
 func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
@@ -22,9 +18,6 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
 		Region:        region,
-		IgnoreUpdates: testhelper.Exemptions{
-			List: ignoreUpdates,
-		},
 	})
 
 	return options

@@ -14,7 +14,7 @@ resource "ibm_is_lb" "lb" {
   name            = "${var.prefix}-${each.value.name}-lb"
   subnets         = var.subnets[*].id
   type            = each.value.type
-  security_groups = each.value.security_group == null ? null : [module.security_group_rules[each.value.security_group.name].security_group_id]
+  security_groups = each.value.security_group == null ? null : [module.security_groups[each.value.security_group.name].security_group_id]
   resource_group  = var.resource_group_id
   tags            = var.tags
 }

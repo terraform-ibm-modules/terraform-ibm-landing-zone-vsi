@@ -23,7 +23,7 @@ locals {
   }
 }
 
-module "security_group_rules" {
+module "security_groups" {
   for_each                     = local.security_group_map
   source                       = "git::https://github.com/terraform-ibm-modules/terraform-ibm-security-group.git?ref=v1.0.0"
   add_ibm_cloud_internal_rules = each.value.add_ibm_cloud_internal_rules

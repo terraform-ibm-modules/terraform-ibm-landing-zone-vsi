@@ -121,7 +121,7 @@
       "source": [
         "ibm_is_instance.vsi.resource_group",
         "ibm_is_lb.lb.resource_group",
-        "module.security_group_rules.ibm_is_security_group.sg.resource_group"
+        "module.security_groups.ibm_is_security_group.sg.resource_group"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -279,7 +279,7 @@
       "source": [
         "data.ibm_is_vpcs.vpcs.depends_on",
         "ibm_is_instance.vsi.vpc",
-        "module.security_group_rules.ibm_is_security_group.sg.vpc"
+        "module.security_groups.ibm_is_security_group.sg.vpc"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -356,7 +356,7 @@
     "ibm": {
       "source": "IBM-Cloud/ibm",
       "version_constraints": [
-        "\u003e= 1.51.0"
+        "\u003e= 1.52.0"
       ]
     }
   },
@@ -518,8 +518,8 @@
     }
   },
   "module_calls": {
-    "security_group_rules": {
-      "name": "security_group_rules",
+    "security_groups": {
+      "name": "security_groups",
       "source": "git::https://github.com/terraform-ibm-modules/terraform-ibm-security-group.git?ref=v1.0.0",
       "attributes": {
         "resource_group": "resource_group_id",
@@ -540,7 +540,7 @@
             "name": "ibm"
           },
           "pos": {
-            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "filename": ".terraform/modules/security_groups/main.tf",
             "line": 7
           }
         },
@@ -555,7 +555,7 @@
             "name": "ibm"
           },
           "pos": {
-            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "filename": ".terraform/modules/security_groups/main.tf",
             "line": 34
           }
         },
@@ -572,7 +572,7 @@
             "name": "ibm"
           },
           "pos": {
-            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "filename": ".terraform/modules/security_groups/main.tf",
             "line": 24
           }
         }
@@ -590,7 +590,7 @@
             "name": "ibm"
           },
           "pos": {
-            "filename": ".terraform/modules/security_group_rules/main.tf",
+            "filename": ".terraform/modules/security_groups/main.tf",
             "line": 14
           }
         }
@@ -600,7 +600,7 @@
           "name": "security_group_id",
           "description": "The ID of the security group where the rules are added",
           "pos": {
-            "filename": ".terraform/modules/security_group_rules/outputs.tf",
+            "filename": ".terraform/modules/security_groups/outputs.tf",
             "line": 10
           }
         },
@@ -609,7 +609,7 @@
           "description": "Security group rules",
           "value": "ibm_is_security_group_rule.security_group_rule",
           "pos": {
-            "filename": ".terraform/modules/security_group_rules/outputs.tf",
+            "filename": ".terraform/modules/security_groups/outputs.tf",
             "line": 15
           }
         },
@@ -618,7 +618,7 @@
           "description": "Resources added to the security group",
           "value": "ibm_is_security_group_target.sg_target",
           "pos": {
-            "filename": ".terraform/modules/security_group_rules/outputs.tf",
+            "filename": ".terraform/modules/security_groups/outputs.tf",
             "line": 5
           }
         }
