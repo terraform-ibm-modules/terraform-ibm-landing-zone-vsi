@@ -19,7 +19,7 @@ variable "region" {
 variable "prefix" {
   description = "The IBM Cloud platform API key needed to deploy IAM enabled resources"
   type        = string
-  default     = "vsi-rajat"
+  default     = "slz-fs-vsi"
 }
 
 variable "resource_tags" {
