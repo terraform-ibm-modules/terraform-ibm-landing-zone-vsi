@@ -64,6 +64,15 @@ locals {
 # Create Virtual Servers
 ##############################################################################
 
+resource "ibm_iam_authorization_policy" "block_storage_policy" {
+  count                       = var.existing_kms_instance_guid != null ? 1 : 0
+  source_service_name         = "server-protect"
+  target_service_name         = "hs-crypto"
+  target_resource_instance_id = var.existing_kms_instance_guid
+  roles                       = ["Reader"]
+  description                 = "Allow block storage volumes to be encrypted by Key Management instance."
+}
+
 resource "ibm_is_instance" "vsi" {
   for_each       = local.vsi_map
   name           = each.key

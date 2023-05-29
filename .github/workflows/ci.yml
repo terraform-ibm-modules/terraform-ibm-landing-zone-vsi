@@ -7,14 +7,17 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   call-terraform-ci-pipeline:
-    uses: terraform-ibm-modules/common-pipeline-assets/.github/workflows/common-terraform-module-ci.yml@v1.9.1
+    uses: terraform-ibm-modules/common-pipeline-assets/.github/workflows/common-terraform-module-ci.yml@v1.12.2
     secrets: inherit
     with:
-      craTarget: "examples/default"
+      craSCCv2: true
+      craTarget: "examples/fscloud"
       craGoalIgnoreFile: "cra-tf-validate-ignore-goals.json"
+      craEnvironmentVariables: "TF_VAR_existing_at_instance_crn=${{ vars.AT_INSTANCE_CRN }},TF_VAR_existing_kms_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_kms_key_crn=${{ vars.HPCS_SOUTH_KEY_CRN }}"

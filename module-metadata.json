@@ -57,6 +57,21 @@
         "line": 87
       }
     },
+    "existing_kms_instance_guid": {
+      "name": "existing_kms_instance_guid",
+      "type": "string",
+      "description": "The GUID of the Hyper Protect Crypto Services or Key Protect instance in which the key specified in var.kms_key_crn and var.backup_encryption_key_crn is coming from. Required only if var.kms_encryption_enabled is set to true, var.skip_iam_authorization_policy is set to false, and you pass a value for var.kms_key_crn, var.backup_encryption_key_crn, or both.",
+      "source": [
+        "ibm_iam_authorization_policy.block_storage_policy.count",
+        "ibm_iam_authorization_policy.block_storage_policy.target_resource_instance_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 365
+      },
+      "immutable": true,
+      "computed": true
+    },
     "image_id": {
       "name": "image_id",
       "type": "string",
@@ -362,6 +377,22 @@
     }
   },
   "managed_resources": {
+    "ibm_iam_authorization_policy.block_storage_policy": {
+      "mode": "managed",
+      "type": "ibm_iam_authorization_policy",
+      "name": "block_storage_policy",
+      "attributes": {
+        "count": "existing_kms_instance_guid",
+        "target_resource_instance_id": "existing_kms_instance_guid"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 67
+      }
+    },
     "ibm_is_floating_ip.secondary_fip": {
       "mode": "managed",
       "type": "ibm_is_floating_ip",
@@ -375,7 +406,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 141
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -391,7 +422,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 125
+        "line": 134
       }
     },
     "ibm_is_instance.vsi": {
@@ -413,7 +444,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 67
+        "line": 76
       }
     },
     "ibm_is_lb.lb": {

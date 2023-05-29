@@ -298,74 +298,9 @@ variable "load_balancers" {
   }
 }
 
-##############################################################################
-
-
-##############################################################################
-# Secondary Interface Variables
-##############################################################################
-
-variable "secondary_subnets" {
-  description = "List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI."
-  type = list(
-    object({
-      name = string
-      id   = string
-      zone = string
-      cidr = string
-    })
-  )
-  default = []
-}
-
-variable "secondary_use_vsi_security_group" {
-  description = "Use the security group created by this module in the secondary interface"
-  type        = bool
-  default     = false
-}
-
-variable "secondary_security_groups" {
-  description = "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups."
-  type = list(
-    object({
-      security_group_id = string
-      interface_name    = string
-    })
-  )
-  default = []
-
-  validation {
-    error_message = "Security group IDs must be unique."
-    condition     = length(var.secondary_security_groups) == length(distinct(var.secondary_security_groups))
-  }
-
-  validation {
-    error_message = "No more than 5 security groups can be added to a VSI deployment."
-    condition     = length(var.secondary_security_groups) <= 5
-  }
-}
-
-variable "secondary_floating_ips" {
-  description = "List of secondary interfaces to add floating ips"
-  type        = list(string)
-  default     = []
-
-  validation {
-    error_message = "Secondary floating IPs must contain a unique list of interfaces."
-    condition     = length(var.secondary_floating_ips) == length(distinct(var.secondary_floating_ips))
-  }
-}
-
-variable "secondary_allow_ip_spoofing" {
-  description = "Allow IP spoofing on additional network interfaces"
-  type        = bool
-  default     = false
-}
-
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.kms_key_crn is coming from."
+  description = "The GUID of the Hyper Protect Crypto Services or Key Protect instance in which the key specified in var.kms_key_crn and var.backup_encryption_key_crn is coming from. Required only if var.kms_encryption_enabled is set to true, var.skip_iam_authorization_policy is set to false, and you pass a value for var.kms_key_crn, var.backup_encryption_key_crn, or both."
   type        = string
-  default     = null
 }
 
 ##############################################################################
