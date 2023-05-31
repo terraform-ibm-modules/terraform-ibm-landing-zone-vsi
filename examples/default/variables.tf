@@ -19,7 +19,7 @@ variable "region" {
 variable "prefix" {
   description = "The prefix that you would like to append to your resources"
   type        = string
-  default     = "rajat-vsi"
+  default     = "slz-vsi"
 }
 
 variable "resource_tags" {

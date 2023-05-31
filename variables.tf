@@ -84,6 +84,12 @@ variable "boot_volume_encryption_key" {
   type        = string
 }
 
+variable "existing_kms_instance_guid" {
+  description = "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.boot_volume_encryption_key is coming from."
+  type        = string
+  default     = null
+}
+
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created"
   type        = bool
@@ -360,12 +366,6 @@ variable "secondary_allow_ip_spoofing" {
   description = "Allow IP spoofing on additional network interfaces"
   type        = bool
   default     = false
-}
-
-variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.kms_key_crn is coming from."
-  type        = string
-  default     = null
 }
 
 ##############################################################################

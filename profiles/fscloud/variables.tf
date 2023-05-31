@@ -8,7 +8,7 @@ variable "resource_group_id" {
 }
 
 variable "prefix" {
-  description = "The IBM Cloud platform API key needed to deploy IAM enabled resources"
+  description = "The prefix that you would like to append to your resources"
   type        = string
 
   validation {
