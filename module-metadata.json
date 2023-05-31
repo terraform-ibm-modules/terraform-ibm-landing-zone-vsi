@@ -8,7 +8,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 93
+        "line": 99
       }
     },
     "block_storage_volumes": {
@@ -21,7 +21,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 174
+        "line": 180
       }
     },
     "boot_volume_encryption_key": {
@@ -41,7 +41,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 99
+        "line": 105
       }
     },
     "enable_floating_ip": {
@@ -54,20 +54,20 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 87
+        "line": 93
       }
     },
     "existing_kms_instance_guid": {
       "name": "existing_kms_instance_guid",
       "type": "string",
-      "description": "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.kms_key_crn is coming from.",
+      "description": "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.boot_volume_encryption_key is coming from.",
       "source": [
         "ibm_iam_authorization_policy.block_storage_policy.count",
         "ibm_iam_authorization_policy.block_storage_policy.target_resource_instance_id"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 365
+        "line": 87
       },
       "immutable": true,
       "computed": true
@@ -94,7 +94,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 193
+        "line": 199
       }
     },
     "machine_type": {
@@ -153,7 +153,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 359
+        "line": 365
       }
     },
     "secondary_floating_ips": {
@@ -166,7 +166,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 348
+        "line": 354
       }
     },
     "secondary_security_groups": {
@@ -176,7 +176,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 327
+        "line": 333
       }
     },
     "secondary_subnets": {
@@ -186,7 +186,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 308
+        "line": 314
       }
     },
     "secondary_use_vsi_security_group": {
@@ -196,7 +196,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 321
+        "line": 327
       }
     },
     "security_group": {
@@ -206,7 +206,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 104
+        "line": 110
       }
     },
     "security_group_ids": {
@@ -216,7 +216,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 158
+        "line": 164
       }
     },
     "ssh_key_ids": {
