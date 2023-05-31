@@ -77,7 +77,7 @@ func TestRunFSCloudExample(t *testing.T) {
 		BestRegionYAMLPath: region,
 		TerraformVars: map[string]interface{}{
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
-			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
+			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
 		},
 	})
 

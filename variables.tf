@@ -81,6 +81,7 @@ variable "user_data" {
 
 variable "boot_volume_encryption_key" {
   description = "CRN of boot volume encryption key"
+  default     = null
   type        = string
 }
 

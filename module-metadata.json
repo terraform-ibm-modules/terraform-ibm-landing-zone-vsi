@@ -8,7 +8,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 99
+        "line": 100
       }
     },
     "block_storage_volumes": {
@@ -21,14 +21,13 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 180
+        "line": 181
       }
     },
     "boot_volume_encryption_key": {
       "name": "boot_volume_encryption_key",
       "type": "string",
       "description": "CRN of boot volume encryption key",
-      "required": true,
       "pos": {
         "filename": "variables.tf",
         "line": 82
@@ -41,7 +40,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 105
+        "line": 106
       }
     },
     "enable_floating_ip": {
@@ -54,7 +53,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 93
+        "line": 94
       }
     },
     "existing_kms_instance_guid": {
@@ -67,7 +66,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 87
+        "line": 88
       },
       "immutable": true,
       "computed": true
@@ -94,7 +93,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 199
+        "line": 200
       }
     },
     "machine_type": {
@@ -153,7 +152,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 365
+        "line": 366
       }
     },
     "secondary_floating_ips": {
@@ -166,7 +165,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 354
+        "line": 355
       }
     },
     "secondary_security_groups": {
@@ -176,7 +175,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 333
+        "line": 334
       }
     },
     "secondary_subnets": {
@@ -186,7 +185,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 314
+        "line": 315
       }
     },
     "secondary_use_vsi_security_group": {
@@ -196,7 +195,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 327
+        "line": 328
       }
     },
     "security_group": {
@@ -206,7 +205,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 110
+        "line": 111
       }
     },
     "security_group_ids": {
@@ -216,7 +215,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 164
+        "line": 165
       }
     },
     "ssh_key_ids": {
