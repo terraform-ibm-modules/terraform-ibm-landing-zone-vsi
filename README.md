@@ -66,6 +66,7 @@ module vsi {
   resource_group_id                = var.resource_group_id
   prefix                           = var.prefix
   tags                             = var.tags
+  access_tags                      = var.access_tags
   vpc_id                           = var.vpc_id
   subnets                          = var.subnets
   image_id                         = var.image_id
