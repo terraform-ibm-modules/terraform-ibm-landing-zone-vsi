@@ -75,6 +75,7 @@ resource "ibm_is_instance" "vsi" {
   user_data      = var.user_data
   keys           = var.ssh_key_ids
   tags           = var.tags
+  access_tags    = var.access_tags
   lifecycle {
     ignore_changes = [
       image
@@ -123,10 +124,11 @@ resource "ibm_is_instance" "vsi" {
 ##############################################################################
 
 resource "ibm_is_floating_ip" "vsi_fip" {
-  for_each = var.enable_floating_ip ? ibm_is_instance.vsi : {}
-  name     = "${each.value.name}-fip"
-  target   = each.value.primary_network_interface[0].id
-  tags     = var.tags
+  for_each    = var.enable_floating_ip ? ibm_is_instance.vsi : {}
+  name        = "${each.value.name}-fip"
+  target      = each.value.primary_network_interface[0].id
+  tags        = var.tags
+  access_tags = var.access_tags
 }
 
 resource "ibm_is_floating_ip" "secondary_fip" {
@@ -134,9 +136,10 @@ resource "ibm_is_floating_ip" "secondary_fip" {
     for interface in local.secondary_fip_list :
     (interface.name) => interface
   }
-  name   = each.key
-  target = each.value.target
-  tags   = var.tags
+  name        = each.key
+  target      = each.value.target
+  tags        = var.tags
+  access_tags = var.access_tags
 }
 
 ##############################################################################
