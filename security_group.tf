@@ -29,6 +29,7 @@ resource "ibm_is_security_group" "security_group" {
   resource_group = var.resource_group_id
   vpc            = var.vpc_id
   tags           = var.tags
+  access_tags    = var.access_tags
 }
 
 ##############################################################################

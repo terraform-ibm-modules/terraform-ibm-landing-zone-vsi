@@ -67,6 +67,7 @@ module "slz_vsi" {
   create_security_group      = var.create_security_group
   security_group             = var.security_group
   tags                       = var.resource_tags
+  access_tags                = var.access_tags
   subnets                    = module.slz_vpc.subnet_zone_list
   vpc_id                     = module.slz_vpc.vpc_id
   prefix                     = var.prefix

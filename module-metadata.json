@@ -1,6 +1,28 @@
 {
   "path": ".",
   "variables": {
+    "access_tags": {
+      "name": "access_tags",
+      "type": "list(string)",
+      "description": "A list of access tags to apply to the VSI resources created by the module. For more information, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial.",
+      "default": [],
+      "source": [
+        "ibm_is_floating_ip.secondary_fip.access_tags",
+        "ibm_is_floating_ip.vsi_fip.access_tags",
+        "ibm_is_instance.vsi.access_tags",
+        "ibm_is_lb.lb.access_tags",
+        "ibm_is_security_group.security_group.access_tags",
+        "ibm_is_volume.volume.access_tags"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 26
+      },
+      "computed": true,
+      "elem": {
+        "type": "TypeString"
+      }
+    },
     "allow_ip_spoofing": {
       "name": "allow_ip_spoofing",
       "type": "bool",
@@ -8,7 +30,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 100
+        "line": 106
       }
     },
     "block_storage_volumes": {
@@ -30,7 +52,7 @@
       "description": "CRN of boot volume encryption key",
       "pos": {
         "filename": "variables.tf",
-        "line": 82
+        "line": 95
       }
     },
     "create_security_group": {
@@ -40,7 +62,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 106
+        "line": 112
       }
     },
     "enable_floating_ip": {
@@ -53,7 +75,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 94
+        "line": 100
       }
     },
     "existing_kms_instance_guid": {
@@ -81,7 +103,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 57
+        "line": 70
       },
       "immutable": true,
       "computed": true
@@ -106,7 +128,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 67
+        "line": 80
       },
       "computed": true
     },
@@ -205,7 +227,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 111
+        "line": 117
       }
     },
     "security_group_ids": {
@@ -238,7 +260,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 62
+        "line": 75
       },
       "elem": {
         "type": "TypeString"
@@ -254,7 +276,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 38
+        "line": 51
       }
     },
     "tags": {
@@ -292,7 +314,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 77
+        "line": 90
       },
       "immutable": true
     },
@@ -308,7 +330,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 33
+        "line": 46
       },
       "immutable": true,
       "computed": true
@@ -320,7 +342,7 @@
       "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 72
+        "line": 85
       }
     }
   },
@@ -407,6 +429,7 @@
       "type": "ibm_is_floating_ip",
       "name": "secondary_fip",
       "attributes": {
+        "access_tags": "access_tags",
         "for_each": "secondary_floating_ips",
         "tags": "tags"
       },
@@ -423,6 +446,7 @@
       "type": "ibm_is_floating_ip",
       "name": "vsi_fip",
       "attributes": {
+        "access_tags": "access_tags",
         "for_each": "enable_floating_ip",
         "tags": "tags"
       },
@@ -431,7 +455,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 134
+        "line": 126
       }
     },
     "ibm_is_instance.vsi": {
@@ -439,6 +463,7 @@
       "type": "ibm_is_instance",
       "name": "vsi",
       "attributes": {
+        "access_tags": "access_tags",
         "image": "image_id",
         "keys": "ssh_key_ids",
         "profile": "machine_type",
@@ -461,6 +486,7 @@
       "type": "ibm_is_lb",
       "name": "lb",
       "attributes": {
+        "access_tags": "access_tags",
         "name": "prefix",
         "resource_group": "resource_group_id",
         "subnets": "subnets",
@@ -483,7 +509,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 80
+        "line": 81
       }
     },
     "ibm_is_lb_pool.pool": {
@@ -498,7 +524,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 29
+        "line": 30
       }
     },
     "ibm_is_lb_pool_member.pool_members": {
@@ -510,7 +536,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 64
+        "line": 65
       }
     },
     "ibm_is_security_group.security_group": {
@@ -518,6 +544,7 @@
       "type": "ibm_is_security_group",
       "name": "security_group",
       "attributes": {
+        "access_tags": "access_tags",
         "resource_group": "resource_group_id",
         "tags": "tags",
         "vpc": "vpc_id"
@@ -539,7 +566,7 @@
       },
       "pos": {
         "filename": "security_group.tf",
-        "line": 62
+        "line": 63
       }
     },
     "ibm_is_volume.volume": {
@@ -547,6 +574,7 @@
       "type": "ibm_is_volume",
       "name": "volume",
       "attributes": {
+        "access_tags": "access_tags",
         "tags": "tags"
       },
       "provider": {
