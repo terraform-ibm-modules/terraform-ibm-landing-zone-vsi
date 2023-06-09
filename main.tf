@@ -4,7 +4,6 @@
 locals {
 
   # Create list of VSI using subnets and VSI per subnet
-  # Create list of VSI using subnets and VSI per subnet
   vsi_list = flatten([
     # For each number in a range from 0 to VSI per subnet
     for count in range(var.vsi_per_subnet) : [
