@@ -74,10 +74,11 @@ func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       fsCloudExampleTerraformDir,
-		Prefix:             "slz-fs-vsi",
-		BestRegionYAMLPath: region,
+		Testing:       t,
+		TerraformDir:  fsCloudExampleTerraformDir,
+		Prefix:        "slz-fs-vsi",
+		ResourceGroup: resourceGroup,
+		Region:        region,
 		TerraformVars: map[string]interface{}{
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],

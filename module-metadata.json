@@ -438,7 +438,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 142
+        "line": 144
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -455,7 +455,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 134
+        "line": 136
       }
     },
     "ibm_is_instance.vsi": {
@@ -478,7 +478,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 75
+        "line": 77
       }
     },
     "ibm_is_lb.lb": {
