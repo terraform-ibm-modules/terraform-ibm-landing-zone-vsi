@@ -13,6 +13,7 @@ module "fscloud_vsi" {
   existing_kms_instance_guid    = var.existing_kms_instance_guid
   skip_iam_authorization_policy = var.skip_iam_authorization_policy
   boot_volume_encryption_key    = var.boot_volume_encryption_key
+  kms_encryption_enabled        = true
   enable_floating_ip            = var.enable_floating_ip
   allow_ip_spoofing             = var.allow_ip_spoofing
   create_security_group         = var.create_security_group

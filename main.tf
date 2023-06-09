@@ -1,3 +1,13 @@
+locals {
+  # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_values = !var.kms_encryption_enabled && var.boot_volume_encryption_key != null ? tobool("When passing values for var.boot_volume_encryption_key, you must set var.kms_encryption_enabled to true. Otherwise unset them to use default encryption") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_vars = var.kms_encryption_enabled && var.boot_volume_encryption_key == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
+}
+
 ##############################################################################
 # Virtual Server Data
 ##############################################################################
@@ -64,7 +74,7 @@ locals {
 ##############################################################################
 
 resource "ibm_iam_authorization_policy" "block_storage_policy" {
-  count               = var.existing_kms_instance_guid == null || var.skip_iam_authorization_policy ? 0 : 1
+  count               = var.skip_iam_authorization_policy ? 0 : 1
   source_service_name = "server-protect"
   # commented the following as policy is not working as expected with this option. Related support case - https://cloud.ibm.com/unifiedsupport/cases?number=CS3419700
   #  source_resource_group_id    = var.resource_group_id

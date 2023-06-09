@@ -43,7 +43,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 200
+        "line": 206
       }
     },
     "boot_volume_encryption_key": {
@@ -83,7 +83,6 @@
       "type": "string",
       "description": "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.boot_volume_encryption_key is coming from.",
       "source": [
-        "ibm_iam_authorization_policy.block_storage_policy.count",
         "ibm_iam_authorization_policy.block_storage_policy.target_resource_instance_id"
       ],
       "pos": {
@@ -108,6 +107,16 @@
       "immutable": true,
       "computed": true
     },
+    "kms_encryption_enabled": {
+      "name": "kms_encryption_enabled",
+      "type": "bool",
+      "description": "Set this to true to control the encryption keys used to encrypt the data that you store in IBM Cloud® Databases. If set to false, the data is encrypted by using randomly generated keys. For more info on HPCS integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 194
+      }
+    },
     "load_balancers": {
       "name": "load_balancers",
       "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              source    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
@@ -115,7 +124,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 219
+        "line": 225
       }
     },
     "machine_type": {
@@ -174,7 +183,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 385
+        "line": 391
       }
     },
     "secondary_floating_ips": {
@@ -187,7 +196,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 374
+        "line": 380
       }
     },
     "secondary_security_groups": {
@@ -197,7 +206,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 353
+        "line": 359
       }
     },
     "secondary_subnets": {
@@ -207,7 +216,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 334
+        "line": 340
       }
     },
     "secondary_use_vsi_security_group": {
@@ -217,7 +226,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 347
+        "line": 353
       }
     },
     "security_group": {
@@ -245,9 +254,12 @@
       "type": "bool",
       "description": "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false.",
       "default": false,
+      "source": [
+        "ibm_iam_authorization_policy.block_storage_policy.count"
+      ],
       "pos": {
         "filename": "variables.tf",
-        "line": 194
+        "line": 200
       }
     },
     "ssh_key_ids": {
@@ -413,7 +425,7 @@
       "type": "ibm_iam_authorization_policy",
       "name": "block_storage_policy",
       "attributes": {
-        "count": "existing_kms_instance_guid",
+        "count": "skip_iam_authorization_policy",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
       "provider": {
@@ -421,7 +433,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 66
+        "line": 76
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -438,7 +450,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 144
+        "line": 154
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -455,7 +467,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 136
+        "line": 146
       }
     },
     "ibm_is_instance.vsi": {
@@ -478,7 +490,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 77
+        "line": 87
       }
     },
     "ibm_is_lb.lb": {
@@ -596,7 +608,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 53
+        "line": 63
       }
     },
     "data.ibm_is_vpcs.vpcs": {
@@ -611,7 +623,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 47
+        "line": 57
       }
     }
   },

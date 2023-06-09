@@ -48,16 +48,6 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	return options
 }
 
-func TestRunBasicExample(t *testing.T) {
-	t.Parallel()
-
-	options := setupOptions(t, "slz-vsi")
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
 func TestRunUpgradeBasicExample(t *testing.T) {
 	t.Parallel()
 
