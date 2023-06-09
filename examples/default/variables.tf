@@ -28,6 +28,12 @@ variable "resource_tags" {
   default     = null
 }
 
+variable "access_tags" {
+  type        = list(string)
+  description = "A list of access tags to apply to the VSI resources created by the module."
+  default     = []
+}
+
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
   type        = string

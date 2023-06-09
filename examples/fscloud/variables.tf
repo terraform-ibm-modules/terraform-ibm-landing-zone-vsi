@@ -31,7 +31,7 @@ variable "resource_tags" {
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region"
   type        = string
-  default     = "r006-1366d3e6-bf5b-49a0-b69a-8efd93cc225f"
+  default     = "r006-7ca7884c-c797-468e-a565-5789102aedc6"
 }
 
 variable "machine_type" {

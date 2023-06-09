@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
@@ -23,7 +24,7 @@ var permanentResources map[string]interface{}
 
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
-
+	// Read the YAML file contents
 	var err error
 	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
 	if err != nil {
@@ -40,6 +41,9 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
 		Region:        region,
+		TerraformVars: map[string]interface{}{
+			"access_tags": permanentResources["accessTags"],
+		},
 	})
 
 	return options
