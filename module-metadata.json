@@ -21,7 +21,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 181
+        "line": 187
       }
     },
     "boot_volume_encryption_key": {
@@ -93,7 +93,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 200
+        "line": 206
       }
     },
     "machine_type": {
@@ -152,7 +152,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 366
+        "line": 372
       }
     },
     "secondary_floating_ips": {
@@ -165,7 +165,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 355
+        "line": 361
       }
     },
     "secondary_security_groups": {
@@ -175,7 +175,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 334
+        "line": 340
       }
     },
     "secondary_subnets": {
@@ -185,7 +185,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 315
+        "line": 321
       }
     },
     "secondary_use_vsi_security_group": {
@@ -195,7 +195,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 328
+        "line": 334
       }
     },
     "security_group": {
@@ -216,6 +216,16 @@
       "pos": {
         "filename": "variables.tf",
         "line": 165
+      }
+    },
+    "skip_iam_authorization_policy": {
+      "name": "skip_iam_authorization_policy",
+      "type": "bool",
+      "description": "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false.",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 181
       }
     },
     "ssh_key_ids": {

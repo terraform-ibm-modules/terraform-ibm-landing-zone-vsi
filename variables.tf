@@ -178,6 +178,12 @@ variable "security_group_ids" {
   }
 }
 
+variable "skip_iam_authorization_policy" {
+  type        = bool
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false."
+  default     = false
+}
+
 variable "block_storage_volumes" {
   description = "List describing the block storage volumes that will be attached to each vsi"
   type = list(

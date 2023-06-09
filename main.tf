@@ -65,7 +65,7 @@ locals {
 ##############################################################################
 
 resource "ibm_iam_authorization_policy" "block_storage_policy" {
-  count                       = var.existing_kms_instance_guid != null ? 1 : 0
+  count                       = var.existing_kms_instance_guid == null || var.skip_iam_authorization_policy ? 0 : 1
   source_service_name         = "server-protect"
   target_service_name         = "hs-crypto"
   target_resource_instance_id = var.existing_kms_instance_guid
@@ -115,7 +115,7 @@ resource "ibm_is_instance" "vsi" {
   }
 
   boot_volume {
-    encryption = var.boot_volume_encryption_key == "" ? null : var.boot_volume_encryption_key
+    encryption = var.boot_volume_encryption_key
   }
 
   # Only add volumes if volumes are being created by the module

@@ -19,7 +19,7 @@ locals {
           capacity       = volume.capacity
           vsi_name       = "${var.prefix}-${(subnet) * (var.vsi_per_subnet) + count + 1}"
           iops           = volume.iops
-          encryption_key = volume.encryption_key
+          encryption_key = var.existing_kms_instance_guid != null ? var.boot_volume_encryption_key : volume.encryption_key
         }
       ]
     ]
