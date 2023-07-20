@@ -17,6 +17,7 @@ resource "ibm_is_lb" "lb" {
   security_groups = each.value.security_group == null ? null : [module.security_groups[each.value.security_group.name].security_group_id]
   resource_group  = var.resource_group_id
   tags            = var.tags
+  access_tags     = var.access_tags
 }
 
 ##############################################################################

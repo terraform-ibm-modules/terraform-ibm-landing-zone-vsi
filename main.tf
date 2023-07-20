@@ -1,9 +1,18 @@
+locals {
+  # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_values = !var.kms_encryption_enabled && var.boot_volume_encryption_key != null ? tobool("When passing values for var.boot_volume_encryption_key, you must set var.kms_encryption_enabled to true. Otherwise unset them to use default encryption") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_vars = var.kms_encryption_enabled && var.boot_volume_encryption_key == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
+}
+
 ##############################################################################
 # Virtual Server Data
 ##############################################################################
 locals {
 
-  # Create list of VSI using subnets and VSI per subnet
   # Create list of VSI using subnets and VSI per subnet
   vsi_list = flatten([
     # For each number in a range from 0 to VSI per subnet
@@ -64,6 +73,17 @@ locals {
 # Create Virtual Servers
 ##############################################################################
 
+resource "ibm_iam_authorization_policy" "block_storage_policy" {
+  count               = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name = "server-protect"
+  # commented the following as policy is not working as expected with this option. Related support case - https://cloud.ibm.com/unifiedsupport/cases?number=CS3419700
+  #  source_resource_group_id    = var.resource_group_id
+  target_service_name         = "hs-crypto"
+  target_resource_instance_id = var.existing_kms_instance_guid
+  roles                       = ["Reader"]
+  description                 = "Allow block storage volumes to be encrypted by Key Management instance."
+}
+
 resource "ibm_is_instance" "vsi" {
   for_each       = local.vsi_map
   name           = each.key
@@ -75,6 +95,7 @@ resource "ibm_is_instance" "vsi" {
   user_data      = var.user_data
   keys           = var.ssh_key_ids
   tags           = var.tags
+  access_tags    = var.access_tags
   lifecycle {
     ignore_changes = [
       image
@@ -106,7 +127,7 @@ resource "ibm_is_instance" "vsi" {
   }
 
   boot_volume {
-    encryption = var.boot_volume_encryption_key == "" ? null : var.boot_volume_encryption_key
+    encryption = var.boot_volume_encryption_key
   }
 
   # Only add volumes if volumes are being created by the module
@@ -123,10 +144,11 @@ resource "ibm_is_instance" "vsi" {
 ##############################################################################
 
 resource "ibm_is_floating_ip" "vsi_fip" {
-  for_each = var.enable_floating_ip ? ibm_is_instance.vsi : {}
-  name     = "${each.value.name}-fip"
-  target   = each.value.primary_network_interface[0].id
-  tags     = var.tags
+  for_each    = var.enable_floating_ip ? ibm_is_instance.vsi : {}
+  name        = "${each.value.name}-fip"
+  target      = each.value.primary_network_interface[0].id
+  tags        = var.tags
+  access_tags = var.access_tags
 }
 
 resource "ibm_is_floating_ip" "secondary_fip" {
@@ -134,9 +156,10 @@ resource "ibm_is_floating_ip" "secondary_fip" {
     for interface in local.secondary_fip_list :
     (interface.name) => interface
   }
-  name   = each.key
-  target = each.value.target
-  tags   = var.tags
+  name        = each.key
+  target      = each.value.target
+  tags        = var.tags
+  access_tags = var.access_tags
 }
 
 ##############################################################################

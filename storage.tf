@@ -19,7 +19,7 @@ locals {
           capacity       = volume.capacity
           vsi_name       = "${var.prefix}-${(subnet) * (var.vsi_per_subnet) + count + 1}"
           iops           = volume.iops
-          encryption_key = volume.encryption_key
+          encryption_key = var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key
         }
       ]
     ]
@@ -47,6 +47,7 @@ resource "ibm_is_volume" "volume" {
   capacity       = each.value.capacity
   encryption_key = each.value.encryption_key
   tags           = var.tags
+  access_tags    = var.access_tags
 }
 
 ##############################################################################

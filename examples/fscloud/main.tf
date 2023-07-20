@@ -4,7 +4,7 @@
 
 locals {
   resource_group_id = var.resource_group != null ? data.ibm_resource_group.existing_resource_group[0].id : ibm_resource_group.resource_group[0].id
-  ssh_key_id        = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
+  ssh_key_id        = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : ibm_is_ssh_key.ssh_key[0].id
 }
 
 ##############################################################################
@@ -24,7 +24,7 @@ data "ibm_resource_group" "existing_resource_group" {
 }
 
 ##############################################################################
-# Create new SSH key
+# SSH key
 ##############################################################################
 resource "tls_private_key" "tls_key" {
   count     = var.ssh_key != null ? 0 : 1
@@ -35,7 +35,7 @@ resource "tls_private_key" "tls_key" {
 resource "ibm_is_ssh_key" "ssh_key" {
   count      = var.ssh_key != null ? 0 : 1
   name       = "${var.prefix}-ssh-key"
-  public_key = resource.tls_private_key.tls_key[0].public_key_openssh
+  public_key = tls_private_key.tls_key[0].public_key_openssh
 }
 
 data "ibm_is_ssh_key" "existing_ssh_key" {
@@ -62,19 +62,19 @@ module "slz_vpc" {
 #############################################################################
 
 module "slz_vsi" {
-  source                     = "../../"
+  source                     = "../../profiles/fscloud"
   resource_group_id          = local.resource_group_id
   image_id                   = var.image_id
   create_security_group      = var.create_security_group
   security_group             = var.security_group
   tags                       = var.resource_tags
-  access_tags                = var.access_tags
   subnets                    = module.slz_vpc.subnet_zone_list
   vpc_id                     = module.slz_vpc.vpc_id
   prefix                     = var.prefix
   machine_type               = var.machine_type
   user_data                  = var.user_data
   boot_volume_encryption_key = var.boot_volume_encryption_key
+  existing_kms_instance_guid = var.existing_kms_instance_guid
   vsi_per_subnet             = var.vsi_per_subnet
   ssh_key_ids                = [local.ssh_key_id]
 }
