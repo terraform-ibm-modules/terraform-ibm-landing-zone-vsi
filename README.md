@@ -60,8 +60,8 @@ This module creates any number of application load balancers to balance traffic 
 
 ```terraform
 module vsi {
-  # Replace "main" with a GIT release version to lock into a specific release
-  source                           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi.git?ref=main"
+  source  = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  version = "latest" # Replace "latest" with a release version to lock into a specific release
   resource_group_id                = var.resource_group_id
   prefix                           = var.prefix
   tags                             = var.tags
@@ -117,7 +117,7 @@ You need the following permissions to run this module.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.52.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.54.0 |
 
 ## Modules
 

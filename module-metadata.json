@@ -112,6 +112,9 @@
       "type": "bool",
       "description": "Set this to true to control the encryption keys used to encrypt the data that for the block storage volumes for VPC. If set to false, the data is encrypted by using randomly generated keys. For more info on encrypting block storage volumes, see https://cloud.ibm.com/docs/vpc?topic=vpc-creating-instances-byok",
       "default": false,
+      "source": [
+        "ibm_iam_authorization_policy.block_storage_policy.count"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 194
@@ -254,9 +257,6 @@
       "type": "bool",
       "description": "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false.",
       "default": false,
-      "source": [
-        "ibm_iam_authorization_policy.block_storage_policy.count"
-      ],
       "pos": {
         "filename": "variables.tf",
         "line": 200
@@ -415,7 +415,7 @@
     "ibm": {
       "source": "IBM-Cloud/ibm",
       "version_constraints": [
-        "\u003e= 1.52.0"
+        "\u003e= 1.54.0"
       ]
     }
   },
@@ -425,7 +425,7 @@
       "type": "ibm_iam_authorization_policy",
       "name": "block_storage_policy",
       "attributes": {
-        "count": "skip_iam_authorization_policy",
+        "count": "kms_encryption_enabled",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
       "provider": {
