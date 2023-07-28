@@ -167,6 +167,7 @@
       "description": "id of resource group to create VPC",
       "required": true,
       "source": [
+        "ibm_iam_authorization_policy.block_storage_policy.source_resource_group_id",
         "ibm_is_instance.vsi.resource_group",
         "ibm_is_lb.lb.resource_group",
         "ibm_is_security_group.security_group.resource_group"
@@ -177,7 +178,10 @@
       },
       "cloud_data_type": "resource_group",
       "immutable": true,
-      "computed": true
+      "computed": true,
+      "cloud_data_range": [
+        "resolved_to:id"
+      ]
     },
     "secondary_allow_ip_spoofing": {
       "name": "secondary_allow_ip_spoofing",
@@ -426,6 +430,7 @@
       "name": "block_storage_policy",
       "attributes": {
         "count": "kms_encryption_enabled",
+        "source_resource_group_id": "resource_group_id",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
       "provider": {
@@ -450,7 +455,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 154
+        "line": 153
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -467,7 +472,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 146
+        "line": 145
       }
     },
     "ibm_is_instance.vsi": {
@@ -490,7 +495,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 87
+        "line": 86
       }
     },
     "ibm_is_lb.lb": {
