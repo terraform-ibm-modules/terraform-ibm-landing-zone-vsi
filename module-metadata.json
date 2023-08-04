@@ -421,6 +421,12 @@
       "version_constraints": [
         "\u003e= 1.54.0"
       ]
+    },
+    "time": {
+      "source": "hashicorp/time",
+      "version_constraints": [
+        "\u003e= 0.9.1"
+      ]
     }
   },
   "managed_resources": {
@@ -438,7 +444,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 76
+        "line": 83
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -455,7 +461,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 153
+        "line": 160
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -472,7 +478,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 145
+        "line": 152
       }
     },
     "ibm_is_instance.vsi": {
@@ -495,7 +501,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 86
+        "line": 93
       }
     },
     "ibm_is_lb.lb": {
@@ -601,6 +607,18 @@
         "filename": "storage.tf",
         "line": 41
       }
+    },
+    "time_sleep.wait_for_authorization_policy": {
+      "mode": "managed",
+      "type": "time_sleep",
+      "name": "wait_for_authorization_policy",
+      "provider": {
+        "name": "time"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 54
+      }
     }
   },
   "data_resources": {
@@ -613,7 +631,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 63
+        "line": 70
       }
     },
     "data.ibm_is_vpcs.vpcs": {
@@ -628,7 +646,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 57
+        "line": 64
       }
     }
   },
