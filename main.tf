@@ -81,9 +81,10 @@ locals {
 ##############################################################################
 
 resource "ibm_iam_authorization_policy" "block_storage_policy" {
-  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name         = "server-protect"
-  source_resource_group_id    = var.resource_group_id
+  count               = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name = "server-protect"
+  # commented the following as policy is not working as expected with this option. Related support case - https://cloud.ibm.com/unifiedsupport/cases?number=CS3514707
+  # source_resource_group_id  = var.resource_group_id
   target_service_name         = "hs-crypto"
   target_resource_instance_id = var.existing_kms_instance_guid
   roles                       = ["Reader"]
