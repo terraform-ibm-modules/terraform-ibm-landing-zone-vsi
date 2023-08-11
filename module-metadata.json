@@ -167,7 +167,6 @@
       "description": "id of resource group to create VPC",
       "required": true,
       "source": [
-        "ibm_iam_authorization_policy.block_storage_policy.source_resource_group_id",
         "ibm_is_instance.vsi.resource_group",
         "ibm_is_lb.lb.resource_group",
         "ibm_is_security_group.security_group.resource_group"
@@ -178,10 +177,7 @@
       },
       "cloud_data_type": "resource_group",
       "immutable": true,
-      "computed": true,
-      "cloud_data_range": [
-        "resolved_to:id"
-      ]
+      "computed": true
     },
     "secondary_allow_ip_spoofing": {
       "name": "secondary_allow_ip_spoofing",
@@ -421,6 +417,12 @@
       "version_constraints": [
         "\u003e= 1.54.0"
       ]
+    },
+    "time": {
+      "source": "hashicorp/time",
+      "version_constraints": [
+        "\u003e= 0.9.1"
+      ]
     }
   },
   "managed_resources": {
@@ -430,7 +432,6 @@
       "name": "block_storage_policy",
       "attributes": {
         "count": "kms_encryption_enabled",
-        "source_resource_group_id": "resource_group_id",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
       "provider": {
@@ -438,7 +439,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 76
+        "line": 83
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -455,7 +456,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 153
+        "line": 161
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -472,7 +473,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 145
+        "line": 153
       }
     },
     "ibm_is_instance.vsi": {
@@ -495,7 +496,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 86
+        "line": 94
       }
     },
     "ibm_is_lb.lb": {
@@ -601,6 +602,18 @@
         "filename": "storage.tf",
         "line": 41
       }
+    },
+    "time_sleep.wait_for_authorization_policy": {
+      "mode": "managed",
+      "type": "time_sleep",
+      "name": "wait_for_authorization_policy",
+      "provider": {
+        "name": "time"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 54
+      }
     }
   },
   "data_resources": {
@@ -613,7 +626,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 63
+        "line": 70
       }
     },
     "data.ibm_is_vpcs.vpcs": {
@@ -628,7 +641,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 57
+        "line": 64
       }
     }
   },
