@@ -2,15 +2,12 @@
 package test
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
-
-	t.Skip("Skipping upgrade test until QuickStart pattern is merged to primary branch")
 
 	options := setupOptions(t, "slz-vsi")
 

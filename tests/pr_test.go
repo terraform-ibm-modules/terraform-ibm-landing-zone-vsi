@@ -53,8 +53,6 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 func TestRunUpgradeBasicExample(t *testing.T) {
 	t.Parallel()
 
-	t.Skip("Skipping upgrade test until QuickStart pattern is merged to primary branch")
-
 	options := setupOptions(t, "slz-vsi-upg")
 
 	output, err := options.RunTestUpgrade()
@@ -66,8 +64,6 @@ func TestRunUpgradeBasicExample(t *testing.T) {
 
 func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
-
-	t.Skip("Skipping upgrade test until QuickStart pattern is merged to primary branch")
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
