@@ -84,8 +84,8 @@ locals {
 # the fact that the Block storage volume does not yet exist in the resource group.
 
 resource "ibm_iam_authorization_policy" "block_storage_policy" {
-  count               = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name = "server-protect"
+  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name         = "server-protect"
   target_service_name         = "hs-crypto"
   target_resource_instance_id = var.existing_kms_instance_guid
   roles                       = ["Reader"]
