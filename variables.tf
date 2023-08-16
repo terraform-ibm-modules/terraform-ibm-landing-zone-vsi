@@ -212,6 +212,7 @@ variable "block_storage_volumes" {
       capacity       = optional(number)
       iops           = optional(number)
       encryption_key = optional(string)
+      resource_group = optional(string)
     })
   )
   default = []
