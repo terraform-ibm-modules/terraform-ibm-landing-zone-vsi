@@ -35,7 +35,7 @@
     },
     "block_storage_volumes": {
       "name": "block_storage_volumes",
-      "type": "list(\n    object({\n      name           = string\n      profile        = string\n      capacity       = optional(number)\n      iops           = optional(number)\n      encryption_key = optional(string)\n      resource_group = optional(string)\n    })\n  )",
+      "type": "list(\n    object({\n      name              = string\n      profile           = string\n      capacity          = optional(number)\n      iops              = optional(number)\n      encryption_key    = optional(string)\n      resource_group_id = optional(string)\n    })\n  )",
       "description": "List describing the block storage volumes that will be attached to each vsi",
       "default": [],
       "source": [

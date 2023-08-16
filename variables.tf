@@ -207,12 +207,12 @@ variable "block_storage_volumes" {
   description = "List describing the block storage volumes that will be attached to each vsi"
   type = list(
     object({
-      name           = string
-      profile        = string
-      capacity       = optional(number)
-      iops           = optional(number)
-      encryption_key = optional(string)
-      resource_group = optional(string)
+      name              = string
+      profile           = string
+      capacity          = optional(number)
+      iops              = optional(number)
+      encryption_key    = optional(string)
+      resource_group_id = optional(string)
     })
   )
   default = []
