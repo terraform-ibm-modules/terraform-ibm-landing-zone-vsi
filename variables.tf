@@ -3,7 +3,7 @@
 ##############################################################################
 
 variable "resource_group_id" {
-  description = "id of resource group to create VPC"
+  description = "id of resource group to create VPC and volumes"
   type        = string
 }
 
