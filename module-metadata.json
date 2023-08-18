@@ -164,7 +164,7 @@
     "resource_group_id": {
       "name": "resource_group_id",
       "type": "string",
-      "description": "id of resource group to create VPC and volumes",
+      "description": "ID of resource group to create VSI and block storage volumes. If you wish to create the block storage volumes in a different resource group, you can optionally set that directly in the 'block_storage_volumes' variable.",
       "required": true,
       "source": [
         "ibm_is_instance.vsi.resource_group",
