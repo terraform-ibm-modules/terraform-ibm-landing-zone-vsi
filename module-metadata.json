@@ -35,7 +35,7 @@
     },
     "block_storage_volumes": {
       "name": "block_storage_volumes",
-      "type": "list(\n    object({\n      name           = string\n      profile        = string\n      capacity       = optional(number)\n      iops           = optional(number)\n      encryption_key = optional(string)\n    })\n  )",
+      "type": "list(\n    object({\n      name              = string\n      profile           = string\n      capacity          = optional(number)\n      iops              = optional(number)\n      encryption_key    = optional(string)\n      resource_group_id = optional(string)\n    })\n  )",
       "description": "List describing the block storage volumes that will be attached to each vsi",
       "default": [],
       "source": [
@@ -127,7 +127,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 225
+        "line": 226
       }
     },
     "machine_type": {
@@ -164,7 +164,7 @@
     "resource_group_id": {
       "name": "resource_group_id",
       "type": "string",
-      "description": "id of resource group to create VPC",
+      "description": "ID of resource group to create VSI and block storage volumes. If you wish to create the block storage volumes in a different resource group, you can optionally set that directly in the 'block_storage_volumes' variable.",
       "required": true,
       "source": [
         "ibm_is_instance.vsi.resource_group",
@@ -186,7 +186,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 391
+        "line": 392
       }
     },
     "secondary_floating_ips": {
@@ -199,7 +199,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 380
+        "line": 381
       }
     },
     "secondary_security_groups": {
@@ -209,7 +209,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 359
+        "line": 360
       }
     },
     "secondary_subnets": {
@@ -219,7 +219,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 340
+        "line": 341
       }
     },
     "secondary_use_vsi_security_group": {
@@ -229,7 +229,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 353
+        "line": 354
       }
     },
     "security_group": {
@@ -600,7 +600,7 @@
       },
       "pos": {
         "filename": "storage.tf",
-        "line": 41
+        "line": 42
       }
     },
     "time_sleep.wait_for_authorization_policy": {
