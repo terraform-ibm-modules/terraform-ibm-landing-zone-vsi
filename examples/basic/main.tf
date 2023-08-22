@@ -26,6 +26,7 @@ data "ibm_resource_group" "existing_resource_group" {
 ##############################################################################
 # Create new SSH key
 ##############################################################################
+
 resource "tls_private_key" "tls_key" {
   count     = var.ssh_key != null ? 0 : 1
   algorithm = "RSA"
@@ -77,4 +78,10 @@ module "slz_vsi" {
   boot_volume_encryption_key = var.boot_volume_encryption_key
   vsi_per_subnet             = var.vsi_per_subnet
   ssh_key_ids                = [local.ssh_key_id]
+  # Add 1 additional data volume to each VSI
+  block_storage_volumes = [
+    {
+      name    = var.prefix
+      profile = "10iops-tier"
+  }]
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
-const defaultExampleTerraformDir = "examples/default"
+const basicExampleTerraformDir = "examples/basic"
 const fsCloudExampleTerraformDir = "examples/fscloud"
 
 const resourceGroup = "geretain-test-resources"
@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  defaultExampleTerraformDir,
+		TerraformDir:  basicExampleTerraformDir,
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
 		Region:        region,

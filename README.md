@@ -105,7 +105,7 @@ You need the following permissions to run this module.
 <!-- BEGIN EXAMPLES HOOK -->
 ## Examples
 
-- [ End to end example with default values](examples/default)
+- [ End to end basic example](examples/basic)
 - [ Financial Services Cloud profile example](examples/fscloud)
 <!-- END EXAMPLES HOOK -->
 
