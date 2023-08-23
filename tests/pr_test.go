@@ -43,7 +43,7 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		TerraformVars: map[string]interface{}{
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
-			"access_tags": permanentResources["accessTags"],
+			"access_tags":                permanentResources["accessTags"],
 		},
 	})
 
