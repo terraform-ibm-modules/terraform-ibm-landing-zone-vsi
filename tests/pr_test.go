@@ -33,7 +33,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
+func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  basicExampleTerraformDir,
@@ -41,6 +41,8 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		ResourceGroup: resourceGroup,
 		Region:        region,
 		TerraformVars: map[string]interface{}{
+			"existing_kms_instance_guid": permanentResources["hpcs_south"],
+			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
 			"access_tags": permanentResources["accessTags"],
 		},
 	})
@@ -48,10 +50,10 @@ func setupOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	return options
 }
 
-func TestRunUpgradeBasicExample(t *testing.T) {
+func TestRunUpgradeFSCloudExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "slz-vsi-upg")
+	options := setupFSCloudOptions(t, "slz-vsi-upg")
 
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {
@@ -63,17 +65,7 @@ func TestRunUpgradeBasicExample(t *testing.T) {
 func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
 
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  fsCloudExampleTerraformDir,
-		Prefix:        "slz-fs-vsi",
-		ResourceGroup: resourceGroup,
-		Region:        region,
-		TerraformVars: map[string]interface{}{
-			"existing_kms_instance_guid": permanentResources["hpcs_south"],
-			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
-		},
-	})
+	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
