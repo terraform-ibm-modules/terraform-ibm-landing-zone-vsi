@@ -26,6 +26,7 @@ data "ibm_resource_group" "existing_resource_group" {
 ##############################################################################
 # Create new SSH key
 ##############################################################################
+
 resource "tls_private_key" "tls_key" {
   count     = var.ssh_key != null ? 0 : 1
   algorithm = "RSA"

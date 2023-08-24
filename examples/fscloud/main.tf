@@ -77,4 +77,11 @@ module "slz_vsi" {
   existing_kms_instance_guid = var.existing_kms_instance_guid
   vsi_per_subnet             = var.vsi_per_subnet
   ssh_key_ids                = [local.ssh_key_id]
+  access_tags                = var.access_tags
+  # Add 1 additional data volume to each VSI
+  block_storage_volumes = [
+    {
+      name    = var.prefix
+      profile = "10iops-tier"
+  }]
 }
