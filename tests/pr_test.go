@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  basicExampleTerraformDir,
+		TerraformDir:  fsCloudExampleTerraformDir,
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
 		Region:        region,
