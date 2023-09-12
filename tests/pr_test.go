@@ -51,7 +51,7 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 }
 
 func TestRunUpgradeFSCloudExample(t *testing.T) {
-	t.Parallel()
+	// t.Parallel()
 
 	options := setupFSCloudOptions(t, "slz-vsi-upg")
 
@@ -63,7 +63,7 @@ func TestRunUpgradeFSCloudExample(t *testing.T) {
 }
 
 func TestRunFSCloudExample(t *testing.T) {
-	t.Parallel()
+	// t.Parallel()
 
 	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
 
