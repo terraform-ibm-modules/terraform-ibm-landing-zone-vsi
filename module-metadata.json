@@ -280,7 +280,7 @@
     },
     "subnets": {
       "name": "subnets",
-      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
+      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = optional(string)\n    })\n  )",
       "description": "A list of subnet IDs where VSI will be deployed",
       "required": true,
       "source": [
