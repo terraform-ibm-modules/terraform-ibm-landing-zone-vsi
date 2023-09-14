@@ -23,8 +23,9 @@ variable "prefix" {
 }
 
 variable "vpc_id" {
-  type    = string
-  default = "r026-9c433ed0-69f5-4554-ab35-c86d01ef1b6c"
+  description = "Id of the VPC in which the VSI will be created."
+  type        = string
+  default     = "r026-9c433ed0-69f5-4554-ab35-c86d01ef1b6c"
 }
 
 variable "ssh_key" {
@@ -55,12 +56,6 @@ variable "machine_type" {
   description = "VSI machine type"
   type        = string
   default     = "cx2-2x4"
-}
-
-variable "create_security_group" {
-  description = "Create security group for VSI"
-  type        = string
-  default     = false
 }
 
 variable "security_group" {
@@ -171,7 +166,8 @@ variable "vsi_per_subnet" {
 }
 
 variable "subnet_names" {
-  type = list(string)
+  description = "Subnets to which the VSI instances should be deployed"
+  type        = list(string)
   default = [
     "vpe-zone-1",
     "vpe-zone-2",

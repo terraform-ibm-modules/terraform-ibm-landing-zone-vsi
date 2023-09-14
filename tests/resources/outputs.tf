@@ -8,5 +8,6 @@ output "prefix" {
 }
 
 output "vpc_data" {
-  value = module.landing_zone.vpc_data
+  value       = module.landing_zone.vpc_data
+  description = "List of VPC data"
 }
