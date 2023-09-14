@@ -13,11 +13,11 @@ locals {
         # For each volume
         for volume in var.block_storage_volumes :
         {
-          name           = "${var.prefix}-${(subnet) * (var.vsi_per_subnet) + count + 1}-${volume.name}"
+          name           = "${var.prefix}-${format("%03d", subnet * var.vsi_per_subnet + count + 1)}-${volume.name}"
           zone           = var.subnets[subnet].zone
           profile        = volume.profile
           capacity       = volume.capacity
-          vsi_name       = "${var.prefix}-${(subnet) * (var.vsi_per_subnet) + count + 1}"
+          vsi_name       = "${var.prefix}-${format("%03d", subnet * var.vsi_per_subnet + count + 1)}"
           iops           = volume.iops
           encryption_key = var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key
           resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
