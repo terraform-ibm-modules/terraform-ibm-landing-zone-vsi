@@ -3,44 +3,31 @@
 ##############################################################################
 
 locals {
-  resource_group_id = var.resource_group != null ? data.ibm_resource_group.existing_resource_group[0].id : ibm_resource_group.resource_group[0].id
-  ssh_key_id        = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : ibm_is_ssh_key.ssh_key[0].id
+  ssh_key_id = var.ssh_keys.public_key != null ? ibm_is_ssh_key.ssh_key[0].id : data.ibm_is_ssh_key.ssh_key[0].id
 }
 
 ##############################################################################
 # Resource Group
-# (if var.resource_group is null, create a new RG using var.prefix)
 ##############################################################################
 
-resource "ibm_resource_group" "resource_group" {
-  count    = var.resource_group != null ? 0 : 1
-  name     = "${var.prefix}-rg"
-  quota_id = null
-}
-
 data "ibm_resource_group" "existing_resource_group" {
-  count = var.resource_group != null ? 1 : 0
-  name  = var.resource_group
+  name = var.resource_group
 }
 
 ##############################################################################
 # SSH key
 ##############################################################################
-resource "tls_private_key" "tls_key" {
-  count     = var.ssh_key != null ? 0 : 1
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
 resource "ibm_is_ssh_key" "ssh_key" {
-  count      = var.ssh_key != null ? 0 : 1
-  name       = "${var.prefix}-ssh-key"
-  public_key = tls_private_key.tls_key[0].public_key_openssh
+  count          = var.ssh_keys.public_key != null ? 1 : 0
+  name           = var.ssh_keys.name
+  public_key     = replace(var.ssh_keys.public_key, "/==.*$/", "==")
+  resource_group = data.ibm_resource_group.existing_resource_group[0].id
+  tags           = var.tags
 }
 
-data "ibm_is_ssh_key" "existing_ssh_key" {
-  count = var.ssh_key != null ? 1 : 0
-  name  = var.ssh_key
+data "ibm_is_ssh_key" "ssh_key" {
+  count = var.ssh_keys.public_key != null ? 0 : 1
+  name  = var.ssh_keys.name
 }
 
 data "ibm_is_vpc" "vpc_by_id" {
@@ -61,7 +48,7 @@ locals {
 
 module "vsi" {
   source                        = "../../"
-  resource_group_id             = local.resource_group_id
+  resource_group_id             = data.ibm_resource_group.existing_resource_group[0].id
   create_security_group         = var.security_group == null ? false : true
   prefix                        = "${var.prefix}-vsi"
   vpc_id                        = var.vpc_id

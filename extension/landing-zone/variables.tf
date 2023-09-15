@@ -1,41 +1,45 @@
 variable "ibmcloud_api_key" {
-  description = "APIkey that's associated with the account to provision resources to"
+  description = "The API key that's associated with the account to provision resources to"
   type        = string
   sensitive   = true
 }
 
 variable "resource_group" {
   type        = string
-  description = "An existing resource group name to use for this example, if unset a new resource group will be created"
-  default     = null
+  description = "An existing resource group name to use for this example."
 }
 
 variable "region" {
-  description = "The region to which to deploy the VPC"
+  description = "The region of the existing LZ VPC."
   type        = string
-  default     = "au-syd"
 }
 
 variable "prefix" {
-  description = "The prefix that you would like to append to your resources"
+  description = "The prefix that you would like to append to VSI, Block Storage, Security Group, Floating IP and Load Balancer."
   type        = string
   default     = "slz-vsi"
 }
 
 variable "vpc_id" {
-  description = "Id of the VPC in which the VSI will be created."
+  description = "The ID of the VPC where the VSI is created."
   type        = string
-  default     = "r026-9c433ed0-69f5-4554-ab35-c86d01ef1b6c"
 }
 
-variable "ssh_key" {
-  type        = string
-  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
-  default     = null
+variable "ssh_keys" {
+  description = "SSH keys to use to provision a VSI. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended). If `public_key` is not provided, the named key will be looked up from data. If a resource group name is added, it must be included in `var.resource_groups`. See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys."
+  type = object({
+    name       = string
+    public_key = optional(string)
+  })
+
+  validation {
+    error_message = "Public SSH Key must be a valid ssh rsa public key."
+    condition     = var.ssh_keys.public_key == null || can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", var.ssh_keys.public_key))
+  }
 }
 
 variable "resource_tags" {
-  description = "List of Tags for the resource created"
+  description = "List of tags for the VSI, Block Storage, Security Group, Floating IP and Load Balancer created"
   type        = list(string)
   default     = null
 }
@@ -49,7 +53,7 @@ variable "access_tags" {
 variable "image_name" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
   type        = string
-  default     = "ibm-ubuntu-18-04-6-minimal-amd64-2"
+  default     = "ibm-ubuntu-22-04-2-minimal-amd64-1"
 }
 
 variable "machine_type" {
@@ -59,7 +63,7 @@ variable "machine_type" {
 }
 
 variable "security_group" {
-  description = "Security group created for VSI"
+  description = "Security group created for the VSI"
   type = object({
     name = string
     rules = list(
@@ -149,7 +153,7 @@ variable "boot_volume_encryption_key" {
 }
 
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto Services or Key Protect instance in which the key specified in var.kms_key_crn and var.backup_encryption_key_crn is coming from. Required only if var.kms_encryption_enabled is set to true, var.skip_iam_authorization_policy is set to false, and you pass a value for var.kms_key_crn, var.backup_encryption_key_crn, or both."
+  description = "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.boot_volume_encryption_key is coming from."
   type        = string
 }
 
@@ -288,7 +292,7 @@ variable "load_balancers" {
   }
 
   validation {
-    error_message = "Load Balancer Pool Protocol can only be `http`, `https`, or `tcp`."
+    error_message = "Incorrect value for the Load Balancer Pool   protocol Valid values are `http`, `https`, or `tcp`."
     condition = length(
       flatten([
         for load_balancer in var.load_balancers :

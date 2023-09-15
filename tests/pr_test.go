@@ -81,11 +81,19 @@ func TestRunFSCloudExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
+func sshPublicKey(t *testing.T) string {
+	pubKey, keyErr := common.GenerateSshRsaPublicKey()
+
+	// if error producing key (very unexpected) fail test immediately
+	require.NoError(t, keyErr, "SSH Keygen failed, without public ssh key test cannot continue")
+
+	return pubKey
+}
+
 func TestRunSLZExample(t *testing.T) {
 	t.Parallel()
 
-	// // TODO: This test needs to be skipped until https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4722 is resolved
-	// t.Skip("Skipping TestRunSLZExample due to a known provider issue with destroy")
+	sshPublicKey := sshPublicKey(t)
 
 	// ------------------------------------------------------------------------------------
 	// Deploy SLZ VPC first since it is needed for the landing-zone extension input
@@ -155,6 +163,12 @@ func TestRunSLZExample(t *testing.T) {
 				"existing_kms_instance_guid": permanentResources["hpcs_south"],
 				"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
 				"vpc_id":                     managementVpcID,
+				"ssh_keys": []interface{}{
+					map[string]interface{}{
+						"name":       "slz-ssh-key",
+						"public_key": sshPublicKey,
+					},
+				},
 			},
 		})
 
