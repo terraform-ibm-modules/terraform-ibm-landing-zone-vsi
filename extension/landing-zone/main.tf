@@ -21,8 +21,8 @@ resource "ibm_is_ssh_key" "ssh_key" {
   count          = var.ssh_keys.public_key != null ? 1 : 0
   name           = var.ssh_keys.name
   public_key     = replace(var.ssh_keys.public_key, "/==.*$/", "==")
-  resource_group = data.ibm_resource_group.existing_resource_group[0].id
-  tags           = var.tags
+  resource_group = data.ibm_resource_group.existing_resource_group.id
+  tags           = var.resource_tags
 }
 
 data "ibm_is_ssh_key" "ssh_key" {
@@ -48,7 +48,7 @@ locals {
 
 module "vsi" {
   source                        = "../../"
-  resource_group_id             = data.ibm_resource_group.existing_resource_group[0].id
+  resource_group_id             = data.ibm_resource_group.existing_resource_group.id
   create_security_group         = var.security_group == null ? false : true
   prefix                        = "${var.prefix}-vsi"
   vpc_id                        = var.vpc_id
