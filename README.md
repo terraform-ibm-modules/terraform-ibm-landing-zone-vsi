@@ -83,7 +83,6 @@ module vsi {
   load_balancers                   = var.load_balancers
   secondary_subnets                = var.secondary_subnets
   secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
-  secondary_security_group_ids     = var.secondary_security_group_ids
   secondary_allow_ip_spoofing      = var.secondary_allow_ip_spoofing
 }
 ```
