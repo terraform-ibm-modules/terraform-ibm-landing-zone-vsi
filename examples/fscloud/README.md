@@ -7,6 +7,7 @@ The example uses the IBM Cloud Terraform provider to create the following infras
 * An SSH Key, if one is not passed in.
 * A Secure Landing Zone virtual private cloud (VPC).
 * An IBM Cloud VSI instance with Hyper Protect Crypto Services root key that is passed in for encrypting block storage.
+* Additional data volumes on each VSI
 
 :exclamation: **Important:** In this example, only the VSI instance complies with the IBM Cloud Framework for Financial Services. Other parts of the infrastructure do not necessarily comply.
 
