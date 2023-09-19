@@ -48,7 +48,8 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 #############################################################################
 
 module "slz_vpc" {
-  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vpc.git?ref=v7.2.0"
+  source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version           = "7.5.0"
   resource_group_id = local.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -76,4 +77,11 @@ module "slz_vsi" {
   existing_kms_instance_guid = var.existing_kms_instance_guid
   vsi_per_subnet             = var.vsi_per_subnet
   ssh_key_ids                = [local.ssh_key_id]
+  access_tags                = var.access_tags
+  # Add 1 additional data volume to each VSI
+  block_storage_volumes = [
+    {
+      name    = var.prefix
+      profile = "10iops-tier"
+  }]
 }

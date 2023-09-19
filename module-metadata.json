@@ -35,7 +35,7 @@
     },
     "block_storage_volumes": {
       "name": "block_storage_volumes",
-      "type": "list(\n    object({\n      name           = string\n      profile        = string\n      capacity       = optional(number)\n      iops           = optional(number)\n      encryption_key = optional(string)\n    })\n  )",
+      "type": "list(\n    object({\n      name              = string\n      profile           = string\n      capacity          = optional(number)\n      iops              = optional(number)\n      encryption_key    = optional(string)\n      resource_group_id = optional(string)\n    })\n  )",
       "description": "List describing the block storage volumes that will be attached to each vsi",
       "default": [],
       "source": [
@@ -112,6 +112,9 @@
       "type": "bool",
       "description": "Set this to true to control the encryption keys used to encrypt the data that for the block storage volumes for VPC. If set to false, the data is encrypted by using randomly generated keys. For more info on encrypting block storage volumes, see https://cloud.ibm.com/docs/vpc?topic=vpc-creating-instances-byok",
       "default": false,
+      "source": [
+        "ibm_iam_authorization_policy.block_storage_policy.count"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 194
@@ -124,7 +127,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 225
+        "line": 226
       }
     },
     "machine_type": {
@@ -161,7 +164,7 @@
     "resource_group_id": {
       "name": "resource_group_id",
       "type": "string",
-      "description": "id of resource group to create VPC",
+      "description": "ID of resource group to create VSI and block storage volumes. If you wish to create the block storage volumes in a different resource group, you can optionally set that directly in the 'block_storage_volumes' variable.",
       "required": true,
       "source": [
         "ibm_is_instance.vsi.resource_group",
@@ -254,9 +257,6 @@
       "type": "bool",
       "description": "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false.",
       "default": false,
-      "source": [
-        "ibm_iam_authorization_policy.block_storage_policy.count"
-      ],
       "pos": {
         "filename": "variables.tf",
         "line": 200
@@ -415,7 +415,13 @@
     "ibm": {
       "source": "IBM-Cloud/ibm",
       "version_constraints": [
-        "\u003e= 1.52.0"
+        "\u003e= 1.54.0"
+      ]
+    },
+    "time": {
+      "source": "hashicorp/time",
+      "version_constraints": [
+        "\u003e= 0.9.1"
       ]
     }
   },
@@ -425,7 +431,7 @@
       "type": "ibm_iam_authorization_policy",
       "name": "block_storage_policy",
       "attributes": {
-        "count": "skip_iam_authorization_policy",
+        "count": "kms_encryption_enabled",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
       "provider": {
@@ -433,7 +439,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 76
+        "line": 86
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -450,7 +456,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 154
+        "line": 162
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -467,7 +473,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 146
+        "line": 154
       }
     },
     "ibm_is_instance.vsi": {
@@ -490,7 +496,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 87
+        "line": 95
       }
     },
     "ibm_is_lb.lb": {
@@ -594,7 +600,19 @@
       },
       "pos": {
         "filename": "storage.tf",
-        "line": 41
+        "line": 42
+      }
+    },
+    "time_sleep.wait_for_authorization_policy": {
+      "mode": "managed",
+      "type": "time_sleep",
+      "name": "wait_for_authorization_policy",
+      "provider": {
+        "name": "time"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 54
       }
     }
   },
@@ -608,7 +626,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 63
+        "line": 70
       }
     },
     "data.ibm_is_vpcs.vpcs": {
@@ -623,7 +641,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 57
+        "line": 64
       }
     }
   },

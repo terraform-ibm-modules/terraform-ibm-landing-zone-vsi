@@ -3,7 +3,7 @@
 ##############################################################################
 
 variable "resource_group_id" {
-  description = "id of resource group to create VPC"
+  description = "ID of resource group to create VSI and block storage volumes. If you wish to create the block storage volumes in a different resource group, you can optionally set that directly in the 'block_storage_volumes' variable."
   type        = string
 }
 
@@ -207,11 +207,12 @@ variable "block_storage_volumes" {
   description = "List describing the block storage volumes that will be attached to each vsi"
   type = list(
     object({
-      name           = string
-      profile        = string
-      capacity       = optional(number)
-      iops           = optional(number)
-      encryption_key = optional(string)
+      name              = string
+      profile           = string
+      capacity          = optional(number)
+      iops              = optional(number)
+      encryption_key    = optional(string)
+      resource_group_id = optional(string)
     })
   )
   default = []
