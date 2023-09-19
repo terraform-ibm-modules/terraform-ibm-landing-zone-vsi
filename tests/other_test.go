@@ -18,7 +18,9 @@ func TestRunBasicExample(t *testing.T) {
 		ResourceGroup: resourceGroup,
 		Region:        region,
 		TerraformVars: map[string]interface{}{
-			"access_tags": permanentResources["accessTags"],
+			"access_tags":                permanentResources["accessTags"],
+			"existing_kms_instance_guid": permanentResources["hpcs_south"],
+			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
 		},
 	})
 
