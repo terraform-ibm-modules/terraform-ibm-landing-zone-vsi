@@ -186,7 +186,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 408
+        "line": 409
       }
     },
     "secondary_floating_ips": {
@@ -199,7 +199,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 397
+        "line": 398
       }
     },
     "secondary_security_groups": {
@@ -209,7 +209,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 376
+        "line": 377
       }
     },
     "secondary_subnets": {
@@ -219,7 +219,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 357
+        "line": 358
       }
     },
     "secondary_use_vsi_security_group": {
@@ -229,7 +229,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 370
+        "line": 371
       }
     },
     "security_group": {
