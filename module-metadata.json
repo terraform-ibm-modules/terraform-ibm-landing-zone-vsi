@@ -521,7 +521,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 83
+        "line": 82
       }
     },
     "ibm_is_lb_pool.pool": {
@@ -536,7 +536,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 32
+        "line": 31
       }
     },
     "ibm_is_lb_pool_member.pool_members": {
@@ -548,7 +548,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 67
+        "line": 66
       }
     },
     "ibm_is_security_group.security_group": {
