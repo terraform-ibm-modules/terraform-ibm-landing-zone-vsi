@@ -238,6 +238,13 @@ variable "load_balancers" {
       health_timeout    = number
       health_type       = string
       pool_member_port  = string
+      profile           = optional(string)
+      dns = optional(
+        object({
+          instance_crn = string
+          zone_id      = string
+        })
+      )
       security_group = optional(
         object({
           name = string
@@ -282,6 +289,16 @@ variable "load_balancers" {
         false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", load_balancer.name))
       ])
     )) == 0
+  }
+
+  validation {
+    error_message = "For Network Load Balancer this attribute is required and should be set to `network-fixed`. For Application Load Balancer it is not required."
+    condition = length(
+      flatten([
+        for load_balancer in var.load_balancers :
+        true if !contains(["network-fixed", null], load_balancer.profile)
+      ])
+    ) == 0
   }
 
   validation {

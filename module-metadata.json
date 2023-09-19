@@ -119,7 +119,7 @@
     },
     "load_balancers": {
       "name": "load_balancers",
-      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              source    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
+      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      profile           = optional(string)\n      dns = optional(\n        object({\n          instance_crn = string\n          zone_id      = string\n        })\n      )\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              source    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
       "description": "Load balancers to add to VSI",
       "default": [],
       "pos": {
@@ -183,7 +183,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 391
+        "line": 408
       }
     },
     "secondary_floating_ips": {
@@ -196,7 +196,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 380
+        "line": 397
       }
     },
     "secondary_security_groups": {
@@ -206,7 +206,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 359
+        "line": 376
       }
     },
     "secondary_subnets": {
@@ -216,7 +216,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 340
+        "line": 357
       }
     },
     "secondary_use_vsi_security_group": {
@@ -226,7 +226,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 353
+        "line": 370
       }
     },
     "security_group": {
@@ -521,7 +521,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 81
+        "line": 83
       }
     },
     "ibm_is_lb_pool.pool": {
@@ -536,7 +536,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 30
+        "line": 32
       }
     },
     "ibm_is_lb_pool_member.pool_members": {
@@ -548,7 +548,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 65
+        "line": 67
       }
     },
     "ibm_is_security_group.security_group": {
