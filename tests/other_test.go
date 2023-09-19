@@ -13,14 +13,12 @@ func TestRunBasicExample(t *testing.T) {
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  fsCloudExampleTerraformDir,
+		TerraformDir:  basicExampleTerraformDir,
 		Prefix:        "slz-vsi-basic",
 		ResourceGroup: resourceGroup,
 		Region:        region,
 		TerraformVars: map[string]interface{}{
 			"access_tags":                permanentResources["accessTags"],
-			"existing_kms_instance_guid": permanentResources["hpcs_south"],
-			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
 		},
 	})
 
