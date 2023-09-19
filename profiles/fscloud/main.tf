@@ -21,4 +21,5 @@ module "fscloud_vsi" {
   security_group_ids            = var.security_group_ids
   block_storage_volumes         = var.block_storage_volumes
   load_balancers                = var.load_balancers
+  access_tags                   = var.access_tags
 }

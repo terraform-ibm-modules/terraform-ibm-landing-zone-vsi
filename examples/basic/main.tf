@@ -26,6 +26,7 @@ data "ibm_resource_group" "existing_resource_group" {
 ##############################################################################
 # Create new SSH key
 ##############################################################################
+
 resource "tls_private_key" "tls_key" {
   count     = var.ssh_key != null ? 0 : 1
   algorithm = "RSA"
@@ -49,7 +50,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.2.0"
+  version           = "7.5.0"
   resource_group_id = local.resource_group_id
   region            = var.region
   prefix            = var.prefix

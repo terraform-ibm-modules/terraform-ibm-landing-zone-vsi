@@ -50,6 +50,13 @@ locals {
   ])
 }
 
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_authorization_policy" {
+  depends_on = [ibm_iam_authorization_policy.block_storage_policy]
+
+  create_duration = "30s"
+}
+
 ##############################################################################
 # Lookup default security group id in the vpc
 ##############################################################################
@@ -73,11 +80,12 @@ locals {
 # Create Virtual Servers
 ##############################################################################
 
+# NOTE: The below auth policy cannot be scoped to a source resource group due to
+# the fact that the Block storage volume does not yet exist in the resource group.
+
 resource "ibm_iam_authorization_policy" "block_storage_policy" {
-  count               = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name = "server-protect"
-  # commented the following as policy is not working as expected with this option. Related support case - https://cloud.ibm.com/unifiedsupport/cases?number=CS3419700
-  #  source_resource_group_id    = var.resource_group_id
+  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name         = "server-protect"
   target_service_name         = "hs-crypto"
   target_resource_instance_id = var.existing_kms_instance_guid
   roles                       = ["Reader"]
