@@ -15,7 +15,7 @@ resource "ibm_is_lb" "lb" {
   subnets         = var.subnets[*].id
   type            = each.value.type
   profile         = each.value.profile
-  dns             = each.value.dns
+  dns             = each.value["dns"]
   security_groups = each.value.security_group == null ? null : [ibm_is_security_group.security_group[each.value.security_group.name].id]
   resource_group  = var.resource_group_id
   tags            = var.tags
