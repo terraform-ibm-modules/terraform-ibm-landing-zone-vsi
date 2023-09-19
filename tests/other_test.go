@@ -18,7 +18,7 @@ func TestRunBasicExample(t *testing.T) {
 		ResourceGroup: resourceGroup,
 		Region:        region,
 		TerraformVars: map[string]interface{}{
-			"access_tags":                permanentResources["accessTags"],
+			"access_tags": permanentResources["accessTags"],
 		},
 	})
 
