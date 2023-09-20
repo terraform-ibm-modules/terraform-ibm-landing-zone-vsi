@@ -293,7 +293,7 @@ variable "load_balancers" {
   }
 
   validation {
-    error_message = "For Network Load Balancer this attribute is required and should be set to `network-fixed`. For Application Load Balancer it is not required."
+    error_message = "For Network Load Balancer `Profile` attribute is required and should be set to `network-fixed`. For Application Load Balancer it is not required."
     condition = length(
       flatten([
         for load_balancer in var.load_balancers :
