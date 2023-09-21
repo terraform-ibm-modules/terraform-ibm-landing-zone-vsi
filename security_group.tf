@@ -21,6 +21,10 @@ locals {
     for group in local.security_groups :
     (group.name) => group
   }
+
+  # input variable validation
+  # tflint-ignore: terraform_unused_declarations
+  validate_security_group = var.create_security_group == false && var.security_group != null ? tobool("A value can not be set for var.security_group when var.create_security_group is false. Use var.security_group_ids to add security groups to VSI deployment primary interface") : true
 }
 
 resource "ibm_is_security_group" "security_group" {
@@ -57,8 +61,6 @@ locals {
     ("${rule.sg_name}-${rule.name}") => rule
   }
 }
-
-
 
 resource "ibm_is_security_group_rule" "security_group_rules" {
   for_each  = local.security_group_rules
