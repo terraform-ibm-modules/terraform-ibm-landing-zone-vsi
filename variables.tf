@@ -178,7 +178,7 @@ variable "security_group" {
       )
     ) == 0
   }
-
+  default = null
 }
 
 variable "security_group_ids" {
