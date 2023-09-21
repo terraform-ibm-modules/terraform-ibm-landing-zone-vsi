@@ -24,7 +24,9 @@ locals {
 
   # input variable validation
   # tflint-ignore: terraform_unused_declarations
-  validate_security_group = var.create_security_group == false && var.security_group != null ? tobool("A value can not be set for var.security_group when var.create_security_group is false. Use var.security_group_ids to add security groups to VSI deployment primary interface") : true
+  validate_security_group = var.create_security_group == false && var.security_group != null ? tobool("var.security_group should be null when var.create_security_group is false. Use var.security_group_ids to add security groups to VSI deployment primary interface.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_security_group_2 = var.create_security_group == true && var.security_group == null ? tobool("var.security_group cannot be null when var.create_security_group is true.") : true
 }
 
 resource "ibm_is_security_group" "security_group" {
