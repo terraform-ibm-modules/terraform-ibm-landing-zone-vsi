@@ -94,18 +94,18 @@ resource "ibm_iam_authorization_policy" "block_storage_policy" {
 }
 
 resource "ibm_is_instance" "vsi" {
-  for_each       = local.vsi_map
-  name           = each.value.vsi_name
-  image          = var.image_id
-  profile        = var.machine_type
-  resource_group = var.resource_group_id
-  vpc            = var.vpc_id
-  zone           = each.value.zone
-  user_data      = var.user_data
-  keys           = var.ssh_key_ids
+  for_each        = local.vsi_map
+  name            = each.value.vsi_name
+  image           = var.image_id
+  profile         = var.machine_type
+  resource_group  = var.resource_group_id
+  vpc             = var.vpc_id
+  zone            = each.value.zone
+  user_data       = var.user_data
+  keys            = var.ssh_key_ids
   placement_group = var.placement_group_id
-  tags           = var.tags
-  access_tags    = var.access_tags
+  tags            = var.tags
+  access_tags     = var.access_tags
   lifecycle {
     ignore_changes = [
       image
