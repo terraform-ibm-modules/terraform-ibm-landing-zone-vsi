@@ -122,7 +122,7 @@ variable "create_security_group" {
 }
 
 variable "placement_group_id" {
-  description = "Unique Identifier of the Placement Group for restricting the placement of the instance"
+  description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host"
   type        = string
   default     = null
 }
