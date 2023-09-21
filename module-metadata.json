@@ -236,7 +236,6 @@
       "name": "security_group",
       "type": "object({\n    name = string\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        source    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
       "description": "Security group created for VSI",
-      "required": true,
       "pos": {
         "filename": "variables.tf",
         "line": 124
@@ -572,7 +571,7 @@
       },
       "pos": {
         "filename": "security_group.tf",
-        "line": 26
+        "line": 32
       }
     },
     "ibm_is_security_group_rule.security_group_rules": {
@@ -584,7 +583,7 @@
       },
       "pos": {
         "filename": "security_group.tf",
-        "line": 63
+        "line": 67
       }
     },
     "ibm_is_volume.volume": {
