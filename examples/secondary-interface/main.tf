@@ -59,7 +59,7 @@ module "slz_vpc" {
 }
 
 #############################################################################
-# Provision Subnet
+# Provision Secondary Subnets
 #############################################################################
 
 locals {
@@ -78,7 +78,7 @@ resource "ibm_is_subnet" "secondary_subnet" {
 }
 
 #############################################################################
-# Provision Secondary Security Group§
+# Provision Secondary Security Groups
 #############################################################################
 
 locals {
