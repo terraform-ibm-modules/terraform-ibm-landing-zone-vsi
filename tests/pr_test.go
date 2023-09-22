@@ -11,6 +11,7 @@ import (
 )
 
 const fsCloudExampleTerraformDir = "examples/fscloud"
+const secondaryInterfaceExampleTerraformDir = "examples/secondary-interface"
 
 const resourceGroup = "geretain-test-resources"
 const region = "us-south"
@@ -65,6 +66,25 @@ func TestRunFSCloudExample(t *testing.T) {
 	// t.Parallel()
 
 	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunSecondaryInterfaceExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  secondaryInterfaceExampleTerraformDir,
+		Prefix:        "slz-vsi-sec-int",
+		ResourceGroup: resourceGroup,
+		Region:        region,
+		TerraformVars: map[string]interface{}{
+			"access_tags": permanentResources["accessTags"],
+		},
+	})
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
