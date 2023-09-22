@@ -6,11 +6,11 @@ variable "ibmcloud_api_key" {
 
 variable "resource_group" {
   type        = string
-  description = "An existing resource group name to use for this example."
+  description = "Resource Group name of the existing landing zone VPC."
 }
 
 variable "region" {
-  description = "The region of the existing LZ VPC."
+  description = "The region of the existing landing zone VPC."
   type        = string
 }
 
@@ -21,7 +21,7 @@ variable "prefix" {
 }
 
 variable "vpc_id" {
-  description = "The ID of the VPC where the VSI is created."
+  description = "The ID of the VPC where the VSI will be created."
   type        = string
 }
 
@@ -41,7 +41,7 @@ variable "ssh_keys" {
 variable "resource_tags" {
   description = "List of tags for the VSI, Block Storage, Security Group, Floating IP and Load Balancer created"
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "access_tags" {
@@ -153,7 +153,7 @@ variable "boot_volume_encryption_key" {
 }
 
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.boot_volume_encryption_key is coming from."
+  description = "The GUID of the KMS instance in which the key specified in var.boot_volume_encryption_key is coming from."
   type        = string
 }
 
@@ -183,16 +183,6 @@ variable "security_group_ids" {
   description = "IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups."
   type        = list(string)
   default     = []
-
-  validation {
-    error_message = "Security group IDs must be unique."
-    condition     = length(var.security_group_ids) == length(distinct(var.security_group_ids))
-  }
-
-  validation {
-    error_message = "No more than 5 security groups can be added to a VSI deployment."
-    condition     = length(var.security_group_ids) <= 5
-  }
 }
 
 variable "block_storage_volumes" {
@@ -207,12 +197,8 @@ variable "block_storage_volumes" {
     })
   )
   default = []
-
-  validation {
-    error_message = "Each block storage volume must have a unique name."
-    condition     = length(distinct(var.block_storage_volumes[*].name)) == length(var.block_storage_volumes)
-  }
 }
+
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created"
   type        = bool
@@ -268,61 +254,4 @@ variable "load_balancers" {
     })
   )
   default = []
-
-  validation {
-    error_message = "Load balancer names must match the regex pattern ^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$."
-    condition = length(distinct(
-      flatten([
-        # Check through rules
-        for load_balancer in var.load_balancers :
-        # Return false if direction is not valid
-        false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", load_balancer.name))
-      ])
-    )) == 0
-  }
-
-  validation {
-    error_message = "Load Balancer Pool algorithm can only be `round_robin`, `weighted_round_robin`, or `least_connections`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["round_robin", "weighted_round_robin", "least_connections"], load_balancer.algorithm)
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Incorrect value for the Load Balancer Pool   protocol Valid values are `http`, `https`, or `tcp`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["http", "https", "tcp"], load_balancer.protocol)
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Pool health delay must be greater than the timeout."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if load_balancer.health_delay < load_balancer.health_timeout
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Load Balancer Pool Health Check Type can only be `http`, `https`, or `tcp`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["http", "https", "tcp"], load_balancer.health_type)
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Each load balancer must have a unique name."
-    condition     = length(distinct(var.load_balancers[*].name)) == length(var.load_balancers[*].name)
-  }
 }
