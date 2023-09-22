@@ -122,7 +122,8 @@ resource "ibm_is_instance" "vsi" {
   dynamic "network_interfaces" {
     for_each = var.secondary_subnets == null ? [] : var.secondary_subnets
     content {
-      subnet = var.secondary_subnets[index(var.secondary_subnets.*.zone, each.value.zone)].id
+      subnet = network_interfaces.value.id
+#      subnet = var.secondary_subnets[index(var.secondary_subnets.*.zone, each.value.zone)].id
       security_groups = flatten([
         (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
         [

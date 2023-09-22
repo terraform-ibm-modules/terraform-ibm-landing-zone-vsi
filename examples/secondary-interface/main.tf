@@ -62,15 +62,15 @@ module "slz_vpc" {
 # Provision Subnet
 #############################################################################
 
-#resource "ibm_is_subnet" "secondary_subnet" {
-#  depends_on = [
-#    module.slz_vpc
-#  ]
-#  ipv4_cidr_block = module.slz_vpc.cidr_blocks[0]
-#  name            = "secondary-subnet1"
-#  vpc             = module.slz_vpc.vpc_id
-#  zone            = "us-south-1"
-#}
+resource "ibm_is_subnet" "secondary_subnet" {
+  depends_on = [
+    module.slz_vpc
+  ]
+  ipv4_cidr_block = module.slz_vpc.cidr_blocks[0]
+  name            = "secondary-subnet"
+  vpc             = module.slz_vpc.vpc_id
+  zone            = "us-south-1"
+}
 
 #############################################################################
 # Provision Secondary Security Group
@@ -80,12 +80,14 @@ resource "ibm_is_security_group" "secondary_security_group" {
   name = "test-security-group"
   vpc  = module.slz_vpc.vpc_id
 }
+cccccbhljifjduinvuuhvneehhjehvelrbrvnukckher
 
 locals {
   secondary_security_groups = [
     for subnet in module.slz_vpc.subnet_zone_list : {
       security_group_id = ibm_is_security_group.secondary_security_group.id
-      interface_name    = "${subnet.name}"
+      interface_name    = subnet.name
+      zone              = subnet.zone
     }
   ]
 }

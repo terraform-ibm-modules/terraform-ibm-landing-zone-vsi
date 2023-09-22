@@ -10,7 +10,6 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
-const basicExampleTerraformDir = "examples/basic"
 const fsCloudExampleTerraformDir = "examples/fscloud"
 
 const resourceGroup = "geretain-test-resources"
