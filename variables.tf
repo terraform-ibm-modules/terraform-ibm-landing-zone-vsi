@@ -121,6 +121,12 @@ variable "create_security_group" {
   type        = bool
 }
 
+variable "placement_group_id" {
+  description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host"
+  type        = string
+  default     = null
+}
+
 variable "security_group" {
   description = "Security group created for VSI"
   type = object({
@@ -172,7 +178,7 @@ variable "security_group" {
       )
     ) == 0
   }
-
+  default = null
 }
 
 variable "security_group_ids" {
