@@ -163,11 +163,9 @@ func TestRunSLZExample(t *testing.T) {
 				"existing_kms_instance_guid": permanentResources["hpcs_south"],
 				"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
 				"vpc_id":                     managementVpcID,
-				"ssh_keys": []interface{}{
-					map[string]interface{}{
-						"name":       "slz-ssh-key",
-						"public_key": sshPublicKey,
-					},
+				"ssh_keys": map[string]interface{}{
+					"name":       "slz-ssh-key",
+					"public_key": sshPublicKey,
 				},
 			},
 		})
