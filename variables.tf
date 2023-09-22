@@ -364,7 +364,7 @@ variable "secondary_use_vsi_security_group" {
 }
 
 variable "secondary_security_groups" {
-  description = "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups. The `interface_name` must match the `name` in `secondary_subnets` or else the default vpc security group will be applied to the secondary network interface."
+  description = "The security group IDs to add to the VSI deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface."
   type = list(
     object({
       security_group_id = string

@@ -218,7 +218,7 @@
     "secondary_security_groups": {
       "name": "secondary_security_groups",
       "type": "list(\n    object({\n      security_group_id = string\n      interface_name    = string\n    })\n  )",
-      "description": "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups.",
+      "description": "The security group IDs to add to the VSI deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface.",
       "default": [],
       "pos": {
         "filename": "variables.tf",
