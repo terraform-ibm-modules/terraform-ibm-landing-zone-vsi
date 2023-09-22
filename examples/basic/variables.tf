@@ -11,7 +11,7 @@ variable "resource_group" {
 }
 
 variable "region" {
-  description = "The region to which to deploy the VPC"
+  description = "The region to which to deploy all resources created by this example"
   type        = string
   default     = "us-south"
 }
@@ -25,7 +25,7 @@ variable "prefix" {
 variable "resource_tags" {
   description = "List of Tags for the resource created"
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "access_tags" {

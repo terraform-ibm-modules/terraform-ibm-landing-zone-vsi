@@ -11,7 +11,7 @@ variable "resource_group" {
 }
 
 variable "region" {
-  description = "The region to which to deploy the VPC"
+  description = "The region to which to deploy all resources created by this example"
   type        = string
   default     = "us-south"
 }
@@ -25,7 +25,7 @@ variable "prefix" {
 variable "resource_tags" {
   description = "List of Tags for the resource created"
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "access_tags" {
@@ -52,47 +52,8 @@ variable "create_security_group" {
   default     = false
 }
 
-variable "security_group" {
-  description = "Security group created for VSI"
-  type = object({
-    name = string
-    rules = list(
-      object({
-        name      = string
-        direction = string
-        source    = string
-        tcp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        udp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        icmp = optional(
-          object({
-            type = number
-            code = number
-          })
-        )
-      })
-    )
-  })
-  default = null
-}
-
 variable "user_data" {
   description = "User data to initialize VSI deployment"
-  type        = string
-  default     = null
-}
-
-variable "boot_volume_encryption_key" {
-  description = "CRN of boot volume encryption key"
   type        = string
   default     = null
 }

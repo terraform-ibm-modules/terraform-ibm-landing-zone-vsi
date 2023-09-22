@@ -70,9 +70,6 @@ locals {
 }
 
 resource "ibm_is_subnet" "secondary_subnet" {
-  depends_on = [
-    module.slz_vpc
-  ]
   for_each                 = local.subnet_map
   total_ipv4_address_count = 256
   name                     = "secondary-subnet-${each.value.zone}"
@@ -81,7 +78,7 @@ resource "ibm_is_subnet" "secondary_subnet" {
 }
 
 #############################################################################
-# Provision Secondary Security Group
+# Provision Secondary Security Group§
 #############################################################################
 
 locals {
@@ -118,7 +115,6 @@ module "slz_vsi" {
   resource_group_id                = local.resource_group_id
   image_id                         = var.image_id
   create_security_group            = var.create_security_group
-  security_group                   = var.security_group
   tags                             = var.resource_tags
   access_tags                      = var.access_tags
   subnets                          = module.slz_vpc.subnet_zone_list
@@ -126,7 +122,6 @@ module "slz_vsi" {
   prefix                           = var.prefix
   machine_type                     = var.machine_type
   user_data                        = var.user_data
-  boot_volume_encryption_key       = var.boot_volume_encryption_key
   vsi_per_subnet                   = var.vsi_per_subnet
   ssh_key_ids                      = [local.ssh_key_id]
   secondary_subnets                = local.secondary_subnet_zone_list
