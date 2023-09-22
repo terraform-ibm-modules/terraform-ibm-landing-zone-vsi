@@ -59,6 +59,17 @@ module "slz_vpc" {
 }
 
 #############################################################################
+# Placement group
+#############################################################################
+
+resource "ibm_is_placement_group" "placement_group" {
+  name           = "${var.prefix}-host-spread"
+  resource_group = local.resource_group_id
+  strategy       = "host_spread"
+  tags           = var.resource_tags
+}
+
+#############################################################################
 # Provision VSI
 #############################################################################
 
@@ -73,6 +84,7 @@ module "slz_vsi" {
   subnets                    = module.slz_vpc.subnet_zone_list
   vpc_id                     = module.slz_vpc.vpc_id
   prefix                     = var.prefix
+  placement_group_id         = ibm_is_placement_group.placement_group.id
   machine_type               = var.machine_type
   user_data                  = var.user_data
   boot_volume_encryption_key = var.boot_volume_encryption_key
