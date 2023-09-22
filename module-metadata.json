@@ -236,7 +236,6 @@
       "name": "security_group",
       "type": "object({\n    name = string\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        source    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
       "description": "Security group created for VSI",
-      "required": true,
       "pos": {
         "filename": "variables.tf",
         "line": 124
@@ -439,7 +438,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 86
+        "line": 87
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -456,7 +455,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 162
+        "line": 163
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -473,7 +472,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 154
+        "line": 155
       }
     },
     "ibm_is_instance.vsi": {
@@ -496,7 +495,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 95
+        "line": 96
       }
     },
     "ibm_is_lb.lb": {
@@ -572,7 +571,7 @@
       },
       "pos": {
         "filename": "security_group.tf",
-        "line": 26
+        "line": 32
       }
     },
     "ibm_is_security_group_rule.security_group_rules": {
@@ -584,7 +583,7 @@
       },
       "pos": {
         "filename": "security_group.tf",
-        "line": 63
+        "line": 67
       }
     },
     "ibm_is_volume.volume": {
@@ -600,7 +599,7 @@
       },
       "pos": {
         "filename": "storage.tf",
-        "line": 42
+        "line": 43
       }
     },
     "time_sleep.wait_for_authorization_policy": {
@@ -612,7 +611,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 54
+        "line": 55
       }
     }
   },
@@ -626,7 +625,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 70
+        "line": 71
       }
     },
     "data.ibm_is_vpcs.vpcs": {
@@ -641,7 +640,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 64
+        "line": 65
       }
     }
   },

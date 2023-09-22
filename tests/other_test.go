@@ -13,7 +13,7 @@ func TestRunBasicExample(t *testing.T) {
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  fsCloudExampleTerraformDir,
+		TerraformDir:  basicExampleTerraformDir,
 		Prefix:        "slz-vsi-basic",
 		ResourceGroup: resourceGroup,
 		Region:        region,
