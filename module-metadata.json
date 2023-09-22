@@ -227,7 +227,7 @@
     },
     "secondary_subnets": {
       "name": "secondary_subnets",
-      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = optional(string)\n    })\n  )",
+      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
       "description": "List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI.",
       "default": [],
       "pos": {
@@ -292,7 +292,7 @@
     },
     "subnets": {
       "name": "subnets",
-      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = optional(string)\n    })\n  )",
+      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
       "description": "A list of subnet IDs where VSI will be deployed",
       "required": true,
       "source": [

@@ -55,7 +55,7 @@ variable "subnets" {
       name = string
       id   = string
       zone = string
-      cidr = optional(string)
+      cidr = string
     })
   )
 }
@@ -351,7 +351,7 @@ variable "secondary_subnets" {
       name = string
       id   = string
       zone = string
-      cidr = optional(string)
+      cidr = string
     })
   )
   default = []
