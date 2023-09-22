@@ -119,34 +119,10 @@ variable "vpc_name" {
 # Secondary Interface Variables
 ##############################################################################
 
-variable "secondary_subnets" {
-  description = "List of secondary network interfaces to add to vsi. Secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI."
-  type        = list(
-    object({
-      name = string
-      id   = string
-      zone = string
-      cidr = string
-    })
-  )
-  default = []
-}
-
 variable "secondary_use_vsi_security_group" {
   description = "Use the security group created by this module in the secondary interface"
   type        = bool
   default     = false
-}
-
-variable "secondary_security_groups" {
-  description = "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups."
-  type        = list(
-    object({
-      security_group_id = string
-      interface_name    = string
-    })
-  )
-  default = []
 }
 
 ##############################################################################

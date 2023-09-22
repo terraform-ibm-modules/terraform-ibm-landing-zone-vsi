@@ -30,7 +30,6 @@ func TestRunBasicExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-
 func TestRunSecondaryInterfaceExample(t *testing.T) {
 	t.Parallel()
 

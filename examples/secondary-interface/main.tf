@@ -59,20 +59,6 @@ module "slz_vpc" {
 }
 
 #############################################################################
-# Provision Subnet
-#############################################################################
-
-resource "ibm_is_subnet" "secondary_subnet" {
-  depends_on = [
-    module.slz_vpc
-  ]
-  ipv4_cidr_block = module.slz_vpc.cidr_blocks[0]
-  name            = "secondary-subnet"
-  vpc             = module.slz_vpc.vpc_id
-  zone            = "us-south-1"
-}
-
-#############################################################################
 # Provision Secondary Security Group
 #############################################################################
 
@@ -80,14 +66,12 @@ resource "ibm_is_security_group" "secondary_security_group" {
   name = "test-security-group"
   vpc  = module.slz_vpc.vpc_id
 }
-cccccbhljifjduinvuuhvneehhjehvelrbrvnukckher
 
 locals {
   secondary_security_groups = [
     for subnet in module.slz_vpc.subnet_zone_list : {
       security_group_id = ibm_is_security_group.secondary_security_group.id
       interface_name    = subnet.name
-      zone              = subnet.zone
     }
   ]
 }
@@ -97,21 +81,22 @@ locals {
 #############################################################################
 
 module "slz_vsi" {
-  source                     = "../../"
-  resource_group_id          = local.resource_group_id
-  image_id                   = var.image_id
-  create_security_group      = var.create_security_group
-  security_group             = var.security_group
-  tags                       = var.resource_tags
-  access_tags                = var.access_tags
-  subnets                    = module.slz_vpc.subnet_zone_list
-  vpc_id                     = module.slz_vpc.vpc_id
-  prefix                     = var.prefix
-  machine_type               = var.machine_type
-  user_data                  = var.user_data
-  boot_volume_encryption_key = var.boot_volume_encryption_key
-  vsi_per_subnet             = var.vsi_per_subnet
-  ssh_key_ids                = [local.ssh_key_id]
-  secondary_subnets          = module.slz_vpc.subnet_zone_list
-  secondary_security_groups  = local.secondary_security_groups
+  source                           = "../../"
+  resource_group_id                = local.resource_group_id
+  image_id                         = var.image_id
+  create_security_group            = var.create_security_group
+  security_group                   = var.security_group
+  tags                             = var.resource_tags
+  access_tags                      = var.access_tags
+  subnets                          = module.slz_vpc.subnet_zone_list
+  vpc_id                           = module.slz_vpc.vpc_id
+  prefix                           = var.prefix
+  machine_type                     = var.machine_type
+  user_data                        = var.user_data
+  boot_volume_encryption_key       = var.boot_volume_encryption_key
+  vsi_per_subnet                   = var.vsi_per_subnet
+  ssh_key_ids                      = [local.ssh_key_id]
+  secondary_subnets                = module.slz_vpc.subnet_zone_list
+  secondary_security_groups        = local.secondary_security_groups
+  secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
 }

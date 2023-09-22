@@ -106,6 +106,7 @@ You need the following permissions to run this module.
 
 - [ End to end basic example](examples/basic)
 - [ Financial Services Cloud profile example](examples/fscloud)
+- [ End to end basic example](examples/secondary-interface)
 <!-- END EXAMPLES HOOK -->
 
 ---
