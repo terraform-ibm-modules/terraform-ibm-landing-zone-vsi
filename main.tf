@@ -126,7 +126,6 @@ resource "ibm_is_instance" "vsi" {
       for k in var.secondary_subnets : k.zone => k
       if k.zone == each.value.zone
     }
-    #    for_each = var.secondary_subnets == null ? [] : var.secondary_subnets
     content {
       subnet = network_interfaces.value.id
       security_groups = flatten([

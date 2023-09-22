@@ -59,26 +59,59 @@ module "slz_vpc" {
 }
 
 #############################################################################
+# Provision Subnet
+#############################################################################
+
+locals {
+  subnet_map = {
+    for subnet in module.slz_vpc.subnet_zone_list :
+    subnet.name => subnet
+  }
+}
+
+resource "ibm_is_subnet" "secondary_subnet" {
+  depends_on = [
+    module.slz_vpc
+  ]
+  for_each                 = local.subnet_map
+  total_ipv4_address_count = 256
+  name                     = "secondary-subnet-${each.value.zone}"
+  vpc                      = module.slz_vpc.vpc_id
+  zone                     = each.value.zone
+}
+
+#############################################################################
 # Provision Secondary Security Group
 #############################################################################
+
+locals {
+  secondary_security_groups = [
+    for subnet in module.slz_vpc.subnet_zone_list : {
+      security_group_id = ibm_is_security_group.secondary_security_group.id
+      interface_name    = "secondary-subnet-${subnet.zone}"
+    }
+  ]
+}
 
 resource "ibm_is_security_group" "secondary_security_group" {
   name = "test-security-group"
   vpc  = module.slz_vpc.vpc_id
 }
 
-locals {
-  secondary_security_groups = [
-    for subnet in module.slz_vpc.subnet_zone_list : {
-      security_group_id = ibm_is_security_group.secondary_security_group.id
-      interface_name    = subnet.name
-    }
-  ]
-}
-
 #############################################################################
 # Provision VSI
 #############################################################################
+
+locals {
+  secondary_subnet_zone_list = [
+    for subnet in ibm_is_subnet.secondary_subnet : {
+      name = subnet.name
+      id   = subnet.id
+      zone = subnet.zone
+      cidr = subnet.ipv4_cidr_block
+    }
+  ]
+}
 
 module "slz_vsi" {
   source                           = "../../"
@@ -96,7 +129,7 @@ module "slz_vsi" {
   boot_volume_encryption_key       = var.boot_volume_encryption_key
   vsi_per_subnet                   = var.vsi_per_subnet
   ssh_key_ids                      = [local.ssh_key_id]
-  secondary_subnets                = module.slz_vpc.subnet_zone_list
+  secondary_subnets                = local.secondary_subnet_zone_list
   secondary_security_groups        = local.secondary_security_groups
   secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
 }
