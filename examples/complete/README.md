@@ -7,3 +7,4 @@ An end-to-end basic example that will provision the following:
 - A new VPC with 3 subnets
 - A new placement group
 - A VSI in each subnet
+- A new Application Load Balancer

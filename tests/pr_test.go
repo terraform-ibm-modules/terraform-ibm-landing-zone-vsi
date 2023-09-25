@@ -11,6 +11,7 @@ import (
 )
 
 const basicExampleTerraformDir = "examples/basic"
+const completeExampleTerraformDir = "examples/complete"
 const fsCloudExampleTerraformDir = "examples/fscloud"
 
 const resourceGroup = "geretain-test-resources"
@@ -50,20 +51,43 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	return options
 }
 
-func TestRunUpgradeFSCloudExample(t *testing.T) {
-	// t.Parallel()
+func setupOptions(t *testing.T, dir string, prefix string) *testhelper.TestOptions {
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  dir,
+		Prefix:        prefix,
+		ResourceGroup: resourceGroup,
+		Region:        region,
+		TerraformVars: map[string]interface{}{
+			"access_tags": permanentResources["accessTags"],
+		},
+	})
 
-	options := setupFSCloudOptions(t, "slz-vsi-upg")
+	return options
+}
+
+func TestRunCompleteExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, completeExampleTerraformDir, "slz-vsi-com")
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunCompleteUpgradeExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, completeExampleTerraformDir, "slz-vsi-com-upg")
 
 	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestRunFSCloudExample(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
 
