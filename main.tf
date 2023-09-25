@@ -21,6 +21,7 @@ locals {
       for subnet in range(length(var.subnets)) :
       {
         name        = "${var.prefix}-${(count) * length(var.subnets) + subnet + 1}"
+        vsi_name    = "${var.prefix}-${format("%03d", count * length(var.subnets) + subnet + 1)}"
         subnet_id   = var.subnets[subnet].id
         zone        = var.subnets[subnet].zone
         subnet_name = var.subnets[subnet].name
@@ -93,17 +94,18 @@ resource "ibm_iam_authorization_policy" "block_storage_policy" {
 }
 
 resource "ibm_is_instance" "vsi" {
-  for_each       = local.vsi_map
-  name           = each.key
-  image          = var.image_id
-  profile        = var.machine_type
-  resource_group = var.resource_group_id
-  vpc            = var.vpc_id
-  zone           = each.value.zone
-  user_data      = var.user_data
-  keys           = var.ssh_key_ids
-  tags           = var.tags
-  access_tags    = var.access_tags
+  for_each        = local.vsi_map
+  name            = each.value.vsi_name
+  image           = var.image_id
+  profile         = var.machine_type
+  resource_group  = var.resource_group_id
+  vpc             = var.vpc_id
+  zone            = each.value.zone
+  user_data       = var.user_data
+  keys            = var.ssh_key_ids
+  placement_group = var.placement_group_id
+  tags            = var.tags
+  access_tags     = var.access_tags
   lifecycle {
     ignore_changes = [
       image

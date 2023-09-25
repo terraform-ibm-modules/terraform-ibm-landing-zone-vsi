@@ -55,7 +55,7 @@ variable "subnets" {
       name = string
       id   = string
       zone = string
-      cidr = string
+      cidr = optional(string)
     })
   )
 }
@@ -121,6 +121,12 @@ variable "create_security_group" {
   type        = bool
 }
 
+variable "placement_group_id" {
+  description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host"
+  type        = string
+  default     = null
+}
+
 variable "security_group" {
   description = "Security group created for VSI"
   type = object({
@@ -172,7 +178,7 @@ variable "security_group" {
       )
     ) == 0
   }
-
+  default = null
 }
 
 variable "security_group_ids" {
@@ -293,16 +299,6 @@ variable "load_balancers" {
   }
 
   validation {
-    error_message = "For Network Load Balancer `Profile` attribute is required and should be set to `network-fixed`. For Application Load Balancer it is not required."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["network-fixed", null], load_balancer.profile)
-      ])
-    ) == 0
-  }
-
-  validation {
     error_message = "Load Balancer Pool algorithm can only be `round_robin`, `weighted_round_robin`, or `least_connections`."
     condition = length(
       flatten([
@@ -362,7 +358,7 @@ variable "secondary_subnets" {
       name = string
       id   = string
       zone = string
-      cidr = string
+      cidr = optional(string)
     })
   )
   default = []
@@ -375,7 +371,7 @@ variable "secondary_use_vsi_security_group" {
 }
 
 variable "secondary_security_groups" {
-  description = "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups."
+  description = "The security group IDs to add to the VSI deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface."
   type = list(
     object({
       security_group_id = string
