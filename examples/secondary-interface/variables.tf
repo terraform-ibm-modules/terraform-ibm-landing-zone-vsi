@@ -19,7 +19,7 @@ variable "region" {
 variable "prefix" {
   description = "The prefix that you would like to append to your resources"
   type        = string
-  default     = "slz-vsi-sec-int"
+  default     = "vsi-sec-int"
 }
 
 variable "resource_tags" {
@@ -74,12 +74,6 @@ variable "vpc_name" {
   type        = string
   description = "Name for VPC"
   default     = "vpc"
-}
-
-variable "security_group_name" {
-  type        = string
-  description = "Name for Security Group"
-  default     = "new-security-group"
 }
 
 ##############################################################################
