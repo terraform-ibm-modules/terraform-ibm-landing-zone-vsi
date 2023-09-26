@@ -3,24 +3,19 @@
 ##############################################################################
 
 locals {
-  resource_group_id = var.resource_group != null ? data.ibm_resource_group.existing_resource_group[0].id : ibm_resource_group.resource_group[0].id
-  ssh_key_id        = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : ibm_is_ssh_key.ssh_key[0].id
+  ssh_key_id = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : ibm_is_ssh_key.ssh_key[0].id
 }
 
 ##############################################################################
 # Resource Group
-# (if var.resource_group is null, create a new RG using var.prefix)
 ##############################################################################
 
-resource "ibm_resource_group" "resource_group" {
-  count    = var.resource_group != null ? 0 : 1
-  name     = "${var.prefix}-rg"
-  quota_id = null
-}
-
-data "ibm_resource_group" "existing_resource_group" {
-  count = var.resource_group != null ? 1 : 0
-  name  = var.resource_group
+module "resource_group" {
+  source  = "terraform-ibm-modules/resource-group/ibm"
+  version = "1.0.6"
+  # if an existing resource group is not set (null) create a new one using prefix
+  resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
+  existing_resource_group_name = var.resource_group
 }
 
 ##############################################################################
@@ -50,7 +45,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
   version           = "7.5.0"
-  resource_group_id = local.resource_group_id
+  resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
   tags              = var.resource_tags
@@ -63,7 +58,7 @@ module "slz_vpc" {
 
 module "slz_vsi" {
   source                     = "../../profiles/fscloud"
-  resource_group_id          = local.resource_group_id
+  resource_group_id          = module.resource_group.resource_group_id
   image_id                   = var.image_id
   create_security_group      = var.create_security_group
   security_group             = var.security_group
