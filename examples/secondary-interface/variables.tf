@@ -76,6 +76,12 @@ variable "vpc_name" {
   default     = "vpc"
 }
 
+variable "security_group_name" {
+  type        = string
+  description = "Name for Security Group"
+  default     = "new-security-group"
+}
+
 ##############################################################################
 # Secondary Interface Variables
 ##############################################################################

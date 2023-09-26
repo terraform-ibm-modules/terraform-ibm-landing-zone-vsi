@@ -91,7 +91,7 @@ locals {
 }
 
 resource "ibm_is_security_group" "secondary_security_group" {
-  name = "test-security-group"
+  name = var.security_group_name
   vpc  = module.slz_vpc.vpc_id
 }
 
