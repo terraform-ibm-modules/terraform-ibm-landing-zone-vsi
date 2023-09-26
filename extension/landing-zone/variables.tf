@@ -205,6 +205,12 @@ variable "enable_floating_ip" {
   default     = false
 }
 
+variable "placement_group_id" {
+  description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host"
+  type        = string
+  default     = null
+}
+
 variable "load_balancers" {
   description = "Load balancers to add to VSI"
   type = list(

@@ -69,4 +69,5 @@ module "vsi" {
   load_balancers                = var.load_balancers
   block_storage_volumes         = var.block_storage_volumes
   enable_floating_ip            = var.enable_floating_ip
+  placement_group_id            = var.placement_group_id
 }
