@@ -6,6 +6,13 @@ locals {
   validate_kms_vars = var.kms_encryption_enabled && var.boot_volume_encryption_key == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key") : true
   # tflint-ignore: terraform_unused_declarations
   validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
+
+  # Determine what KMS service is being used for database encryption
+  kms_service = var.boot_volume_encryption_key != null ? (
+    can(regex(".*kms.*", var.boot_volume_encryption_key)) ? "kms" : (
+      can(regex(".*hs-crypto.*", var.boot_volume_encryption_key)) ? "hs-crypto" : null
+    )
+  ) : null
 }
 
 ##############################################################################
@@ -87,7 +94,7 @@ locals {
 resource "ibm_iam_authorization_policy" "block_storage_policy" {
   count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
   source_service_name         = "server-protect"
-  target_service_name         = "hs-crypto"
+  target_service_name         = local.kms_service
   target_resource_instance_id = var.existing_kms_instance_guid
   roles                       = ["Reader"]
   description                 = "Allow block storage volumes to be encrypted by Key Management instance."

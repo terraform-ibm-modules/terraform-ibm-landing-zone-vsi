@@ -451,7 +451,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 87
+        "line": 94
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -468,7 +468,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 164
+        "line": 171
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -485,7 +485,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 156
+        "line": 163
       }
     },
     "ibm_is_instance.vsi": {
@@ -509,7 +509,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 96
+        "line": 103
       }
     },
     "ibm_is_lb.lb": {
@@ -625,7 +625,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 55
+        "line": 62
       }
     }
   },
@@ -639,7 +639,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 71
+        "line": 78
       }
     },
     "data.ibm_is_vpcs.vpcs": {
@@ -654,7 +654,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 65
+        "line": 72
       }
     }
   },
