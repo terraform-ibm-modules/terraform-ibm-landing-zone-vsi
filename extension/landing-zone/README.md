@@ -2,8 +2,6 @@
 
 This logic creates a VSI to an existing landing zone VPC.
 
-## Infrastructure
-
 This code creates and configures the following infrastructure:
-- Add SSH key to IBM Cloud, or using an existing one.
-- A VSI in each subnet of the landing zone VPC.
+- Adds an SSH key to IBM Cloud or uses an existing one.
+- Adds a VSI in each subnet of the landing zone VPC.

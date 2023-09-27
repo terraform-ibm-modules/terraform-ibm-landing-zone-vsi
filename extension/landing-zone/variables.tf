@@ -6,16 +6,16 @@ variable "ibmcloud_api_key" {
 
 variable "resource_group" {
   type        = string
-  description = "Resource Group name of the existing landing zone VPC."
+  description = "The resource group name of the landing zone VPC."
 }
 
 variable "region" {
-  description = "The region of the existing landing zone VPC."
+  description = "The region of the landing zone VPC."
   type        = string
 }
 
 variable "prefix" {
-  description = "The prefix that you would like to append to VSI, Block Storage, Security Group, Floating IP and Load Balancer."
+  description = "The prefix to add to the VSI, block storage, security group, floating IP, and load balancer resources."
   type        = string
   default     = "slz-vsi"
 }
@@ -33,13 +33,13 @@ variable "ssh_keys" {
   })
 
   validation {
-    error_message = "Public SSH Key must be a valid ssh rsa public key."
+    error_message = "The public SSH key must be a valid SSH RSA public key."
     condition     = var.ssh_keys.public_key == null || can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", var.ssh_keys.public_key))
   }
 }
 
 variable "resource_tags" {
-  description = "List of tags for the VSI, Block Storage, Security Group, Floating IP and Load Balancer created"
+  description = "A list of tags to add to the VSI, block storage, security group, floating IP, and load balancer created by the module."
   type        = list(string)
   default     = []
 }
@@ -51,7 +51,7 @@ variable "access_tags" {
 }
 
 variable "image_name" {
-  description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
+  description = "Image ID used for the VSI. Run the 'ibmcloud is images' CLI command to find available images. The IDs are different in each region."
   type        = string
   default     = "ibm-ubuntu-22-04-2-minimal-amd64-1"
 }
@@ -142,35 +142,35 @@ variable "security_group" {
 }
 
 variable "user_data" {
-  description = "User data to initialize VSI deployment"
+  description = "User data to initialize VSI deployment."
   type        = string
   default     = null
 }
 
 variable "boot_volume_encryption_key" {
-  description = "CRN of boot volume encryption key"
+  description = "The CRN of the boot volume encryption key."
   type        = string
 }
 
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the KMS instance in which the key specified in var.boot_volume_encryption_key is coming from."
+  description = "The GUID of the KMS instance that holds the key specified in `var.boot_volume_encryption_key`."
   type        = string
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable."
+  description = "Set to `true` to skip the creation of an IAM authorization policy that permits all storage blocks to read the encryption key from the KMS instance. If set to `false` (and creating a policy), specify the GUID of the KMS instance in the `existing_kms_instance_guid` variable."
   default     = false
 }
 
 variable "vsi_per_subnet" {
-  description = "Number of VSI instances for each subnet"
+  description = "The number of VSI instances for each subnet."
   type        = number
   default     = 1
 }
 
 variable "subnet_names" {
-  description = "Subnets to which the VSI instances should be deployed"
+  description = "The subnets to deploy the VSI instances to."
   type        = list(string)
   default = [
     "vpe-zone-1",
@@ -180,13 +180,13 @@ variable "subnet_names" {
 }
 
 variable "security_group_ids" {
-  description = "IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups."
+  description = "IDs of additional security groups to add to the VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups."
   type        = list(string)
   default     = []
 }
 
 variable "block_storage_volumes" {
-  description = "List describing the block storage volumes that will be attached to each vsi"
+  description = "The list of block storage volumes to attach to each VSI."
   type = list(
     object({
       name           = string
@@ -200,7 +200,7 @@ variable "block_storage_volumes" {
 }
 
 variable "enable_floating_ip" {
-  description = "Create a floating IP for each virtual server created"
+  description = "Set to `true` to create a floating IP for each virtual server."
   type        = bool
   default     = false
 }
@@ -212,7 +212,7 @@ variable "placement_group_id" {
 }
 
 variable "load_balancers" {
-  description = "Load balancers to add to VSI"
+  description = "The load balancers to add to the VSI."
   type = list(
     object({
       name              = string
