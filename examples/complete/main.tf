@@ -79,27 +79,78 @@ resource "ibm_is_placement_group" "placement_group" {
 }
 
 #############################################################################
+# Provision Secondary Subnets
+#############################################################################
+
+locals {
+  subnet_map = {
+    for subnet in module.slz_vpc.subnet_zone_list :
+    subnet.name => subnet
+  }
+}
+
+resource "ibm_is_subnet" "secondary_subnet" {
+  for_each                 = local.subnet_map
+  total_ipv4_address_count = 256
+  name                     = "secondary-subnet-${each.value.zone}"
+  vpc                      = module.slz_vpc.vpc_id
+  zone                     = each.value.zone
+}
+
+#############################################################################
+# Provision Secondary Security Groups
+#############################################################################
+
+locals {
+  secondary_security_groups = [
+    for subnet in module.slz_vpc.subnet_zone_list : {
+      security_group_id = ibm_is_security_group.secondary_security_group.id
+      interface_name    = "secondary-subnet-${subnet.zone}"
+    }
+  ]
+}
+
+resource "ibm_is_security_group" "secondary_security_group" {
+  name = "${var.prefix}-sg"
+  vpc  = module.slz_vpc.vpc_id
+}
+
+#############################################################################
 # Provision VSI
 #############################################################################
 
+locals {
+  secondary_subnet_zone_list = [
+    for subnet in ibm_is_subnet.secondary_subnet : {
+      name = subnet.name
+      id   = subnet.id
+      zone = subnet.zone
+      cidr = subnet.ipv4_cidr_block
+    }
+  ]
+}
+
 module "slz_vsi" {
-  source                     = "../../"
-  resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
-  create_security_group      = false
-  tags                       = var.resource_tags
-  access_tags                = var.access_tags
-  subnets                    = module.slz_vpc.subnet_zone_list
-  vpc_id                     = module.slz_vpc.vpc_id
-  prefix                     = var.prefix
-  placement_group_id         = ibm_is_placement_group.placement_group.id
-  machine_type               = "cx2-2x4"
-  user_data                  = null
-  boot_volume_encryption_key = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
-  kms_encryption_enabled     = true
-  existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
-  vsi_per_subnet             = 1
-  ssh_key_ids                = [local.ssh_key_id]
+  source                           = "../../"
+  resource_group_id                = module.resource_group.resource_group_id
+  image_id                         = var.image_id
+  create_security_group            = false
+  tags                             = var.resource_tags
+  access_tags                      = var.access_tags
+  subnets                          = module.slz_vpc.subnet_zone_list
+  vpc_id                           = module.slz_vpc.vpc_id
+  prefix                           = var.prefix
+  placement_group_id               = ibm_is_placement_group.placement_group.id
+  machine_type                     = "cx2-2x4"
+  user_data                        = null
+  boot_volume_encryption_key       = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  kms_encryption_enabled           = true
+  existing_kms_instance_guid       = module.key_protect_all_inclusive.key_protect_guid
+  vsi_per_subnet                   = 1
+  ssh_key_ids                      = [local.ssh_key_id]
+  secondary_subnets                = local.secondary_subnet_zone_list
+  secondary_security_groups        = local.secondary_security_groups
+  secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
   # Add 1 additional data volume to each VSI
   block_storage_volumes = [
     {
