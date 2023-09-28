@@ -42,7 +42,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 208
+        "line": 213
       }
     },
     "boot_volume_encryption_key": {
@@ -116,17 +116,17 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 196
+        "line": 201
       }
     },
     "load_balancers": {
       "name": "load_balancers",
-      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name                         = string\n          add_ibm_cloud_internal_rules = bool\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              remote    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
+      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      profile           = optional(string)\n      dns = optional(\n        object({\n          instance_crn = string\n          zone_id      = string\n        })\n      )\n      security_group = optional(\n        object({\n          name                         = string\n          add_ibm_cloud_internal_rules = bool\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              remote    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
       "description": "Load balancers to add to VSI",
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 228
+        "line": 233
       }
     },
     "machine_type": {
@@ -142,6 +142,19 @@
         "line": 80
       },
       "computed": true
+    },
+    "placement_group_id": {
+      "name": "placement_group_id",
+      "type": "string",
+      "description": "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host",
+      "source": [
+        "ibm_is_instance.vsi.placement_group"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 124
+      },
+      "immutable": true
     },
     "prefix": {
       "name": "prefix",
@@ -185,7 +198,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 395
+        "line": 407
       }
     },
     "secondary_floating_ips": {
@@ -198,27 +211,27 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 384
+        "line": 396
       }
     },
     "secondary_security_groups": {
       "name": "secondary_security_groups",
       "type": "list(\n    object({\n      security_group_id = string\n      interface_name    = string\n    })\n  )",
-      "description": "IDs of additional security groups to be added to VSI deployment secondary interfaces. A VSI interface can have a maximum of 5 security groups.",
+      "description": "The security group IDs to add to the VSI deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface.",
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 363
+        "line": 375
       }
     },
     "secondary_subnets": {
       "name": "secondary_subnets",
-      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
+      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = optional(string)\n    })\n  )",
       "description": "List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI.",
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 344
+        "line": 356
       }
     },
     "secondary_use_vsi_security_group": {
@@ -228,17 +241,16 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 357
+        "line": 369
       }
     },
     "security_group": {
       "name": "security_group",
       "type": "object({\n    name                         = string\n    add_ibm_cloud_internal_rules = bool\n    rules = list(\n      object({\n        name      = string\n        direction = string\n        remote    = string\n        tcp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        udp = optional(\n          object({\n            port_max = number\n            port_min = number\n          })\n        )\n        icmp = optional(\n          object({\n            type = number\n            code = number\n          })\n        )\n      })\n    )\n  })",
       "description": "Security group created for VSI",
-      "required": true,
       "pos": {
         "filename": "variables.tf",
-        "line": 125
+        "line": 130
       }
     },
     "security_group_ids": {
@@ -248,7 +260,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 180
+        "line": 185
       }
     },
     "skip_iam_authorization_policy": {
@@ -258,7 +270,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 202
+        "line": 207
       }
     },
     "ssh_key_ids": {
@@ -279,7 +291,7 @@
     },
     "subnets": {
       "name": "subnets",
-      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = string\n    })\n  )",
+      "type": "list(\n    object({\n      name = string\n      id   = string\n      zone = string\n      cidr = optional(string)\n    })\n  )",
       "description": "A list of subnet IDs where VSI will be deployed",
       "required": true,
       "source": [
@@ -437,7 +449,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 86
+        "line": 94
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -454,7 +466,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 162
+        "line": 171
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -471,7 +483,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 154
+        "line": 163
       }
     },
     "ibm_is_instance.vsi": {
@@ -482,6 +494,7 @@
         "access_tags": "access_tags",
         "image": "image_id",
         "keys": "ssh_key_ids",
+        "placement_group": "placement_group_id",
         "profile": "machine_type",
         "resource_group": "resource_group_id",
         "tags": "tags",
@@ -494,7 +507,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 95
+        "line": 103
       }
     },
     "ibm_is_lb.lb": {
@@ -525,7 +538,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 81
+        "line": 82
       }
     },
     "ibm_is_lb_pool.pool": {
@@ -540,7 +553,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 30
+        "line": 31
       }
     },
     "ibm_is_lb_pool_member.pool_members": {
@@ -552,7 +565,7 @@
       },
       "pos": {
         "filename": "load_balancer.tf",
-        "line": 65
+        "line": 66
       }
     },
     "ibm_is_volume.volume": {
@@ -568,7 +581,7 @@
       },
       "pos": {
         "filename": "storage.tf",
-        "line": 42
+        "line": 43
       }
     },
     "time_sleep.wait_for_authorization_policy": {
@@ -580,7 +593,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 54
+        "line": 62
       }
     }
   },
@@ -594,7 +607,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 70
+        "line": 78
       }
     },
     "data.ibm_is_vpcs.vpcs": {
@@ -609,7 +622,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 64
+        "line": 72
       }
     }
   },
@@ -721,7 +734,7 @@
       },
       "pos": {
         "filename": "security_group.tf",
-        "line": 26
+        "line": 32
       }
     }
   }

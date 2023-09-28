@@ -3,7 +3,7 @@
 ##############################################################################
 
 locals {
-  ssh_key_id = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : ibm_is_ssh_key.ssh_key[0].id
+  ssh_key_id = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
 }
 
 ##############################################################################
@@ -19,8 +19,23 @@ module "resource_group" {
 }
 
 ##############################################################################
-# SSH key
+# Key Protect All Inclusive
 ##############################################################################
+
+module "key_protect_all_inclusive" {
+  source                    = "terraform-ibm-modules/key-protect-all-inclusive/ibm"
+  version                   = "4.2.0"
+  resource_group_id         = module.resource_group.resource_group_id
+  region                    = var.region
+  key_protect_instance_name = "${var.prefix}-kp"
+  resource_tags             = var.resource_tags
+  key_map                   = { "slz-vsi" = ["${var.prefix}-vsi"] }
+}
+
+##############################################################################
+# Create new SSH key
+##############################################################################
+
 resource "tls_private_key" "tls_key" {
   count     = var.ssh_key != null ? 0 : 1
   algorithm = "RSA"
@@ -30,7 +45,7 @@ resource "tls_private_key" "tls_key" {
 resource "ibm_is_ssh_key" "ssh_key" {
   count      = var.ssh_key != null ? 0 : 1
   name       = "${var.prefix}-ssh-key"
-  public_key = tls_private_key.tls_key[0].public_key_openssh
+  public_key = resource.tls_private_key.tls_key[0].public_key_openssh
 }
 
 data "ibm_is_ssh_key" "existing_ssh_key" {
@@ -49,7 +64,18 @@ module "slz_vpc" {
   region            = var.region
   prefix            = var.prefix
   tags              = var.resource_tags
-  name              = var.vpc_name
+  name              = "${var.prefix}-vpc"
+}
+
+#############################################################################
+# Placement group
+#############################################################################
+
+resource "ibm_is_placement_group" "placement_group" {
+  name           = "${var.prefix}-host-spread"
+  resource_group = module.resource_group.resource_group_id
+  strategy       = "host_spread"
+  tags           = var.resource_tags
 }
 
 #############################################################################
@@ -57,26 +83,43 @@ module "slz_vpc" {
 #############################################################################
 
 module "slz_vsi" {
-  source                     = "../../profiles/fscloud"
+  source                     = "../../"
   resource_group_id          = module.resource_group.resource_group_id
   image_id                   = var.image_id
-  create_security_group      = var.create_security_group
-  security_group             = var.security_group
+  create_security_group      = false
   tags                       = var.resource_tags
+  access_tags                = var.access_tags
   subnets                    = module.slz_vpc.subnet_zone_list
   vpc_id                     = module.slz_vpc.vpc_id
   prefix                     = var.prefix
-  machine_type               = var.machine_type
-  user_data                  = var.user_data
-  boot_volume_encryption_key = var.boot_volume_encryption_key
-  existing_kms_instance_guid = var.existing_kms_instance_guid
-  vsi_per_subnet             = var.vsi_per_subnet
+  placement_group_id         = ibm_is_placement_group.placement_group.id
+  machine_type               = "cx2-2x4"
+  user_data                  = null
+  boot_volume_encryption_key = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  kms_encryption_enabled     = true
+  existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
+  vsi_per_subnet             = 1
   ssh_key_ids                = [local.ssh_key_id]
-  access_tags                = var.access_tags
   # Add 1 additional data volume to each VSI
   block_storage_volumes = [
     {
       name    = var.prefix
       profile = "10iops-tier"
   }]
+  load_balancers = [
+    {
+      name              = "${var.prefix}-lb"
+      type              = "public"
+      listener_port     = 9080
+      listener_protocol = "http"
+      connection_limit  = 100
+      algorithm         = "round_robin"
+      protocol          = "http"
+      health_delay      = 60
+      health_retries    = 5
+      health_timeout    = 30
+      health_type       = "http"
+      pool_member_port  = 8080
+    }
+  ]
 }

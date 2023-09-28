@@ -21,6 +21,12 @@ locals {
     for group in local.security_groups :
     (group.name) => group
   }
+
+  # input variable validation
+  # tflint-ignore: terraform_unused_declarations
+  validate_security_group = var.create_security_group == false && var.security_group != null ? tobool("var.security_group should be null when var.create_security_group is false. Use var.security_group_ids to add security groups to VSI deployment primary interface.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_security_group_2 = var.create_security_group == true && var.security_group == null ? tobool("var.security_group cannot be null when var.create_security_group is true.") : true
 }
 
 module "security_groups" {
