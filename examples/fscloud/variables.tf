@@ -55,7 +55,7 @@ variable "security_group" {
       object({
         name      = string
         direction = string
-        remote    = string
+        source    = string
         tcp = optional(
           object({
             port_max = number

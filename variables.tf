@@ -131,12 +131,12 @@ variable "security_group" {
   description = "Security group created for VSI"
   type = object({
     name                         = string
-    add_ibm_cloud_internal_rules = bool
+    add_ibm_cloud_internal_rules = optional(bool, false)
     rules = list(
       object({
         name      = string
         direction = string
-        remote    = string
+        source    = string
         tcp = optional(
           object({
             port_max = number
@@ -256,12 +256,12 @@ variable "load_balancers" {
       security_group = optional(
         object({
           name                         = string
-          add_ibm_cloud_internal_rules = bool
+          add_ibm_cloud_internal_rules = optional(bool, false)
           rules = list(
             object({
               name      = string
               direction = string
-              remote    = string
+              source    = string
               tcp = optional(
                 object({
                   port_max = number
