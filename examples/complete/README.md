@@ -1,4 +1,4 @@
-# Complete Example using a placement group, attaching a load balancer, and adding additional data volumes
+# Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes
 
 It will provision the following:
 
