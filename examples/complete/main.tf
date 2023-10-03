@@ -30,6 +30,7 @@ module "key_protect_all_inclusive" {
   key_protect_instance_name = "${var.prefix}-kp"
   resource_tags             = var.resource_tags
   key_map                   = { "slz-vsi" = ["${var.prefix}-vsi"] }
+  force_delete              = true
 }
 
 ##############################################################################
