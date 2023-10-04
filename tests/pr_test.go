@@ -95,6 +95,6 @@ func TestRunFSCloudExample(t *testing.T) {
 	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
 
 	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
+	assert.Nil(t, err, "This should not have errored.")
 	assert.NotNil(t, output, "Expected some output")
 }

@@ -45,3 +45,9 @@ variable "ssh_key" {
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
   default     = null
 }
+
+variable "secondary_use_vsi_security_group" {
+  description = "Use the security group created by this module in the secondary interface"
+  type        = bool
+  default     = false
+}
