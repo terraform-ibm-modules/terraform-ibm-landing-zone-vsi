@@ -23,8 +23,8 @@ output "list" {
       name                     = virtual_server.name
       id                       = virtual_server.id
       zone                     = virtual_server.zone
-      ipv4_address             = virtual_server.primary_network_interface[0].primary_ipv4_address
-      secondary_ipv4_addresses = virtual_server.network_interfaces[0].primary_ipv4_address
+      ipv4_address             = virtual_server.primary_network_interface[0].address
+      secondary_ipv4_addresses = virtual_server.network_interfaces[0].address
       floating_ip              = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
       vpc_id                   = var.vpc_id
     }
@@ -39,8 +39,8 @@ output "fip_list" {
       name                     = virtual_server.name
       id                       = virtual_server.id
       zone                     = virtual_server.zone
-      ipv4_address             = virtual_server.primary_network_interface[0].primary_ipv4_address
-      secondary_ipv4_addresses = virtual_server.network_interfaces[0].primary_ipv4_address
+      ipv4_address             = virtual_server.primary_network_interface[0].address
+      secondary_ipv4_addresses = virtual_server.network_interfaces[0].address
       floating_ip              = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
       vpc_id                   = var.vpc_id
     } if var.enable_floating_ip == true
