@@ -108,7 +108,7 @@ You need the following permissions to run this module.
 ## Examples
 
 - [ End to end basic example](examples/basic)
-- [ Complete Example using a placement group, attaching a load balancer, and adding additional data volumes](examples/complete)
+- [ Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](examples/complete)
 - [ Financial Services Cloud profile example](examples/fscloud)
 <!-- END EXAMPLES HOOK -->
 

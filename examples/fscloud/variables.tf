@@ -11,7 +11,7 @@ variable "resource_group" {
 }
 
 variable "region" {
-  description = "The region to which to deploy the VPC"
+  description = "The region to which to deploy all resources created by this example"
   type        = string
   default     = "us-south"
 }
