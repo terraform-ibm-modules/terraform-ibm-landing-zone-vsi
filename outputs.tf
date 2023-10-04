@@ -20,13 +20,13 @@ output "list" {
   value = [
     for vsi_key, virtual_server in ibm_is_instance.vsi :
     {
-      name                     = virtual_server.name
-      id                       = virtual_server.id
-      zone                     = virtual_server.zone
-      ipv4_address             = virtual_server.primary_network_interface[0].primary_ipv4_address
+      name                   = virtual_server.name
+      id                     = virtual_server.id
+      zone                   = virtual_server.zone
+      ipv4_address           = virtual_server.primary_network_interface[0].primary_ipv4_address
       secondary_ipv4_address = length(virtual_server.network_interfaces) == 0 ? "" : virtual_server.network_interfaces[0].primary_ipv4_address
-      floating_ip              = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
-      vpc_id                   = var.vpc_id
+      floating_ip            = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
+      vpc_id                 = var.vpc_id
     }
   ]
 }
@@ -36,13 +36,13 @@ output "fip_list" {
   value = [
     for vsi_key, virtual_server in ibm_is_instance.vsi :
     {
-      name                     = virtual_server.name
-      id                       = virtual_server.id
-      zone                     = virtual_server.zone
-      ipv4_address             = virtual_server.primary_network_interface[0].primary_ipv4_address
+      name                   = virtual_server.name
+      id                     = virtual_server.id
+      zone                   = virtual_server.zone
+      ipv4_address           = virtual_server.primary_network_interface[0].primary_ipv4_address
       secondary_ipv4_address = length(virtual_server.network_interfaces) == 0 ? "" : virtual_server.network_interfaces[0].primary_ipv4_address
-      floating_ip              = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
-      vpc_id                   = var.vpc_id
+      floating_ip            = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
+      vpc_id                 = var.vpc_id
     } if var.enable_floating_ip == true
   ]
 }
