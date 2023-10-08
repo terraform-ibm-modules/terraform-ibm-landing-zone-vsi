@@ -140,7 +140,8 @@ resource "ibm_is_instance" "vsi" {
         [
           for group in var.secondary_security_groups :
           group.security_group_id if group.interface_name == network_interfaces.value.name
-        ]
+        ],
+        (var.secondary_attach_default_security_group ? [local.default_security_group_id] : [])
       ])
       allow_ip_spoofing = var.secondary_allow_ip_spoofing
     }

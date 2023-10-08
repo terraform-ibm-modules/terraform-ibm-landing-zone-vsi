@@ -364,6 +364,12 @@ variable "secondary_subnets" {
   default = []
 }
 
+variable "secondary_attach_default_security_group" {
+  description = "Attach the default security group to the secondary interface"
+  type        = bool
+  default     = false
+}
+
 variable "secondary_use_vsi_security_group" {
   description = "Use the security group created by this module in the secondary interface"
   type        = bool
