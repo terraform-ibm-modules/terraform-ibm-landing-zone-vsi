@@ -68,3 +68,13 @@ output "lb_security_groups" {
 }
 
 ##############################################################################
+
+output "secondary_subnets" {
+  description = "Secondary subnets created"
+  value = var.secondary_subnets
+}
+
+output "secondary_security_groups" {
+  description = "Secondary security groups created"
+  value = var.secondary_security_groups
+}
