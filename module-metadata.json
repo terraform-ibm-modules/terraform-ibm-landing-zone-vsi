@@ -199,17 +199,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 411
-      }
-    },
-    "secondary_attach_default_security_group": {
-      "name": "secondary_attach_default_security_group",
-      "type": "bool",
-      "description": "Attach the default security group to the secondary interface",
-      "default": false,
-      "pos": {
-        "filename": "variables.tf",
-        "line": 367
+        "line": 405
       }
     },
     "secondary_floating_ips": {
@@ -222,7 +212,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 400
+        "line": 394
       }
     },
     "secondary_security_groups": {
@@ -232,7 +222,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 379
+        "line": 373
       }
     },
     "secondary_subnets": {
@@ -252,7 +242,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 373
+        "line": 367
       }
     },
     "security_group": {
@@ -478,7 +468,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 175
+        "line": 180
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -495,7 +485,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 167
+        "line": 172
       }
     },
     "ibm_is_instance.vsi": {
