@@ -135,6 +135,8 @@ resource "ibm_is_instance" "vsi" {
     }
     content {
       subnet = network_interfaces.value.id
+      # If security_groups is empty(list is len(0)) then default list to default_security_group_id.
+      # If list is empty it will fail on reapply as when vsi is passed an empty security group list it will attach the default security group.
       security_groups = length(flatten([
         (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
         [
