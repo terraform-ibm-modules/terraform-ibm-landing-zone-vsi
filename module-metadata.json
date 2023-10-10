@@ -376,7 +376,7 @@
       "description": "A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached.",
       "pos": {
         "filename": "outputs.tf",
-        "line": 33
+        "line": 34
       }
     },
     "ids": {
@@ -392,7 +392,7 @@
       "description": "Hostnames for the Load Balancer created",
       "pos": {
         "filename": "outputs.tf",
-        "line": 54
+        "line": 56
       }
     },
     "lb_security_groups": {
@@ -400,7 +400,7 @@
       "description": "Load Balancer security groups",
       "pos": {
         "filename": "outputs.tf",
-        "line": 62
+        "line": 64
       }
     },
     "list": {
