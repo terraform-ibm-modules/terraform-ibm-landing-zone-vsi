@@ -130,7 +130,8 @@ variable "placement_group_id" {
 variable "security_group" {
   description = "Security group created for VSI"
   type = object({
-    name = string
+    name                         = string
+    add_ibm_cloud_internal_rules = optional(bool, false)
     rules = list(
       object({
         name      = string
@@ -254,7 +255,8 @@ variable "load_balancers" {
       )
       security_group = optional(
         object({
-          name = string
+          name                         = string
+          add_ibm_cloud_internal_rules = optional(bool, false)
           rules = list(
             object({
               name      = string

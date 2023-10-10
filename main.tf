@@ -122,7 +122,7 @@ resource "ibm_is_instance" "vsi" {
   primary_network_interface {
     subnet = each.value.subnet_id
     security_groups = flatten([
-      (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : [local.default_security_group_id]),
+      ((var.create_security_group && var.security_group != null) ? [module.security_groups[var.security_group.name].security_group_id] : [local.default_security_group_id]),
       var.security_group_ids
     ])
     allow_ip_spoofing = var.allow_ip_spoofing
@@ -136,7 +136,7 @@ resource "ibm_is_instance" "vsi" {
     content {
       subnet = network_interfaces.value.id
       security_groups = flatten([
-        (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+        ((var.create_security_group && var.security_group != null && var.secondary_use_vsi_security_group) ? [module.security_groups[var.security_group.name].security_group_id] : []),
         [
           for group in var.secondary_security_groups :
           group.security_group_id if group.interface_name == network_interfaces.value.name

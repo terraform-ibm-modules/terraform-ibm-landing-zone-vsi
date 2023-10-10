@@ -55,7 +55,8 @@ variable "create_security_group" {
 variable "security_group" {
   description = "Security group created for VSI"
   type = object({
-    name = string
+    name                         = string
+    add_ibm_cloud_internal_rules = bool
     rules = list(
       object({
         name      = string
