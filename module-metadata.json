@@ -348,7 +348,7 @@
       "description": "ID of VPC",
       "required": true,
       "source": [
-        "data.ibm_is_vpcs.vpcs.depends_on",
+        "data.ibm_is_vpc.vpc.identifier",
         "ibm_is_instance.vsi.vpc",
         "ibm_is_security_group.security_group.vpc"
       ],
@@ -451,7 +451,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 94
+        "line": 83
       }
     },
     "ibm_is_floating_ip.secondary_fip": {
@@ -468,7 +468,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 182
+        "line": 169
       }
     },
     "ibm_is_floating_ip.vsi_fip": {
@@ -485,7 +485,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 174
+        "line": 161
       }
     },
     "ibm_is_instance.vsi": {
@@ -509,7 +509,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 103
+        "line": 92
       }
     },
     "ibm_is_lb.lb": {
@@ -634,20 +634,8 @@
       "mode": "data",
       "type": "ibm_is_vpc",
       "name": "vpc",
-      "provider": {
-        "name": "ibm"
-      },
-      "pos": {
-        "filename": "main.tf",
-        "line": 78
-      }
-    },
-    "data.ibm_is_vpcs.vpcs": {
-      "mode": "data",
-      "type": "ibm_is_vpcs",
-      "name": "vpcs",
       "attributes": {
-        "depends_on": "vpc_id"
+        "identifier": "vpc_id"
       },
       "provider": {
         "name": "ibm"
