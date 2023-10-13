@@ -69,19 +69,8 @@ resource "time_sleep" "wait_for_authorization_policy" {
 # Lookup default security group id in the vpc
 ##############################################################################
 
-data "ibm_is_vpcs" "vpcs" {
-  depends_on = [
-    var.vpc_id
-  ]
-}
-
 data "ibm_is_vpc" "vpc" {
-  name = local.vpc_by_id[var.vpc_id].name
-}
-
-locals {
-  vpc_by_id                 = { for vpc in data.ibm_is_vpcs.vpcs.vpcs : vpc.id => vpc }
-  default_security_group_id = data.ibm_is_vpc.vpc.default_security_group
+  identifier = var.vpc_id
 }
 
 ##############################################################################
@@ -124,7 +113,7 @@ resource "ibm_is_instance" "vsi" {
     security_groups = flatten([
       (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
       var.security_group_ids,
-      (var.create_security_group == false && length(var.security_group_ids) == 0 ? [local.default_security_group_id] : []),
+      (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
     ])
     allow_ip_spoofing = var.allow_ip_spoofing
   }
@@ -136,7 +125,7 @@ resource "ibm_is_instance" "vsi" {
     }
     content {
       subnet = network_interfaces.value.id
-      # If security_groups is empty(list is len(0)) then default list to default_security_group_id.
+      # If security_groups is empty(list is len(0)) then default list to data.ibm_is_vpc.vpc.default_security_group.
       # If list is empty it will fail on reapply as when vsi is passed an empty security group list it will attach the default security group.
       security_groups = length(flatten([
         (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
@@ -144,7 +133,7 @@ resource "ibm_is_instance" "vsi" {
           for group in var.secondary_security_groups :
           group.security_group_id if group.interface_name == network_interfaces.value.name
         ]
-        ])) == 0 ? [local.default_security_group_id] : flatten([
+        ])) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : flatten([
         (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
         [
           for group in var.secondary_security_groups :
@@ -162,8 +151,6 @@ resource "ibm_is_instance" "vsi" {
   # Only add volumes if volumes are being created by the module
   volumes = length(var.block_storage_volumes) == 0 ? [] : local.volume_by_vsi[each.key]
 }
-
-
 
 ##############################################################################
 
