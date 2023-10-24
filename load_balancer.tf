@@ -86,7 +86,7 @@ resource "ibm_is_lb_listener" "listener" {
   port                    = each.value.listener_port
   protocol                = each.value.listener_protocol
   connection_limit        = each.value.connection_limit > 0 ? each.value.connection_limit : null
-  idle_connection_timeout = each.value.idle_connection_timeout > 0 ? each.value.idle_connection_timeout : null
+  idle_connection_timeout = each.value.idle_connection_timeout
   depends_on              = [ibm_is_lb_pool_member.pool_members]
 }
 

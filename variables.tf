@@ -238,7 +238,7 @@ variable "load_balancers" {
       listener_port           = number
       listener_protocol       = string
       connection_limit        = number
-      idle_connection_timeout = number
+      idle_connection_timeout = optional(number)
       algorithm               = string
       protocol                = string
       health_delay            = number
@@ -304,10 +304,13 @@ variable "load_balancers" {
     condition = length(
       flatten([
         for load_balancer in var.load_balancers :
-        true if(load_balancer.idle_connection_timeout < 50 || load_balancer.idle_connection_timeout > 7200)
+        load_balancer.idle_connection_timeout != null ?
+        (load_balancer.idle_connection_timeout < 50 || load_balancer.idle_connection_timeout > 7200) ? [true] : []
+        : []
       ])
     ) == 0
   }
+
 
   validation {
     error_message = "Load Balancer Pool algorithm can only be `round_robin`, `weighted_round_robin`, or `least_connections`."

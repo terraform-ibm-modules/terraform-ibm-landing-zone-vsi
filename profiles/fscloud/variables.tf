@@ -157,7 +157,7 @@ variable "load_balancers" {
       listener_port           = number
       listener_protocol       = string
       connection_limit        = number
-      idle_connection_timeout = number
+      idle_connection_timeout = optional(number)
       algorithm               = string
       protocol                = string
       health_delay            = number
