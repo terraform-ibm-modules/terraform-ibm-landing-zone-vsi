@@ -11,7 +11,7 @@ variable "resource_group" {
 }
 
 variable "region" {
-  description = "The region to which to deploy the VPC"
+  description = "The region to which to deploy all resources created by this example"
   type        = string
   default     = "us-south"
 }
@@ -19,7 +19,7 @@ variable "region" {
 variable "prefix" {
   description = "The prefix that you would like to append to your resources"
   type        = string
-  default     = "rajat-fs-vsi"
+  default     = "slz-fs-vsi"
 }
 
 variable "resource_tags" {
