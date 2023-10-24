@@ -122,7 +122,7 @@
     },
     "load_balancers": {
       "name": "load_balancers",
-      "type": "list(\n    object({\n      name              = string\n      type              = string\n      listener_port     = number\n      listener_protocol = string\n      connection_limit  = number\n      algorithm         = string\n      protocol          = string\n      health_delay      = number\n      health_retries    = number\n      health_timeout    = number\n      health_type       = string\n      pool_member_port  = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              source    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
+      "type": "list(\n    object({\n      name                    = string\n      type                    = string\n      listener_port           = number\n      listener_protocol       = string\n      connection_limit        = number\n      idle_connection_timeout = number\n      algorithm               = string\n      protocol                = string\n      health_delay            = number\n      health_retries          = number\n      health_timeout          = number\n      health_type             = string\n      pool_member_port        = string\n      security_group = optional(\n        object({\n          name = string\n          rules = list(\n            object({\n              name      = string\n              direction = string\n              source    = string\n              tcp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              udp = optional(\n                object({\n                  port_max = number\n                  port_min = number\n                })\n              )\n              icmp = optional(\n                object({\n                  type = number\n                  code = number\n                })\n              )\n            })\n          )\n        })\n      )\n    })\n  )",
       "description": "Load balancers to add to VSI",
       "default": [],
       "pos": {
@@ -186,7 +186,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 392
+        "line": 403
       }
     },
     "secondary_floating_ips": {
@@ -199,7 +199,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 381
+        "line": 392
       }
     },
     "secondary_security_groups": {
@@ -209,7 +209,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 360
+        "line": 371
       }
     },
     "secondary_subnets": {
@@ -219,7 +219,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 341
+        "line": 352
       }
     },
     "secondary_use_vsi_security_group": {
@@ -229,7 +229,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 354
+        "line": 365
       }
     },
     "security_group": {

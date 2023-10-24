@@ -79,13 +79,14 @@ resource "ibm_is_lb_pool_member" "pool_members" {
 ##############################################################################
 
 resource "ibm_is_lb_listener" "listener" {
-  for_each         = local.load_balancer_map
-  lb               = ibm_is_lb.lb[each.value.name].id
-  default_pool     = ibm_is_lb_pool.pool[each.value.name].id
-  port             = each.value.listener_port
-  protocol         = each.value.listener_protocol
-  connection_limit = each.value.connection_limit > 0 ? each.value.connection_limit : null
-  depends_on       = [ibm_is_lb_pool_member.pool_members]
+  for_each                = local.load_balancer_map
+  lb                      = ibm_is_lb.lb[each.value.name].id
+  default_pool            = ibm_is_lb_pool.pool[each.value.name].id
+  port                    = each.value.listener_port
+  protocol                = each.value.listener_protocol
+  connection_limit        = each.value.connection_limit > 0 ? each.value.connection_limit : null
+  idle_connection_timeout = each.value.idle_connection_timeout > 0 ? each.value.idle_connection_timeout : null
+  depends_on              = [ibm_is_lb_pool_member.pool_members]
 }
 
 ##############################################################################

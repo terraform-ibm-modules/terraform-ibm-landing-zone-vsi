@@ -227,18 +227,19 @@ variable "load_balancers" {
   description = "Load balancers to add to VSI"
   type = list(
     object({
-      name              = string
-      type              = string
-      listener_port     = number
-      listener_protocol = string
-      connection_limit  = number
-      algorithm         = string
-      protocol          = string
-      health_delay      = number
-      health_retries    = number
-      health_timeout    = number
-      health_type       = string
-      pool_member_port  = string
+      name                    = string
+      type                    = string
+      listener_port           = number
+      listener_protocol       = string
+      connection_limit        = number
+      idle_connection_timeout = number
+      algorithm               = string
+      protocol                = string
+      health_delay            = number
+      health_retries          = number
+      health_timeout          = number
+      health_type             = string
+      pool_member_port        = string
       security_group = optional(
         object({
           name = string
@@ -283,6 +284,16 @@ variable "load_balancers" {
         false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", load_balancer.name))
       ])
     )) == 0
+  }
+
+  validation {
+    error_message = "Load balancer idle_connection_timeout must be between 50 and 7200."
+    condition = length(
+      flatten([
+        for load_balancer in var.load_balancers :
+        true if(load_balancer.idle_connection_timeout < 50 || load_balancer.idle_connection_timeout > 7200)
+      ])
+    ) == 0
   }
 
   validation {
