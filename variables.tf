@@ -233,19 +233,20 @@ variable "load_balancers" {
   description = "Load balancers to add to VSI"
   type = list(
     object({
-      name              = string
-      type              = string
-      listener_port     = number
-      listener_protocol = string
-      connection_limit  = number
-      algorithm         = string
-      protocol          = string
-      health_delay      = number
-      health_retries    = number
-      health_timeout    = number
-      health_type       = string
-      pool_member_port  = string
-      profile           = optional(string)
+      name                    = string
+      type                    = string
+      listener_port           = number
+      listener_protocol       = string
+      connection_limit        = number
+      idle_connection_timeout = optional(number)
+      algorithm               = string
+      protocol                = string
+      health_delay            = number
+      health_retries          = number
+      health_timeout          = number
+      health_type             = string
+      pool_member_port        = string
+      profile                 = optional(string)
       dns = optional(
         object({
           instance_crn = string
@@ -297,6 +298,19 @@ variable "load_balancers" {
       ])
     )) == 0
   }
+
+  validation {
+    error_message = "Load balancer idle_connection_timeout must be between 50 and 7200."
+    condition = length(
+      flatten([
+        for load_balancer in var.load_balancers :
+        load_balancer.idle_connection_timeout != null ?
+        (load_balancer.idle_connection_timeout < 50 || load_balancer.idle_connection_timeout > 7200) ? [true] : []
+        : []
+      ])
+    ) == 0
+  }
+
 
   validation {
     error_message = "Load Balancer Pool algorithm can only be `round_robin`, `weighted_round_robin`, or `least_connections`."

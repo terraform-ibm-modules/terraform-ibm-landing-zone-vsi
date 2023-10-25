@@ -152,19 +152,20 @@ variable "load_balancers" {
   description = "Load balancers to add to VSI"
   type = list(
     object({
-      name              = string
-      type              = string
-      listener_port     = number
-      listener_protocol = string
-      connection_limit  = number
-      algorithm         = string
-      protocol          = string
-      health_delay      = number
-      health_retries    = number
-      health_timeout    = number
-      health_type       = string
-      pool_member_port  = string
-      profile           = optional(string)
+      name                    = string
+      type                    = string
+      listener_port           = number
+      listener_protocol       = string
+      connection_limit        = number
+      idle_connection_timeout = optional(number)
+      algorithm               = string
+      protocol                = string
+      health_delay            = number
+      health_retries          = number
+      health_timeout          = number
+      health_type             = string
+      pool_member_port        = string
+      profile                 = optional(string)
       dns = optional(
         object({
           instance_crn = string

@@ -79,4 +79,5 @@ module "slz_vsi" {
       name    = var.prefix
       profile = "10iops-tier"
   }]
+  skip_iam_authorization_policy = var.skip_iam_authorization_policy
 }

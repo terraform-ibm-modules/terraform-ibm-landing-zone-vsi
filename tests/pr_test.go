@@ -34,23 +34,6 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  fsCloudExampleTerraformDir,
-		Prefix:        prefix,
-		ResourceGroup: resourceGroup,
-		Region:        region,
-		TerraformVars: map[string]interface{}{
-			"existing_kms_instance_guid": permanentResources["hpcs_south"],
-			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
-			"access_tags":                permanentResources["accessTags"],
-		},
-	})
-
-	return options
-}
-
 func setupOptions(t *testing.T, dir string, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
@@ -89,7 +72,25 @@ func TestRunCompleteUpgradeExample(t *testing.T) {
 	}
 }
 
+func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  fsCloudExampleTerraformDir,
+		Prefix:        prefix,
+		ResourceGroup: resourceGroup,
+		Region:        region,
+		TerraformVars: map[string]interface{}{
+			"existing_kms_instance_guid": permanentResources["hpcs_south"],
+			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
+			"access_tags":                permanentResources["accessTags"],
+		},
+	})
+
+	return options
+}
+
 func TestRunFSCloudExample(t *testing.T) {
+	t.Skip() // Skip until we can run in own account. See discussions in https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/pull/569
 	t.Parallel()
 
 	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
