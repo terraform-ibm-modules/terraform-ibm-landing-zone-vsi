@@ -80,10 +80,9 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		ResourceGroup: resourceGroup,
 		Region:        region,
 		TerraformVars: map[string]interface{}{
-			"skip_iam_authorization_policy": true, // The test account already has got a s2s policy setup that would clash
-			"existing_kms_instance_guid":    permanentResources["hpcs_south"],
-			"boot_volume_encryption_key":    permanentResources["hpcs_south_root_key_crn"],
-			"access_tags":                   permanentResources["accessTags"],
+			"existing_kms_instance_guid": permanentResources["hpcs_south"],
+			"boot_volume_encryption_key": permanentResources["hpcs_south_root_key_crn"],
+			"access_tags":                permanentResources["accessTags"],
 		},
 	})
 
@@ -91,6 +90,7 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 }
 
 func TestRunFSCloudExample(t *testing.T) {
+	t.Skip() // Skip until we can run in own account. See discussions in https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/pull/569
 	t.Parallel()
 
 	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
