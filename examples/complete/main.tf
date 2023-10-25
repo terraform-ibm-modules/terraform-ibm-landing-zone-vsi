@@ -165,7 +165,7 @@ module "slz_vsi" {
       listener_port           = 9080
       listener_protocol       = "http"
       connection_limit        = 100
-      idle_connection_timeout = 100
+      idle_connection_timeout = 50
       algorithm               = "round_robin"
       protocol                = "http"
       health_delay            = 60
