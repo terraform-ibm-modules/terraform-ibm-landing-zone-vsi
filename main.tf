@@ -160,12 +160,12 @@ resource "ibm_is_instance" "vsi" {
 ##############################################################################
 
 resource "ibm_is_floating_ip" "vsi_fip" {
-  for_each     = var.enable_floating_ip ? ibm_is_instance.vsi : {}
-  name         = "${each.value.name}-fip"
-  target       = each.value.primary_network_interface[0].id
-  tags         = var.tags
-  access_tags  = var.access_tags
-resource_group = var.resource_group_id
+  for_each       = var.enable_floating_ip ? ibm_is_instance.vsi : {}
+  name           = "${each.value.name}-fip"
+  target         = each.value.primary_network_interface[0].id
+  tags           = var.tags
+  access_tags    = var.access_tags
+  resource_group = var.resource_group_id
 }
 
 resource "ibm_is_floating_ip" "secondary_fip" {
