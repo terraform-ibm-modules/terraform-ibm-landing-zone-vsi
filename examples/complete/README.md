@@ -7,5 +7,6 @@ It will provision the following:
 - A new VPC with 3 subnets.
 - A new placement group.
 - A VSI in each subnet placed in the placement group.
-- A secondary VSI with secondary subnets and secondary security group
+- A floating IP for each virtual server created.
+- A secondary VSI with secondary subnets and secondary security group.
 - A new Application Load Balancer to balance traffic between all virtual servers that are created by this example.
