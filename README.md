@@ -55,8 +55,19 @@ By using the `enable_floating_ip`, a floating IP address is assigned to each VSI
 This module creates any number of application load balancers to balance traffic between all virtual servers that are created by this module. Each load balancer can optionally be added to its own security group. Use the `load_balancers` variable to configure the back-end pool and front-end listener for each load balancer.
 
 ---
+<!-- Below content is automatically populated via pre-commit hook -->
+<!-- BEGIN OVERVIEW HOOK -->
+## Overview
+* [terraform-ibm-landing-zone-vsi](#terraform-ibm-landing-zone-vsi)
+* [Examples](./examples)
+    * [Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](./examples/complete)
+    * [End to end basic example](./examples/basic)
+    * [Financial Services Cloud profile example](./examples/fscloud)
+* [Contributing](#contributing)
+<!-- END OVERVIEW HOOK -->
 
-## Usage
+## terraform-ibm-landing-zone-vsi
+### Usage
 
 ```terraform
 module vsi {
@@ -99,17 +110,7 @@ You need the following permissions to run this module.
     - **VPC Infrastructure Services** service
         - `Editor` platform access
 
----
 
-<!-- BEGIN EXAMPLES HOOK -->
-## Examples
-
-- [ End to end basic example](examples/basic)
-- [ Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](examples/complete)
-- [ Financial Services Cloud profile example](examples/fscloud)
-<!-- END EXAMPLES HOOK -->
-
----
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
