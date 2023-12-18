@@ -4,20 +4,32 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-landing-zone-vsi?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/releases/latest)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 
 This module creates virtual server instances (VSI) across multiple subnets with any number of block storage volumes that are connected by any number of load balancers.
-![vsi-module](./.docs/vsi-lb.png)
+![vsi-module](https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/.docs/vsi-lb.png)
 
----
+<!-- Below content is automatically populated via pre-commit hook -->
+<!-- BEGIN OVERVIEW HOOK -->
+## Overview
+* [terraform-ibm-landing-zone-vsi](#terraform-ibm-landing-zone-vsi)
+* [Examples](./examples)
+    * [Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](./examples/complete)
+    * [End to end basic example](./examples/basic)
+    * [Financial Services Cloud profile example](./examples/fscloud)
+* [Contributing](#contributing)
+<!-- END OVERVIEW HOOK -->
 
-## Prerequisites
+## terraform-ibm-landing-zone-vsi
+
+### Prerequisites
 
 - A VPC
 - A VPC SSH key
 
 ---
 
-## Virtual servers
+### Virtual servers
 
 This module creates virtual servers across any number of subnets in a single VPC that is connected by a single security group. You can specify the number of virtual servers to provision on each subnet by using the `vsi_per_subnet` variable. Virtual servers use the `prefix` variable to dynamically create names. These names are also used as the Terraform address for each virtual server, which allows for easy reference.
 
@@ -29,7 +41,7 @@ module.vsi["test-vsi"].ibm_is_instance.vsi["test-vsi-3"]
 
 ---
 
-## Block storage volumes
+### Block storage volumes
 
 This module creates any number of identical block storage volumes. One storage volume that is specified in the `volumes` variable is created and attached to each virtual server. These block storage volumes use the virtual server name and the volume name to create easily identifiable and manageable addresses within Terraform:
 
@@ -44,24 +56,24 @@ module.vsi["test-vsi"].ibm_is_volume.volume["test-vsi-3-two"]
 
 ---
 
-## Floating IP addresses
+### Floating IP addresses
 
 By using the `enable_floating_ip`, a floating IP address is assigned to each VSI created by this module. This floating IP address is displayed in the output, if provisioned.
 
 ---
 
-## Load balancers
+### Load balancers
 
 This module creates any number of application load balancers to balance traffic between all virtual servers that are created by this module. Each load balancer can optionally be added to its own security group. Use the `load_balancers` variable to configure the back-end pool and front-end listener for each load balancer.
 
 ---
 
-## Usage
+### Usage
 
 ```terraform
 module vsi {
-  source  = "terraform-ibm-modules/landing-zone-vsi/ibm"
-  version = "latest" # Replace "latest" with a release version to lock into a specific release
+  source                           = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  version                          = "X.X.X" # Replace "X.X.X" with a release version to lock into a specific release
   resource_group_id                = var.resource_group_id
   prefix                           = var.prefix
   tags                             = var.tags
@@ -99,17 +111,7 @@ You need the following permissions to run this module.
     - **VPC Infrastructure Services** service
         - `Editor` platform access
 
----
 
-<!-- BEGIN EXAMPLES HOOK -->
-## Examples
-
-- [ End to end basic example](examples/basic)
-- [ Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](examples/complete)
-- [ Financial Services Cloud profile example](examples/fscloud)
-<!-- END EXAMPLES HOOK -->
-
----
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
