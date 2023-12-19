@@ -13,6 +13,8 @@ This module creates virtual server instances (VSI) across multiple subnets with 
 <!-- BEGIN OVERVIEW HOOK -->
 ## Overview
 * [terraform-ibm-landing-zone-vsi](#terraform-ibm-landing-zone-vsi)
+* [Submodules](./modules)
+    * [fscloud](./modules/fscloud)
 * [Examples](./examples)
     * [Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](./examples/complete)
     * [End to end basic example](./examples/basic)
