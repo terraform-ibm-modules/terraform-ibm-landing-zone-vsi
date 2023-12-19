@@ -57,7 +57,7 @@ module "slz_vpc" {
 #############################################################################
 
 module "slz_vsi" {
-  source                     = "../../profiles/fscloud"
+  source                     = "../../modules/fscloud"
   resource_group_id          = module.resource_group.resource_group_id
   image_id                   = var.image_id
   create_security_group      = var.create_security_group

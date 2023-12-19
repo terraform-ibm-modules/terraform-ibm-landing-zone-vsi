@@ -1,6 +1,6 @@
 # Financial Services Cloud profile example
 
-An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../profiles/fscloud/) to deploy a VSI.
+An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/modules/fscloud) to deploy a VSI.
 
 The example uses the IBM Cloud Terraform provider to create the following infrastructure:
 * A resource group, if one is not passed in.
