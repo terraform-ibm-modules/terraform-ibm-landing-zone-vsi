@@ -26,6 +26,8 @@ output "list" {
       ipv4_address           = virtual_server.primary_network_interface[0].primary_ipv4_address
       secondary_ipv4_address = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0].primary_ipv4_address
       floating_ip            = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
+      floating_ip_id         = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].id : null
+      floating_ip_crn        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].crn : null
       vpc_id                 = var.vpc_id
     }
   ]
