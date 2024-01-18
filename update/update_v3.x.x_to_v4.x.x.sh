@@ -91,8 +91,8 @@ function update_state() {
             DESTINATION=${SOURCE//"${VSI_LIST[$j]}"/"${subnet_name}-${j}"}
 
             if [ -n "$SOURCE" ] || [ -n "$DESTINATION" ]; then
-                # terraform state mv "$SOURCE" "$DESTINATION"
                 echo "terraform state mv \"$SOURCE\" \"$DESTINATION\""
+                terraform state mv "$SOURCE" "$DESTINATION"
             fi
             if [ -n "${VSI_LIST[$j]}" ]; then
                 VOL_RESOURCES=$(echo "$STATE" | jq -r --arg vol_vsi "${VSI_LIST[$j]}-" '.. | objects | select((.index | try contains($vol_vsi)) and (.type == "ibm_is_volume")).index')
@@ -106,8 +106,8 @@ function update_state() {
                     vol_name=${VOL_LIST[$x]//"${VSI_LIST[$j]}-"/}
                     VOL_DESTINATION=${VOL_SOURCE//"${VOL_LIST[$x]}"/"${subnet_name}-${j}-${vol_name}"}
                     if [ -n "$VOL_SOURCE" ] || [ -n "$VOL_DESTINATION" ]; then
-                        # terraform state mv "$VOL_SOURCE" "$VOL_DESTINATION"
                         echo "terraform state mv \"$VOL_SOURCE\" \"$VOL_DESTINATION\""
+                        terraform state mv "$VOL_SOURCE" "$VOL_DESTINATION"
                     fi
                 done
             fi
