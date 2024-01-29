@@ -15,6 +15,7 @@ usage: ./${PRG}
     - readarray
 "
 VOL_RESOURCES=""
+VOL_NAMES=""
 
 helpFunction() {
     echo ""
@@ -67,7 +68,7 @@ function ibmcloud_login() {
 }
 
 function get_vpc_details() {
-    VPC_DATA=$(ibmcloud is vpc "$VPC_ID" --output JSON --show-attached)
+    VPC_DATA=$(ibmcloud is vpc "$VPC_ID" --output JSON --show-attached -q)
 }
 
 function get_workspace_details() {
@@ -87,9 +88,9 @@ function update_state() {
 
     for i in "${!SUBNET_LIST[@]}"; do
         for j in "${!ADDRESS_LIST[@]}"; do
-            VSI_LIST="$(echo "$STATE" | jq -r --arg address "${ADDRESS_LIST[$j]}" '.resources[] | select((.type == "ibm_is_instance") and (.module == $address)) | .instances')"
+            VSI_RESOURCES="$(echo "$STATE" | jq -r --arg address "${ADDRESS_LIST[$j]}" '.resources[] | select((.type == "ibm_is_instance") and (.module == $address)) | .instances')"
             subnet_name=$(echo "$VPC_DATA" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.subnets[] | select(.id == $subnet_id) | .name')
-            vsi_names=$(echo "$VSI_LIST" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.[] | select(.attributes.primary_network_interface[0].subnet == $subnet_id) | .index_key')
+            vsi_names=$(echo "$VSI_RESOURCES" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.[] | select(.attributes.primary_network_interface[0].subnet == $subnet_id) | .index_key')
             readarray -t VSI_LIST <<<"$vsi_names"
 
             for x in "${!VSI_LIST[@]}"; do
@@ -99,20 +100,38 @@ function update_state() {
                 if [ -n "${VSI_LIST[$x]}" ] && [ -n "${subnet_name}" ]; then
                     update_schematics "$SOURCE" "$DESTINATION"
                 fi
-                if [ -n "${VSI_LIST[$j]}" ]; then
-                    VOL_RESOURCES="$(echo "$STATE" | jq -r --arg address "${ADDRESS_LIST[$j]}" '.resources[] | select((.type == "ibm_is_volume") and (.module == $address)) | .instances')"
-                fi
+                if [ -n "${VSI_LIST[$x]}" ]; then
+                    VOL_NAMES=$(echo "$VSI_RESOURCES" | jq -r --arg vsi "${VSI_LIST[$x]}" '.[] | select(.index_key == $vsi) | .attributes.volume_attachments[].volume_name')
 
-                if [ -n "$VOL_RESOURCES" ]; then
-                    vol_names=$(echo "$VOL_RESOURCES" | jq -r --arg vol_vsi "${VSI_LIST[$x]}-" '.[] | select(.index_key | try contains($vol_vsi)).index_key')
-                    readarray -t VOL_LIST <<<"$vol_names"
-                    for z in "${!VOL_LIST[@]}"; do
-                        VOL_SOURCE="${ADDRESS_LIST[$j]}.ibm_is_volume.volume[\"${VOL_LIST[$z]}\"]"
-                        vol_name=${VOL_LIST[$z]//"${VSI_LIST[$x]}-"/}
-                        VOL_DESTINATION="${ADDRESS_LIST[$j]}.ibm_is_volume.volume[\"${subnet_name}-${x}-${vol_name}\"]"
-                        if [ -n "${VOL_LIST[$z]}" ] || [ -n "${subnet_name}" ]; then
-                            update_schematics "$VOL_SOURCE" "$VOL_DESTINATION"
-                        fi
+                fi
+                str="${VSI_LIST[$x]}"
+                lastIndex=$(echo $str | awk '{print length}')
+                for ((i = lastIndex; i >= 0; i--)); do
+                    if [[ "${str:$i:1}" == "-" ]]; then
+                        str="${str::i}"
+                        break
+                    fi
+                done
+                if [ -n "$VOL_NAMES" ]; then
+                    readarray -t VOL_ADDRESS_LIST <<<"$(echo "$STATE" | jq -r '.resources[] | select(.type == "ibm_is_volume") | .module')"
+                    readarray -t VOL_NAME <<<"$VOL_NAMES"
+                    for a in "${!VOL_NAME[@]}"; do
+                        for b in "${!VOL_ADDRESS_LIST[@]}"; do
+                            VOL_RESOURCES="$(echo "$STATE" | jq -r --arg address "${VOL_ADDRESS_LIST[$b]}" '.resources[] | select((.type == "ibm_is_volume") and (.module == $address)) | .instances')"
+                            vol_names=$(echo "$VOL_RESOURCES" | jq -r --arg vol1 "${VOL_NAME[$a]}" '.[] | select(.attributes.name == $vol1) | .index_key')
+                            readarray -t VOL_LIST <<<"$vol_names"
+                            for c in "${!VOL_LIST[@]}"; do
+                                if [ -n "${VOL_LIST[$c]}" ]; then
+                                    VOL_SOURCE="${ADDRESS_LIST[$j]}.ibm_is_volume.volume[\"${VOL_LIST[$c]}\"]"
+                                    test="${VOL_LIST[$c]/$str/}"
+                                    vol=$(echo $test | cut -d"-" -f3-)
+                                    VOL_DESTINATION="${ADDRESS_LIST[$j]}.ibm_is_volume.volume[\"${subnet_name}-${x}-${vol}\"]"
+                                    if [ -n "${VOL_LIST[$c]}" ] || [ -n "${subnet_name}" ]; then
+                                        update_schematics "$VOL_SOURCE" "$VOL_DESTINATION"
+                                    fi
+                                fi
+                            done
+                        done
                     done
                 fi
             done

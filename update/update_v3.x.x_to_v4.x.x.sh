@@ -95,19 +95,32 @@ function update_state() {
                 terraform state mv "$SOURCE" "$DESTINATION"
             fi
             if [ -n "${VSI_LIST[$j]}" ]; then
-                VOL_RESOURCES=$(echo "$STATE" | jq -r --arg vol_vsi "${VSI_LIST[$j]}-" '.. | objects | select((.index | try contains($vol_vsi)) and (.type == "ibm_is_volume")).index')
+                VOL_RESOURCES=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_instance")) | .values.volume_attachments[].volume_name')
             fi
 
             if [ -n "$VOL_RESOURCES" ]; then
+                str="${VSI_LIST[$j]}"
+                lastIndex=$(echo $str | awk '{print length}')
+                for ((i = lastIndex; i >= 0; i--)); do
+                    if [[ "${str:$i:1}" == "-" ]]; then
+                        str="${str::i}"
+                        break
+                    fi
+                done
 
                 readarray -t VOL_LIST <<<"$VOL_RESOURCES"
                 for x in "${!VOL_LIST[@]}"; do
-                    VOL_SOURCE=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.index == $index) and (.type == "ibm_is_volume")) | .address')
-                    vol_name=${VOL_LIST[$x]//"${VSI_LIST[$j]}-"/}
-                    VOL_DESTINATION=${VOL_SOURCE//"${VOL_LIST[$x]}"/"${subnet_name}-${j}-${vol_name}"}
-                    if [ -n "$VOL_SOURCE" ] || [ -n "$VOL_DESTINATION" ]; then
-                        echo "terraform state mv \"$VOL_SOURCE\" \"$VOL_DESTINATION\""
-                        terraform state mv "$VOL_SOURCE" "$VOL_DESTINATION"
+                    VOL_SOURCE=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .address')
+
+                    if [ -n "$VOL_SOURCE" ]; then
+                        VOL_INDEX=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .index')
+                        test="${VOL_LIST[$x]/$str/}"
+                        vol=$(echo $test | cut -d"-" -f3-)
+                        VOL_DESTINATION=${VOL_SOURCE//"$VOL_INDEX"/"${subnet_name}-${j}-${vol}"}
+                        if [ -n "$VOL_SOURCE" ] || [ -n "$VOL_DESTINATION" ]; then
+                            echo "terraform state mv \"$VOL_SOURCE\" \"$VOL_DESTINATION\""
+                            terraform state mv "$VOL_SOURCE" "$VOL_DESTINATION"
+                        fi
                     fi
                 done
             fi
