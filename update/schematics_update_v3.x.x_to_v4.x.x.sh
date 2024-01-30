@@ -105,10 +105,10 @@ function update_state() {
 
                 fi
                 str="${VSI_LIST[$x]}"
-                lastIndex=$(echo $str | awk '{print length}')
-                for ((i = lastIndex; i >= 0; i--)); do
-                    if [[ "${str:$i:1}" == "-" ]]; then
-                        str="${str::i}"
+                lastIndex=$(echo "$str" | awk '{print length}')
+                for ((l = lastIndex; l >= 0; l--)); do
+                    if [[ "${str:$l:1}" == "-" ]]; then
+                        str="${str::l}"
                         break
                     fi
                 done
@@ -124,7 +124,7 @@ function update_state() {
                                 if [ -n "${VOL_LIST[$c]}" ]; then
                                     VOL_SOURCE="${ADDRESS_LIST[$j]}.ibm_is_volume.volume[\"${VOL_LIST[$c]}\"]"
                                     test="${VOL_LIST[$c]/$str/}"
-                                    vol=$(echo $test | cut -d"-" -f3-)
+                                    vol=$(echo "$test" | cut -d"-" -f3-)
                                     VOL_DESTINATION="${ADDRESS_LIST[$j]}.ibm_is_volume.volume[\"${subnet_name}-${x}-${vol}\"]"
                                     if [ -n "${VOL_LIST[$c]}" ] || [ -n "${subnet_name}" ]; then
                                         update_schematics "$VOL_SOURCE" "$VOL_DESTINATION"

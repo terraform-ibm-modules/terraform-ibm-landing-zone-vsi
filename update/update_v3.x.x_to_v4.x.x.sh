@@ -100,10 +100,10 @@ function update_state() {
 
             if [ -n "$VOL_RESOURCES" ]; then
                 str="${VSI_LIST[$j]}"
-                lastIndex=$(echo $str | awk '{print length}')
-                for ((i = lastIndex; i >= 0; i--)); do
-                    if [[ "${str:$i:1}" == "-" ]]; then
-                        str="${str::i}"
+                lastIndex=$(echo "$str" | awk '{print length}')
+                for ((l = lastIndex; l >= 0; l--)); do
+                    if [[ "${str:$l:1}" == "-" ]]; then
+                        str="${str::l}"
                         break
                     fi
                 done
@@ -115,7 +115,7 @@ function update_state() {
                     if [ -n "$VOL_SOURCE" ]; then
                         VOL_INDEX=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .index')
                         test="${VOL_LIST[$x]/$str/}"
-                        vol=$(echo $test | cut -d"-" -f3-)
+                        vol=$(echo "$test" | cut -d"-" -f3-)
                         VOL_DESTINATION=${VOL_SOURCE//"$VOL_INDEX"/"${subnet_name}-${j}-${vol}"}
                         if [ -n "$VOL_SOURCE" ] || [ -n "$VOL_DESTINATION" ]; then
                             echo "terraform state mv \"$VOL_SOURCE\" \"$VOL_DESTINATION\""
