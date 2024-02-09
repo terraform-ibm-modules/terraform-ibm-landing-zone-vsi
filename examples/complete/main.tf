@@ -163,7 +163,7 @@ module "slz_vsi" {
   load_balancers = [
     {
       name                    = "${var.prefix}-lb"
-      type                    = "public"
+      type                    = "private"
       listener_port           = 9080
       listener_protocol       = "http"
       connection_limit        = 100
