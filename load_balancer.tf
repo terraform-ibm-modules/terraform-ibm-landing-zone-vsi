@@ -13,7 +13,7 @@ resource "ibm_is_lb" "lb" {
   for_each        = local.load_balancer_map
   name            = "${var.prefix}-${each.value.name}-lb"
   subnets         = var.subnets[*].id
-  type            = each.value.type #checkov:skip=CKV2_IBM_1:See https://github.com/bridgecrewio/checkov/issues/5824#
+  type            = each.value.type
   profile         = each.value.profile
   security_groups = each.value.security_group == null ? null : [ibm_is_security_group.security_group[each.value.security_group.name].id]
   resource_group  = var.resource_group_id
