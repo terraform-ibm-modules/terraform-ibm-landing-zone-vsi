@@ -6,7 +6,6 @@ usage: ./${PRG}
     Required environment variables:
     IBMCLOUD_API_KEY
     WORKSPACE_ID
-    WORKSPACE_REGION
     Dependencies:
     - IBM Cloud CLI
     - IBM Cloud CLI 'is' plugin
@@ -43,7 +42,7 @@ fi
 function verify_required_env_var() {
     printf "\n#### VERIFYING ENV ####\n\n"
     all_env_vars_exist=true
-    env_var_array=(IBMCLOUD_API_KEY WORKSPACE_ID WORKSPACE_REGION)
+    env_var_array=(IBMCLOUD_API_KEY WORKSPACE_ID)
     set +u
     for var in "${env_var_array[@]}"; do
         [ -z "${!var}" ] && echo "${var} not defined." && all_env_vars_exist=false
@@ -72,6 +71,7 @@ function get_vpc_details() {
 }
 
 function get_workspace_details() {
+    WORKSPACE_REGION=$(echo "$WORKSPACE_ID" | cut -d "." -f 1)
     until ibmcloud target -r "$WORKSPACE_REGION" || [ $attempts -ge 3 ]; do
         attempts=$((attempts + 1))
         echo "Error logging in to IBM Cloud CLI..."
