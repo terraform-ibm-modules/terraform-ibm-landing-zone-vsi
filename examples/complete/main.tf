@@ -23,14 +23,23 @@ module "resource_group" {
 ##############################################################################
 
 module "key_protect_all_inclusive" {
-  source                    = "terraform-ibm-modules/key-protect-all-inclusive/ibm"
-  version                   = "4.4.2"
+  source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
+  version                   = "4.8.3"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
   resource_tags             = var.resource_tags
-  key_map                   = { "slz-vsi" = ["${var.prefix}-vsi"] }
-  force_delete              = true
+  keys = [
+    {
+      key_ring_name = "slz-vsi"
+      keys = [
+        {
+          key_name     = "${var.prefix}-vsi"
+          force_delete = true
+        }
+      ]
+    }
+  ]
 }
 
 ##############################################################################
@@ -146,7 +155,7 @@ module "slz_vsi" {
   user_data                  = null
   boot_volume_encryption_key = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
   kms_encryption_enabled     = true
-  existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
+  existing_kms_instance_guid = module.key_protect_all_inclusive.kms_guid
   vsi_per_subnet             = 1
   ssh_key_ids                = [local.ssh_key_id]
   secondary_subnets          = local.secondary_subnet_zone_list
