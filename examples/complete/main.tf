@@ -93,18 +93,37 @@ resource "ibm_is_placement_group" "placement_group" {
 #############################################################################
 
 locals {
-  subnet_map = {
-    for subnet in module.slz_vpc.subnet_zone_list :
-    subnet.name => subnet
+  secondary_subnet_map = {
+    "${var.prefix}-second-subnet-a" = {
+      zone = "${var.region}-1"
+      cidr = "10.10.20.0/24"
+    }
+    "${var.prefix}-second-subnet-b" = {
+      zone = "${var.region}-2"
+      cidr = "10.20.20.0/24"
+    }
+    "${var.prefix}-second-subnet-c" = {
+      zone = "${var.region}-3"
+      cidr = "10.30.20.0/24"
+    }
   }
 }
 
+resource "ibm_is_vpc_address_prefix" "secondary_address_prefixes" {
+  for_each = local.secondary_subnet_map
+  name     = "${each.key}-prefix"
+  vpc      = module.slz_vpc.vpc_id
+  zone     = each.value.zone
+  cidr     = each.value.cidr
+}
+
 resource "ibm_is_subnet" "secondary_subnet" {
-  for_each                 = local.subnet_map
-  total_ipv4_address_count = 256
-  name                     = "secondary-subnet-${each.value.zone}"
-  vpc                      = module.slz_vpc.vpc_id
-  zone                     = each.value.zone
+  depends_on      = [ibm_is_vpc_address_prefix.secondary_address_prefixes]
+  for_each        = local.secondary_subnet_map
+  ipv4_cidr_block = each.value.cidr
+  name            = each.key
+  vpc             = module.slz_vpc.vpc_id
+  zone            = each.value.zone
 }
 
 #############################################################################
