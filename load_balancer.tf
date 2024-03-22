@@ -19,6 +19,12 @@ resource "ibm_is_lb" "lb" {
   resource_group  = var.resource_group_id
   tags            = var.tags
   access_tags     = var.access_tags
+
+  timeouts {
+    create = "45m"
+    update = "45m"
+    delete = "45m"
+  }
 }
 
 ##############################################################################

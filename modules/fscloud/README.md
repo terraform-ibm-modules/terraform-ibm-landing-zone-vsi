@@ -9,7 +9,7 @@ The default values in this profile were scanned by [IBM Code Risk Analyzer (CRA)
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0, <1.6.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0, <1.7.0 |
 
 ### Modules
 
