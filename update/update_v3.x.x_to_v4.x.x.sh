@@ -15,7 +15,6 @@ usage: ./${PRG}
 
 STATE_LOCATION=""
 VOL_RESOURCES=""
-VOL_NAMES=""
 REVERT=false
 
 helpFunction() {
@@ -48,7 +47,7 @@ fi
 function dependency_check() {
     dependencies=("ibmcloud" "ibmcloud is" "ibmcloud schematics" "jq" "readarray")
     for dependency in "${dependencies[@]}"; do
-        if ! command -v $dependency >/dev/null 2>&1; then
+        if ! command -v "$dependency" >/dev/null 2>&1; then
             echo "$dependency is not installed. Please install $dependency."
             exit 1
         fi
@@ -149,7 +148,7 @@ function update_state() {
 }
 function update_local_state() {
     while read -r line; do
-        eval $line
+        eval "$line"
     done <"./moved.txt"
 }
 
@@ -159,7 +158,7 @@ function revert_local_state() {
     else
         if [ -s "./revert.txt" ]; then
             while read -r line; do
-                eval $line
+                eval "$line"
             done <"./revert.txt"
         else
             echo "Revert.txt is empty."
@@ -184,8 +183,8 @@ create_txt_files() {
     # Check if the file exists
     if [ -f "$MOVED_JSON" ] || [ -f "$REVERT_JSON" ]; then
         # If the file exists, empty it
-        >"$MOVED_JSON"
-        >"$REVERT_JSON"
+        echo "" >"$MOVED_JSON"
+        echo "" >"$REVERT_JSON"
     else
         # If the file does not exist, create it
         touch "$MOVED_JSON"
