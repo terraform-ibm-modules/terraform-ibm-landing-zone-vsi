@@ -15,27 +15,31 @@ usage: ./${PRG}
 "
 VOL_RESOURCES=""
 VOL_NAMES=""
+REVERT=false
 
 helpFunction() {
     echo ""
-    echo "Usage: $0 -v VPC_ID -r VPC_REGION"
+    echo "Usage: $0 -v VPC_ID -r VPC_REGION [-z]"
     echo -e "\t-v , seperated IDs or names of the VPC in which the VSIs are deployed which needs to be tracked by the newer version of the terraform module."
     echo -e "\t-r Region of the VPC."
     exit 1 # Exit script after printing help
 }
 
-while getopts "v:r:" opt; do
+while getopts "v:r:z" opt; do
     case "$opt" in
     v) VPC_ID="$OPTARG" ;;
     r) VPC_REGION="$OPTARG" ;;
+    z) REVERT=true ;;
     ?) helpFunction ;; # Print helpFunction in case parameter is non-existent
     esac
 done
 
 # Print helpFunction in case parameters are empty
-if [ -z "$VPC_ID" ] || [ -z "$VPC_REGION" ]; then
-    echo "VPC_ID or REGION is empty"
-    helpFunction
+if [ "$REVERT" == false ]; then
+    if [ -z "$VPC_ID" ] || [ -z "$VPC_REGION" ]; then
+        echo "VPC_ID or REGION is empty"
+        helpFunction
+    fi
 fi
 
 function dependency_check() {
@@ -161,21 +165,38 @@ function update_schematics() {
         sleep 3
     done
     ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./moved.json
-    sleep 60
-    while true; do
-        status=$(ibmcloud schematics workspace get --id "$WORKSPACE_ID" -o json | jq -r .status)
-        echo "$status"
-        if [[ "$status" == "ACTIVE" ]]; then
-            echo "Change Done"
-            break
-        elif [[ "$status" == "FAILED" ]]; then
-            ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./revert.json
-        fi
-        sleep 10
-        status=""
-    done
+    # sleep 60
+    # while true; do
+    #     status=$(ibmcloud schematics workspace get --id "$WORKSPACE_ID" -o json | jq -r .status)
+    #     echo "$status"
+    #     if [[ "$status" == "ACTIVE" ]]; then
+    #         echo "Change Done"
+    #         break
+    #     elif [[ "$status" == "FAILED" ]]; then
+    #         ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./revert.json
+    #     fi
+    #     sleep 10
+    #     status=""
+    # done
 }
 
+function revert_schematics() {
+    if ! [ -f "./revert.json" ]; then
+        echo "Revert.json does not exist."
+    else
+        if [ -s "./revert.json" ]; then
+            until ibmcloud target -r "$WORKSPACE_REGION" || [ $attempts -ge 3 ]; do
+                attempts=$((attempts + 1))
+                echo "Error logging in to IBM Cloud CLI..."
+                sleep 3
+            done
+            ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./revert.json
+        else
+            echo "Revert.json is empty."
+        fi
+    fi
+
+}
 create_json() {
     for movedparam in "${!MOVED_PARAMS[@]}"; do
         jq --arg command_params "${MOVED_PARAMS[$movedparam]}" --arg command_name "Move$movedparam" '.commands += [{"command": "state mv","command_params": $command_params, "command_name": $command_name, "command_onerror": "abort"}]' moved.json >temp.json && mv temp.json moved.json
@@ -220,14 +241,20 @@ create_json_files() {
 
 # run
 function main() {
-    dependency_check
-    create_json_files
-    verify_required_env_var
-    ibmcloud_login
-    get_workspace_details
-    update_state
-    create_json
-    update_schematics
+    if [ "$REVERT" == false ]; then
+        # dependency_check
+        # create_json_files
+        # verify_required_env_var
+        # ibmcloud_login
+        # get_workspace_details
+        # update_state
+        # create_json
+        update_schematics
+    else
+        verify_required_env_var
+        ibmcloud_login
+        revert_schematics
+    fi
 }
 
 main
