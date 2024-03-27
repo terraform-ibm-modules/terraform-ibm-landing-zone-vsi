@@ -15,30 +15,46 @@ usage: ./${PRG}
 
 STATE_LOCATION=""
 VOL_RESOURCES=""
+VOL_NAMES=""
+REVERT=false
 
 helpFunction() {
     echo ""
-    echo "Usage: $0 -v VPC_ID -r REGION -t STATE_LOCATION"
-    echo -e "\t-v ID or name of the VPC in which the VSIs are deployed which needs to be tracked by the newer version of the terraform module."
+    echo "Usage: $0 -v VPC_ID -r REGION -t STATE_LOCATION [-z]"
+    echo -e "\t-v , seperated IDs or names of the VPC in which the VSIs are deployed which needs to be tracked by the newer version of the terraform module."
     echo -e "\t-r Region of the VPC."
     echo -e "\t-t Path of the terrafom state file. If no path is specified, the current state will be shown."
     exit 1 # Exit script after printing help
 }
 
-while getopts "v:r:t:" opt; do
+while getopts "v:r:t:z" opt; do
     case "$opt" in
     v) VPC_ID="$OPTARG" ;;
     r) REGION="$OPTARG" ;;
     t) STATE_LOCATION="$OPTARG" ;;
+    z) REVERT=true ;;
     ?) helpFunction ;; # Print helpFunction in case parameter is non-existent
     esac
 done
 
 # Print helpFunction in case parameters are empty
-if [ -z "$VPC_ID" ] || [ -z "$REGION" ]; then
-    echo "VPC_ID or REGION is empty"
-    helpFunction
+if [ "$REVERT" == false ]; then
+    if [ -z "$VPC_ID" ] || [ -z "$REGION" ]; then
+        echo "VPC_ID or REGION is empty"
+        helpFunction
+    fi
 fi
+
+function dependency_check() {
+    dependencies=("ibmcloud" "ibmcloud is" "ibmcloud schematics" "jq" "readarray")
+    for dependency in "${dependencies[@]}"; do
+        if ! command -v $dependency >/dev/null 2>&1; then
+            echo "$dependency is not installed. Please install $dependency."
+            exit 1
+        fi
+    done
+    echo "All dependencies are available!"
+}
 
 # check that env contains required vars
 function verify_required_env_var() {
@@ -69,7 +85,7 @@ function ibmcloud_login() {
 }
 
 function get_details() {
-    VPC_DATA=$(ibmcloud is vpc "$VPC_ID" --output JSON --show-attached -q)
+    terraform init -upgrade
     if [ -z "$STATE_LOCATION" ]; then
         STATE=$(terraform show -json)
     else
@@ -78,62 +94,121 @@ function get_details() {
 }
 
 function update_state() {
-    readarray -t SUBNET_LIST <<<"$(echo "$VPC_DATA" | jq -r '.subnets[] | .id')"
+    readarray -td, VPC_LIST <<<"$VPC_ID"
+    for vpc in "${!VPC_LIST[@]}"; do
+        VPC_DATA=$(ibmcloud is vpc "${VPC_LIST[$vpc]//$'\n'/}" --output JSON --show-attached -q)
+        readarray -t SUBNET_LIST <<<"$(echo "$VPC_DATA" | jq -r '.subnets[] | .id')"
 
-    for i in "${!SUBNET_LIST[@]}"; do
-        subnet_name=$(echo "$VPC_DATA" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.subnets[] | select(.id == $subnet_id) | .name')
-        vsi_names=$(echo "$STATE" | jq -r --arg subnet "${SUBNET_LIST[$i]}" '.. | objects | select((.values.primary_network_interface[0].subnet == $subnet) and (.type == "ibm_is_instance")) | .index')
+        for i in "${!SUBNET_LIST[@]}"; do
+            subnet_name=$(echo "$VPC_DATA" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.subnets[] | select(.id == $subnet_id) | .name')
+            vsi_names=$(echo "$STATE" | jq -r --arg subnet "${SUBNET_LIST[$i]}" '.. | objects | select((.values.primary_network_interface[0].subnet == $subnet) and (.type == "ibm_is_instance")) | .index')
 
-        readarray -t VSI_LIST <<<"$vsi_names"
+            readarray -t VSI_LIST <<<"$vsi_names"
 
-        for j in "${!VSI_LIST[@]}"; do
-            SOURCE=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_instance")) | .address')
-            DESTINATION=${SOURCE//"${VSI_LIST[$j]}"/"${subnet_name}-${j}"}
+            for j in "${!VSI_LIST[@]}"; do
+                SOURCE=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_instance")) | .address')
+                DESTINATION=${SOURCE//"${VSI_LIST[$j]}"/"${subnet_name}-${j}"}
 
-            if [ -n "$SOURCE" ] || [ -n "$DESTINATION" ]; then
-                echo "terraform state mv \"$SOURCE\" \"$DESTINATION\""
-                terraform state mv "$SOURCE" "$DESTINATION"
-            fi
-            if [ -n "${VSI_LIST[$j]}" ]; then
-                VOL_RESOURCES=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_instance")) | .values.volume_attachments[].volume_name')
-            fi
+                if [ -n "$SOURCE" ] || [ -n "$DESTINATION" ]; then
+                    MOVED_PARAMS+=("'$SOURCE' '$DESTINATION'")
+                    REVERT_PARAMS+=("'$DESTINATION' '$SOURCE'")
+                fi
+                if [ -n "${VSI_LIST[$j]}" ]; then
+                    VOL_RESOURCES=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_instance")) | .values.volume_attachments[].volume_name')
+                fi
 
-            if [ -n "$VOL_RESOURCES" ]; then
-                str="${VSI_LIST[$j]}"
-                lastIndex=$(echo "$str" | awk '{print length}')
-                for ((l = lastIndex; l >= 0; l--)); do
-                    if [[ "${str:$l:1}" == "-" ]]; then
-                        str="${str::l}"
-                        break
-                    fi
-                done
-
-                readarray -t VOL_LIST <<<"$VOL_RESOURCES"
-                for x in "${!VOL_LIST[@]}"; do
-                    VOL_SOURCE=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .address')
-
-                    if [ -n "$VOL_SOURCE" ]; then
-                        VOL_INDEX=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .index')
-                        test="${VOL_LIST[$x]/$str/}"
-                        vol=$(echo "$test" | cut -d"-" -f3-)
-                        VOL_DESTINATION=${VOL_SOURCE//"$VOL_INDEX"/"${subnet_name}-${j}-${vol}"}
-                        if [ -n "$VOL_SOURCE" ] || [ -n "$VOL_DESTINATION" ]; then
-                            echo "terraform state mv \"$VOL_SOURCE\" \"$VOL_DESTINATION\""
-                            terraform state mv "$VOL_SOURCE" "$VOL_DESTINATION"
+                if [ -n "$VOL_RESOURCES" ]; then
+                    str="${VSI_LIST[$j]}"
+                    lastIndex=$(echo "$str" | awk '{print length}')
+                    for ((l = lastIndex; l >= 0; l--)); do
+                        if [[ "${str:$l:1}" == "-" ]]; then
+                            str="${str::l}"
+                            break
                         fi
-                    fi
-                done
-            fi
+                    done
+
+                    readarray -t VOL_LIST <<<"$VOL_RESOURCES"
+                    for x in "${!VOL_LIST[@]}"; do
+                        VOL_SOURCE=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .address')
+
+                        if [ -n "$VOL_SOURCE" ]; then
+                            VOL_INDEX=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .index')
+                            test="${VOL_LIST[$x]/$str/}"
+                            vol=$(echo "$test" | cut -d"-" -f3-)
+                            VOL_DESTINATION=${VOL_SOURCE//"$VOL_INDEX"/"${subnet_name}-${j}-${vol}"}
+                            if [ -n "$VOL_SOURCE" ] || [ -n "$VOL_DESTINATION" ]; then
+                                MOVED_PARAMS+=("'$VOL_SOURCE' '$VOL_DESTINATION'")
+                                REVERT_PARAMS+=("'$VOL_DESTINATION' '$VOL_SOURCE'")
+                            fi
+                        fi
+                    done
+                fi
+            done
         done
     done
+}
+function update_local_state() {
+    while read -r line; do
+        eval $line
+    done <"./moved.txt"
+}
+
+function revert_local_state() {
+    if ! [ -f "./revert.txt" ]; then
+        echo "Revert.txt does not exist."
+    else
+        if [ -s "./revert.txt" ]; then
+            while read -r line; do
+                eval $line
+            done <"./revert.txt"
+        else
+            echo "Revert.txt is empty."
+        fi
+    fi
+
+}
+create_txt() {
+    for movedparam in "${!MOVED_PARAMS[@]}"; do
+        echo "terraform state mv ${MOVED_PARAMS[$movedparam]}" >>./moved.txt
+    done
+    for revertparam in "${!REVERT_PARAMS[@]}"; do
+        echo "terraform state mv ${REVERT_PARAMS[$revertparam]}" >>./revert.txt
+    done
+}
+
+create_txt_files() {
+    # Define the file path and content
+    MOVED_JSON="./moved.txt"
+    REVERT_JSON="./revert.txt"
+
+    # Check if the file exists
+    if [ -f "$MOVED_JSON" ] || [ -f "$REVERT_JSON" ]; then
+        # If the file exists, empty it
+        >"$MOVED_JSON"
+        >"$REVERT_JSON"
+    else
+        # If the file does not exist, create it
+        touch "$MOVED_JSON"
+        touch "$REVERT_JSON"
+    fi
+
 }
 
 # run
 function main() {
-    verify_required_env_var
-    ibmcloud_login
-    get_details
-    update_state
+    if [ "$REVERT" == false ]; then
+        dependency_check
+        create_txt_files
+        verify_required_env_var
+        ibmcloud_login
+        get_details
+        update_state
+        create_txt
+        update_local_state
+    else
+
+        revert_local_state
+    fi
 }
 
 main
