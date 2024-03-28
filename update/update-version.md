@@ -4,39 +4,8 @@ Starting from version v4.x.x, we have refactored the code for the VSI module, re
 
 By employing the suggested method, you can avoid the need for VSI recreation.
 
-- [Local Terraform State file](#local-state)
 - [Schematics](#schematics)
-
-## Terraform CLI
-{: #local-state}
-
-If you have both the code and the Terraform state file stored locally on your machine, you can utilize the update_v3.x.x_to_v4.x.x.sh script to avoid the recreation of Virtual Server Instances (VSIs).
-
-1. Make sure you have all the dependencies to run the script.
-    - IBM Cloud CLI
-    - IBM Cloud CLI 'is' plugin
-    - Terraform CLI
-    - jq
-    - readarray
-
-2. Set the `IBMCLOUD_API_KEY` variable as an environment variable.
-
-3. Retrive the VPC IDs of the VPC on which all the VSIs are deployed, including the region of VPC.
-
-4. Run the script
-```sh
-bash update_v3.x.x_to_v4.x.x.sh -v "<vpc-id1>,[<vpc-id2>,...]" -r "<vpc-region>"
-```
-
-5. Now pull in the latest release and run `terraform plan` and make sure none of the VSIs will be recreated.
-
-6. Run `terraform apply`.
-
-7. [Optional] If an issue occurs during the Terraform state migration, you can undo the modifications made by the script by running it again with the -z option. For example,
-```sh
-bash update_v3.x.x_to_v4.x.x.sh -z
-```
-Reverting the Terraform state file back to its prior condition, which existed prior to the execution of the script.
+- [Local Terraform State file](#local-state)
 
 ## Schematics
 {: #schematics}
@@ -70,3 +39,34 @@ This script will trigger a new job in the schematics workspace, please monitor t
 bash schematics_update_v3.x.x_to_v4.x.x.sh -z
 ```
 A new schematics workspace job reverting the state back to its prior condition, which existed prior to the execution of the script.
+
+## Local Terraform State file
+{: #local-state}
+
+If you have both the code and the Terraform state file stored locally on your machine, you can utilize the update_v3.x.x_to_v4.x.x.sh script to avoid the recreation of Virtual Server Instances (VSIs).
+
+1. Make sure you have all the dependencies to run the script.
+    - IBM Cloud CLI
+    - IBM Cloud CLI 'is' plugin
+    - Terraform CLI
+    - jq
+    - readarray
+
+2. Set the `IBMCLOUD_API_KEY` variable as an environment variable.
+
+3. Retrive the VPC IDs of the VPC on which all the VSIs are deployed, including the region of VPC.
+
+4. Run the script
+```sh
+bash update_v3.x.x_to_v4.x.x.sh -v "<vpc-id1>,[<vpc-id2>,...]" -r "<vpc-region>"
+```
+
+5. Now pull in the latest release and run `terraform plan` and make sure none of the VSIs will be recreated.
+
+6. Run `terraform apply`.
+
+7. [Optional] If an issue occurs during the Terraform state migration, you can undo the modifications made by the script by running it again with the -z option. For example,
+```sh
+bash update_v3.x.x_to_v4.x.x.sh -z
+```
+Reverting the Terraform state file back to its prior condition, which existed prior to the execution of the script.
