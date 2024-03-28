@@ -45,10 +45,17 @@ if [ "$REVERT" == false ]; then
 fi
 
 function dependency_check() {
-    dependencies=("ibmcloud" "ibmcloud is" "ibmcloud schematics" "jq" "readarray")
+    dependencies=("ibmcloud" "jq" "readarray")
     for dependency in "${dependencies[@]}"; do
         if ! command -v "$dependency" >/dev/null 2>&1; then
-            echo "$dependency is not installed. Please install $dependency."
+            echo "\"$dependency\" is not installed. Please install $dependency."
+            exit 1
+        fi
+    done
+    plugin_dependencies=("vpc-infrastructure")
+    for plugin_dependency in "${plugin_dependencies[@]}"; do
+        if ! ibmcloud plugin show "$plugin_dependency" >/dev/null; then
+            echo "\"$plugin_dependency\" ibmcloud plugin is not installed. Please install $plugin_dependency."
             exit 1
         fi
     done

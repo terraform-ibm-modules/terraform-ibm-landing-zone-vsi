@@ -43,10 +43,17 @@ if [ "$REVERT" == false ]; then
 fi
 
 function dependency_check() {
-    dependencies=("ibmcloud" "ibmcloud is" "ibmcloud schematics" "jq" "readarray")
+    dependencies=("ibmcloud" "jq" "readarray")
     for dependency in "${dependencies[@]}"; do
         if ! command -v "$dependency" >/dev/null 2>&1; then
-            echo "$dependency is not installed. Please install $dependency."
+            echo "\"$dependency\" is not installed. Please install $dependency."
+            exit 1
+        fi
+    done
+    plugin_dependencies=("schematics" "vpc-infrastructure")
+    for plugin_dependency in "${plugin_dependencies[@]}"; do
+        if ! ibmcloud plugin show "$plugin_dependency" >/dev/null; then
+            echo "\"$plugin_dependency\" ibmcloud plugin is not installed. Please install $plugin_dependency."
             exit 1
         fi
     done
@@ -89,7 +96,7 @@ function get_workspace_details() {
 }
 
 function update_state() {
-    until ibmcloud target -r "$VPC_REGION" || [ $attempts -ge 3 ]; do
+    until ibmcloud target -r "$VPC_REGION" || [ "$attempts" -ge 3 ]; do
         attempts=$((attempts + 1))
         echo "Error logging in to IBM Cloud CLI..."
         sleep 3
@@ -159,25 +166,12 @@ function update_state() {
 }
 
 function update_schematics() {
-    until ibmcloud target -r "$WORKSPACE_REGION" || [ $attempts -ge 3 ]; do
+    until ibmcloud target -r "$WORKSPACE_REGION" || [ "$attempts" -ge 3 ]; do
         attempts=$((attempts + 1))
         echo "Error logging in to IBM Cloud CLI..."
         sleep 3
     done
     ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./moved.json
-    # sleep 60
-    # while true; do
-    #     status=$(ibmcloud schematics workspace get --id "$WORKSPACE_ID" -o json | jq -r .status)
-    #     echo "$status"
-    #     if [[ "$status" == "ACTIVE" ]]; then
-    #         echo "Change Done"
-    #         break
-    #     elif [[ "$status" == "FAILED" ]]; then
-    #         ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./revert.json
-    #     fi
-    #     sleep 10
-    #     status=""
-    # done
 }
 
 function revert_schematics() {
