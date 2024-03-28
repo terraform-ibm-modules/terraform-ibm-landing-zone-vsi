@@ -5,7 +5,7 @@ Starting from version v4.x.x, we have refactored the code for the VSI module, re
 By employing the suggested method, you can avoid the need for VSI recreation.
 
 - [Schematics](#schematics)
-- [Local Terraform State file](#local-state)
+- [Local Terraform State file](#local)
 
 ## Schematics
 {: #schematics}
@@ -41,7 +41,7 @@ bash schematics_update_v3.x.x_to_v4.x.x.sh -z
 A new schematics workspace job reverting the state back to its prior condition, which existed prior to the execution of the script.
 
 ## Local Terraform State file
-{: #local-state}
+{: #local}
 
 If you have both the code and the Terraform state file stored locally on your machine, you can utilize the update_v3.x.x_to_v4.x.x.sh script to avoid the recreation of Virtual Server Instances (VSIs).
 
