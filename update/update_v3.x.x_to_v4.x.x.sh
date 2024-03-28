@@ -10,7 +10,6 @@ usage: ./${PRG}
     - IBM Cloud CLI 'is' plugin
     - Terraform CLI
     - jq
-    - readarray
 "
 
 STATE_LOCATION=""
@@ -45,7 +44,7 @@ if [ "$REVERT" == false ]; then
 fi
 
 function dependency_check() {
-    dependencies=("ibmcloud" "jq" "readarray")
+    dependencies=("ibmcloud" "jq")
     for dependency in "${dependencies[@]}"; do
         if ! command -v "$dependency" >/dev/null 2>&1; then
             echo "\"$dependency\" is not installed. Please install $dependency."
@@ -100,16 +99,19 @@ function get_details() {
 }
 
 function update_state() {
-    readarray -td, VPC_LIST <<<"$VPC_ID"
+    VPC_LIST=()
+    IFS=',' read -r -d '' -a VPC_LIST <<<"$VPC_ID"
     for vpc in "${!VPC_LIST[@]}"; do
         VPC_DATA=$(ibmcloud is vpc "${VPC_LIST[$vpc]//$'\n'/}" --output JSON --show-attached -q)
-        readarray -t SUBNET_LIST <<<"$(echo "$VPC_DATA" | jq -r '.subnets[] | .id')"
+        SUBNET_LIST=()
+        while IFS='' read -r line; do SUBNET_LIST+=("$line"); done < <(echo "$VPC_DATA" | jq -r '.subnets[] | .id')
 
         for i in "${!SUBNET_LIST[@]}"; do
             subnet_name=$(echo "$VPC_DATA" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.subnets[] | select(.id == $subnet_id) | .name')
             vsi_names=$(echo "$STATE" | jq -r --arg subnet "${SUBNET_LIST[$i]}" '.. | objects | select((.values.primary_network_interface[0].subnet == $subnet) and (.type == "ibm_is_instance")) | .index')
 
-            readarray -t VSI_LIST <<<"$vsi_names"
+            VSI_LIST=()
+            IFS=$'\n' read -r -d '' -a VSI_LIST <<<"$vsi_names"
 
             for j in "${!VSI_LIST[@]}"; do
                 SOURCE=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_instance")) | .address')
@@ -132,8 +134,8 @@ function update_state() {
                             break
                         fi
                     done
-
-                    readarray -t VOL_LIST <<<"$VOL_RESOURCES"
+                    VOL_LIST=()
+                    IFS=$'\n' read -r -d '' -a VOL_LIST <<<"$VOL_RESOURCES"
                     for x in "${!VOL_LIST[@]}"; do
                         VOL_SOURCE=$(echo "$STATE" | jq -r --arg index "${VOL_LIST[$x]}" '.. | objects | select((.values.name == $index) and (.type == "ibm_is_volume")) | .address')
 

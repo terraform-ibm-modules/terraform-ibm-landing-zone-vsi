@@ -11,7 +11,6 @@ usage: ./${PRG}
     - IBM Cloud CLI 'is' plugin
     - Terraform CLI
     - jq
-    - readarray
 "
 VOL_RESOURCES=""
 VOL_NAMES=""
@@ -43,7 +42,7 @@ if [ "$REVERT" == false ]; then
 fi
 
 function dependency_check() {
-    dependencies=("ibmcloud" "jq" "readarray")
+    dependencies=("ibmcloud" "jq")
     for dependency in "${dependencies[@]}"; do
         if ! command -v "$dependency" >/dev/null 2>&1; then
             echo "\"$dependency\" is not installed. Please install $dependency."
@@ -101,19 +100,22 @@ function update_state() {
         echo "Error logging in to IBM Cloud CLI..."
         sleep 3
     done
-    readarray -td, VPC_LIST <<<"$VPC_ID"
+    VPC_LIST=()
+    IFS=',' read -r -d '' -a VPC_LIST <<<"$VPC_ID"
     for vpc in "${!VPC_LIST[@]}"; do
         VPC_DATA=$(ibmcloud is vpc "${VPC_LIST[$vpc]//$'\n'/}" --output JSON --show-attached -q)
-        readarray -t SUBNET_LIST <<<"$(echo "$VPC_DATA" | jq -r '.subnets[] | .id')"
-
-        readarray -t ADDRESS_LIST <<<"$(echo "$STATE" | jq -r '.resources[] | select(.type == "ibm_is_instance") | .module')"
+        SUBNET_LIST=()
+        while IFS='' read -r line; do SUBNET_LIST+=("$line"); done < <(echo "$VPC_DATA" | jq -r '.subnets[] | .id')
+        ADDRESS_LIST=()
+        while IFS='' read -r line; do ADDRESS_LIST+=("$line"); done < <(echo "$STATE" | jq -r '.resources[] | select(.type == "ibm_is_instance") | .module')
 
         for i in "${!SUBNET_LIST[@]}"; do
             for j in "${!ADDRESS_LIST[@]}"; do
                 VSI_RESOURCES="$(echo "$STATE" | jq -r --arg address "${ADDRESS_LIST[$j]}" '.resources[] | select((.type == "ibm_is_instance") and (.module == $address)) | .instances')"
                 subnet_name=$(echo "$VPC_DATA" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.subnets[] | select(.id == $subnet_id) | .name')
                 vsi_names=$(echo "$VSI_RESOURCES" | jq -r --arg subnet_id "${SUBNET_LIST[$i]}" '.[] | select(.attributes.primary_network_interface[0].subnet == $subnet_id) | .index_key')
-                readarray -t VSI_LIST <<<"$vsi_names"
+                VSI_LIST=()
+                IFS=$'\n' read -r -d '' -a VSI_LIST <<<"$vsi_names"
 
                 for x in "${!VSI_LIST[@]}"; do
                     SOURCE="${ADDRESS_LIST[$j]}.ibm_is_instance.vsi[\"${VSI_LIST[$x]}\"]"
@@ -136,13 +138,16 @@ function update_state() {
                         fi
                     done
                     if [ -n "$VOL_NAMES" ]; then
-                        readarray -t VOL_ADDRESS_LIST <<<"$(echo "$STATE" | jq -r '.resources[] | select(.type == "ibm_is_volume") | .module')"
-                        readarray -t VOL_NAME <<<"$VOL_NAMES"
+                        VOL_ADDRESS_LIST=()
+                        while IFS='' read -r line; do VOL_ADDRESS_LIST+=("$line"); done < <(echo "$STATE" | jq -r '.resources[] | select(.type == "ibm_is_volume") | .module')
+                        VOL_NAME=()
+                        IFS=$'\n' read -r -d '' -a VOL_NAME <<<"$VOL_NAMES"
                         for a in "${!VOL_NAME[@]}"; do
                             for b in "${!VOL_ADDRESS_LIST[@]}"; do
                                 VOL_RESOURCES="$(echo "$STATE" | jq -r --arg address "${VOL_ADDRESS_LIST[$b]}" '.resources[] | select((.type == "ibm_is_volume") and (.module == $address)) | .instances')"
                                 vol_names=$(echo "$VOL_RESOURCES" | jq -r --arg vol1 "${VOL_NAME[$a]}" '.[] | select(.attributes.name == $vol1) | .index_key')
-                                readarray -t VOL_LIST <<<"$vol_names"
+                                VOL_LIST=()
+                                IFS=$'\n' read -r -d '' -a VOL_LIST <<<"$vol_names"
                                 for c in "${!VOL_LIST[@]}"; do
                                     if [ -n "${VOL_LIST[$c]}" ]; then
                                         VOL_SOURCE="${ADDRESS_LIST[$j]}.ibm_is_volume.volume[\"${VOL_LIST[$c]}\"]"
