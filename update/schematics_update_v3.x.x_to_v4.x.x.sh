@@ -15,20 +15,24 @@ usage: ./${PRG}
 VOL_RESOURCES=""
 VOL_NAMES=""
 REVERT=false
+VPC_IBMCLOUD_API_KEY=""
 
 helpFunction() {
     echo ""
-    echo "Usage: $0 -v VPC_ID -r VPC_REGION [-z]"
+    echo "Usage: $0 -v VPC_ID -r VPC_REGION [-k VPC_IBMCLOUD_API_KEY] [-z]"
     echo -e "\t-v , seperated IDs or names of the VPC in which the VSIs are deployed which needs to be tracked by the newer version of the terraform module."
     echo -e "\t-r Region of the VPC."
+    echo -e "\t-k [Optional] IBMCLOUD_API_KEY to access the VPCs, if the VPCs are deployed in a different account."
+    echo -e "\t-z [Optional] Flag to revert the changes done to the state file."
     exit 1 # Exit script after printing help
 }
 
-while getopts "v:r:z" opt; do
+while getopts "v:r:z:k" opt; do
     case "$opt" in
     v) VPC_ID="$OPTARG" ;;
     r) VPC_REGION="$OPTARG" ;;
     z) REVERT=true ;;
+    k) VPC_IBMCLOUD_API_KEY="$OPTARG" ;;
     ?) helpFunction ;; # Print helpFunction in case parameter is non-existent
     esac
 done
@@ -95,11 +99,19 @@ function get_workspace_details() {
 }
 
 function update_state() {
-    until ibmcloud target -r "$VPC_REGION" || [ "$attempts" -ge 3 ]; do
-        attempts=$((attempts + 1))
-        echo "Error logging in to IBM Cloud CLI..."
-        sleep 3
-    done
+    if [[ -z "$VPC_IBMCLOUD_API_KEY" ]]; then
+        until ibmcloud target -r "$VPC_REGION" || [ "$attempts" -ge 3 ]; do
+            attempts=$((attempts + 1))
+            echo "Error logging in to IBM Cloud CLI..."
+            sleep 3
+        done
+    else
+        until ibmcloud login --apikey "$VPC_IBMCLOUD_API_KEY" -r "$VPC_REGION" || [ $attempts -ge 3 ]; do
+            attempts=$((attempts + 1))
+            echo "Error logging in to IBM Cloud CLI..."
+            sleep 3
+        done
+    fi
     VPC_LIST=()
     IFS=',' read -r -d '' -a VPC_LIST <<<"$VPC_ID"
     for vpc in "${!VPC_LIST[@]}"; do
@@ -171,11 +183,20 @@ function update_state() {
 }
 
 function update_schematics() {
-    until ibmcloud target -r "$WORKSPACE_REGION" || [ "$attempts" -ge 3 ]; do
-        attempts=$((attempts + 1))
-        echo "Error logging in to IBM Cloud CLI..."
-        sleep 3
-    done
+    if [[ -z "$VPC_IBMCLOUD_API_KEY" ]]; then
+        until ibmcloud target -r "$WORKSPACE_REGION" || [ "$attempts" -ge 3 ]; do
+            attempts=$((attempts + 1))
+            echo "Error logging in to IBM Cloud CLI..."
+            sleep 3
+        done
+    else
+        until ibmcloud login --apikey "$IBMCLOUD_API_KEY" -r "$WORKSPACE_REGION" || [ $attempts -ge 3 ]; do
+            attempts=$((attempts + 1))
+            echo "Error logging in to IBM Cloud CLI..."
+            sleep 3
+        done
+    fi
+
     ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./moved.json
 }
 
@@ -184,11 +205,19 @@ function revert_schematics() {
         echo "Revert.json does not exist."
     else
         if [ -s "./revert.json" ]; then
-            until ibmcloud target -r "$WORKSPACE_REGION" || [ $attempts -ge 3 ]; do
-                attempts=$((attempts + 1))
-                echo "Error logging in to IBM Cloud CLI..."
-                sleep 3
-            done
+            if [[ -z "$VPC_IBMCLOUD_API_KEY" ]]; then
+                until ibmcloud target -r "$WORKSPACE_REGION" || [ "$attempts" -ge 3 ]; do
+                    attempts=$((attempts + 1))
+                    echo "Error logging in to IBM Cloud CLI..."
+                    sleep 3
+                done
+            else
+                until ibmcloud login --apikey "$IBMCLOUD_API_KEY" -r "$WORKSPACE_REGION" || [ $attempts -ge 3 ]; do
+                    attempts=$((attempts + 1))
+                    echo "Error logging in to IBM Cloud CLI..."
+                    sleep 3
+                done
+            fi
             ibmcloud schematics workspace commands --id "$WORKSPACE_ID" --file ./revert.json
         else
             echo "Revert.json is empty."

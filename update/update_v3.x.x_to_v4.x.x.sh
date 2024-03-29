@@ -22,6 +22,7 @@ helpFunction() {
     echo -e "\t-v , seperated IDs or names of the VPC in which the VSIs are deployed which needs to be tracked by the newer version of the terraform module."
     echo -e "\t-r Region of the VPC."
     echo -e "\t-t Path of the terrafom state file. If no path is specified, the current state will be shown."
+    echo -e "\t-z [Optional] Flag to revert the changes done to the state file."
     exit 1 # Exit script after printing help
 }
 
