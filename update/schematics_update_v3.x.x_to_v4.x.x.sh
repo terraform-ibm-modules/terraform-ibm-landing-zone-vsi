@@ -27,12 +27,12 @@ helpFunction() {
     exit 1 # Exit script after printing help
 }
 
-while getopts "v:r:z:k" opt; do
+while getopts "v:r:z:k:" opt; do
     case "$opt" in
     v) VPC_ID="$OPTARG" ;;
     r) VPC_REGION="$OPTARG" ;;
-    z) REVERT=true ;;
     k) VPC_IBMCLOUD_API_KEY="$OPTARG" ;;
+    z) REVERT=true ;;
     ?) helpFunction ;; # Print helpFunction in case parameter is non-existent
     esac
 done

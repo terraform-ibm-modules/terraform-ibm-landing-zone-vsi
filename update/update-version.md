@@ -22,7 +22,7 @@ If you have your cloud infrastructure deployed using Schematics, you can use the
 1. Set the `IBMCLOUD_API_KEY`, `WORKSPACE_ID` variables as an environment variable.
     1. IBMCLOUD_API_KEY : This is an IBM Cloud API key, which can be used for accessing the Projects/Schematics Workspace. For more information, see https://cloud.ibm.com/docs/account?topic=account-userapikey&interface=ui
     ```sh
-        export IBMCLOUD_API_KEY="<API-KEY>"
+        export IBMCLOUD_API_KEY="<API-KEY>" #pragma: allowlist secret
     ```
 
     1. Get Workspace ID from Schematics Workspace:
@@ -30,7 +30,7 @@ If you have your cloud infrastructure deployed using Schematics, you can use the
         - Select the workspace associated with your vsi deployment.
         - Click **Settings** on the left hand side Menu.
         - Copy **Workspace ID** from the Details tab.
-    1. Get Workspace ID from Projects: 
+    1. Get Workspace ID from Projects:
         - In the {{site.data.keyword.cloud_notm}} console, click the **Navigation menu** icon ![Navigation menu icon](../icons/icon_hamburger.svg "Menu"), and then click **Projects**.
         - Select the Project associated with your VSI deployment.
         - Click on the **Configurations** tab.
@@ -51,7 +51,7 @@ If you have your cloud infrastructure deployed using Schematics, you can use the
         - In the {{site.data.keyword.cloud_notm}} console, click the **Navigation menu** icon ![Navigation menu icon](../icons/icon_hamburger.svg "Menu"), and then click **Projects**.
         - Select the Project associated with your VSI deployment.
         - Click on the **Configurations** tab.
-        - Select the configuration associated with your VSI deployment. 
+        - Select the configuration associated with your VSI deployment.
         - In the **Outputs** tab you can find an output labeled **vpc_data**.
         - Clicking on it will open a json of all the VPC data of the VPCs provisioned.
         - Copy the VPC IDs from the **vpc_data** json.
@@ -88,7 +88,7 @@ If you have both the code and the Terraform state file stored locally on your ma
 1. Set the `IBMCLOUD_API_KEY` variable as an environment variable.
     1. IBMCLOUD_API_KEY : This is an IBM Cloud API key, which can be used for accessing the Projects/Schematics Workspace. For more information, see https://cloud.ibm.com/docs/account?topic=account-userapikey&interface=ui
     ```sh
-        export IBMCLOUD_API_KEY="<API-KEY>"
+        export IBMCLOUD_API_KEY="<API-KEY>" #pragma: allowlist secret
     ```
 
 1. Retrive the VPC IDs of the VPC on which all the VSIs are deployed, including the region of VPC.

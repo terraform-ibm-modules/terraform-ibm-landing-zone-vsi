@@ -28,7 +28,7 @@ locals {
       for subnet in range(length(var.subnets)) :
       {
         name        = "${var.subnets[subnet].name}-${count}"
-        vsi_name    = "${var.prefix}-${var.subnets[subnet].name}-${format("%03d", count)}"
+        vsi_name    = "${var.prefix}-${format("%03d", count * length(var.subnets) + subnet + 1)}"
         subnet_id   = var.subnets[subnet].id
         zone        = var.subnets[subnet].zone
         subnet_name = var.subnets[subnet].name
