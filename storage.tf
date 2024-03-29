@@ -14,7 +14,7 @@ locals {
         for volume in var.block_storage_volumes :
         {
           name           = "${var.subnets[subnet].name}-${count}-${volume.name}"
-          vol_name       = "${var.prefix}-${format("%03d", subnet * var.vsi_per_subnet + count + 1)}-${volume.name}"
+          vol_name       = "${var.prefix}-${format("%03d", count * length(var.subnets) + subnet + 1)}-${volume.name}"
           zone           = var.subnets[subnet].zone
           profile        = volume.profile
           capacity       = volume.capacity
