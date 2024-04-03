@@ -54,3 +54,7 @@ Brewfile.lock.json
 
 # Ignore .vscode files
 .vscode/
+
+# Ignore schematics json
+/update/*.json
+
