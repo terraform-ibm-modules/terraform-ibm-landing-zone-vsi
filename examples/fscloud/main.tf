@@ -78,6 +78,39 @@ module "slz_vsi" {
     {
       name    = var.prefix
       profile = "10iops-tier"
+  },{
+      name    = "${var.prefix}-test"
+      profile = "10iops-tier"
   }]
-  skip_iam_authorization_policy = var.skip_iam_authorization_policy
+  skip_iam_authorization_policy = true
+}
+
+module "slz_vsi1" {
+  source                     = "../../modules/fscloud"
+  resource_group_id          = module.resource_group.resource_group_id
+  image_id                   = var.image_id
+  create_security_group      = var.create_security_group
+  security_group             = var.security_group
+  tags                       = var.resource_tags
+  subnets                    = module.slz_vpc.subnet_zone_list
+  vpc_id                     = module.slz_vpc.vpc_id
+  prefix                     = "${var.prefix}-1"
+  machine_type               = var.machine_type
+  user_data                  = var.user_data
+  boot_volume_encryption_key = var.boot_volume_encryption_key
+  existing_kms_instance_guid = var.existing_kms_instance_guid
+  vsi_per_subnet             = var.vsi_per_subnet
+  ssh_key_ids                = [local.ssh_key_id]
+  access_tags                = var.access_tags
+  # Add 1 additional data volume to each VSI
+  block_storage_volumes = [
+    {
+      name    = "${var.prefix}-1"
+      profile = "10iops-tier"
+  }, {
+      name    = "${var.prefix}-1-test"
+      profile = "10iops-tier"
+  }
+  ]
+  skip_iam_authorization_policy = true
 }
