@@ -57,4 +57,3 @@ Brewfile.lock.json
 
 # Ignore schematics json
 /update/*.json
-
