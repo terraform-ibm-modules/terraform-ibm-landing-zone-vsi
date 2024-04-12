@@ -190,7 +190,7 @@ module "slz_vsi" {
   }]
   load_balancers = [
     {
-      name                    = "${var.prefix}-lb"
+      name                    = "${var.prefix}-alb"
       type                    = "public"
       listener_port           = 9080
       listener_protocol       = "http"
@@ -203,6 +203,20 @@ module "slz_vsi" {
       health_timeout          = 30
       health_type             = "http"
       pool_member_port        = 8080
+    },
+    {
+      name              = "${var.prefix}-nlb"
+      type              = "public"
+      profile           = "network-fixed"
+      listener_port     = 3128
+      listener_protocol = "tcp"
+      algorithm         = "round_robin"
+      protocol          = "tcp"
+      health_delay      = 60
+      health_retries    = 5
+      health_timeout    = 30
+      health_type       = "tcp"
+      pool_member_port  = 3120
     }
   ]
 }
