@@ -190,7 +190,7 @@ module "slz_vsi" {
   }]
   load_balancers = [
     {
-      name                    = "${var.prefix}-alb"
+      name                    = "${var.prefix}-lb"
       type                    = "public"
       listener_port           = 9080
       listener_protocol       = "http"
