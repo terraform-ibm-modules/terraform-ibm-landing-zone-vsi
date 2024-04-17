@@ -89,6 +89,13 @@ resource "ibm_iam_authorization_policy" "block_storage_policy" {
   description                 = "Allow block storage volumes to be encrypted by Key Management instance."
 }
 
+resource "ibm_is_subnet_reserved_ip" "vsi_ip" {
+  for_each    = local.vsi_map
+  name        = "${each.value.name}-ip"
+  subnet      = each.value.subnet_id
+  auto_delete = false
+}
+
 resource "ibm_is_instance" "vsi" {
   for_each        = local.vsi_map
   name            = each.value.vsi_name
@@ -116,6 +123,9 @@ resource "ibm_is_instance" "vsi" {
       (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
     ])
     allow_ip_spoofing = var.allow_ip_spoofing
+    primary_ip {
+      reserved_ip = ibm_is_subnet_reserved_ip.vsi_ip[each.value.name].reserved_ip
+    }
   }
 
   dynamic "network_interfaces" {
