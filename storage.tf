@@ -16,7 +16,7 @@ locals {
           name           = "${var.prefix}-${(subnet) * (var.vsi_per_subnet) + count + 1}-${volume.name}"
           vol_name       = "${var.prefix}-${format("%03d", subnet * var.vsi_per_subnet + count + 1)}-${volume.name}"
           zone           = var.subnets[subnet].zone
-          profile        = (var.storage_volume_snapshot_id == null) ? volume.profile : null
+          profile        = volume.profile
           capacity       = (var.storage_volume_snapshot_id == null) ? volume.capacity : null
           vsi_name       = "${var.prefix}-${(count) * length(var.subnets) + subnet + 1}"
           iops           = (var.storage_volume_snapshot_id == null) ? volume.iops : null
