@@ -16,12 +16,13 @@ locals {
           name           = "${var.prefix}-${(subnet) * (var.vsi_per_subnet) + count + 1}-${volume.name}"
           vol_name       = "${var.prefix}-${format("%03d", subnet * var.vsi_per_subnet + count + 1)}-${volume.name}"
           zone           = var.subnets[subnet].zone
-          profile        = volume.profile
-          capacity       = volume.capacity
+          profile        = (var.storage_volume_snapshot_id == null) ? volume.profile : null
+          capacity       = (var.storage_volume_snapshot_id == null) ? volume.capacity : null
           vsi_name       = "${var.prefix}-${(count) * length(var.subnets) + subnet + 1}"
-          iops           = volume.iops
-          encryption_key = var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key
+          iops           = (var.storage_volume_snapshot_id == null) ? volume.iops : null
+          encryption_key = (var.storage_volume_snapshot_id == null) ? (var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key) : null
           resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
+          snapshot_id    = var.storage_volume_snapshot_id
         }
       ]
     ]
@@ -41,16 +42,17 @@ locals {
 ##############################################################################
 
 resource "ibm_is_volume" "volume" {
-  for_each       = local.volume_map
-  name           = each.value.vol_name
-  profile        = each.value.profile
-  zone           = each.value.zone
-  iops           = each.value.iops
-  capacity       = each.value.capacity
-  encryption_key = each.value.encryption_key
-  resource_group = each.value.resource_group
-  tags           = var.tags
-  access_tags    = var.access_tags
+  for_each        = local.volume_map
+  name            = each.value.vol_name
+  profile         = each.value.profile
+  zone            = each.value.zone
+  iops            = each.value.iops
+  capacity        = each.value.capacity
+  encryption_key  = each.value.encryption_key
+  resource_group  = each.value.resource_group
+  tags            = var.tags
+  access_tags     = var.access_tags
+  source_snapshot = each.value.snapshot_id
 }
 
 ##############################################################################

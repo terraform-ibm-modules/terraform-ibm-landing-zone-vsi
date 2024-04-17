@@ -423,3 +423,21 @@ variable "secondary_allow_ip_spoofing" {
 }
 
 ##############################################################################
+
+##############################################################################
+# Secondary Interface Variables
+##############################################################################
+
+variable "boot_volume_snapshot_id" {
+  description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)"
+  type        = string
+  default     = null
+}
+
+variable "storage_volume_snapshot_id" {
+  description = "The snapshot id of the volume to be used for creating block storage volumes"
+  type        = string
+  default     = null
+}
+
+##############################################################################
