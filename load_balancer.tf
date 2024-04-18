@@ -14,7 +14,7 @@ locals {
 resource "ibm_is_lb" "lb" {
   for_each        = local.load_balancer_map
   name            = "${var.prefix}-${each.value.name}-lb"
-  subnets         = (each.value.profile == "network-fixed") ? [local.subnets_id[0]] : local.subnets_id
+  subnets         = (each.value.profile == "network-fixed") ? (each.value.subnet_id_to_provision_nlb != null ? [each.value.subnet_id_to_provision_nlb] : [local.subnets_id[0]]) : local.subnets_id
   type            = each.value.type #checkov:skip=CKV2_IBM_1:See https://github.com/bridgecrewio/checkov/issues/5824#
   profile         = each.value.profile
   security_groups = each.value.security_group == null ? null : [ibm_is_security_group.security_group[each.value.security_group.name].id]
