@@ -225,6 +225,7 @@ variable "block_storage_volumes" {
       iops              = optional(number)
       encryption_key    = optional(string)
       resource_group_id = optional(string)
+      snapshot_id       = optional(string) # set if you would like to base volume on a snapshot
     })
   )
   default = []
@@ -436,12 +437,6 @@ variable "secondary_allow_ip_spoofing" {
 
 variable "boot_volume_snapshot_id" {
   description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)"
-  type        = string
-  default     = null
-}
-
-variable "storage_volume_snapshot_id" {
-  description = "The snapshot id of the volume to be used for creating block storage volumes"
   type        = string
   default     = null
 }

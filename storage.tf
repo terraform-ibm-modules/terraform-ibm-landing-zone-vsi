@@ -17,12 +17,12 @@ locals {
           vol_name       = "${var.prefix}-${format("%03d", subnet * var.vsi_per_subnet + count + 1)}-${volume.name}"
           zone           = var.subnets[subnet].zone
           profile        = volume.profile
-          capacity       = (var.storage_volume_snapshot_id == null) ? volume.capacity : null
+          capacity       = (volume.snapshot_id == null) ? volume.capacity : null
           vsi_name       = "${var.prefix}-${(count) * length(var.subnets) + subnet + 1}"
-          iops           = (var.storage_volume_snapshot_id == null) ? volume.iops : null
-          encryption_key = (var.storage_volume_snapshot_id == null) ? (var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key) : null
+          iops           = (volume.snapshot_id == null) ? volume.iops : null
+          encryption_key = (volume.snapshot_id == null) ? (var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key) : null
           resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
-          snapshot_id    = var.storage_volume_snapshot_id
+          snapshot_id    = volume.snapshot_id
         }
       ]
     ]
