@@ -104,6 +104,12 @@ variable "existing_kms_instance_guid" {
   default     = null
 }
 
+variable "manage_reserved_ips" {
+  description = "Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP."
+  type        = bool
+  default     = false
+}
+
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created"
   type        = bool
@@ -425,7 +431,7 @@ variable "secondary_allow_ip_spoofing" {
 ##############################################################################
 
 ##############################################################################
-# Secondary Interface Variables
+# Snapshot Restore Variables
 ##############################################################################
 
 variable "boot_volume_snapshot_id" {
