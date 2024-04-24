@@ -56,6 +56,9 @@ locals {
       }
     ]
   ])
+
+  # determine snapshot in following order: input variable -> from consistency group -> null (none)
+  vsi_boot_volume_snapshot_id = try(coalesce(var.boot_volume_snapshot_id, local.consistency_group_boot_snapshot_id), null)
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
@@ -99,7 +102,7 @@ resource "ibm_is_subnet_reserved_ip" "vsi_ip" {
 resource "ibm_is_instance" "vsi" {
   for_each        = local.vsi_map
   name            = each.value.vsi_name
-  image           = (var.boot_volume_snapshot_id == null) ? var.image_id : null # image and snapshot are mutually exclusive
+  image           = (local.vsi_boot_volume_snapshot_id == null) ? var.image_id : null # image and snapshot are mutually exclusive
   profile         = var.machine_type
   resource_group  = var.resource_group_id
   vpc             = var.vpc_id
@@ -159,7 +162,8 @@ resource "ibm_is_instance" "vsi" {
 
   boot_volume {
     encryption = var.boot_volume_encryption_key
-    snapshot   = var.boot_volume_snapshot_id
+    # determine snapshot in following order: input variable -> from consistency group -> null (none)
+    snapshot = local.vsi_boot_volume_snapshot_id
   }
 
   # Only add volumes if volumes are being created by the module

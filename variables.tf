@@ -441,4 +441,10 @@ variable "boot_volume_snapshot_id" {
   default     = null
 }
 
+variable "snapshot_consistency_group_id" {
+  description = "The snapshot consistency group Id. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot Ids by setting the appropriate input variables as well."
+  type        = string
+  default     = null
+}
+
 ##############################################################################
