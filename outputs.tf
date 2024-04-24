@@ -74,3 +74,19 @@ output "lb_security_groups" {
 }
 
 ##############################################################################
+
+##############################################################################
+# Consistency Group Outputs
+##############################################################################
+
+output "consistency_group_boot_snapshot_id" {
+  description = "The Snapshot Id used for the VSI boot volume, determined from an optionally supplied consistency group"
+  value       = local.consistency_group_boot_snapshot_id
+}
+
+output "consistency_group_storage_snapshot_ids" {
+  description = "The Snapshot Ids (string array) used for VSI attached storage volumes, determined from an optionally supplied consistency group"
+  value       = local.consistency_group_storage_snapshot_ids
+}
+
+##############################################################################
