@@ -88,6 +88,7 @@ function ibmcloud_login() {
         echo "Error logging in to IBM Cloud CLI..."
         sleep 3
     done
+    printf "\n#### Verification complete ####\n\n"
 }
 
 function get_details() {
