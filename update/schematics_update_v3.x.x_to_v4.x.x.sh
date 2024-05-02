@@ -27,7 +27,7 @@ helpFunction() {
     exit 1 # Exit script after printing help
 }
 
-while getopts "v:r:z:k:" opt; do
+while getopts "v:r:k:z" opt; do
     case "$opt" in
     v) VPC_ID="$OPTARG" ;;
     r) VPC_REGION="$OPTARG" ;;
@@ -141,6 +141,17 @@ function update_state() {
                     if [ -n "${VSI_LIST[$x]}" ]; then
                         VOL_NAMES=$(echo "$VSI_RESOURCES" | jq -r --arg vsi "${VSI_LIST[$x]}" '.[] | select(.index_key == $vsi) | .attributes.volume_attachments[].volume_name')
 
+                    fi
+                    if [ -n "${VSI_LIST[$x]}" ]; then
+                        FIP_RESOURCES="$(echo "$STATE" | jq -r --arg address "${ADDRESS_LIST[$j]}" '.resources[] | select((.type == "ibm_is_floating_ip") and (.module == $address)) | .instances')"
+                    fi
+                    if [ -n "$FIP_RESOURCES" ]; then
+                        FIP_SOURCE="${ADDRESS_LIST[$j]}.ibm_is_floating_ip.vsi_fip[\"${VSI_LIST[$x]}\"]"
+                        FIP_DESTINATION="${ADDRESS_LIST[$j]}.ibm_is_floating_ip.vsi_fip[\"${subnet_name}-${x}\"]"
+                        if [ -n "${VSI_LIST[$x]}" ] && [ -n "${subnet_name}" ]; then
+                        MOVED_PARAMS+=("$FIP_SOURCE, $FIP_DESTINATION")
+                        REVERT_PARAMS+=("$FIP_DESTINATION, $FIP_SOURCE")
+                    fi
                     fi
                     str="${VSI_LIST[$x]}"
                     lastIndex=$(echo "$str" | awk '{print length}')
