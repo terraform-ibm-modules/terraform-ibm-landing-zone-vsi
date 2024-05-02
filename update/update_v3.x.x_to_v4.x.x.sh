@@ -3,8 +3,10 @@
 PRG=$(basename -- "${0}")
 USAGE="
 usage: ./${PRG}
+
     Required environment variables:
-    IBMCLOUD_API_KEY
+    - IBMCLOUD_API_KEY
+
     Dependencies:
     - IBM Cloud CLI
     - IBM Cloud CLI 'is' plugin
@@ -18,10 +20,10 @@ REVERT=false
 
 helpFunction() {
     echo ""
-    echo "Usage: $0 -v VPC_ID -r REGION -t STATE_LOCATION [-z]"
-    echo -e "\t-v , seperated IDs or names of the VPC in which the VSIs are deployed which needs to be tracked by the newer version of the terraform module."
-    echo -e "\t-r Region of the VPC."
-    echo -e "\t-t Path of the terrafom state file. If no path is specified, the current state will be shown."
+    echo "Usage: $0 -v \"VPC_ID_1[,VPC_ID_2,..]\" -r \"REGION\" [-t \"STATE_LOCATION\"] [-z]"
+    echo -e "\t-v comma separated IDs or names of the VPC in which the VSIs are deployed."
+    echo -e "\t-r Region of the VPC(s)."
+    echo -e "\t-t [Optional] Path of the terrafom state file. If no path is specified, the current working directory will be used."
     echo -e "\t-z [Optional] Flag to revert the changes done to the state file."
     exit 1 # Exit script after printing help
 }
@@ -103,7 +105,8 @@ function get_details() {
 
 function update_state() {
     VPC_LIST=()
-    IFS=',' read -r -d '' -a VPC_LIST <<<"$VPC_ID"
+    VPC_ID=${VPC_ID//","/" "}
+    IFS=' ' read -r -a VPC_LIST <<<"$VPC_ID"
     for vpc in "${!VPC_LIST[@]}"; do
         VPC_DATA=$(ibmcloud is vpc "${VPC_LIST[$vpc]//$'\n'/}" --output JSON --show-attached -q)
         SUBNET_LIST=()

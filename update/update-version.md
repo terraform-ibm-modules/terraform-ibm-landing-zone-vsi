@@ -5,10 +5,9 @@ Starting from version v4.x.x, we have refactored the code for the VSI module, re
 By employing the suggested method, you can avoid the need for VSI recreation.
 
 - [Schematics](#schematics)
-- [Local Terraform State file](#local)
+- [Local Terraform State file](#local-terraform-state-file)
 
 ## Schematics
-{: #schematics}
 
 If you have your cloud infrastructure deployed using Schematics, you can use the  `schematics_update_v3.x.x_to_v4.x.x.sh` script to avoid the recreation of Virtual Server Instances (VSIs).
 
@@ -75,7 +74,6 @@ bash schematics_update_v3.x.x_to_v4.x.x.sh -z
 A new schematics workspace job reverting the state back to its prior condition, which existed prior to the execution of the script.
 
 ## Local Terraform State file
-{: #local}
 
 If you have both the code and the Terraform state file stored locally on your machine, you can utilize the update_v3.x.x_to_v4.x.x.sh script to avoid the recreation of Virtual Server Instances (VSIs).
 
@@ -91,15 +89,15 @@ If you have both the code and the Terraform state file stored locally on your ma
     export IBMCLOUD_API_KEY="<API-KEY>" #pragma: allowlist secret
     ```
 
-1. Retrive the VPC ID and the region of the VPC on which all the VSIs are deployed, including the region of VPC.
-    1. VPC ID can be retrieved from the terraform output by running `terraform output` or use the following command to get the VPC ID
-    ```sh
-    terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .vpc_id' | sort -u | xargs
-    ```
+1. Retrieve the VPC IDs and region of any VPCs in which VSIs are deployed
+    1. VPC IDs can be retrieved from the terraform output by running `terraform output` or use the following jq command to parse them from the state:
+        ```sh
+        terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .vpc_id' | sort -u | xargs
+        ```
     1. Region also can be retrieved using the following command
-    ```sh
-    terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .zone | select(. != null)' | rev | cut -c3- | rev | sort -u | xargs
-    ```
+        ```sh
+        terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .zone | select(. != null)' | rev | cut -c3- | rev | sort -u | xargs
+        ```
 
 1. Download/Copy the script to the same directory in which the state file exists.
     ```sh
@@ -108,7 +106,7 @@ If you have both the code and the Terraform state file stored locally on your ma
 
 1. Run the script
     ```sh
-    bash update_v3.x.x_to_v4.x.x.sh -v "<vpc-id>" -r "<vpc-region>"
+    bash update_v3.x.x_to_v4.x.x.sh -v "<vpc-id-1>[,<vpc-id-2>,..]" -r "<vpc-region>"
     ```
     In the unlikely event that an issue occurs, you can undo the modifications made by the script by running it again with the -z option. For example,
     ```sh
