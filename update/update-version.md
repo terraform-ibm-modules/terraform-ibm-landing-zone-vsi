@@ -98,7 +98,7 @@ If you have both the code and the Terraform state file stored locally on your ma
     ```
     1. Region also can be retrieved using the following command
     ```sh
-    terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .zone' | rev | cut -c3- | rev | sort -u | xargs
+    terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .zone | select(. != null)' | rev | cut -c3- | rev | sort -u | xargs
     ```
 
 1. Download/Copy the script to the same directory in which the state file exists.
