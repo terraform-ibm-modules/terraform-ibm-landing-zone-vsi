@@ -127,7 +127,17 @@ function update_state() {
                 if [ -n "${VSI_LIST[$j]}" ]; then
                     VOL_RESOURCES=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_instance")) | .values.volume_attachments[].volume_name')
                 fi
-
+                if [ -n "${VSI_LIST[$j]}" ]; then
+                    FIP_RESOURCES=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_floating_ip")) | .index')
+                fi
+                if [ -n "$FIP_RESOURCES" ]; then
+                    FIP_SOURCE=$(echo "$STATE" | jq -r --arg vsi "${VSI_LIST[$j]}" '.. | objects | select((.index == $vsi) and (.type == "ibm_is_floating_ip")) | .address')
+                    FIP_DESTINATION=${FIP_SOURCE//"${VSI_LIST[$j]}"/"${subnet_name}-${j}"}
+                    if [ -n "$FIP_SOURCE" ] || [ -n "$FIP_DESTINATION" ]; then
+                        MOVED_PARAMS+=("'$FIP_SOURCE' '$FIP_DESTINATION'")
+                        REVERT_PARAMS+=("'$FIP_DESTINATION' '$FIP_SOURCE'")
+                    fi
+                fi
                 if [ -n "$VOL_RESOURCES" ]; then
                     str="${VSI_LIST[$j]}"
                     lastIndex=$(echo "$str" | awk '{print length}')
@@ -217,7 +227,6 @@ function main() {
         create_txt
         update_local_state
     else
-
         revert_local_state
     fi
 }
