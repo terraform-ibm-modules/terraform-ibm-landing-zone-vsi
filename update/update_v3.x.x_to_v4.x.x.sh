@@ -77,6 +77,7 @@ function verify_required_env_var() {
         echo "${USAGE}"
         exit 1
     fi
+    printf "\nVerification complete\n"
 }
 
 # Login to IBM Cloud using IBMCLOUD_API_KEY env var value
@@ -88,7 +89,7 @@ function ibmcloud_login() {
         echo "Error logging in to IBM Cloud CLI..."
         sleep 3
     done
-    printf "\n#### Verification complete ####\n\n"
+    printf "\nLogin complete\n"
 }
 
 function get_details() {
