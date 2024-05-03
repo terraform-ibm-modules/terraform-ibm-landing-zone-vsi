@@ -117,7 +117,8 @@ function update_state() {
         done
     fi
     VPC_LIST=()
-    IFS=',' read -r -d '' -a VPC_LIST <<<"$VPC_ID"
+    VPC_ID=${VPC_ID//","/" "}
+    IFS=' ' read -r -a VPC_LIST <<<"$VPC_ID"
     for vpc in "${!VPC_LIST[@]}"; do
         VPC_DATA=$(ibmcloud is vpc "${VPC_LIST[$vpc]//$'\n'/}" --output JSON --show-attached -q)
         SUBNET_LIST=()
