@@ -15,63 +15,66 @@ If you have your cloud infrastructure deployed using Schematics, you can use the
     - IBM Cloud CLI
     - IBM Cloud CLI 'is' plugin
     - IBM Cloud CLI 'schematics' plugin
-    - Terraform CLI
     - jq
 
 1. Set the `IBMCLOUD_API_KEY`, `WORKSPACE_ID` variables as an environment variable.
     1. IBMCLOUD_API_KEY : This is an IBM Cloud API key, which can be used for accessing the Projects/Schematics Workspace. For more information, see https://cloud.ibm.com/docs/account?topic=account-userapikey&interface=ui
-    ```sh
+        ```sh
         export IBMCLOUD_API_KEY="<API-KEY>" #pragma: allowlist secret
-    ```
+        ```
 
-    1. Get Workspace ID from Schematics Workspace:
-        - In the {{site.data.keyword.cloud_notm}} console, click the **Navigation menu** icon ![Navigation menu icon](../icons/icon_hamburger.svg "Menu"), and then click **Schematics** > **Workspaces**.
-        - Select the workspace associated with your vsi deployment.
-        - Click **Settings** on the left hand side Menu.
-        - Copy **Workspace ID** from the Details tab.
     1. Get Workspace ID from Projects:
-        - In the {{site.data.keyword.cloud_notm}} console, click the **Navigation menu** icon ![Navigation menu icon](../icons/icon_hamburger.svg "Menu"), and then click **Projects**.
+        - Go to [Projects](https://cloud.ibm.com/projects)
         - Select the Project associated with your VSI deployment.
         - Click on the **Configurations** tab.
         - Select the configuration associated with your VSI deployment.
         - You can find the **Workspace** ID of the Project towards the right-hand side of the screen.
         - Click on copy button to copy the Workspace ID.
+
+    1. Get Workspace ID from Schematics Workspace: Alternatively, if not using Projects, but using Schematics directly do the following...
+        - Go to [Schematics Workspaces]( https://cloud.ibm.com/schematics/workspaces) and select the location from the dropdown that the workspace is in.
+        - Select the workspace associated with your vsi deployment.
+        - Click **Settings** on the left hand side Menu.
+        - Copy **Workspace ID** from the Details tab.
+
     ```sh
-        export WORKSPACE_ID="<workspace-id>"
+    export WORKSPACE_ID="<workspace-id>"
     ```
 
-1. Retrive the VPC IDs of the VPC on which all the VSIs are deployed, including the region of VPC.
-    1. Get VPC ID from Schematics Workspace:
-        - In the {{site.data.keyword.cloud_notm}} console, click the **Navigation menu** icon ![Navigation menu icon](../icons/icon_hamburger.svg "Menu"), and then click **VPC Infrastructure** > **VPCs**.
+1. Download the script to your local machine.
+    ```sh
+    curl https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/update/schematics_update_v3.x.x_to_v4.x.x.sh > schematics_update_v3.x.x_to_v4.x.x.sh
+    ```
+
+1. Retrieve the VPC IDs and region of any VPCs in which VSIs are deployed.
+    1. Get VPC ID from IBM Cloud UI Console:
+        - In the left navigation column, click on **VPC Infrastructure** > **VPCs**.
         - Select the region in which the VPC of the VSI was deployed.
         - Select the VPC associated with the VSI deployment.
         - Copy the **VPC ID** from the Overview tab.
-    1. Get VPC ID from Projects:
-        - In the {{site.data.keyword.cloud_notm}} console, click the **Navigation menu** icon ![Navigation menu icon](../icons/icon_hamburger.svg "Menu"), and then click **Projects**.
-        - Select the Project associated with your VSI deployment.
-        - Click on the **Configurations** tab.
-        - Select the configuration associated with your VSI deployment.
-        - In the **Outputs** tab you can find an output labeled **vpc_data**.
-        - Clicking on it will open a json of all the VPC data of the VPCs provisioned.
-        - Copy the VPC IDs from the **vpc_data** json.
 
 1. [Optional] If the VSIs are being deployed in an account that is different from the account where the Schematics Workspace are located, you need to provide an IBM Cloud API key, which can be used for fetching the VPC details. In this case, you can pass the VPC API-KEY to the script using `-k` flag. For more information, see https://cloud.ibm.com/docs/account?topic=account-userapikey&interface=ui
 
-1. Run the script from any local machine
-```sh
-bash schematics_update_v3.x.x_to_v4.x.x.sh -v "<vpc-id1>,[<vpc-id2>,...]" -r "<vpc-region> [-k <vpc-ibm-api-key>]"
-```
-This script will trigger a new job in the schematics workspace, please monitor the state of the job in IBM Cloud UI. Check if the job completes **Successfully**, in that case go ahead with **Step 5**. In case of schematics workspace job ends in a failed state, please follow **Step 7** to revert any changes made by the script.
+1. Run the script from your local machine
+    ```sh
+    bash schematics_update_v3.x.x_to_v4.x.x.sh -v "<vpc-id1>[,<vpc-id2>,...]" -r "<vpc-region>" [-k "<vpc-ibm-api-key>"]
+    ```
+    This script will trigger a new job in the schematics workspace, please monitor the state of the job in IBM Cloud UI. Check if the job completes **Successfully**, in that case go ahead with **Step 7**. In case of schematics workspace job ends in a failed state, please follow **Step 9** to revert any changes made by the script.
 
-1. Now pull in the latest release in Schematics and click on `Generate plan` and make sure none of the VSIs will be recreated.
+1. The user would have to update their code to consume version 4.x.x, and then update their schematics workspace to the version of their code that contains the updated module and click on `Generate plan` and make sure none of the VSIs will be recreated. The expected behaviour should be that the plans contains only naming updates, and no destroy / re-creates of any resources.
 
 1. Click on `Apply plan`.
 
 1. [Optional] If a schematics workspace job that was initiated through the script encounters an issue, you can undo any modifications made by running the script again with the -z flag. For example,
-```sh
-bash schematics_update_v3.x.x_to_v4.x.x.sh -z
-```
-A new schematics workspace job reverting the state back to its prior condition, which existed prior to the execution of the script.
+    ```sh
+    bash schematics_update_v3.x.x_to_v4.x.x.sh -z
+    ```
+    A new schematics workspace job reverting the state back to its prior condition, which existed prior to the execution of the script. The script will use the `revert.json` file that got created when the script initially ran
+
+1. After the successful upgrade to the newer release of the VSI module, it is safe to remove the temporary files generated by the script.
+    ```sh
+    rm moved.json revert.json
+    ```
 
 ## Local Terraform State file
 

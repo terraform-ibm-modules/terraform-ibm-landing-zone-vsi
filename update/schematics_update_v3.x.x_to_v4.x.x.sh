@@ -3,13 +3,15 @@
 PRG=$(basename -- "${0}")
 USAGE="
 usage: ./${PRG}
+
     Required environment variables:
-    IBMCLOUD_API_KEY
-    WORKSPACE_ID
+    - IBMCLOUD_API_KEY
+    - WORKSPACE_ID
+
     Dependencies:
     - IBM Cloud CLI
     - IBM Cloud CLI 'is' plugin
-    - Terraform CLI
+    - IBM Cloud CLI 'schematics' plugin
     - jq
 "
 VOL_RESOURCES=""
@@ -78,6 +80,7 @@ function verify_required_env_var() {
         echo "${USAGE}"
         exit 1
     fi
+    printf "\nVerification complete\n"
 }
 
 # Login to IBM Cloud using IBMCLOUD_API_KEY env var value
@@ -90,7 +93,7 @@ function ibmcloud_login() {
         echo "Error logging in to IBM Cloud CLI..."
         sleep 3
     done
-    printf "\n#### Verification complete ####\n\n"
+    printf "\nLogin complete\n"
 }
 
 function get_workspace_details() {
@@ -149,9 +152,9 @@ function update_state() {
                         FIP_SOURCE="${ADDRESS_LIST[$j]}.ibm_is_floating_ip.vsi_fip[\"${VSI_LIST[$x]}\"]"
                         FIP_DESTINATION="${ADDRESS_LIST[$j]}.ibm_is_floating_ip.vsi_fip[\"${subnet_name}-${x}\"]"
                         if [ -n "${VSI_LIST[$x]}" ] && [ -n "${subnet_name}" ]; then
-                        MOVED_PARAMS+=("$FIP_SOURCE, $FIP_DESTINATION")
-                        REVERT_PARAMS+=("$FIP_DESTINATION, $FIP_SOURCE")
-                    fi
+                            MOVED_PARAMS+=("$FIP_SOURCE, $FIP_DESTINATION")
+                            REVERT_PARAMS+=("$FIP_DESTINATION, $FIP_SOURCE")
+                        fi
                     fi
                     str="${VSI_LIST[$x]}"
                     lastIndex=$(echo "$str" | awk '{print length}')
