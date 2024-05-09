@@ -1,8 +1,10 @@
-# Updating from v3.x.x to v4.x.x
+# Updating from v3 to v4.x.x
 
 Version v4.x.x changes the VSI module code in ways that result in significant changes when you update from version 3.x.x to 4.x.x. When you update, the Virtual Server Instances (VSIs) that are managed by this module are deleted and re-created.
 
-Follow these steps to avoid the need to re-create the VSIs when you update.
+:information_source: **Tip:** VSIs in v4.x.x have a new prefix naming convention `prefix- + the last 4 digits of the subnet ID + a sequential number for each subnet`. For example, `prefix-3ad7-00`. When you update, your VSIs will adopt the new prefix.
+
+Follow these steps to update to version 4.x.x and avoid the need to re-create the VSIs.
 
 ## Before you begin
 
@@ -11,7 +13,7 @@ Make sure you have recent versions of these command-line prerequisites.
 - [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cli-getting-started)
 - [IBM Cloud CLI plug-ins](https://cloud.ibm.com/docs/cli?topic=cli-plug-ins):
     - `is` plug-in (vpc-infrastructure)
-    - `sch` plug-in (schematics)
+    - For IBM Schematics deployments: `sch` plug-in (schematics)
 - JSON processor `jq` (https://jqlang.github.io/jq/)
 - [Curl](). To test whether curl is installed on your system, run the following command:
 
@@ -26,18 +28,18 @@ Make sure you have recent versions of these command-line prerequisites.
 
 Select the procedure that matches where you deployed the code.
 
-- [Deployed with schematics](#deployed-with-schematics)
+- [Deployed with Schematics](#deployed-with-schematics)
 - [Local Terraform](#local-terraform)
 
-## Deployed with schematics
+## Deployed with Schematics
 
-If you deployed your IBM Cloud infrastructure by using Schematics, you run the `schematics_update_v3.x.x_to_v4.x.x.sh` script as a Schematics job.
+If you deployed your IBM Cloud infrastructure by using Schematics, the `schematics_update_v3.x.x_to_v4.x.x.sh` script creates a Schematics job. [View the script](schematics_update_v3.x.x_to_v4.x.x.sh).
 
 ### Schematics process
 
 1. Set the environment variables:
 
-    1. Set the IBM Cloud API key that has access to your IBM Cloud project or Schematics workspace. For more information, see https://cloud.ibm.com/docs/account?topic=account-userapikey&interface=ui. Run the following command:
+    1. Set the IBM Cloud API key that has access to your IBM Cloud project or Schematics workspace. Run the following command:
 
         ```sh
         export IBMCLOUD_API_KEY="<API-KEY>" #pragma: allowlist secret
@@ -47,12 +49,11 @@ If you deployed your IBM Cloud infrastructure by using Schematics, you run the `
 
     1. Find your Schematics workspace ID:
         - If you are using IBM Cloud Projects:
-            1. Go to [IBM Cloud Projects](https://cloud.ibm.com/projects)
+            1. Go to [Projects](https://cloud.ibm.com/projects)
             1. Select the project that is associated with your VSI deployment.
             1. Click the **Configurations** tab.
-            1. Select the configuration that is associated with your VSI deployment.
-            1. Find the **Workspace** ID for the project toward the right side of the screen.
-            1. Copy the ID.
+            1. Click the configuration name that is associated with your VSI deployment.
+            1. Under **Workspace** copy the ID.
 
         - If you are not using IBM Cloud Projects:
             1. Go to [Schematics Workspaces](https://cloud.ibm.com/schematics/workspaces)
@@ -73,8 +74,11 @@ If you deployed your IBM Cloud infrastructure by using Schematics, you run the `
     curl https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/update/schematics_update_v3.x.x_to_v4.x.x.sh > schematics_update_v3.x.x_to_v4.x.x.sh
     ```
 
-1. Get the VPC IDs and the regions of any VPCs that the VSIs are deployed in by using the IBM Cloud console:
-    1. Click the 3-layer menu icon, and then click **VPC Infrastructure** > **VPCs**.
+1. Use the IBM Cloud console to get the VPC IDs and regions of VPCs that the VSIs are deployed in.
+
+    :information_source: **Tip:** Make sure that you're logged in with the account that owns the VSIs. This account might be different from your projects or Schematics account.
+
+    1. Click the Navigation menu on the left, and then click **VPC Infrastructure** > **VPCs**.
     1. Select the region in which the VPC of the VSI was deployed.
     1. Select the VPC that is associated with the VSI deployment.
     1. Copy the **VPC ID**.
@@ -89,20 +93,22 @@ If you deployed your IBM Cloud infrastructure by using Schematics, you run the `
 
     The script creates a job in the Schematics workspace.
 
-1.  Monitor the status of the job in the IBM Cloud [console](https://cloud.ibm.com/schematics/workspaces).
+1.  Monitor the status of the job by selecting the workspace from your [Schematics workspaces dashboard](https://cloud.ibm.com/schematics/workspaces).
     - When the job completes successfully, go to the next step.
     - If the job fails, see [Reverting changes](#reverting-changes).
 
 ### Apply the changes in Schematics
 
-1. Update your code to consume version 4.x.x, and then update your Schematics workspace to the version of the code that contains the updated module. Click **Generate plan** and make sure none of the VSIs will be re-created. You should see changes only to names. No resources should be set to be destroyed or re-created.
+1. Update your code to consume version 4.x.x, and then update your Schematics workspace to the version of the code that contains the updated module. Click **Generate plan** and make sure none of the VSIs will be re-created.
+
+    You should see in-place updates to names. No resources should be set to be destroyed or re-created.
 1. Click **Apply plan**.
 
     If the job is successful, follow the steps in [Clean up](#clean-up). If the job fails, see [Reverting changes](#reverting-changes).
 
 ## Local Terraform
 
-If you store both the Terraform code and state file locally, run the `update_v3.x.x_to_v4.x.x.sh` script locally.
+If you store both the Terraform code and state file locally, run the `update_v3.x.x_to_v4.x.x.sh` script locally. [View the script](schematics_update_v3.x.x_to_v4.x.x.sh).
 
 1. Set the IBM Cloud API key that has access to your VPCs as an environment variable by running the following command:
 
@@ -120,7 +126,7 @@ If you store both the Terraform code and state file locally, run the `update_v3.
         terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .vpc_id' | sort -u | xargs
         ```
 
-    1. Get the region by running the following `jq` command:
+    - Get the region by running the following `jq` command:
 
         ```sh
         terraform output -json | jq -r '.. | objects | .value' | jq -r '.. | objects | select(.vpc_id != null) | .zone | select(. != null)' | rev | cut -c3- | rev | sort -u | xargs
@@ -153,8 +159,8 @@ If you store both the Terraform code and state file locally, run the `update_v3.
     1. Run the `terraform init` command to pull the latest version.
     1. Run the `terraform plan` command to make sure that none of the VSIs will be re-created.
 
-        - You should see changes only to names. No resources should be set to be destroyed or re-created.
-        - The name changes include a prefix change: `prefix-` + the last 4 digits of the subnet ID + a sequential number for each subnet`.
+        - You should see in-place updates to names. No resources should be set to be destroyed or re-created.
+        - The name changes include a prefix change: `prefix + the last 4 digits of the subnet ID + a sequential number for each subnet`.
 
             For example,
 
@@ -169,9 +175,9 @@ If you store both the Terraform code and state file locally, run the `update_v3.
 
 After you upgrade to the newer release of the VSI module, you can remove the temporary files that are generated by the script by running this command:
 
-    ```sh
-    rm moved.json revert.json
-    ```
+```sh
+rm moved.json revert.json
+```
 
 ## Reverting changes
 
@@ -182,6 +188,6 @@ bash schematics_update_v3.x.x_to_v4.x.x.sh -z
 ```
 
 - If you ran the job in Schematics, a new workspace job reverts the state to what existed before you ran the script initially.
-- If your code and state file is on your computer, the script reverts changes to the local Terraform state file.
+- If your code and state file are on your computer, the script reverts changes to the local Terraform state file.
 
 :exclamation: **Important:** After you revert the changes, don't run any other steps in this process. Create an IBM Cloud support case and include information about the script and errors. For more information, see [Creating support cases](https://cloud.ibm.com/docs/get-support?topic=get-support-open-case&interface=ui).
