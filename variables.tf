@@ -240,20 +240,24 @@ variable "load_balancers" {
   description = "Load balancers to add to VSI"
   type = list(
     object({
-      name                    = string
-      type                    = string
-      listener_port           = number
-      listener_protocol       = string
-      connection_limit        = number
-      idle_connection_timeout = optional(number)
-      algorithm               = string
-      protocol                = string
-      health_delay            = number
-      health_retries          = number
-      health_timeout          = number
-      health_type             = string
-      pool_member_port        = string
-      profile                 = optional(string)
+      name                       = string
+      type                       = string
+      listener_port              = optional(number)
+      listener_port_max          = optional(number)
+      listener_port_min          = optional(number)
+      listener_protocol          = string
+      connection_limit           = optional(number)
+      idle_connection_timeout    = optional(number)
+      algorithm                  = string
+      protocol                   = string
+      health_delay               = number
+      health_retries             = number
+      health_timeout             = number
+      health_type                = string
+      pool_member_port           = string
+      profile                    = optional(string)
+      accept_proxy_protocol      = optional(bool)
+      subnet_id_to_provision_nlb = optional(string) # Required for Network Load Balancer. If no value is provided, the first one from the VPC subnet list will be selected.
       dns = optional(
         object({
           instance_crn = string
@@ -362,6 +366,30 @@ variable "load_balancers" {
   validation {
     error_message = "Each load balancer must have a unique name."
     condition     = length(distinct(var.load_balancers[*].name)) == length(var.load_balancers[*].name)
+  }
+
+  validation {
+    error_message = "Application load balancer connection_limit can not be null."
+    condition = length(
+      flatten([
+        for load_balancer in var.load_balancers :
+        load_balancer.profile != "network-fixed" ?
+        (load_balancer.connection_limit == null) ? [true] : []
+        : []
+      ])
+    ) == 0
+  }
+
+  validation {
+    error_message = "Application load balancer listener_port can not be null."
+    condition = length(
+      flatten([
+        for load_balancer in var.load_balancers :
+        load_balancer.profile != "network-fixed" ?
+        (load_balancer.listener_port == null) ? [true] : []
+        : []
+      ])
+    ) == 0
   }
 }
 
