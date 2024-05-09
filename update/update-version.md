@@ -1,10 +1,10 @@
-# Updating from v3 to v4.x.x
+# Updating from v3 to v4
 
-Version v4.x.x changes the VSI module code in ways that result in significant changes when you update from version 3.x.x to 4.x.x. When you update, the Virtual Server Instances (VSIs) that are managed by this module are deleted and re-created.
+Version 4 changes the VSI module code in ways that result in significant changes when you update from version 3 to 4. When you update, the Virtual Server Instances (VSIs) that are managed by this module are deleted and re-created.
 
-:information_source: **Tip:** VSIs in v4.x.x have a new prefix naming convention `prefix- + the last 4 digits of the subnet ID + a sequential number for each subnet`. For example, `prefix-3ad7-00`. When you update, your VSIs will adopt the new prefix.
+:information_source: **Tip:** VSIs in v4 have a new prefix naming convention `prefix- + the last 4 digits of the subnet ID + a sequential number for each subnet`. For example, `prefix-3ad7-00`. When you update, your VSIs will adopt the new prefix.
 
-Follow these steps to update to version 4.x.x and avoid the need to re-create the VSIs.
+Follow these steps to update to version 4 and avoid the need to re-create the VSIs.
 
 ## Before you begin
 
@@ -22,7 +22,6 @@ Make sure you have recent versions of these command-line prerequisites.
     ```
 
     If you need to install curl, see https://everything.curl.dev/install/index.html.
-
 
 ## Select a procedure
 
@@ -99,7 +98,7 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `schemati
 
 ### Apply the changes in Schematics
 
-1. Update your code to consume version 4.x.x, and then update your Schematics workspace to the version of the code that contains the updated module. Click **Generate plan** and make sure none of the VSIs will be re-created.
+1. Update your code to consume version 4, and then update your Schematics workspace to the version of the code that contains the updated module. Click **Generate plan** and make sure none of the VSIs will be re-created.
 
     You should see in-place updates to names. No resources should be set to be destroyed or re-created.
 1. Click **Apply plan**.
@@ -149,7 +148,7 @@ If you store both the Terraform code and state file locally, run the `update_v3.
         If the job fails, see [Reverting changes](#reverting-changes).
 
 1. Initialize, check the planned changes, and apply the changes:
-    1. Update the version of the module in your consuming code to the 4.x.x version, as in this example:
+    1. Update the version of the module in your consuming code to the 4 version, as in this example:
 
         ```hcl
         source                           = "terraform-ibm-modules/landing-zone-vsi/ibm"
@@ -168,7 +167,7 @@ If you store both the Terraform code and state file locally, run the `update_v3.
             ~ name                             = "prefix-001" -> "prefix-3ad7-001"
             ```
 
-    1. Run `terraform apply` to upgrade to the 4.x.x version of the module and apply the update in place to rename the VSIs.
+    1. Run `terraform apply` to upgrade to the 4 version of the module and apply the update in place to rename the VSIs.
     1. If the commands are successful, follow the steps in [Clean up](#clean-up).
 
 ### Clean up
