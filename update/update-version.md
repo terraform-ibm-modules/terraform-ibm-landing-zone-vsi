@@ -32,7 +32,7 @@ Select the procedure that matches where you deployed the code.
 
 ## Deployed with Schematics
 
-If you deployed your IBM Cloud infrastructure by using Schematics, the `schematics_update_v3.x.x_to_v4.x.x.sh` script creates a Schematics job. [View the script](schematics_update_v3.x.x_to_v4.x.x.sh).
+If you deployed your IBM Cloud infrastructure by using Schematics, the `schematics_update_v3_to_v4.sh` script creates a Schematics job. [View the script](schematics_update_v3_to_v4.sh).
 
 ### Schematics process
 
@@ -70,7 +70,7 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `schemati
 1. Download the script by running this Curl command:
 
     ```sh
-    curl https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/update/schematics_update_v3.x.x_to_v4.x.x.sh > schematics_update_v3.x.x_to_v4.x.x.sh
+    curl https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/update/schematics_update_v3_to_v4.sh > schematics_update_v3_to_v4.sh
     ```
 
 1. Use the IBM Cloud console to get the VPC IDs and regions of VPCs that the VSIs are deployed in.
@@ -84,7 +84,7 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `schemati
 1. Run the script:
 
     ```sh
-    bash schematics_update_v3.x.x_to_v4.x.x.sh -v "<vpc-id1>[,<vpc-id2>,...]" -r "<vpc-region>" [-k "<vpc-ibm-api-key>"]
+    bash schematics_update_v3_to_v4.sh -v "<vpc-id1>[,<vpc-id2>,...]" -r "<vpc-region>" [-k "<vpc-ibm-api-key>"]
     ```
 
     - Replace `<vpc-id1>` and `<vpc-region>` with the information that you copied earlier.
@@ -107,7 +107,7 @@ If you deployed your IBM Cloud infrastructure by using Schematics, the `schemati
 
 ## Local Terraform
 
-If you store both the Terraform code and state file locally, run the `update_v3.x.x_to_v4.x.x.sh` script locally. [View the script](schematics_update_v3.x.x_to_v4.x.x.sh).
+If you store both the Terraform code and state file locally, run the `update_v3_to_v4.sh` script locally. [View the script](schematics_update_v3_to_v4.sh).
 
 1. Set the IBM Cloud API key that has access to your VPCs as an environment variable by running the following command:
 
@@ -134,13 +134,13 @@ If you store both the Terraform code and state file locally, run the `update_v3.
 1. Download the script to the directory with the state file by running this Curl command:
 
     ```sh
-    curl https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/update/update_v3.x.x_to_v4.x.x.sh > update_v3.x.x_to_v4.x.x.sh
+    curl https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/update/update_v3_to_v4.sh > update_v3_to_v4.sh
     ```
 
 1. Run the script from the directory with the state file:
 
     ```sh
-    bash update_v3.x.x_to_v4.x.x.sh -v "<vpc-id-1>[,<vpc-id-2>,..]" -r "<vpc-region>"
+    bash update_v3_to_v4.sh -v "<vpc-id-1>[,<vpc-id-2>,..]" -r "<vpc-region>"
     ```
 
     - Replace `<vpc-id1>` and `<vpc-region>` with the information that you found earlier.
@@ -183,7 +183,7 @@ rm moved.json revert.json
 If the script fails, run the script again with the `-z` option to undo the changes. The script uses the `revert.json` file that was created when you ran the script without the `-z` option.
 
 ```sh
-bash schematics_update_v3.x.x_to_v4.x.x.sh -z
+bash schematics_update_v3_to_v4.sh -z
 ```
 
 - If you ran the job in Schematics, a new workspace job reverts the state to what existed before you ran the script initially.
