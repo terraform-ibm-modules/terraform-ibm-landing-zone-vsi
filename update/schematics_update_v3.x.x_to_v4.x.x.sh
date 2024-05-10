@@ -65,7 +65,7 @@ function dependency_check() {
     echo "All dependencies are available!"
 }
 
-# check that env contains required vars
+# Check that env contains required vars
 function verify_required_env_var() {
     printf "\n#### VERIFYING ENV ####\n\n"
     all_env_vars_exist=true
@@ -83,7 +83,7 @@ function verify_required_env_var() {
     printf "\nVerification complete\n"
 }
 
-# Login to IBM Cloud using IBMCLOUD_API_KEY env var value
+# Log in to IBM Cloud using IBMCLOUD_API_KEY env var value
 function ibmcloud_login() {
     printf "\n#### IBM CLOUD LOGIN ####\n\n"
     WORKSPACE_REGION=$(echo "$WORKSPACE_ID" | cut -d "." -f 1)
