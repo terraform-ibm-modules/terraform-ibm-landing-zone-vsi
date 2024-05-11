@@ -22,7 +22,7 @@ VPC_IBMCLOUD_API_KEY=""
 helpFunction() {
     echo ""
     echo "Usage: $0 -v VPC_ID -r VPC_REGION [-k VPC_IBMCLOUD_API_KEY] [-z]"
-    echo -e "\t-v , seperated IDs or names of the VPC in which the VSIs are deployed which needs to be tracked by the newer version of the terraform module."
+    echo -e "\t-v , separated IDs or names of the VPC where the VSIs are deployed and which need to be tracked by the newer version of the Terraform module."
     echo -e "\t-r Region of the VPC."
     echo -e "\t-k [Optional] IBMCLOUD_API_KEY to access the VPCs, if the VPCs are deployed in a different account."
     echo -e "\t-z [Optional] Flag to revert the changes done to the state file."
