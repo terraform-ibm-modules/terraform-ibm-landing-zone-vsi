@@ -2,7 +2,7 @@
 
 Version 4 changes the VSI module code in ways that result in significant changes when you update from version 3 to 4. When you update, the Virtual Server Instances (VSIs) that are managed by this module are deleted and re-created.
 
-:information_source: **Tip:** VSIs in v4 have a new prefix naming convention `prefix- + the last 4 digits of the subnet ID + a sequential number for each subnet`. For example, `prefix-3ad7-00`. When you update, your VSIs will adopt the new prefix.
+:information_source: **Tip:** VSIs in v4 have a new prefix naming convention `prefix- + the last 4 digits of the subnet ID + a sequential number for each subnet`. For example, `prefix-3ad7-001`. When you update, your VSIs will adopt the new prefix.
 
 Follow these steps to update to version 4 and avoid the need to re-create the VSIs.
 
