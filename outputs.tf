@@ -86,7 +86,7 @@ output "consistency_group_boot_snapshot_id" {
 
 output "consistency_group_storage_snapshot_ids" {
   description = "The Snapshot Ids (string array) used for VSI attached storage volumes, determined from an optionally supplied consistency group"
-  value       = local.consistency_group_storage_snapshot_ids
+  value       = values(local.consistency_group_snapshot_to_volume_map)
 }
 
 ##############################################################################
