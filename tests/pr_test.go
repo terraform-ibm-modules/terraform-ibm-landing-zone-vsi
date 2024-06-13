@@ -111,17 +111,18 @@ func TestRunExistingSnapshotGroupExample(t *testing.T) {
 	// values once cloud resources are permanently replaced and
 	// IDs can be entered into common-dev-assets files!
 	// ***************************************************
-	snapGroupId := "r014-0606d617-b866-4ae8-9588-84935b13ff55"
+	snapGroupId := "r026-43d41ad0-88f4-4e99-8adf-0cae4a02710c"
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  snapshotExampleTerraformDir,
 		Prefix:        "slz-vsi-snap",
 		ResourceGroup: resourceGroup,
-		Region:        "us-east", // hardcode due to image requirement
+		Region:        "au-syd", // hardcode due to image requirement
 		TerraformVars: map[string]interface{}{
 			"access_tags":                   permanentResources["accessTags"],
 			"snapshot_consistency_group_id": snapGroupId,
+			"image_id":                      "r014-0606d617-b866-4ae8-9588-84935b13ff55", // for au-syd region
 		},
 	})
 
@@ -146,9 +147,9 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 	// values once cloud resources are permanently replaced and
 	// IDs can be entered into common-dev-assets files!
 	// ***************************************************
-	snapBootId := "r014-5219de54-3f01-479f-9771-1d23afd13eb4"
-	snapVol1Id := "r014-165d280e-d624-45bb-b463-6abd8878ae3f"
-	snapVol2Id := "r014-baca1ccd-cc63-401a-a571-8427421b0d03"
+	snapBootId := "r026-88f05225-d0aa-4d4e-896f-0135ae569bcc"
+	snapVol1Id := "r026-daf63a97-c445-4f9c-bb54-d6e371e95388"
+	snapVol2Id := "r026-1518ae7d-319c-4164-a781-56067e9be451"
 
 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
