@@ -24,12 +24,12 @@ locals {
   consistency_group_available_snapshots_map = length(data.ibm_is_snapshot_consistency_group.snapshot_group) > 0 ? { for snap in data.ibm_is_snapshot_consistency_group.snapshot_group[0].snapshots : snap.name => snap } : {}
 
   # find the bootable snapshot by service tag, looking always for index 0, if it doesn't exist then no snapshot for boot volume (null)
-  consistency_group_boot_snapshots   = [for snap in data.ibm_is_snapshot.snapshots_from_group : snap if contains(snap.tags, "is.snapshot:attachment_index_0") && snap.bootable]
+  consistency_group_boot_snapshots   = [for snap in data.ibm_is_snapshot.snapshots_from_group : snap if contains(snap.service_tags, "is.instance:attachment_index_0") && snap.bootable]
   consistency_group_boot_snapshot_id = one(local.consistency_group_boot_snapshots[*].identifier)
 
   # loop through desired additional block volumes, and see if snapshot in group exists by looking at service tag and index, starting at _1
   consistency_group_snapshot_to_volume_map = {
     for idx, volume in var.block_storage_volumes :
-    volume.name => one([for snap in data.ibm_is_snapshot.snapshots_from_group : snap.identifier if contains(snap.tags, format("%s%s", "is.snapshot:attachment_index_", tostring(idx + 1)))])
+    volume.name => one([for snap in data.ibm_is_snapshot.snapshots_from_group : snap.identifier if contains(snap.service_tags, format("%s%s", "is.instance:attachment_index_", tostring(idx + 1)))])
   }
 }
