@@ -53,6 +53,7 @@ variable "ssh_key" {
 }
 
 variable "snapshot_consistency_group_id" {
-  type    = string
-  default = null
+  type        = string
+  description = "An existing Snapshot Consistency Group Id, used to automatically determine volume snapshots for deployment"
+  default     = null
 }
