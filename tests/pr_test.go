@@ -105,13 +105,7 @@ func TestRunFSCloudExample(t *testing.T) {
 func TestRunExistingSnapshotGroupExample(t *testing.T) {
 	t.Parallel()
 
-	// ***************************************************
-	// NOTICE! MUST BE REPLACED!
-	// These hardcoded values must be replaced with true snapshot
-	// values once cloud resources are permanently replaced and
-	// IDs can be entered into common-dev-assets files!
-	// ***************************************************
-	snapGroupId := "r026-43d41ad0-88f4-4e99-8adf-0cae4a02710c"
+	snapGroupId := permanentResources["snapshot_group_au_syd_group_id"]
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
@@ -141,15 +135,9 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 		options.Testing.Logf("DEBUG: value of global pr_test variable is: %s", snapshotExampleTerraformDir)
 	}
 
-	// ***************************************************
-	// NOTICE! MUST BE REPLACED!
-	// These hardcoded values must be replaced with true snapshot
-	// values once cloud resources are permanently replaced and
-	// IDs can be entered into common-dev-assets files!
-	// ***************************************************
-	snapBootId := "r026-88f05225-d0aa-4d4e-896f-0135ae569bcc"
-	snapVol1Id := "r026-daf63a97-c445-4f9c-bb54-d6e371e95388"
-	snapVol2Id := "r026-1518ae7d-319c-4164-a781-56067e9be451"
+	snapBootId := permanentResources["snapshot_group_au_syd_boot_id"]
+	snapVol1Id := permanentResources["snapshot_group_au_syd_vol1_id"]
+	snapVol2Id := permanentResources["snapshot_group_au_syd_vol2_id"]
 
 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
