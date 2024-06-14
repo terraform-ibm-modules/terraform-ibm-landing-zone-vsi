@@ -59,6 +59,12 @@ module.vsi["test-vsi"].ibm_is_volume.volume["test-vsi-3-two"]
 
 ---
 
+### Reserved IP addresses
+
+By setting the `manage_reserved_ips` to true, this Terraform module will manage VPC reserved IPs for all VSI instances. In the case where the VSI instances would need to be recreated by this module (such as rolling back to a snapshot volume), the new instances will retain the same reserved IP from their previous deployment.
+
+---
+
 ### Floating IP addresses
 
 By using the `enable_floating_ip`, a floating IP address is assigned to each VSI created by this module. This floating IP address is displayed in the output, if provisioned.
@@ -68,6 +74,24 @@ By using the `enable_floating_ip`, a floating IP address is assigned to each VSI
 ### Load balancers
 
 This module creates any number of application load balancers to balance traffic between all virtual servers that are created by this module. Each load balancer can optionally be added to its own security group. Use the `load_balancers` variable to configure the back-end pool and front-end listener for each load balancer.
+
+---
+
+### Storage Volume Snapshot support
+
+This module supports volume snapshots for both VSI boot volumes and attached block storage volumes. This feature can be used in either of the following scenarios:
+1. Create new VSI instances using existing volume snapshots.
+2. Roll back currently deployed VSI instances to existing volume snapshots. NOTE: if the boot volume is restored from a snapshot, all VSI instances will be recreated, and will retain most or all of their previous configuration (see note about [Reserved IP addresses above](#reserved-ip-addresses))
+
+There are three methods you can use to specify volume snapshots for your deployment:
+1. Specify individual Snapshot Ids using the `boot_volume_snapshot_id` and `block_storage_volumes.snapshot_id` input variables
+2. Specify a Snapshot Consistency Group Id using the `snapshot_consistency_group_id` input variable (see explanation below)
+3. A combination of specific Snapshot Ids and Consistency Group Ids, with specific Snapshot Ids taking precedence over Consistency Group Id snapshots, useful in situations where you may want to override one or more of the Consistency Group snapshots
+
+Snapshot Consistency Group logic explained:
+If a `snapshot_consistency_group_id` is passed into this module, the snapshots belonging to that group will be queried for their "service_tags" that were applied at group creation. These tags will contain an index that identifies the snapshot within the group as belonging to either the boot volume of the instance (index 0), or one of the attached block storage volumes (index 1..n). These indexes are used to match up each group snapshot with the boot volume of the instance (which is always index 0), as well as any additional required volumes from the `block_storage_volumes` input variable, using the order of the input variable against the tag index (first `block_storage_volume` in input array = index 1, second = index 2, and so on). If there is a mismatch of group snapshots to the required storage specified in module inputs, then any of the extra snapshots or volumes will simply be ignored in the matching logic.
+
+NOTE: Snapshot and Consistency Group creation are not a part of this module and should be handled elsewhere.
 
 ---
 
