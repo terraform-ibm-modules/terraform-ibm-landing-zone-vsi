@@ -58,21 +58,22 @@ module "slz_vpc" {
 #############################################################################
 
 module "slz_vsi" {
-  source                = "../../"
-  resource_group_id     = module.resource_group.resource_group_id
-  image_id              = var.image_id
-  create_security_group = false
-  tags                  = var.resource_tags
-  access_tags           = var.access_tags
-  subnets               = module.slz_vpc.subnet_zone_list
-  vpc_id                = module.slz_vpc.vpc_id
-  prefix                = var.prefix
-  machine_type          = var.machine_type
-  vsi_per_subnet        = 1
-  ssh_key_ids           = [local.ssh_key_id]
-  user_data             = null
-  manage_reserved_ips   = true
-  enable_floating_ip    = true
+  source                      = "../../"
+  resource_group_id           = module.resource_group.resource_group_id
+  image_id                    = var.image_id
+  create_security_group       = false
+  tags                        = var.resource_tags
+  access_tags                 = var.access_tags
+  subnets                     = module.slz_vpc.subnet_zone_list
+  vpc_id                      = module.slz_vpc.vpc_id
+  prefix                      = var.prefix
+  machine_type                = var.machine_type
+  vsi_per_subnet              = 1
+  ssh_key_ids                 = [local.ssh_key_id]
+  user_data                   = null
+  manage_reserved_ips         = true
+  enable_floating_ip          = true
+  use_static_boot_volume_name = true
   block_storage_volumes = [
     {
       name    = "vsi-block-1"
