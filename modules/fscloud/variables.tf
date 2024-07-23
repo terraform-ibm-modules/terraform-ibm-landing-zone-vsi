@@ -85,6 +85,12 @@ variable "manage_reserved_ips" {
   default     = false
 }
 
+variable "use_static_boot_volume_name" {
+  description = "Sets the boot volume name for each VSI to a static name in the format `{hostname}_boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when VSIs are recreated."
+  type        = bool
+  default     = false
+}
+
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created"
   type        = bool

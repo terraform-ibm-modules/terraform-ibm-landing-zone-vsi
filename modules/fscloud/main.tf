@@ -15,6 +15,7 @@ module "fscloud_vsi" {
   boot_volume_encryption_key    = var.boot_volume_encryption_key
   kms_encryption_enabled        = true
   manage_reserved_ips           = var.manage_reserved_ips
+  use_static_boot_volume_name   = var.use_static_boot_volume_name
   enable_floating_ip            = var.enable_floating_ip
   allow_ip_spoofing             = var.allow_ip_spoofing
   create_security_group         = var.create_security_group
