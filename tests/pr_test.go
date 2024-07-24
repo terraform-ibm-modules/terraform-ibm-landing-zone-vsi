@@ -99,7 +99,6 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 			fmt.Sprintf("module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-a-0-%s\"]", options.Prefix, options.Prefix),
 			fmt.Sprintf("module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-b-0-%s\"]", options.Prefix, options.Prefix),
 			fmt.Sprintf("module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-c-0-%s\"]", options.Prefix, options.Prefix),
-			// "module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"" + options.Prefix + "-vpc-subnet-a-0-" + options.Prefix + "\"]",
 		},
 	}
 	return options
