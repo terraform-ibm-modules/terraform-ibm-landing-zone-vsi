@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -45,6 +46,13 @@ func setupOptions(t *testing.T, dir string, prefix string) *testhelper.TestOptio
 			"access_tags": permanentResources["accessTags"],
 		},
 	})
+	options.IgnoreUpdates = testhelper.Exemptions{
+		List: []string{
+			fmt.Sprintf("module.slz_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-a-0-%s\"]", options.Prefix, options.Prefix),
+			fmt.Sprintf("module.slz_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-b-0-%s\"]", options.Prefix, options.Prefix),
+			fmt.Sprintf("module.slz_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-c-0-%s\"]", options.Prefix, options.Prefix),
+		},
+	}
 
 	return options
 }
@@ -86,7 +94,14 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 			"access_tags":                   permanentResources["accessTags"],
 		},
 	})
-
+	options.IgnoreUpdates = testhelper.Exemptions{
+		List: []string{
+			fmt.Sprintf("module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-a-0-%s\"]", options.Prefix, options.Prefix),
+			fmt.Sprintf("module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-b-0-%s\"]", options.Prefix, options.Prefix),
+			fmt.Sprintf("module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"%s-vpc-subnet-c-0-%s\"]", options.Prefix, options.Prefix),
+			// "module.slz_vsi.module.fscloud_vsi.ibm_is_volume.volume[\"" + options.Prefix + "-vpc-subnet-a-0-" + options.Prefix + "\"]",
+		},
+	}
 	return options
 }
 
