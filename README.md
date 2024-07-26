@@ -65,6 +65,14 @@ By setting the `manage_reserved_ips` to true, this Terraform module will manage 
 
 ---
 
+### Static boot volume names
+
+The default boot volume names created for VSI instances are four-word random names, which are regenerated if the VSI is recreated. If you set the `use_static_boot_volume_name` to true, the boot volume name for each VSI will not be random and will have a name that will be used again when recreated. This static name is of the format `hostname-boot`. If the VSI is recreated by Terraform for any reason, the exact same boot volume name will be used for the new instance.
+
+Example of static boot volume name: "my-prefix-0a2b-001-boot"
+
+---
+
 ### Floating IP addresses
 
 By using the `enable_floating_ip`, a floating IP address is assigned to each VSI created by this module. This floating IP address is displayed in the output, if provisioned.
