@@ -56,6 +56,9 @@ locals {
       }
     ]
   ])
+
+  # determine snapshot in following order: input variable -> from consistency group -> null (none)
+  vsi_boot_volume_snapshot_id = try(coalesce(var.boot_volume_snapshot_id, local.consistency_group_boot_snapshot_id), null)
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
@@ -89,10 +92,17 @@ resource "ibm_iam_authorization_policy" "block_storage_policy" {
   description                 = "Allow block storage volumes to be encrypted by Key Management instance."
 }
 
+resource "ibm_is_subnet_reserved_ip" "vsi_ip" {
+  for_each    = { for vsi_key, vsi_value in local.vsi_map : vsi_key => vsi_value if var.manage_reserved_ips }
+  name        = "${each.value.name}-ip"
+  subnet      = each.value.subnet_id
+  auto_delete = false
+}
+
 resource "ibm_is_instance" "vsi" {
   for_each        = local.vsi_map
   name            = each.value.vsi_name
-  image           = var.image_id
+  image           = (local.vsi_boot_volume_snapshot_id == null) ? var.image_id : null # image and snapshot are mutually exclusive
   profile         = var.machine_type
   resource_group  = var.resource_group_id
   vpc             = var.vpc_id
@@ -116,6 +126,12 @@ resource "ibm_is_instance" "vsi" {
       (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
     ])
     allow_ip_spoofing = var.allow_ip_spoofing
+    dynamic "primary_ip" {
+      for_each = var.manage_reserved_ips ? [1] : []
+      content {
+        reserved_ip = ibm_is_subnet_reserved_ip.vsi_ip[each.value.name].reserved_ip
+      }
+    }
   }
 
   dynamic "network_interfaces" {
@@ -146,6 +162,9 @@ resource "ibm_is_instance" "vsi" {
 
   boot_volume {
     encryption = var.boot_volume_encryption_key
+    name       = var.use_static_boot_volume_name ? "${each.value.vsi_name}-boot" : null
+    # determine snapshot in following order: input variable -> from consistency group -> null (none)
+    snapshot = local.vsi_boot_volume_snapshot_id
   }
 
   # Only add volumes if volumes are being created by the module

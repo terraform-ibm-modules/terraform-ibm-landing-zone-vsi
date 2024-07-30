@@ -104,6 +104,18 @@ variable "existing_kms_instance_guid" {
   default     = null
 }
 
+variable "manage_reserved_ips" {
+  description = "Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP."
+  type        = bool
+  default     = false
+}
+
+variable "use_static_boot_volume_name" {
+  description = "Sets the boot volume name for each VSI to a static name in the format `{hostname}_boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when VSIs are recreated."
+  type        = bool
+  default     = false
+}
+
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created"
   type        = bool
@@ -219,6 +231,7 @@ variable "block_storage_volumes" {
       iops              = optional(number)
       encryption_key    = optional(string)
       resource_group_id = optional(string)
+      snapshot_id       = optional(string) # set if you would like to base volume on a snapshot
     })
   )
   default = []
@@ -448,6 +461,24 @@ variable "secondary_allow_ip_spoofing" {
   description = "Allow IP spoofing on additional network interfaces"
   type        = bool
   default     = false
+}
+
+##############################################################################
+
+##############################################################################
+# Snapshot Restore Variables
+##############################################################################
+
+variable "boot_volume_snapshot_id" {
+  description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)"
+  type        = string
+  default     = null
+}
+
+variable "snapshot_consistency_group_id" {
+  description = "The snapshot consistency group Id. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot Ids by setting the appropriate input variables as well."
+  type        = string
+  default     = null
 }
 
 ##############################################################################

@@ -29,6 +29,7 @@ output "list" {
       floating_ip_id         = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].id : null
       floating_ip_crn        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].crn : null
       vpc_id                 = var.vpc_id
+      snapshot_id            = one(virtual_server.boot_volume[*].snapshot)
     }
   ]
 }
@@ -71,6 +72,22 @@ output "lb_security_groups" {
     for load_balancer in var.load_balancers :
     (load_balancer.name) => ibm_is_security_group.security_group[load_balancer.security_group.name] if load_balancer.security_group != null
   }
+}
+
+##############################################################################
+
+##############################################################################
+# Consistency Group Outputs
+##############################################################################
+
+output "consistency_group_boot_snapshot_id" {
+  description = "The Snapshot Id used for the VSI boot volume, determined from an optionally supplied consistency group"
+  value       = local.consistency_group_boot_snapshot_id
+}
+
+output "consistency_group_storage_snapshot_ids" {
+  description = "Map of attached storage volumes requested, and the Snapshot Ids that will be used, determined from an optionally supplied consistency group, and mapped "
+  value       = local.consistency_group_snapshot_to_volume_map
 }
 
 ##############################################################################

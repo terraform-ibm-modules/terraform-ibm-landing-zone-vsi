@@ -17,11 +17,13 @@ locals {
           vol_name       = "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}-${volume.name}"
           zone           = var.subnets[subnet].zone
           profile        = volume.profile
-          capacity       = volume.capacity
+          capacity       = (volume.snapshot_id == null) ? volume.capacity : null
           vsi_name       = "${var.subnets[subnet].name}-${count}"
-          iops           = volume.iops
-          encryption_key = var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key
+          iops           = (volume.snapshot_id == null) ? volume.iops : null
+          encryption_key = (volume.snapshot_id == null) ? (var.kms_encryption_enabled ? var.boot_volume_encryption_key : volume.encryption_key) : null
           resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
+          # check for snapshot in this order: supplied directly in variable -> part of consistency group -> null (no snapshot)
+          snapshot_id = try(coalesce(volume.snapshot_id, lookup(local.consistency_group_snapshot_to_volume_map, volume.name, null)), null)
         }
       ]
     ]
@@ -41,16 +43,17 @@ locals {
 ##############################################################################
 
 resource "ibm_is_volume" "volume" {
-  for_each       = local.volume_map
-  name           = each.value.vol_name
-  profile        = each.value.profile
-  zone           = each.value.zone
-  iops           = each.value.iops
-  capacity       = each.value.capacity
-  encryption_key = each.value.encryption_key
-  resource_group = each.value.resource_group
-  tags           = var.tags
-  access_tags    = var.access_tags
+  for_each        = local.volume_map
+  name            = each.value.vol_name
+  profile         = each.value.profile
+  zone            = each.value.zone
+  iops            = each.value.iops
+  capacity        = each.value.capacity
+  encryption_key  = each.value.encryption_key
+  resource_group  = each.value.resource_group
+  tags            = var.tags
+  access_tags     = var.access_tags
+  source_snapshot = each.value.snapshot_id
 }
 
 ##############################################################################

@@ -14,6 +14,8 @@ module "fscloud_vsi" {
   skip_iam_authorization_policy = var.skip_iam_authorization_policy
   boot_volume_encryption_key    = var.boot_volume_encryption_key
   kms_encryption_enabled        = true
+  manage_reserved_ips           = var.manage_reserved_ips
+  use_static_boot_volume_name   = var.use_static_boot_volume_name
   enable_floating_ip            = var.enable_floating_ip
   allow_ip_spoofing             = var.allow_ip_spoofing
   create_security_group         = var.create_security_group
@@ -22,4 +24,6 @@ module "fscloud_vsi" {
   block_storage_volumes         = var.block_storage_volumes
   load_balancers                = var.load_balancers
   access_tags                   = var.access_tags
+  snapshot_consistency_group_id = var.snapshot_consistency_group_id
+  boot_volume_snapshot_id       = var.boot_volume_snapshot_id
 }
