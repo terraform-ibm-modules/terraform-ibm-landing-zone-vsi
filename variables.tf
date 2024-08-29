@@ -92,6 +92,13 @@ variable "user_data" {
   type        = string
 }
 
+variable "use_boot_volume_key_as_default" {
+  description = "Set to true to use boot volume encryption key as the default for all volumes."
+  type        = bool
+  default     = false
+}
+
+
 variable "boot_volume_encryption_key" {
   description = "CRN of boot volume encryption key"
   default     = null
