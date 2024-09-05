@@ -160,25 +160,25 @@ locals {
 }
 
 module "slz_vsi" {
-  source                     = "../../"
-  resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
-  create_security_group      = false
-  tags                       = var.resource_tags
-  access_tags                = var.access_tags
-  subnets                    = module.slz_vpc.subnet_zone_list
-  vpc_id                     = module.slz_vpc.vpc_id
-  prefix                     = var.prefix
-  placement_group_id         = ibm_is_placement_group.placement_group.id
-  machine_type               = "cx2-2x4"
-  user_data                  = null
-  boot_volume_encryption_key = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
-  kms_encryption_enabled     = true
-  existing_kms_instance_guid = module.key_protect_all_inclusive.kms_guid
-  vsi_per_subnet             = 1
-  ssh_key_ids                = [local.ssh_key_id]
-  secondary_subnets          = local.secondary_subnet_zone_list
-  secondary_security_groups  = local.secondary_security_groups
+  source                         = "../../"
+  resource_group_id              = module.resource_group.resource_group_id
+  image_id                       = var.image_id
+  create_security_group          = false
+  tags                           = var.resource_tags
+  access_tags                    = var.access_tags
+  subnets                        = module.slz_vpc.subnet_zone_list
+  vpc_id                         = module.slz_vpc.vpc_id
+  prefix                         = var.prefix
+  placement_group_id             = ibm_is_placement_group.placement_group.id
+  machine_type                   = "cx2-2x4"
+  user_data                      = null
+  boot_volume_encryption_key     = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  kms_encryption_enabled         = true
+  existing_kms_instance_guid     = module.key_protect_all_inclusive.kms_guid
+  vsi_per_subnet                 = 1
+  ssh_key_ids                    = [local.ssh_key_id]
+  secondary_subnets              = local.secondary_subnet_zone_list
+  secondary_security_groups      = local.secondary_security_groups
   use_boot_volume_key_as_default = true
   # Create a floating IP for each virtual server created
   enable_floating_ip               = true
