@@ -179,6 +179,7 @@ module "slz_vsi" {
   ssh_key_ids                = [local.ssh_key_id]
   secondary_subnets          = local.secondary_subnet_zone_list
   secondary_security_groups  = local.secondary_security_groups
+  use_boot_volume_key_as_default = true
   # Create a floating IP for each virtual server created
   enable_floating_ip               = true
   secondary_use_vsi_security_group = var.secondary_use_vsi_security_group

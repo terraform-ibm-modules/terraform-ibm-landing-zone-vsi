@@ -98,7 +98,6 @@ variable "use_boot_volume_key_as_default" {
   default     = false
 }
 
-
 variable "boot_volume_encryption_key" {
   description = "CRN of boot volume encryption key"
   default     = null
