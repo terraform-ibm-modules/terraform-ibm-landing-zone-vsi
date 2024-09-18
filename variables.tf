@@ -93,7 +93,7 @@ variable "user_data" {
 }
 
 variable "use_boot_volume_key_as_default" {
-  description = "Set to true to use the boot_volume_encryption_key as default for all volumes, overriding any encryption_key specified. If set to false, the encryption_key provided in `block_storage_volumes.encryption_key` will be used instead."
+  description = "Set to true to use the key specified in the `boot_volume_encryption_key` input as default for all volumes, overriding any key value that may be specified in the `encryption_key` option of the `block_storage_volumes` input variable. If set to `false`, the value passed for the `encryption_key` option of the `block_storage_volumes` will be used instead."
   type        = bool
   default     = false
 }
