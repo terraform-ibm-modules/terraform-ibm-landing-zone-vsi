@@ -134,7 +134,7 @@ resource "ibm_is_subnet_reserved_ip" "vsi_ip" {
 }
 
 resource "ibm_is_subnet_reserved_ip" "secondary_vsi_ip" {
-  for_each    = var.number_of_secondary_reserved_ips > 0 && var.manage_reserved_ips && !var.use_legacy_network_interface ? local.secondary_reserved_ips_map : {}
+  for_each    = var.number_of_secondary_reserved_ips > 0 && !var.use_legacy_network_interface ? local.secondary_reserved_ips_map : {}
   name        = "${each.value.name}-ip"
   subnet      = each.value.subnet_id
   auto_delete = false
@@ -181,7 +181,7 @@ resource "ibm_is_instance" "vsi" {
           }
         }
         dynamic "ips" {
-          for_each = var.number_of_secondary_reserved_ips > 0 && var.manage_reserved_ips ? { for count in range(var.number_of_secondary_reserved_ips) : count => count } : {}
+          for_each = var.number_of_secondary_reserved_ips > 0 ? { for count in range(var.number_of_secondary_reserved_ips) : count => count } : {}
           content {
             reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
           }
@@ -307,7 +307,7 @@ resource "ibm_is_floating_ip" "secondary_fip" {
   resource_group = var.resource_group_id
 }
 
-resource "ibm_is_floating_ip" "latest_secondary_fip" {
+resource "ibm_is_floating_ip" "vni_secondary_fip" {
   for_each       = !var.use_legacy_network_interface ? length(var.secondary_floating_ips) == 0 ? {} : local.secondary_fip_map : {}
   name           = each.key
   target         = each.value.vni_id
