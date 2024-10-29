@@ -111,6 +111,35 @@ data "ibm_is_vpc" "vpc" {
 }
 
 ##############################################################################
+# Create Virtual Network Interface
+##############################################################################
+resource "ibm_is_virtual_network_interface" "primary_vni" {
+  for_each = !var.use_legacy_network_interface ? local.vsi_map : {}
+  name     = "${each.key}-vni"
+  subnet   = each.value.subnet_id
+  security_groups = flatten([
+    (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+    var.security_group_ids,
+    (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
+  ])
+  allow_ip_spoofing         = var.allow_ip_spoofing
+  auto_delete               = false
+  enable_infrastructure_nat = true
+  dynamic "primary_ip" {
+    for_each = var.manage_reserved_ips ? [1] : []
+    content {
+      reserved_ip = ibm_is_subnet_reserved_ip.vsi_ip[each.value.name].reserved_ip
+    }
+  }
+  dynamic "ips" {
+    for_each = var.number_of_secondary_reserved_ips > 0 ? { for count in range(var.number_of_secondary_reserved_ips) : count => count } : {}
+    content {
+      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
+    }
+  }
+}
+
+##############################################################################
 # Create Virtual Servers
 ##############################################################################
 
@@ -165,27 +194,7 @@ resource "ibm_is_instance" "vsi" {
     content {
       name = "${each.value.subnet_name}-eth0"
       virtual_network_interface {
-        subnet = each.value.subnet_id
-        security_groups = flatten([
-          (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
-          var.security_group_ids,
-          (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
-        ])
-        allow_ip_spoofing         = var.allow_ip_spoofing
-        auto_delete               = true
-        enable_infrastructure_nat = true
-        dynamic "primary_ip" {
-          for_each = var.manage_reserved_ips ? [1] : []
-          content {
-            reserved_ip = ibm_is_subnet_reserved_ip.vsi_ip[each.value.name].reserved_ip
-          }
-        }
-        dynamic "ips" {
-          for_each = var.number_of_secondary_reserved_ips > 0 ? { for count in range(var.number_of_secondary_reserved_ips) : count => count } : {}
-          content {
-            reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
-          }
-        }
+        id = ibm_is_virtual_network_interface.primary_vni[each.key].id
       }
     }
   }
