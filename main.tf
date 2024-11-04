@@ -161,6 +161,12 @@ resource "ibm_is_virtual_network_interface" "secondary_vni" {
   ])
   auto_delete               = false
   enable_infrastructure_nat = true
+  dynamic "primary_ip" {
+    for_each = var.manage_reserved_ips ? [1] : []
+    content {
+      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vni_ip[each.key].reserved_ip
+    }
+  }
 }
 
 ##############################################################################
@@ -190,6 +196,13 @@ resource "ibm_is_subnet_reserved_ip" "secondary_vsi_ip" {
   for_each    = { for key, value in local.secondary_reserved_ips_map : key => value if var.number_of_secondary_reserved_ips > 0 && !var.use_legacy_network_interface }
   name        = "${each.value.name}-ip"
   subnet      = each.value.subnet_id
+  auto_delete = false
+}
+
+resource "ibm_is_subnet_reserved_ip" "secondary_vni_ip" {
+  for_each    = { for k in var.secondary_subnets : k.zone => k if !var.use_legacy_network_interface && var.manage_reserved_ips }
+  name        = "${each.value.name}-ip"
+  subnet      = each.value.id
   auto_delete = false
 }
 
