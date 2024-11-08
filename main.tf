@@ -44,7 +44,7 @@ locals {
 
   # List of additional private IP addresses to bind to the primary virtual network interface.
   secondary_reserved_ips_list = flatten([
-    for count in range(var.number_of_secondary_reserved_ips) : [
+    for count in range(var.primary_vni_additional_ip_count) : [
       for vsi_key, vsi_value in local.vsi_map :
       {
         name      = "${vsi_key}-${count}"
@@ -132,7 +132,7 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
     }
   }
   dynamic "ips" {
-    for_each = var.number_of_secondary_reserved_ips > 0 ? { for count in range(var.number_of_secondary_reserved_ips) : count => count } : {}
+    for_each = var.primary_vni_additional_ip_count > 0 ? { for count in range(var.primary_vni_additional_ip_count) : count => count } : {}
     content {
       reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
     }
@@ -193,7 +193,7 @@ resource "ibm_is_subnet_reserved_ip" "vsi_ip" {
 }
 
 resource "ibm_is_subnet_reserved_ip" "secondary_vsi_ip" {
-  for_each    = { for key, value in local.secondary_reserved_ips_map : key => value if var.number_of_secondary_reserved_ips > 0 && !var.use_legacy_network_interface }
+  for_each    = { for key, value in local.secondary_reserved_ips_map : key => value if var.primary_vni_additional_ip_count > 0 && !var.use_legacy_network_interface }
   name        = "${each.value.name}-ip"
   subnet      = each.value.subnet_id
   auto_delete = false

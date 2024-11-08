@@ -116,7 +116,7 @@ variable "manage_reserved_ips" {
   default     = false
 }
 
-variable "number_of_secondary_reserved_ips" {
+variable "primary_vni_additional_ip_count" {
   description = "The number of secondary reversed IPs to attach to a Virtual Network Interface (VNI). Additional IPs are created only if `manage_reserved_ips` is set to true."
   type        = number
   nullable    = false
