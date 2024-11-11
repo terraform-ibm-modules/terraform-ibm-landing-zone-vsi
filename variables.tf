@@ -116,6 +116,13 @@ variable "manage_reserved_ips" {
   default     = false
 }
 
+variable "primary_vni_additional_ip_count" {
+  description = "The number of secondary reversed IPs to attach to a Virtual Network Interface (VNI). Additional IPs are created only if `manage_reserved_ips` is set to true."
+  type        = number
+  nullable    = false
+  default     = 0
+}
+
 variable "use_static_boot_volume_name" {
   description = "Sets the boot volume name for each VSI to a static name in the format `{hostname}_boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when VSIs are recreated."
   type        = bool
@@ -488,3 +495,9 @@ variable "snapshot_consistency_group_id" {
 }
 
 ##############################################################################
+
+variable "use_legacy_network_interface" {
+  description = "Set this to true to use legacy network interface for the created instances."
+  type        = bool
+  default     = false
+}

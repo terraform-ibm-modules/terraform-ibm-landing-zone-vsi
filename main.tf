@@ -42,7 +42,24 @@ locals {
     server.name => server
   }
 
-  secondary_fip_list = flatten([
+  # List of additional private IP addresses to bind to the primary virtual network interface.
+  secondary_reserved_ips_list = flatten([
+    for count in range(var.primary_vni_additional_ip_count) : [
+      for vsi_key, vsi_value in local.vsi_map :
+      {
+        name      = "${vsi_key}-${count}"
+        subnet_id = vsi_value.subnet_id
+      }
+    ]
+  ])
+
+  secondary_reserved_ips_map = {
+    for ip in local.secondary_reserved_ips_list :
+    ip.name => ip
+  }
+
+  # Old approach to create floating IPs for the secondary network interface.
+  legacy_secondary_fip_list = var.use_legacy_network_interface ? flatten([
     # For each interface in list of floating ips
     for interface in var.secondary_floating_ips :
     [
@@ -55,7 +72,24 @@ locals {
         target = instance.network_interfaces[index(var.secondary_subnets[*].name, interface)].id
       }
     ]
-  ])
+  ]) : []
+
+  # List of secondary Virtual network interface for which floating IPs needs to be added.
+  secondary_fip_list = !var.use_legacy_network_interface && length(var.secondary_floating_ips) != 0 ? flatten([
+    for instance in ibm_is_instance.vsi : [
+      for network_attachment in instance.network_attachments :
+      network_attachment if contains([for subnet in var.secondary_floating_ips : subnet], network_attachment.name)
+    ]
+  ]) : []
+
+  secondary_fip_map = {
+    for vni in local.secondary_fip_list :
+    vni.name => {
+      vni_name    = vni.virtual_network_interface[0].name
+      subnet_name = vni.name
+      vni_id      = vni.virtual_network_interface[0].id
+    }
+  }
 
   # determine snapshot in following order: input variable -> from consistency group -> null (none)
   vsi_boot_volume_snapshot_id = try(coalesce(var.boot_volume_snapshot_id, local.consistency_group_boot_snapshot_id), null)
@@ -74,6 +108,65 @@ resource "time_sleep" "wait_for_authorization_policy" {
 
 data "ibm_is_vpc" "vpc" {
   identifier = var.vpc_id
+}
+
+##############################################################################
+# Create Virtual Network Interface
+##############################################################################
+resource "ibm_is_virtual_network_interface" "primary_vni" {
+  for_each = { for vsi_key, vsi_value in local.vsi_map : vsi_key => vsi_value if !var.use_legacy_network_interface }
+  name     = "${each.key}-vni"
+  subnet   = each.value.subnet_id
+  security_groups = flatten([
+    (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+    var.security_group_ids,
+    (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
+  ])
+  allow_ip_spoofing         = var.allow_ip_spoofing
+  auto_delete               = false
+  enable_infrastructure_nat = true
+  dynamic "primary_ip" {
+    for_each = var.manage_reserved_ips ? [1] : []
+    content {
+      reserved_ip = ibm_is_subnet_reserved_ip.vsi_ip[each.value.name].reserved_ip
+    }
+  }
+  dynamic "ips" {
+    for_each = var.primary_vni_additional_ip_count > 0 ? { for count in range(var.primary_vni_additional_ip_count) : count => count } : {}
+    content {
+      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
+    }
+  }
+}
+
+resource "ibm_is_virtual_network_interface" "secondary_vni" {
+  for_each = { for k in var.secondary_subnets : k.zone => k if !var.use_legacy_network_interface }
+  name     = each.value.name
+  subnet   = each.value.id
+  # If security_groups is empty(list is len(0)) then default list to data.ibm_is_vpc.vpc.default_security_group.
+  # If list is empty it will fail on reapply as when vsi is passed an empty security group list it will attach the default security group.
+  allow_ip_spoofing = var.secondary_allow_ip_spoofing
+  security_groups = length(flatten([
+    (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+    [
+      for group in var.secondary_security_groups :
+      group.security_group_id if group.interface_name == each.value.name
+    ]
+    ])) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : flatten([
+    (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+    [
+      for group in var.secondary_security_groups :
+      group.security_group_id if group.interface_name == each.value.name
+    ]
+  ])
+  auto_delete               = false
+  enable_infrastructure_nat = true
+  dynamic "primary_ip" {
+    for_each = var.manage_reserved_ips ? [1] : []
+    content {
+      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vni_ip[each.key].reserved_ip
+    }
+  }
 }
 
 ##############################################################################
@@ -99,6 +192,20 @@ resource "ibm_is_subnet_reserved_ip" "vsi_ip" {
   auto_delete = false
 }
 
+resource "ibm_is_subnet_reserved_ip" "secondary_vsi_ip" {
+  for_each    = { for key, value in local.secondary_reserved_ips_map : key => value if var.primary_vni_additional_ip_count > 0 && !var.use_legacy_network_interface }
+  name        = "${each.value.name}-ip"
+  subnet      = each.value.subnet_id
+  auto_delete = false
+}
+
+resource "ibm_is_subnet_reserved_ip" "secondary_vni_ip" {
+  for_each    = { for k in var.secondary_subnets : k.zone => k if !var.use_legacy_network_interface && var.manage_reserved_ips }
+  name        = "${each.value.name}-ip"
+  subnet      = each.value.id
+  auto_delete = false
+}
+
 resource "ibm_is_instance" "vsi" {
   for_each        = local.vsi_map
   name            = each.value.vsi_name
@@ -118,26 +225,52 @@ resource "ibm_is_instance" "vsi" {
     ]
   }
 
-  primary_network_interface {
-    subnet = each.value.subnet_id
-    security_groups = flatten([
-      (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
-      var.security_group_ids,
-      (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
-    ])
-    allow_ip_spoofing = var.allow_ip_spoofing
-    dynamic "primary_ip" {
-      for_each = var.manage_reserved_ips ? [1] : []
-      content {
-        reserved_ip = ibm_is_subnet_reserved_ip.vsi_ip[each.value.name].reserved_ip
+  # Primary Virtual Network Interface
+  dynamic "primary_network_attachment" {
+    for_each = var.use_legacy_network_interface ? [] : [1]
+    content {
+      name = "${each.value.subnet_name}-eth0"
+      virtual_network_interface {
+        id = ibm_is_virtual_network_interface.primary_vni[each.key].id
       }
     }
   }
 
+  # Additional Virtual Network Interface
+  dynamic "network_attachments" {
+    for_each = { for key, value in ibm_is_virtual_network_interface.secondary_vni : key => value if key == each.value.zone && !var.use_legacy_network_interface }
+    content {
+      name = network_attachments.value.name
+      virtual_network_interface {
+        id = network_attachments.value.id
+      }
+    }
+  }
+
+  # Legacy Network Interface
+  dynamic "primary_network_interface" {
+    for_each = var.use_legacy_network_interface ? [1] : []
+    content {
+      subnet = each.value.subnet_id
+      security_groups = flatten([
+        (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
+        var.security_group_ids,
+        (var.create_security_group == false && length(var.security_group_ids) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : []),
+      ])
+      allow_ip_spoofing = var.allow_ip_spoofing
+      dynamic "primary_ip" {
+        for_each = var.manage_reserved_ips ? [1] : []
+        content {
+          reserved_ip = ibm_is_subnet_reserved_ip.vsi_ip[each.value.name].reserved_ip
+        }
+      }
+    }
+  }
+  # Legacy additional Network Interface
   dynamic "network_interfaces" {
     for_each = {
       for k in var.secondary_subnets : k.zone => k
-      if k.zone == each.value.zone
+      if k.zone == each.value.zone && var.use_legacy_network_interface
     }
     content {
       subnet = network_interfaces.value.id
@@ -181,17 +314,17 @@ resource "ibm_is_instance" "vsi" {
 resource "ibm_is_floating_ip" "vsi_fip" {
   for_each       = var.enable_floating_ip ? ibm_is_instance.vsi : {}
   name           = "${each.value.name}-fip"
-  target         = each.value.primary_network_interface[0].id
+  target         = var.use_legacy_network_interface ? each.value.primary_network_interface[0].id : each.value.primary_network_attachment[0].virtual_network_interface[0].id
   tags           = var.tags
   access_tags    = var.access_tags
   resource_group = var.resource_group_id
 }
 
 resource "ibm_is_floating_ip" "secondary_fip" {
-  for_each = length(var.secondary_floating_ips) == 0 ? {} : {
-    for interface in local.secondary_fip_list :
+  for_each = var.use_legacy_network_interface ? length(var.secondary_floating_ips) == 0 ? {} : {
+    for interface in local.legacy_secondary_fip_list :
     (interface.name) => interface
-  }
+  } : {}
   name           = each.key
   target         = each.value.target
   tags           = var.tags
@@ -199,4 +332,12 @@ resource "ibm_is_floating_ip" "secondary_fip" {
   resource_group = var.resource_group_id
 }
 
+resource "ibm_is_floating_ip" "vni_secondary_fip" {
+  for_each       = local.secondary_fip_map
+  name           = each.key
+  target         = each.value.vni_id
+  tags           = var.tags
+  access_tags    = var.access_tags
+  resource_group = var.resource_group_id
+}
 ##############################################################################
