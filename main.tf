@@ -78,13 +78,13 @@ locals {
   secondary_fip_list = !var.use_legacy_network_interface && length(var.secondary_floating_ips) != 0 ? flatten([
     for instance in ibm_is_instance.vsi : [
       for network_attachment in instance.network_attachments :
-      network_attachment if contains([for subnet in var.secondary_floating_ips : subnet], network_attachment.name)
+      network_attachment if contains([for subnet in var.secondary_floating_ips : subnet], network_attachment.virtual_network_interface[0].name)
     ]
   ]) : []
 
   secondary_fip_map = {
     for vni in local.secondary_fip_list :
-    vni.name => {
+    vni.virtual_network_interface[0].name => {
       vni_name    = vni.virtual_network_interface[0].name
       subnet_name = vni.name
       vni_id      = vni.virtual_network_interface[0].id
