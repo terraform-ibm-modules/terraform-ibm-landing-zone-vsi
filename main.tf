@@ -141,7 +141,7 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
 
 resource "ibm_is_virtual_network_interface" "secondary_vni" {
   for_each = { for k in var.secondary_subnets : k.zone => k if !var.use_legacy_network_interface }
-  name     = "${var.prefix}-${each.value.name}-vni"
+  name     = "${var.prefix}-${substr(md5(each.value.name), -4, 4)}-vni"
   subnet   = each.value.id
   # If security_groups is empty(list is len(0)) then default list to data.ibm_is_vpc.vpc.default_security_group.
   # If list is empty it will fail on reapply as when vsi is passed an empty security group list it will attach the default security group.
@@ -229,7 +229,7 @@ resource "ibm_is_instance" "vsi" {
   dynamic "primary_network_attachment" {
     for_each = var.use_legacy_network_interface ? [] : [1]
     content {
-      name = "${each.value.subnet_name}-eth0"
+      name = ibm_is_virtual_network_interface.primary_vni[each.key].name
       virtual_network_interface {
         id = ibm_is_virtual_network_interface.primary_vni[each.key].id
       }
