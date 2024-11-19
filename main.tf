@@ -78,13 +78,13 @@ locals {
   secondary_fip_list = !var.use_legacy_network_interface && length(var.secondary_floating_ips) != 0 ? flatten([
     for instance in ibm_is_instance.vsi : [
       for network_attachment in instance.network_attachments :
-      network_attachment if contains([for subnet in var.secondary_floating_ips : subnet], network_attachment.virtual_network_interface[0].name)
+      network_attachment if contains([for subnet in var.secondary_floating_ips : subnet], network_attachment.name)
     ]
   ]) : []
 
   secondary_fip_map = {
     for vni in local.secondary_fip_list :
-    vni.virtual_network_interface[0].name => {
+    vni.name => {
       vni_name    = vni.virtual_network_interface[0].name
       subnet_name = vni.name
       vni_id      = vni.virtual_network_interface[0].id
@@ -141,7 +141,7 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
 
 resource "ibm_is_virtual_network_interface" "secondary_vni" {
   for_each = { for k in var.secondary_subnets : k.zone => k if !var.use_legacy_network_interface }
-  name     = "${var.prefix}-${substr(md5(each.value.name), -4, 4)}-vni"
+  name     = each.value.name
   subnet   = each.value.id
   # If security_groups is empty(list is len(0)) then default list to data.ibm_is_vpc.vpc.default_security_group.
   # If list is empty it will fail on reapply as when vsi is passed an empty security group list it will attach the default security group.
