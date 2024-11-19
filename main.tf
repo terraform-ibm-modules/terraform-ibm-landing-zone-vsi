@@ -115,7 +115,7 @@ data "ibm_is_vpc" "vpc" {
 ##############################################################################
 resource "ibm_is_virtual_network_interface" "primary_vni" {
   for_each = { for vsi_key, vsi_value in local.vsi_map : vsi_key => vsi_value if !var.use_legacy_network_interface }
-  name     = "${each.key}-vni"
+  name     = "${each.value.vsi_name}-vni"
   subnet   = each.value.subnet_id
   security_groups = flatten([
     (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
@@ -229,7 +229,7 @@ resource "ibm_is_instance" "vsi" {
   dynamic "primary_network_attachment" {
     for_each = var.use_legacy_network_interface ? [] : [1]
     content {
-      name = "${each.value.subnet_name}-eth0"
+      name = ibm_is_virtual_network_interface.primary_vni[each.key].name
       virtual_network_interface {
         id = ibm_is_virtual_network_interface.primary_vni[each.key].id
       }
