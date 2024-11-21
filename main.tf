@@ -221,9 +221,9 @@ resource "ibm_is_subnet_reserved_ip" "secondary_vsi_ip" {
 }
 
 resource "ibm_is_subnet_reserved_ip" "secondary_vni_ip" {
-  for_each    = { for k in var.secondary_subnets : k.zone => k if !var.use_legacy_network_interface && var.manage_reserved_ips }
-  name        = "${each.value.name}-ip"
-  subnet      = each.value.id
+  for_each    = { for key, value in local.secondary_vni_map : key => value if !var.use_legacy_network_interface && var.manage_reserved_ips }
+  name        = "${var.prefix}-${substr(md5(each.value.name), -4, 4)}-secondary-vni-ip"
+  subnet      = each.value.subnet_id
   auto_delete = false
 }
 
