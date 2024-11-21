@@ -175,7 +175,7 @@ module "slz_vsi" {
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
   kms_encryption_enabled          = true
   existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
-  vsi_per_subnet                  = 1
+  vsi_per_subnet                  = 2
   primary_vni_additional_ip_count = 2
   ssh_key_ids                     = [local.ssh_key_id]
   secondary_subnets               = local.secondary_subnet_zone_list

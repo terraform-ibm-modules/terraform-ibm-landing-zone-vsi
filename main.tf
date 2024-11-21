@@ -27,14 +27,34 @@ locals {
       # For each subnet
       for subnet in range(length(var.subnets)) :
       {
-        name        = "${var.subnets[subnet].name}-${count}"
-        vsi_name    = "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}"
-        subnet_id   = var.subnets[subnet].id
-        zone        = var.subnets[subnet].zone
-        subnet_name = var.subnets[subnet].name
+        name           = "${var.subnets[subnet].name}-${count}"
+        vsi_name       = "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}"
+        subnet_id      = var.subnets[subnet].id
+        zone           = var.subnets[subnet].zone
+        subnet_name    = var.subnets[subnet].name
+        secondary_vnis = [for index, vni in ibm_is_virtual_network_interface.secondary_vni : vni.id if(vni.zone == var.subnets[subnet].zone) && (tonumber(substr(index, -1, -1)) == count)]
       }
     ]
   ])
+
+  secondary_vni_list = flatten([
+    # For each number in a range from 0 to VSI per subnet
+    for count in range(var.vsi_per_subnet) : [
+      # For each subnet
+      for subnet in range(length(var.secondary_subnets)) :
+      {
+        name        = "${var.prefix}-${var.secondary_subnets[subnet].name}-${count}"
+        subnet_id   = var.secondary_subnets[subnet].id
+        zone        = var.secondary_subnets[subnet].zone
+        subnet_name = var.secondary_subnets[subnet].name
+      }
+    ]
+  ])
+
+  secondary_vni_map = {
+    for vni in local.secondary_vni_list :
+    vni.name => vni
+  }
 
   # Create map of VSI from list
   vsi_map = {
@@ -47,7 +67,7 @@ locals {
     for count in range(var.primary_vni_additional_ip_count) : [
       for vsi_key, vsi_value in local.vsi_map :
       {
-        name      = "${vsi_key}-${count}"
+        name      = "${var.prefix}-${vsi_key}-${count}"
         subnet_id = vsi_value.subnet_id
       }
     ]
@@ -76,19 +96,20 @@ locals {
 
   # List of secondary Virtual network interface for which floating IPs needs to be added.
   secondary_fip_list = !var.use_legacy_network_interface && length(var.secondary_floating_ips) != 0 ? flatten([
-    for instance in ibm_is_instance.vsi : [
-      for network_attachment in instance.network_attachments :
-      network_attachment if contains([for subnet in var.secondary_floating_ips : subnet], network_attachment.name)
+    for subnet in var.secondary_floating_ips :
+    [
+      for key, value in local.secondary_vni_map :
+      {
+        subnet_index = key
+        vni_name     = ibm_is_virtual_network_interface.secondary_vni[key].name
+        vni_id       = ibm_is_virtual_network_interface.secondary_vni[key].id
+      } if strcontains(key, "${var.prefix}-${subnet}")
     ]
   ]) : []
 
   secondary_fip_map = {
     for vni in local.secondary_fip_list :
-    vni.name => {
-      vni_name    = vni.virtual_network_interface[0].name
-      subnet_name = vni.name
-      vni_id      = vni.virtual_network_interface[0].id
-    }
+    vni.subnet_index => vni
   }
 
   # determine snapshot in following order: input variable -> from consistency group -> null (none)
@@ -134,15 +155,15 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
   dynamic "ips" {
     for_each = var.primary_vni_additional_ip_count > 0 ? { for count in range(var.primary_vni_additional_ip_count) : count => count } : {}
     content {
-      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
+      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${var.prefix}-${each.value.name}-${ips.key}"].reserved_ip
     }
   }
 }
 
 resource "ibm_is_virtual_network_interface" "secondary_vni" {
-  for_each = { for k in var.secondary_subnets : k.zone => k if !var.use_legacy_network_interface }
+  for_each = { for key, value in local.secondary_vni_map : key => value if !var.use_legacy_network_interface }
   name     = each.value.name
-  subnet   = each.value.id
+  subnet   = each.value.subnet_id
   # If security_groups is empty(list is len(0)) then default list to data.ibm_is_vpc.vpc.default_security_group.
   # If list is empty it will fail on reapply as when vsi is passed an empty security group list it will attach the default security group.
   allow_ip_spoofing = var.secondary_allow_ip_spoofing
@@ -238,11 +259,11 @@ resource "ibm_is_instance" "vsi" {
 
   # Additional Virtual Network Interface
   dynamic "network_attachments" {
-    for_each = { for key, value in ibm_is_virtual_network_interface.secondary_vni : key => value if key == each.value.zone && !var.use_legacy_network_interface }
+    for_each = { for index, id in each.value.secondary_vnis : index => id if !var.use_legacy_network_interface }
     content {
-      name = network_attachments.value.name
+      name = "${each.value.vsi_name}-secondary-vni-${network_attachments.key}"
       virtual_network_interface {
-        id = network_attachments.value.id
+        id = network_attachments.value
       }
     }
   }
