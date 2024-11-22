@@ -67,7 +67,7 @@ locals {
     for count in range(var.primary_vni_additional_ip_count) : [
       for vsi_key, vsi_value in local.vsi_map :
       {
-        name      = "${var.prefix}-${vsi_key}-${count}"
+        name      = "${vsi_key}-${count}"
         subnet_id = vsi_value.subnet_id
       }
     ]
@@ -155,7 +155,7 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
   dynamic "ips" {
     for_each = var.primary_vni_additional_ip_count > 0 ? { for count in range(var.primary_vni_additional_ip_count) : count => count } : {}
     content {
-      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${var.prefix}-${each.value.name}-${ips.key}"].reserved_ip
+      reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
     }
   }
 }
