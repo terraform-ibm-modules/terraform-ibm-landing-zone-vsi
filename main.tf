@@ -43,7 +43,7 @@ locals {
       # For each subnet
       for subnet in range(length(var.secondary_subnets)) :
       {
-        name        = "${var.prefix}-${var.secondary_subnets[subnet].name}-${count}"
+        name        = "${var.secondary_subnets[subnet].name}-${count}"
         subnet_id   = var.secondary_subnets[subnet].id
         zone        = var.secondary_subnets[subnet].zone
         subnet_name = var.secondary_subnets[subnet].name
@@ -103,7 +103,7 @@ locals {
         subnet_index = key
         vni_name     = ibm_is_virtual_network_interface.secondary_vni[key].name
         vni_id       = ibm_is_virtual_network_interface.secondary_vni[key].id
-      } if strcontains(key, "${var.prefix}-${subnet}")
+      } if strcontains(key, subnet)
     ]
   ]) : []
 
