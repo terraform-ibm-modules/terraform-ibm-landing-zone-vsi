@@ -499,5 +499,6 @@ variable "snapshot_consistency_group_id" {
 variable "use_legacy_network_interface" {
   description = "Set this to true to use legacy network interface for the created instances."
   type        = bool
+  nullable    = false
   default     = false
 }
