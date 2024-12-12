@@ -51,3 +51,9 @@ variable "secondary_use_vsi_security_group" {
   type        = bool
   default     = false
 }
+
+variable "enable_dedicated_host" {
+  description = "Allows user to create VSI's on a dedicated Host"
+  type        = bool
+  default     = false
+}

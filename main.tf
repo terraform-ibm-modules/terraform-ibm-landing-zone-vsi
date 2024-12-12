@@ -237,6 +237,7 @@ resource "ibm_is_instance" "vsi" {
   zone            = each.value.zone
   user_data       = var.user_data
   keys            = var.ssh_key_ids
+  dedicated_host  = var.enable_dedicated_host ? try(module.dedicated_host[each.value.zone].dedicated_host_id, null) : null
   placement_group = var.placement_group_id
   tags            = var.tags
   access_tags     = var.access_tags

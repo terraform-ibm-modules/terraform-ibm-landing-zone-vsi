@@ -170,6 +170,7 @@ module "slz_vsi" {
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = var.prefix
   placement_group_id              = ibm_is_placement_group.placement_group.id
+  enable_dedicated_host           = var.enable_dedicated_host  
   machine_type                    = "cx2-2x4"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn

@@ -85,6 +85,12 @@ This module creates any number of application load balancers to balance traffic 
 
 ---
 
+### Dedicated Hosts
+
+By using the `enable_dedicated_host`, a dedicatd host allows the user to provision VSI's in a single host server. This has security adavantage for the user on host level.
+
+---
+
 ### Storage Volume Snapshot support
 
 This module supports volume snapshots for both VSI boot volumes and attached block storage volumes. This feature can be used in either of the following scenarios:
@@ -122,6 +128,7 @@ module vsi {
   user_data                        = var.user_data
   boot_volume_encryption_key       = var.boot_volume_encryption_key
   enable_floating_ip               = var.enable_floating_ip
+  enable_dedicated_host            = var.enable_dedicated_host
   allow_ip_spoofing                = var.allow_ip_spoofing
   create_security_group            = var.create_security_group
   security_group                   = var.security_group
@@ -149,7 +156,7 @@ You need the following permissions to run this module.
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-### Requirements
+## Requirements
 
 | Name | Version |
 |------|---------|
@@ -157,11 +164,20 @@ You need the following permissions to run this module.
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.65.0, < 2.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
 
-### Modules
+## Providers
 
-No modules.
+| Name | Version |
+|------|---------|
+| <a name="provider_ibm"></a> [ibm](#provider\_ibm) | 1.72.1 |
+| <a name="provider_time"></a> [time](#provider\_time) | 0.12.1 |
 
-### Resources
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_dedicated_host"></a> [dedicated\_host](#module\_dedicated\_host) | terraform-ibm-modules/dedicated-host/ibm | 1.0.0 |
+
+## Resources
 
 | Name | Type |
 |------|------|
@@ -188,7 +204,7 @@ No modules.
 | [ibm_is_snapshot_consistency_group.snapshot_group](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_snapshot_consistency_group) | data source |
 | [ibm_is_vpc.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_vpc) | data source |
 
-### Inputs
+## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -198,6 +214,10 @@ No modules.
 | <a name="input_boot_volume_encryption_key"></a> [boot\_volume\_encryption\_key](#input\_boot\_volume\_encryption\_key) | CRN of boot volume encryption key | `string` | `null` | no |
 | <a name="input_boot_volume_snapshot_id"></a> [boot\_volume\_snapshot\_id](#input\_boot\_volume\_snapshot\_id) | The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used) | `string` | `null` | no |
 | <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Create security group for VSI. If this is passed as false, the default will be used | `bool` | n/a | yes |
+| <a name="input_dh_profile"></a> [dh\_profile](#input\_dh\_profile) | Profile for the dedicated hosts(size and resources). Refer [Understanding DH Profile](https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui) for more details | `string` | `"bx2-host-152x608"` | no |
+| <a name="input_dh_profile_class"></a> [dh\_profile\_class](#input\_dh\_profile\_class) | Profile class of the dedicated host, this has to be defined based on the VSI usage. Refer [Understanding DH Class](https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui#:~:text=common%20use%20cases.-,Understanding%20profiles,-The%20following%20example) for more details | `string` | `"bx2"` | no |
+| <a name="input_dh_profile_family"></a> [dh\_profile\_family](#input\_dh\_profile\_family) | Family defines the purpose of the dedicated host, The dedicated host family can be defined from balanced,compute or memory. Refer [Understanding DH Profile family](https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui#:~:text=%22b%22%3A%20balanced%20family,1%3A28%20ratio) for more details | `string` | `"balanced"` | no |
+| <a name="input_enable_dedicated_host"></a> [enable\_dedicated\_host](#input\_enable\_dedicated\_host) | Allows user to create VSI's on a dedicated Host | `bool` | `false` | no |
 | <a name="input_enable_floating_ip"></a> [enable\_floating\_ip](#input\_enable\_floating\_ip) | Create a floating IP for each virtual server created | `bool` | `false` | no |
 | <a name="input_existing_kms_instance_guid"></a> [existing\_kms\_instance\_guid](#input\_existing\_kms\_instance\_guid) | The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.boot\_volume\_encryption\_key is coming from. | `string` | `null` | no |
 | <a name="input_image_id"></a> [image\_id](#input\_image\_id) | Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region | `string` | n/a | yes |
@@ -228,7 +248,7 @@ No modules.
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of VPC | `string` | n/a | yes |
 | <a name="input_vsi_per_subnet"></a> [vsi\_per\_subnet](#input\_vsi\_per\_subnet) | Number of VSI instances for each subnet | `number` | n/a | yes |
 
-### Outputs
+## Outputs
 
 | Name | Description |
 |------|-------------|

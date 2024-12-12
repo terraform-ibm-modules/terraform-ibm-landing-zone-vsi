@@ -29,6 +29,7 @@ output "list" {
       floating_ip_id         = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].id : null
       floating_ip_crn        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].crn : null
       vpc_id                 = var.vpc_id
+      dedicated_host_id      = var.enable_dedicated_host ? try(module.dedicated_host[each.value.zone].dedicated_host_id, null) : null
       snapshot_id            = one(virtual_server.boot_volume[*].snapshot)
     }
   ]
