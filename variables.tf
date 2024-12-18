@@ -502,3 +502,34 @@ variable "use_legacy_network_interface" {
   nullable    = false
   default     = false
 }
+
+##############################################################################
+
+##############################################################################
+# Dedicated Host Variables
+##############################################################################
+
+variable "enable_dedicated_host" {
+  description = "Allows user to create VSI's on a dedicated Host"
+  type        = bool
+  default     = false
+}
+
+variable "dh_profile_family" {
+  description = "Family defines the purpose of the dedicated host, The dedicated host family can be defined from balanced,compute or memory. Refer [Understanding DH Profile family](https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui#:~:text=%22b%22%3A%20balanced%20family,1%3A28%20ratio) for more details"
+  type        = string
+  default     = "balanced"
+}
+
+variable "dh_profile_class" {
+  description = "Profile class of the dedicated host, this has to be defined based on the VSI usage. Refer [Understanding DH Class](https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui#:~:text=common%20use%20cases.-,Understanding%20profiles,-The%20following%20example) for more details"
+  default     = "bx2"
+}
+
+variable "dh_profile" {
+  description = "Profile for the dedicated hosts(size and resources). Refer [Understanding DH Profile](https://cloud.ibm.com/docs/vpc?topic=vpc-dh-profiles&interface=ui) for more details"
+  type        = string
+  default     = "bx2-host-152x608"
+}
+
+##############################################################################

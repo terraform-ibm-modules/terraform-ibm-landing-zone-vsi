@@ -6,6 +6,7 @@ It will provision the following:
 - A new public SSH key if one is not passed in.
 - A new VPC with 3 subnets.
 - A new placement group.
+- A new dedicated Host for the VSI if the value is set to true.
 - A VSI in each subnet placed in the placement group.
 - A floating IP for each virtual server created.
 - A secondary VSI with secondary subnets and secondary security group.
