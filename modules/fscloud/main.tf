@@ -27,4 +27,5 @@ module "fscloud_vsi" {
   access_tags                    = var.access_tags
   snapshot_consistency_group_id  = var.snapshot_consistency_group_id
   boot_volume_snapshot_id        = var.boot_volume_snapshot_id
+  enable_dedicated_host          = var.enable_dedicated_host 
 }
