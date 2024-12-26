@@ -502,3 +502,17 @@ variable "use_legacy_network_interface" {
   nullable    = false
   default     = false
 }
+
+##############################################################################
+
+variable "enable_dedicated_host" {
+  type        = bool
+  default     = false
+  description = "Set this option to true to enable dedicated hosts for the VSI created for workload servers, with the default value set to false."
+}
+
+variable "dedicated_host" {
+  type        = string
+  description = "ID of the dedicated host for creating a single host for the VSI's"
+  default = null
+}
