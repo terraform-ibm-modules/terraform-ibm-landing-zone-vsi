@@ -504,15 +504,19 @@ variable "use_legacy_network_interface" {
 }
 
 ##############################################################################
+# Dedicated Host Variables
+##############################################################################
 
 variable "enable_dedicated_host" {
   type        = bool
   default     = false
-  description = "Set this option to true to enable dedicated hosts for the VSI created for workload servers, with the default value set to false."
+  description = "Setting this option to true will enable dedicated hosts for the VSI's, the default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details"
 }
 
 variable "dedicated_host_id" {
   type        = string
-  description = "ID of the dedicated host for creating a single host for the VSI's"
-  default = null
+  description = "ID of the dedicated host for hosting the VSI's"
+  default     = null
 }
+
+##############################################################################
