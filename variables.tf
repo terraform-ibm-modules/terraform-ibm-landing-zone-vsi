@@ -515,8 +515,14 @@ variable "enable_dedicated_host" {
 
 variable "dedicated_host_id" {
   type        = string
-  description = "ID of the dedicated host for hosting the VSI's"
   default     = null
+  description = "ID of the dedicated host for hosting the VSI's"
+
+  validation {
+    condition     = var.enable_dedicated_host == false || var.dedicated_host_id != null
+    error_message = "When enable_dedicated_host is set to true, dedicated_host_id host cannot be empty."
+  }
 }
+
 
 ##############################################################################

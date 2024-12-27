@@ -170,7 +170,9 @@ module "slz_vsi" {
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = var.prefix
   placement_group_id              = ibm_is_placement_group.placement_group.id
-  machine_type                    = "cx2-2x4"
+  enable_dedicated_host           = true
+  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host[0].id : null
+  machine_type                    = "bx2-2x8"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
   kms_encryption_enabled          = true
@@ -223,6 +225,30 @@ module "slz_vsi" {
       health_timeout    = 30
       health_type       = "tcp"
       pool_member_port  = 3120
+    }
+  ]
+}
+
+#############################################################################
+# Dedicated Host
+#############################################################################
+
+module "dedicated_host" {
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-dedicated-host.git?ref=v1.1.0"
+  dedicated_hosts = [
+    {
+      host_group_name     = "${var.prefix}-dhgroup"
+      existing_host_group = false
+      resource_group_id   = module.resource_group.resource_group_id
+      class               = "bx2"
+      family              = "balanced"
+      zone                = "${var.region}-1"
+      dedicated_host = [
+        {
+          name    = "${var.prefix}-dhhost"
+          profile = "bx2-host-152x608"
+        }
+      ]
     }
   ]
 }

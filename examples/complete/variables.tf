@@ -51,3 +51,9 @@ variable "secondary_use_vsi_security_group" {
   type        = bool
   default     = false
 }
+
+variable "enable_dedicated_host" {
+  type        = bool
+  default     = false
+  description = "Setting this option to true will enable dedicated hosts for the VSI's, the default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details"
+}
