@@ -170,8 +170,6 @@ module "slz_vsi" {
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = var.prefix
   placement_group_id              = ibm_is_placement_group.placement_group.id
-  enable_dedicated_host           = true
-  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host[0].dedicated_host_ids[0] : null
   machine_type                    = "bx2-2x8"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
@@ -229,13 +227,36 @@ module "slz_vsi" {
   ]
 }
 
+module "slz_vsi_dh" {
+  source                          = "../../"
+  resource_group_id               = module.resource_group.resource_group_id
+  image_id                        = var.image_id
+  create_security_group           = false
+  tags                            = var.resource_tags
+  access_tags                     = var.access_tags
+  subnets                         = module.slz_vpc.subnet_zone_list
+  vpc_id                          = module.slz_vpc.vpc_id
+  prefix                          = "${var.prefix}-dh"
+  enable_dedicated_host           = true
+  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
+  machine_type                    = "bx2-2x8"
+  user_data                       = null
+  boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  kms_encryption_enabled          = true
+  existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
+  vsi_per_subnet                  = 1
+  primary_vni_additional_ip_count = 2
+  ssh_key_ids                     = [local.ssh_key_id]
+  secondary_subnets               = local.secondary_subnet_zone_list
+  secondary_security_groups       = local.secondary_security_groups
+}
+
 #############################################################################
 # Dedicated Host
 #############################################################################
 
 module "dedicated_host" {
   source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-dedicated-host.git?ref=v1.1.0"
-  count  = var.enable_dedicated_host ? 1 : 0
   dedicated_hosts = [
     {
       host_group_name     = "${var.prefix}-dhgroup"
