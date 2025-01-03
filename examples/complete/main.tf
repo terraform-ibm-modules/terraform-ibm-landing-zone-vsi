@@ -234,7 +234,7 @@ module "slz_vsi_dh" {
   create_security_group           = false
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
-  subnets                         = module.slz_vpc.subnet_zone_list
+  subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = "${var.prefix}-dh"
   enable_dedicated_host           = true
@@ -247,8 +247,6 @@ module "slz_vsi_dh" {
   vsi_per_subnet                  = 1
   primary_vni_additional_ip_count = 2
   ssh_key_ids                     = [local.ssh_key_id]
-  secondary_subnets               = local.secondary_subnet_zone_list
-  secondary_security_groups       = local.secondary_security_groups
 }
 
 #############################################################################
