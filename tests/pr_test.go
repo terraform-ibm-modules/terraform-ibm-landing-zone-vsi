@@ -14,6 +14,7 @@ import (
 
 const basicExampleTerraformDir = "examples/basic"
 const completeExampleTerraformDir = "examples/complete"
+const UpgradeExampleTerraformDir = "example/upgrade"
 const fsCloudExampleTerraformDir = "examples/fscloud"
 const snapshotExampleTerraformDir = "examples/snapshot"
 
@@ -70,10 +71,10 @@ func TestRunCompleteExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-/*func TestRunCompleteUpgradeExample(t *testing.T) {
+func TestRunCompleteUpgradeExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, completeExampleTerraformDir, "slz-vsi-com-upg")
+	options := setupOptions(t, UpgradeExampleTerraformDir, "slz-vsi-com-upg")
 
 	output, err := options.RunTestUpgrade()
 
@@ -81,7 +82,7 @@ func TestRunCompleteExample(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
-}*/
+}
 
 func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
