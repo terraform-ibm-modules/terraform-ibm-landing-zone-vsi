@@ -497,8 +497,31 @@ variable "snapshot_consistency_group_id" {
 ##############################################################################
 
 variable "use_legacy_network_interface" {
-  description = "Set this to true to use legacy network interface for the created instances. test"
+  description = "Set this to true to use legacy network interface for the created instances."
   type        = bool
   nullable    = false
   default     = false
 }
+
+##############################################################################
+# Dedicated Host Variables
+##############################################################################
+
+variable "enable_dedicated_host" {
+  type        = bool
+  default     = false
+  description = "Setting this option to true will enable dedicated hosts for the VSI's, the default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details"
+}
+
+variable "dedicated_host_id" {
+  type        = string
+  default     = null
+  description = "ID of the dedicated host for hosting the VSI's"
+
+  validation {
+    condition     = var.enable_dedicated_host == false || (var.enable_dedicated_host == true && var.dedicated_host_id != null)
+    error_message = "When enable_dedicated_host is set to true, provide dedicated_host_id or new dedicated host will be created."
+  }
+}
+
+##############################################################################

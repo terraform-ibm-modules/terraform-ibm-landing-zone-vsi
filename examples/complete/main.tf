@@ -226,3 +226,50 @@ module "slz_vsi" {
     }
   ]
 }
+
+module "slz_vsi_dh" {
+  source                          = "../../"
+  resource_group_id               = module.resource_group.resource_group_id
+  image_id                        = var.image_id
+  create_security_group           = false
+  tags                            = var.resource_tags
+  access_tags                     = var.access_tags
+  subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
+  vpc_id                          = module.slz_vpc.vpc_id
+  prefix                          = "${var.prefix}-dh"
+  enable_dedicated_host           = true
+  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
+  machine_type                    = "bx2-2x8"
+  user_data                       = null
+  boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  kms_encryption_enabled          = true
+  existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
+  vsi_per_subnet                  = 1
+  primary_vni_additional_ip_count = 2
+  ssh_key_ids                     = [local.ssh_key_id]
+}
+
+#############################################################################
+# Dedicated Host
+#############################################################################
+
+module "dedicated_host" {
+  source  = "terraform-ibm-modules/dedicated-host/ibm"
+  version = "1.1.0"
+  dedicated_hosts = [
+    {
+      host_group_name     = "${var.prefix}-dhgroup"
+      existing_host_group = false
+      resource_group_id   = module.resource_group.resource_group_id
+      class               = "bx2"
+      family              = "balanced"
+      zone                = "${var.region}-1"
+      dedicated_host = [
+        {
+          name    = "${var.prefix}-dhhost"
+          profile = "bx2-host-152x608"
+        }
+      ]
+    }
+  ]
+}
