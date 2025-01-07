@@ -169,7 +169,7 @@ module "slz_vsi" {
   subnets                         = module.slz_vpc.subnet_zone_list
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = var.prefix
-  placement_group_id              = ibm_is_placement_group.placement_group.id
+  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
   machine_type                    = "cx2-2x4"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
@@ -225,28 +225,6 @@ module "slz_vsi" {
       pool_member_port  = 3120
     }
   ]
-}
-
-module "slz_vsi_dh" {
-  source                          = "../../"
-  resource_group_id               = module.resource_group.resource_group_id
-  image_id                        = var.image_id
-  create_security_group           = false
-  tags                            = var.resource_tags
-  access_tags                     = var.access_tags
-  subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
-  vpc_id                          = module.slz_vpc.vpc_id
-  prefix                          = "${var.prefix}-dh"
-  enable_dedicated_host           = true
-  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
-  machine_type                    = "bx2-2x8"
-  user_data                       = null
-  boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
-  kms_encryption_enabled          = true
-  existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
-  vsi_per_subnet                  = 1
-  primary_vni_additional_ip_count = 2
-  ssh_key_ids                     = [local.ssh_key_id]
 }
 
 #############################################################################
