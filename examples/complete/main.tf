@@ -166,11 +166,11 @@ module "slz_vsi" {
   create_security_group           = false
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
-  subnets                         = module.slz_vpc.subnet_zone_list
+  subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = var.prefix
-  placement_group_id              = ibm_is_placement_group.placement_group.id
-  machine_type                    = "cx2-2x4"
+  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
+  machine_type                    = "bx2-2x8"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
   kms_encryption_enabled          = true
@@ -194,35 +194,29 @@ module "slz_vsi" {
       name    = var.prefix
       profile = "10iops-tier"
   }]
-  load_balancers = [
+}
+
+#############################################################################
+# Dedicated Host
+#############################################################################
+
+module "dedicated_host" {
+  source  = "terraform-ibm-modules/dedicated-host/ibm"
+  version = "1.1.0"
+  dedicated_hosts = [
     {
-      name                    = "${var.prefix}-lb"
-      type                    = "public"
-      listener_port           = 9080
-      listener_protocol       = "http"
-      connection_limit        = 100
-      idle_connection_timeout = 50
-      algorithm               = "round_robin"
-      protocol                = "http"
-      health_delay            = 60
-      health_retries          = 5
-      health_timeout          = 30
-      health_type             = "http"
-      pool_member_port        = 8080
-    },
-    {
-      name              = "${var.prefix}-nlb"
-      type              = "public"
-      profile           = "network-fixed"
-      listener_port     = 3128
-      listener_protocol = "tcp"
-      algorithm         = "round_robin"
-      protocol          = "tcp"
-      health_delay      = 60
-      health_retries    = 5
-      health_timeout    = 30
-      health_type       = "tcp"
-      pool_member_port  = 3120
+      host_group_name     = "${var.prefix}-dhgroup"
+      existing_host_group = false
+      resource_group_id   = module.resource_group.resource_group_id
+      class               = "bx2"
+      family              = "balanced"
+      zone                = "${var.region}-1"
+      dedicated_host = [
+        {
+          name    = "${var.prefix}-dhhost"
+          profile = "bx2-host-152x608"
+        }
+      ]
     }
   ]
 }

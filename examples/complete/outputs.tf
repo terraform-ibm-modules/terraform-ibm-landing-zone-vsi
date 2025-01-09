@@ -17,3 +17,8 @@ output "secondary_security_groups" {
   description = "Secondary security groups created"
   value       = local.secondary_security_groups
 }
+
+output "dedicated_host" {
+  description = "Dedicated host ID"
+  value       = module.dedicated_host
+}

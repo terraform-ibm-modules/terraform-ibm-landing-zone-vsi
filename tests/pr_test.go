@@ -14,7 +14,7 @@ import (
 
 const basicExampleTerraformDir = "examples/basic"
 const completeExampleTerraformDir = "examples/complete"
-const UpgradeExampleTerraformDir = "example/complete/complete_dh"
+const UpgradeExampleTerraformDir = "example/complete"
 const fsCloudExampleTerraformDir = "examples/fscloud"
 const snapshotExampleTerraformDir = "examples/snapshot"
 
