@@ -20,5 +20,5 @@ output "secondary_security_groups" {
 
 output "dedicated_host" {
   description = "Dedicated host ID"
-  value = module.dedicated_host
+  value       = module.dedicated_host
 }
