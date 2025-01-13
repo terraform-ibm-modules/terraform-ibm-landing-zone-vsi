@@ -194,6 +194,7 @@ module "slz_vsi" {
       name    = var.prefix
       profile = "10iops-tier"
   }]
+  depends_on = [module.dedicated_host]
 }
 
 #############################################################################
