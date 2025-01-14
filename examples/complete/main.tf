@@ -253,7 +253,7 @@ module "slz_vsidh" {
   access_tags                     = var.access_tags
   subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
   vpc_id                          = module.slz_vpc.vpc_id
-  prefix                          = var.prefix
+  prefix                          = "${var.prefix}-dh"
   dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
   machine_type                    = "bx2-2x8"
   user_data                       = null
@@ -276,7 +276,7 @@ module "slz_vsidh" {
   # Add 1 additional data volume to each VSI
   block_storage_volumes = [
     {
-      name    = var.prefix
+      name    = "${var.prefix}-dh"
       profile = "10iops-tier"
   }]
 }
