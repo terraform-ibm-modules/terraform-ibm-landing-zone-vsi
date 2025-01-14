@@ -265,13 +265,9 @@ module "slz_vsidh" {
   ssh_key_ids                     = [local.ssh_key_id]
   secondary_subnets               = local.secondary_subnet_zone_list
   secondary_security_groups       = local.secondary_security_groups
-  # Create a floating IPs for the additional VNI
-  secondary_floating_ips = [
-    for subnet in local.secondary_subnet_zone_list :
-    subnet.name
-  ]
+
   # Create a floating IP for each virtual server created
-  enable_floating_ip               = true
+  enable_floating_ip               = false
   secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
   # Add 1 additional data volume to each VSI
   block_storage_volumes = [
