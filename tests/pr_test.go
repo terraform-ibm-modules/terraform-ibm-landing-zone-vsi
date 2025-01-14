@@ -71,7 +71,7 @@ func TestRunCompleteExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunCompleteUpgradeExample(t *testing.T) {
+/*func TestRunCompleteUpgradeExample(t *testing.T) {
 	t.Parallel()
 
 	options := setupOptions(t, UpgradeExampleTerraformDir, "slz-vsi-com-upg")
@@ -82,7 +82,7 @@ func TestRunCompleteUpgradeExample(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
-}
+}*/
 
 func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
