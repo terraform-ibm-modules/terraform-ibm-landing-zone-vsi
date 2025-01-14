@@ -240,42 +240,6 @@ module "slz_vsi" {
   ]
 }
 
-#############################################################################
-# VSI with Dedicated Host
-#############################################################################
-
-module "slz_vsidh" {
-  source                          = "../../"
-  resource_group_id               = module.resource_group.resource_group_id
-  image_id                        = var.image_id
-  create_security_group           = false
-  tags                            = var.resource_tags
-  access_tags                     = var.access_tags
-  subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
-  vpc_id                          = module.slz_vpc.vpc_id
-  prefix                          = "${var.prefix}-dh"
-  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
-  machine_type                    = "bx2-2x8"
-  user_data                       = null
-  boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsidh.${var.prefix}-vsidh"].crn
-  kms_encryption_enabled          = true
-  existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
-  vsi_per_subnet                  = 1
-  primary_vni_additional_ip_count = 2
-  ssh_key_ids                     = [local.ssh_key_id]
-  secondary_subnets               = local.secondary_subnet_zone_list
-  secondary_security_groups       = local.secondary_security_groups
-
-  # Create a floating IP for each virtual server created
-  enable_floating_ip               = false
-  secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
-  # Add 1 additional data volume to each VSI
-  block_storage_volumes = [
-    {
-      name    = "${var.prefix}-dh"
-      profile = "10iops-tier"
-  }]
-}
 
 #############################################################################
 # Dedicated Host
@@ -300,4 +264,40 @@ module "dedicated_host" {
       ]
     }
   ]
+}
+
+#############################################################################
+# VSI with Dedicated Host
+#############################################################################
+
+module "slz_vsidh" {
+  source                          = "../../"
+  resource_group_id               = module.resource_group.resource_group_id
+  image_id                        = var.image_id
+  create_security_group           = false
+  tags                            = var.resource_tags
+  access_tags                     = var.access_tags
+  subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
+  vpc_id                          = module.slz_vpc.vpc_id
+  prefix                          = "${var.prefix}-dh"
+  dedicated_host_id               = module.dedicated_host.dedicated_host_ids[0]
+  machine_type                    = "bx2-2x8"
+  user_data                       = null
+  boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsidh.${var.prefix}-vsidh"].crn
+  kms_encryption_enabled          = true
+  existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
+  vsi_per_subnet                  = 1
+  primary_vni_additional_ip_count = 2
+  ssh_key_ids                     = [local.ssh_key_id]
+
+  # Create a floating IP for each virtual server created
+  enable_floating_ip               = false
+  secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
+  # Add 1 additional data volume to each VSI
+  block_storage_volumes = [
+    {
+      name    = "${var.prefix}-dh"
+      profile = "10iops-tier"
+  }]
+  skip_iam_authorization_policy = var.skip_iam_authorization_policy
 }

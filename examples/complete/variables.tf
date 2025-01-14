@@ -52,8 +52,8 @@ variable "secondary_use_vsi_security_group" {
   default     = false
 }
 
-variable "enable_dedicated_host" {
+variable "skip_iam_authorization_policy" {
   type        = bool
-  default     = true
-  description = "Setting this option to true will enable dedicated hosts for the VSI's, the default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details"
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false."
+  default     = false
 }
