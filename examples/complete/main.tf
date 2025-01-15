@@ -299,5 +299,6 @@ module "slz_vsidh" {
       name    = "${var.prefix}-dh"
       profile = "10iops-tier"
   }]
-  skip_iam_authorization_policy = var.skip_iam_authorization_policy
+  skip_iam_authorization_policy = true
+  depends_on                    = [module.dedicated_host]
 }
