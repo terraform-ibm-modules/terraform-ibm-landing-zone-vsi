@@ -238,6 +238,7 @@ resource "ibm_is_instance" "vsi" {
   user_data       = var.user_data
   keys            = var.ssh_key_ids
   placement_group = var.placement_group_id
+  dedicated_host  = var.enable_dedicated_host ? var.dedicated_host_id : null
   tags            = var.tags
   access_tags     = var.access_tags
   lifecycle {
