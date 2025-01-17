@@ -8,8 +8,8 @@ output "slz_vsi" {
   description = "VSI module values"
 }
 
-output "slz_vsidh" {
-  value       = module.slz_vsidh
+output "slz_vsi_dh" {
+  value       = module.slz_vsi_dh
   description = "VSI module values"
 }
 
