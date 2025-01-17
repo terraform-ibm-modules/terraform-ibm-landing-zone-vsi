@@ -71,7 +71,6 @@ func TestRunCompleteExample(t *testing.T) {
 }
 
 func TestRunCompleteUpgradeExample(t *testing.T) {
-	t.Parallel()
 
 	options := setupOptions(t, completeExampleTerraformDir, "slz-vsi-com-upg")
 

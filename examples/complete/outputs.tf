@@ -8,6 +8,11 @@ output "slz_vsi" {
   description = "VSI module values"
 }
 
+output "slz_vsi_dh" {
+  value       = module.slz_vsi_dh
+  description = "VSI module values"
+}
+
 output "secondary_subnets" {
   description = "Secondary subnets created"
   value       = local.secondary_subnet_zone_list

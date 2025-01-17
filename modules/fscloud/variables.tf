@@ -261,3 +261,22 @@ variable "snapshot_consistency_group_id" {
 }
 
 ##############################################################################
+
+##############################################################################
+# Dedicated Host Variables
+##############################################################################
+
+variable "enable_dedicated_host" {
+  type        = bool
+  default     = false
+  nullable    = false
+  description = "Enabling this option will activate dedicated hosts for the VSIs. When enabled, the dedicated_host_id input is required. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details"
+}
+
+variable "dedicated_host_id" {
+  type        = string
+  default     = null
+  description = "ID of the dedicated host for hosting the VSI's. The enable_dedicated_host input shoud be set to true if passing a dedicated host ID"
+}
+
+##############################################################################
