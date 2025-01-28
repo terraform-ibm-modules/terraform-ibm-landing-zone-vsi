@@ -245,7 +245,7 @@ variable "block_storage_volumes" {
       encryption_key    = optional(string)
       resource_group_id = optional(string)
       snapshot_id       = optional(string) # set if you would like to base volume on a snapshot
-      tags              = optional(list(string))
+      tags              = optional(list(string), [])
     })
   )
   default = []
