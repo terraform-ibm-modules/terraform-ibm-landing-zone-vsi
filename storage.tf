@@ -24,6 +24,7 @@ locals {
           resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
           # check for snapshot in this order: supplied directly in variable -> part of consistency group -> null (no snapshot)
           snapshot_id = try(coalesce(volume.snapshot_id, lookup(local.consistency_group_snapshot_to_volume_map, volume.name, null)), null)
+          tags        = volume.tags
         }
       ]
     ]
@@ -51,7 +52,7 @@ resource "ibm_is_volume" "volume" {
   capacity        = each.value.capacity
   encryption_key  = each.value.encryption_key
   resource_group  = each.value.resource_group
-  tags            = var.tags
+  tags            = distinct(concat(var.tags, each.value.tags))
   access_tags     = var.access_tags
   source_snapshot = each.value.snapshot_id
 }
