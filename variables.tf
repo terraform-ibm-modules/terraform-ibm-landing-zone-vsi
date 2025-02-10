@@ -413,6 +413,36 @@ variable "load_balancers" {
   }
 }
 
+variable "custom_vsi_volume_names" {
+
+  description = "The map of subnets, VSI names and storage volume names. Subnet names should be names of existing subnets, while names of VSI and storage volume are names used for resources creation. Format example: { 'subnet_name': { 'vsi_name}: [ 'storage_volume_name_1', 'storage_volume_name_2'] }}"
+  type        = map(map(list(string)))
+  default     = {}
+  nullable    = false
+
+  # Validation to ensure the map has the same number of volumes as the number of block storage volumes defiend in 'block_storage_volumes'
+  validation {
+    condition = alltrue([
+      for subnet_key, subnet_value in coalesce(var.custom_vsi_volume_names, {}) : alltrue([
+        for vsi_key, volumes in subnet_value : length(volumes) == length(var.block_storage_volumes)
+      ])
+    ])
+    error_message = "The number of storage volume names must be the same as the number of block storage volumes defiend in 'block_storage_volumes' input variable."
+  }
+
+  # Validation to ensure that subnets and custom_vsi_volume_names can't be set at the same time
+  validation {
+    condition     = !(length(coalesce(var.custom_vsi_volume_names, {})) > 0 && length(coalesce(var.subnets, [])) > 0)
+    error_message = "'subnets' and 'custom_vsi_volume_names' input variables can not be set at the same time."
+  }
+
+  # Validation to ensure that vsi_per_subnet and custom_vsi_volume_names can't be set at the same time
+  validation {
+    condition     = !(length(coalesce(var.custom_vsi_volume_names, {})) > 0 && coalesce(var.vsi_per_subnet, 0) > 0)
+    error_message = "'vsi_per_subnet' and 'custom_vsi_volume_names' input variables can not be set at the same time."
+  }
+}
+
 ##############################################################################
 
 

@@ -1,34 +1,80 @@
 ##############################################################################
 # Create Volumes
 ##############################################################################
-
 locals {
 
-  # List of volumes for each VSI
-  volume_list = flatten([
+  # set required data for block storage volumes, which are used for volume_list creation
+  volumes = [for volume in var.block_storage_volumes :
+    {
+      vol_name_ref   = volume.name
+      profile        = volume.profile
+      capacity       = (volume.snapshot_id == null) ? volume.capacity : null
+      iops           = (volume.snapshot_id == null) ? volume.iops : null
+      encryption_key = (volume.snapshot_id == null) ? (var.use_boot_volume_key_as_default ? var.boot_volume_encryption_key : (var.kms_encryption_enabled ? volume.encryption_key : null)) : null
+      resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
+      # check for snapshot in this order: supplied directly in variable -> part of consistency group -> null (no snapshot)
+      snapshot_id = try(coalesce(volume.snapshot_id, lookup(local.consistency_group_snapshot_to_volume_map, volume.name, null)), null)
+  }]
+
+
+  ##############################################################################
+  # Create a temp list of volumes for each VSI using subnets and VSI per subnet
+  ##############################################################################
+  volume_list_dynamic_temp = flatten([
     # For each subnet
     for subnet in range(length(var.subnets)) : [
       # For each number in a range from 0 to VSI per subnet
       for count in range(var.vsi_per_subnet) : [
         # For each volume
-        for volume in var.block_storage_volumes :
-        {
-          name           = "${var.subnets[subnet].name}-${count}-${volume.name}"
-          vol_name       = "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}-${volume.name}"
-          zone           = var.subnets[subnet].zone
-          profile        = volume.profile
-          capacity       = (volume.snapshot_id == null) ? volume.capacity : null
-          vsi_name       = "${var.subnets[subnet].name}-${count}"
-          iops           = (volume.snapshot_id == null) ? volume.iops : null
-          encryption_key = (volume.snapshot_id == null) ? (var.use_boot_volume_key_as_default ? var.boot_volume_encryption_key : (var.kms_encryption_enabled ? volume.encryption_key : null)) : null
-          resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
-          # check for snapshot in this order: supplied directly in variable -> part of consistency group -> null (no snapshot)
-          snapshot_id = try(coalesce(volume.snapshot_id, lookup(local.consistency_group_snapshot_to_volume_map, volume.name, null)), null)
-          tags        = volume.tags
-        }
+        for idx, key in(var.block_storage_volumes) : merge(
+          {
+            name     = "${var.subnets[subnet].name}-${count}-${var.block_storage_volumes[idx].name}"
+            vol_name = "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}-${var.block_storage_volumes[idx].name}"
+            zone     = var.subnets[subnet].zone
+            vsi_name = "${var.subnets[subnet].name}-${count}"
+          },
+          local.volumes[idx]
+        )
       ]
     ]
   ])
+
+  # need to remove 'vol_name_ref' (temp value) which was added to 'local.volumes' to have a value that is a part of 'name'
+  volume_list_dynamic = [
+    for m in local.volume_list_dynamic_temp : {
+      for k, v in m : k => v if k != "vol_name_ref"
+    }
+  ]
+
+  ##############################################################################
+
+  ##############################################################################
+  # Create a list of volumes for each VSI using 'custom_vsi_volume_names' input variable
+  ##############################################################################
+  volume_list_static_temp = flatten([
+    for idx, vsi in local.vsi_list_static : [
+      for index, storage_volume in lookup(var.custom_vsi_volume_names[vsi.subnet_name], vsi.vsi_name, []) : merge(
+        {
+          name     = "${vsi.name}-${local.volumes[index].vol_name_ref}"
+          vsi_name = vsi.name
+          zone     = vsi.zone
+          vol_name = storage_volume
+        },
+        local.volumes[index]
+      )
+    ]
+  ])
+
+  # need to remove 'vol_name_ref' (temp value) which was added to 'local.volumes' to have a value that is a part of 'name'
+  volume_list_static = [
+    for m in local.volume_list_static_temp : {
+      for k, v in m : k => v if k != "vol_name_ref"
+    }
+  ]
+  ##############################################################################
+
+  # vsi list can be created dynamically or statically (using 'custom_vsi_volume_names' input variable)
+  volume_list = var.custom_vsi_volume_names != null && length(keys(var.custom_vsi_volume_names)) > 0 ? local.volume_list_static : local.volume_list_dynamic
 
   # Map of all volumes
   volume_map = {
@@ -37,7 +83,6 @@ locals {
   }
 }
 
-##############################################################################
 
 ##############################################################################
 # Create Volumes
