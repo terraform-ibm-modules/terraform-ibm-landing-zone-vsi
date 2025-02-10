@@ -18,10 +18,11 @@ locals {
 ##############################################################################
 # Virtual Server Data
 ##############################################################################
+
 locals {
 
   # Create list of VSI using subnets and VSI per subnet
-  vsi_list = flatten([
+  vsi_list_dynamic = flatten([
     # For each number in a range from 0 to VSI per subnet
     for count in range(var.vsi_per_subnet) : [
       # For each subnet
@@ -36,6 +37,34 @@ locals {
       }
     ]
   ])
+
+  # Create list of VSI using 'custom_vsi_volume_names' input variable
+  vsi_list_static = flatten([
+    for idx, item in local.existing_subnets : [
+      for idx, key in keys(lookup(var.custom_vsi_volume_names, item.subnet_name, {})) : merge(
+        item,
+        {
+          name     = "${item.name}-${idx}"
+          vsi_name = key
+        }
+      )
+    ]
+  ])
+
+  # extract only required data of each subnet
+  existing_subnets = [
+    for idx, key in keys(data.ibm_is_subnet.existing_subnets) :
+    {
+      subnet_name    = data.ibm_is_subnet.existing_subnets[key].name
+      subnet_id      = data.ibm_is_subnet.existing_subnets[key].id
+      zone           = data.ibm_is_subnet.existing_subnets[key].zone
+      name           = data.ibm_is_subnet.existing_subnets[key].name
+      secondary_vnis = [for index, vni in ibm_is_virtual_network_interface.secondary_vni : vni.id if(vni.zone == data.ibm_is_subnet.existing_subnets[key].zone) && (tonumber(substr(index, -1, -1)) == idx)]
+    }
+  ]
+
+  # vsi_list can be created dynamically or statically (using 'custom_vsi_volume_names' input variable)
+  vsi_list = var.custom_vsi_volume_names != null && length(keys(var.custom_vsi_volume_names)) > 0 ? local.vsi_list_static : local.vsi_list_dynamic
 
   secondary_vni_list = flatten([
     # For each number in a range from 0 to VSI per subnet
@@ -122,6 +151,16 @@ resource "time_sleep" "wait_for_authorization_policy" {
 
   create_duration = "30s"
 }
+
+##############################################################################
+# Lookup existing subnets
+##############################################################################
+
+data "ibm_is_subnet" "existing_subnets" {
+  for_each = var.custom_vsi_volume_names
+  name     = each.key
+}
+
 
 ##############################################################################
 # Lookup default security group id in the vpc
