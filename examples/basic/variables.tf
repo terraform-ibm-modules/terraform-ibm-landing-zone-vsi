@@ -25,7 +25,7 @@ variable "prefix" {
 variable "resource_tags" {
   description = "List of Tags for the resource created"
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "access_tags" {
@@ -100,7 +100,7 @@ variable "boot_volume_encryption_key" {
 variable "vsi_per_subnet" {
   description = "Number of VSI instances for each subnet"
   type        = number
-  default     = 1
+  default     = 0
 }
 
 variable "ssh_key" {

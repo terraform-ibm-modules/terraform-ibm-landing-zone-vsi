@@ -12,6 +12,7 @@ locals {
       iops           = (volume.snapshot_id == null) ? volume.iops : null
       encryption_key = (volume.snapshot_id == null) ? (var.use_boot_volume_key_as_default ? var.boot_volume_encryption_key : (var.kms_encryption_enabled ? volume.encryption_key : null)) : null
       resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
+      tags           = volume.tags
       # check for snapshot in this order: supplied directly in variable -> part of consistency group -> null (no snapshot)
       snapshot_id = try(coalesce(volume.snapshot_id, lookup(local.consistency_group_snapshot_to_volume_map, volume.name, null)), null)
   }]
