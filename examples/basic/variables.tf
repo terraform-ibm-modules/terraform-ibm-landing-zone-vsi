@@ -100,7 +100,7 @@ variable "boot_volume_encryption_key" {
 variable "vsi_per_subnet" {
   description = "Number of VSI instances for each subnet"
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "ssh_key" {
