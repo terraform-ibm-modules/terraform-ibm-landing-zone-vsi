@@ -186,6 +186,7 @@ No modules.
 | [time_sleep.wait_for_authorization_policy](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [ibm_is_snapshot.snapshots_from_group](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_snapshot) | data source |
 | [ibm_is_snapshot_consistency_group.snapshot_group](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_snapshot_consistency_group) | data source |
+| [ibm_is_subnet.existing_subnets](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_subnet) | data source |
 | [ibm_is_vpc.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/is_vpc) | data source |
 
 ### Inputs
@@ -198,6 +199,7 @@ No modules.
 | <a name="input_boot_volume_encryption_key"></a> [boot\_volume\_encryption\_key](#input\_boot\_volume\_encryption\_key) | CRN of boot volume encryption key | `string` | `null` | no |
 | <a name="input_boot_volume_snapshot_id"></a> [boot\_volume\_snapshot\_id](#input\_boot\_volume\_snapshot\_id) | The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used) | `string` | `null` | no |
 | <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Create security group for VSI. If this is passed as false, the default will be used | `bool` | n/a | yes |
+| <a name="input_custom_vsi_volume_names"></a> [custom\_vsi\_volume\_names](#input\_custom\_vsi\_volume\_names) | The map of subnets, VSI names and storage volume names. Subnet names should be names of existing subnets, while names of VSI and storage volume are names used for resources creation. Format example: { 'subnet\_name': { 'vsi\_name}: [ 'storage\_volume\_name\_1', 'storage\_volume\_name\_2'] }} | `map(map(list(string)))` | `{}` | no |
 | <a name="input_dedicated_host_id"></a> [dedicated\_host\_id](#input\_dedicated\_host\_id) | ID of the dedicated host for hosting the VSI's. The enable\_dedicated\_host input shoud be set to true if passing a dedicated host ID | `string` | `null` | no |
 | <a name="input_enable_dedicated_host"></a> [enable\_dedicated\_host](#input\_enable\_dedicated\_host) | Enabling this option will activate dedicated hosts for the VSIs. When enabled, the dedicated\_host\_id input is required. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details | `bool` | `false` | no |
 | <a name="input_enable_floating_ip"></a> [enable\_floating\_ip](#input\_enable\_floating\_ip) | Create a floating IP for each virtual server created | `bool` | `false` | no |
@@ -241,6 +243,13 @@ No modules.
 | <a name="output_lb_hostnames"></a> [lb\_hostnames](#output\_lb\_hostnames) | Hostnames for the Load Balancer created |
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
+| <a name="output_volume"></a> [volume](#output\_volume) | value |
+| <a name="output_volume_list"></a> [volume\_list](#output\_volume\_list) | value |
+| <a name="output_volume_list_dynamic"></a> [volume\_list\_dynamic](#output\_volume\_list\_dynamic) | value |
+| <a name="output_volume_list_static"></a> [volume\_list\_static](#output\_volume\_list\_static) | value |
+| <a name="output_volume_map"></a> [volume\_map](#output\_volume\_map) | value |
+| <a name="output_vsi_list_dynamic"></a> [vsi\_list\_dynamic](#output\_vsi\_list\_dynamic) | value |
+| <a name="output_vsi_list_static"></a> [vsi\_list\_static](#output\_vsi\_list\_static) | value |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
