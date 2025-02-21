@@ -243,13 +243,6 @@ No modules.
 | <a name="output_lb_hostnames"></a> [lb\_hostnames](#output\_lb\_hostnames) | Hostnames for the Load Balancer created |
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
-| <a name="output_volume"></a> [volume](#output\_volume) | value |
-| <a name="output_volume_list"></a> [volume\_list](#output\_volume\_list) | value |
-| <a name="output_volume_list_dynamic"></a> [volume\_list\_dynamic](#output\_volume\_list\_dynamic) | value |
-| <a name="output_volume_list_static"></a> [volume\_list\_static](#output\_volume\_list\_static) | value |
-| <a name="output_volume_map"></a> [volume\_map](#output\_volume\_map) | value |
-| <a name="output_vsi_list_dynamic"></a> [vsi\_list\_dynamic](#output\_vsi\_list\_dynamic) | value |
-| <a name="output_vsi_list_static"></a> [vsi\_list\_static](#output\_vsi\_list\_static) | value |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
