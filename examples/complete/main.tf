@@ -271,7 +271,7 @@ module "dedicated_host" {
       dedicated_host = [
         {
           name    = "${var.prefix}-dhhost"
-          profile = "bx2-host-152x608"
+          profile = "bx2-2x8"
         }
       ]
     }
