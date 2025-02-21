@@ -29,4 +29,5 @@ module "fscloud_vsi" {
   boot_volume_snapshot_id        = var.boot_volume_snapshot_id
   enable_dedicated_host          = var.enable_dedicated_host
   dedicated_host_id              = var.dedicated_host_id
+  custom_vsi_volume_names        = var.custom_vsi_volume_names
 }

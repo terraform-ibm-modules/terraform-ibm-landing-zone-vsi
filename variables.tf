@@ -58,6 +58,7 @@ variable "subnets" {
       cidr = optional(string)
     })
   )
+  default = []
 }
 
 ##############################################################################
@@ -85,6 +86,7 @@ variable "machine_type" {
 variable "vsi_per_subnet" {
   description = "Number of VSI instances for each subnet"
   type        = number
+  default     = 0
 }
 
 variable "user_data" {
@@ -415,7 +417,7 @@ variable "load_balancers" {
 
 variable "custom_vsi_volume_names" {
 
-  description = "The map of subnets, VSI names and storage volume names. Subnet names should be names of existing subnets, while names of VSI and storage volume are names used for resources creation. Format example: { 'subnet_name': { 'vsi_name}: [ 'storage_volume_name_1', 'storage_volume_name_2'] }}"
+  description = "The map of subnets, VSI names and storage volume names. Subnet names should be names of existing subnets, while names of VSI and storage volume are names used for resources creation. Format example: { 'subnet_name_1': { 'vsi_name_1': [ 'storage_volume_name_1', 'storage_volume_name_2' ] } }"
   type        = map(map(list(string)))
   default     = {}
   nullable    = false
@@ -440,6 +442,24 @@ variable "custom_vsi_volume_names" {
   validation {
     condition     = !(length(coalesce(var.custom_vsi_volume_names, {})) > 0 && coalesce(var.vsi_per_subnet, 0) > 0)
     error_message = "'vsi_per_subnet' and 'custom_vsi_volume_names' input variables can not be set at the same time."
+  }
+
+  # Validation to ensure that volume names are unique
+  validation {
+    condition = alltrue([
+      for subnet, vsi_map in var.custom_vsi_volume_names :
+      alltrue([
+        for vsi_name, volumes in vsi_map :
+        length(volumes) == length(distinct(volumes))
+      ])
+    ])
+    error_message = "Each member of a list of storage volume names for a vsi_name must be unique."
+  }
+
+  # Validation to ensure that each subnet has the same number of VSIs
+  validation {
+    condition     = length(var.custom_vsi_volume_names) == 0 || length(distinct([for subnet, vsis in var.custom_vsi_volume_names : length(keys(vsis))])) == 1
+    error_message = "Each subnet map must have the same number of VSI names."
   }
 }
 
