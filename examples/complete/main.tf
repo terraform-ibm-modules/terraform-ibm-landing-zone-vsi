@@ -245,6 +245,7 @@ module "slz_vsi" {
 #############################################################################
 
 module "dedicated_host" {
+  count   = var.enable_dedicated_host ? 1 : 0
   source  = "terraform-ibm-modules/dedicated-host/ibm"
   version = "1.1.0"
   dedicated_hosts = [
@@ -270,6 +271,9 @@ module "dedicated_host" {
 #############################################################################
 
 module "slz_vsi_dh" {
+  # depends_on                    = [module.dedicated_host]
+  # dedicated_host_id               = module.dedicated_host.dedicated_host_ids[0]
+  skip_iam_authorization_policy   = true
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = var.image_id
@@ -279,7 +283,6 @@ module "slz_vsi_dh" {
   subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = "${var.prefix}-dh"
-  dedicated_host_id               = module.dedicated_host.dedicated_host_ids[0]
   machine_type                    = "bx2-2x8"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsidh.${var.prefix}-vsidh"].crn
@@ -298,6 +301,4 @@ module "slz_vsi_dh" {
       name    = "${var.prefix}-dh"
       profile = "10iops-tier"
   }]
-  skip_iam_authorization_policy = true
-  depends_on                    = [module.dedicated_host]
 }

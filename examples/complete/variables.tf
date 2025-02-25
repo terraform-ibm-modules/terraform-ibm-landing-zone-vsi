@@ -25,7 +25,7 @@ variable "prefix" {
 variable "resource_tags" {
   description = "List of Tags for the resource created"
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "access_tags" {
@@ -50,4 +50,10 @@ variable "secondary_use_vsi_security_group" {
   description = "Use the security group created by this module in the secondary interface"
   type        = bool
   default     = false
+}
+
+variable "enable_dedicated_host" {
+  type        = bool
+  default     = false
+  description = "Enabling this option will activate dedicated hosts for the VSIs. When enabled, the dedicated_host_id input is required. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details"
 }
