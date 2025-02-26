@@ -55,5 +55,5 @@ variable "secondary_use_vsi_security_group" {
 variable "enable_dedicated_host" {
   type        = bool
   default     = false
-  description = "Set the flag to true to provision a dedicated host and deploy VSIs on it. When disabled (default), VSIs will be created on shared hosts instead. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details."
+  description = "Set the flag to true to provision a dedicated host and deploy VSIs on it. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details."
 }

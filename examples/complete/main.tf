@@ -274,7 +274,6 @@ module "slz_vsi_dh" {
   count                           = var.enable_dedicated_host ? 1 : 0
   depends_on                      = [module.dedicated_host]
   dedicated_host_id               = try(module.dedicated_host.dedicated_host_ids[0], null)
-  skip_iam_authorization_policy   = true
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = var.image_id
