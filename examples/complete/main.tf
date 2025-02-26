@@ -271,8 +271,8 @@ module "dedicated_host" {
 #############################################################################
 
 module "slz_vsi_dh" {
-  # depends_on                    = [module.dedicated_host]
-  # dedicated_host_id               = module.dedicated_host.dedicated_host_ids[0]
+  depends_on                      = [module.dedicated_host]
+  dedicated_host_id               = var.enable_dedicated_host ? try(module.dedicated_host.dedicated_host_ids[0], null) : null
   skip_iam_authorization_policy   = true
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
