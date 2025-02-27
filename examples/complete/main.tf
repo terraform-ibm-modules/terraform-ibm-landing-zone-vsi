@@ -272,8 +272,7 @@ module "dedicated_host" {
 
 module "slz_vsi_dh" {
   count                           = var.enable_dedicated_host ? 1 : 0
-  depends_on                      = [module.dedicated_host]
-  dedicated_host_id               = try(module.dedicated_host.dedicated_host_ids[0], null)
+  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = var.image_id
