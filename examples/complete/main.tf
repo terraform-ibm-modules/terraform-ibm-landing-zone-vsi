@@ -170,8 +170,7 @@ locals {
   custom_vsi_volume_names = {
     for idx, subnet in module.slz_vpc.subnet_zone_list : subnet.name =>
     {
-      "${subnet.name}-vsi-name-1" = ["${subnet.name}-vol-1a", "${subnet.name}-vol-2a"]
-      "${subnet.name}-vsi-name-2" = ["${subnet.name}-vol-1b", "${subnet.name}-vol-2b"]
+      "${subnet.name}-vsi-name-1" = ["${subnet.name}-vol-1a"]
     }
   }
 }
@@ -208,14 +207,10 @@ module "slz_vsi" {
   # Create a floating IP for each virtual server created
   enable_floating_ip               = true
   secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
-  # Add 2 additional data volumes to each VSI
+  # Add 1 additional data volumes to each VSI
   block_storage_volumes = [
     {
       name    = var.prefix
-      profile = "10iops-tier"
-    },
-    {
-      name    = "${var.prefix}-gp}"
       profile = "10iops-tier"
   }]
   custom_vsi_volume_names = local.custom_vsi_volume_names
