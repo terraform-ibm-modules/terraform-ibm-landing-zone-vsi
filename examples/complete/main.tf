@@ -207,7 +207,7 @@ module "slz_vsi" {
   # Create a floating IP for each virtual server created
   enable_floating_ip               = true
   secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
-  # Add 1 additional data volumes to each VSI
+  # Add 1 additional data volume to each VSI
   block_storage_volumes = [
     {
       name    = var.prefix
