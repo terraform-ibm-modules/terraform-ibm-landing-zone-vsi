@@ -247,7 +247,7 @@ module "slz_vsi" {
 module "dedicated_host" {
   count   = var.enable_dedicated_host ? 1 : 0
   source  = "terraform-ibm-modules/dedicated-host/ibm"
-  version = "1.1.0"
+  version = "2.0.0"
   dedicated_hosts = [
     {
       host_group_name     = "${var.prefix}-dhgroup"
