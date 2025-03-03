@@ -8,7 +8,7 @@ locals {
     (load_balancer.name) => load_balancer
   }
 
-  subnets_id = var.subnets[*].id
+  subnets_id = length(var.custom_vsi_volume_names) > 0 ? local.existing_subnets[*].subnet_id : var.subnets[*].id
 }
 
 resource "ibm_is_lb" "lb" {

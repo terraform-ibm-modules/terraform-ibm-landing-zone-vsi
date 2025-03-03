@@ -166,6 +166,13 @@ locals {
       cidr = subnet.ipv4_cidr_block
     }
   ]
+
+  custom_vsi_volume_names = {
+    for idx, subnet in module.slz_vpc.subnet_zone_list : subnet.name =>
+    {
+      "${subnet.name}-vsi-name-1" = ["${subnet.name}-vol-1a"]
+    }
+  }
 }
 
 #############################################################################
@@ -173,13 +180,13 @@ locals {
 #############################################################################
 
 module "slz_vsi" {
+  depends_on                      = [module.slz_vpc]
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = var.image_id
   create_security_group           = false
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
-  subnets                         = module.slz_vpc.subnet_zone_list
   vpc_id                          = module.slz_vpc.vpc_id
   prefix                          = var.prefix
   placement_group_id              = ibm_is_placement_group.placement_group.id
@@ -188,7 +195,6 @@ module "slz_vsi" {
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
   kms_encryption_enabled          = true
   existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
-  vsi_per_subnet                  = 1
   primary_vni_additional_ip_count = 2
   ssh_key_ids                     = [local.ssh_key_id]
   secondary_subnets               = local.secondary_subnet_zone_list
@@ -207,6 +213,7 @@ module "slz_vsi" {
       name    = var.prefix
       profile = "10iops-tier"
   }]
+  custom_vsi_volume_names = local.custom_vsi_volume_names
   load_balancers = [
     {
       name                    = "${var.prefix}-lb"

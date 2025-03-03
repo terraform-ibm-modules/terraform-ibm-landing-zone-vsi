@@ -18,12 +18,14 @@ locals {
 ##############################################################################
 # Virtual Server Data
 ##############################################################################
+
 locals {
+  vsi_per_subnet = length(keys(var.custom_vsi_volume_names)) > 0 ? [for subnet, vsis in var.custom_vsi_volume_names : length(keys(vsis))][0] : var.vsi_per_subnet
 
   # Create list of VSI using subnets and VSI per subnet
-  vsi_list = flatten([
+  vsi_list_dynamic = flatten([
     # For each number in a range from 0 to VSI per subnet
-    for count in range(var.vsi_per_subnet) : [
+    for count in range(local.vsi_per_subnet) : [
       # For each subnet
       for subnet in range(length(var.subnets)) :
       {
@@ -37,9 +39,40 @@ locals {
     ]
   ])
 
+  # Create list of VSI using 'custom_vsi_volume_names' input variable
+  vsi_list_static = flatten([
+    # For each number in a range from 0 to VSI per subnet
+    for count in range(local.vsi_per_subnet) : [
+      # For each subnet
+      for index, subnet in range(length(local.existing_subnets)) :
+      {
+        name           = "${keys(var.custom_vsi_volume_names)[index]}-${count}"
+        vsi_name       = keys(var.custom_vsi_volume_names[local.existing_subnets[index].name])[count]
+        subnet_id      = local.existing_subnets[index].subnet_id
+        zone           = local.existing_subnets[index].zone
+        subnet_name    = local.existing_subnets[index].name
+        secondary_vnis = [for idx, vni in ibm_is_virtual_network_interface.secondary_vni : vni.id if(vni.zone == local.existing_subnets[index].zone) && (tonumber(substr(idx, -1, -1)) == count)]
+      }
+    ]
+  ])
+
+  # extract only required data of each subnet
+  existing_subnets = [
+    for key in keys(data.ibm_is_subnet.existing_subnets) :
+    {
+      subnet_name = data.ibm_is_subnet.existing_subnets[key].name
+      subnet_id   = data.ibm_is_subnet.existing_subnets[key].id
+      zone        = data.ibm_is_subnet.existing_subnets[key].zone
+      name        = data.ibm_is_subnet.existing_subnets[key].name
+    }
+  ]
+
+  # vsi_list can be created dynamically or statically (using 'custom_vsi_volume_names' input variable)
+  vsi_list = length(keys(var.custom_vsi_volume_names)) > 0 ? local.vsi_list_static : local.vsi_list_dynamic
+
   secondary_vni_list = flatten([
     # For each number in a range from 0 to VSI per subnet
-    for count in range(var.vsi_per_subnet) : [
+    for count in range(local.vsi_per_subnet) : [
       # For each subnet
       for subnet in range(length(var.secondary_subnets)) :
       {
@@ -121,6 +154,15 @@ resource "time_sleep" "wait_for_authorization_policy" {
   depends_on = [ibm_iam_authorization_policy.block_storage_policy]
 
   create_duration = "30s"
+}
+
+##############################################################################
+# Lookup existing subnets
+##############################################################################
+
+data "ibm_is_subnet" "existing_subnets" {
+  for_each = var.custom_vsi_volume_names
+  name     = each.key
 }
 
 ##############################################################################
