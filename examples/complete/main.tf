@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "4.19.8"
+  version                   = "4.20.0"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -254,7 +254,7 @@ module "slz_vsi" {
 module "dedicated_host" {
   count   = var.enable_dedicated_host ? 1 : 0
   source  = "terraform-ibm-modules/dedicated-host/ibm"
-  version = "1.1.0"
+  version = "2.0.0"
   dedicated_hosts = [
     {
       host_group_name     = "${var.prefix}-dhgroup"
