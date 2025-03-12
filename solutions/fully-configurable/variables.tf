@@ -1,23 +1,45 @@
-##############################################################################
-# Account Variables
-##############################################################################
+########################################################################################################################
+# Input variables
+########################################################################################################################
 
-variable "resource_group_id" {
-  description = "ID of resource group to create VSI and block storage volumes. If you wish to create the block storage volumes in a different resource group, you can optionally set that directly in the 'block_storage_volumes' variable."
+variable "ibmcloud_api_key" {
   type        = string
+  description = "The IBM Cloud api key"
+  sensitive   = true
 }
 
 variable "prefix" {
-  description = "The prefix to add to all resources created by this module."
   type        = string
-
+  nullable    = false
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`)."
   validation {
     error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
     condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
   }
 }
 
-variable "tags" {
+variable "existing_resource_group_name" {
+  type        = string
+  description = "The name of an existing resource group to provision the VSIs."
+}
+
+variable "region" {
+  type        = string
+  description = "Region where resources are created"
+}
+
+variable "provider_visibility" {
+  description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
+  type        = string
+  default     = "public"
+
+  validation {
+    condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
+    error_message = "Invalid visibility option. Allowed values are 'public', 'private', or 'public-and-private'."
+  }
+}
+
+variable "resource_tags" {
   description = "List of tags to apply to resources created by this module."
   type        = list(string)
   default     = []
@@ -27,13 +49,6 @@ variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the VSI resources created by the module. For more information, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial."
   default     = []
-
-  validation {
-    condition = alltrue([
-      for tag in var.access_tags : can(regex("[\\w\\-_\\.]+:[\\w\\-_\\.]+", tag)) && length(tag) <= 128
-    ])
-    error_message = "Tags must match the regular expression \"[\\w\\-_\\.]+:[\\w\\-_\\.]+\". For more information, see https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#limits."
-  }
 }
 
 ##############################################################################
@@ -43,21 +58,14 @@ variable "access_tags" {
 # VPC Variables
 ##############################################################################
 
-variable "vpc_id" {
-  description = "ID of VPC"
+variable "existing_vpc_id" {
+  description = "The ID of an existing VPC."
   type        = string
 }
 
-variable "subnets" {
-  description = "A list of subnet IDs where VSI will be deployed"
-  type = list(
-    object({
-      name = string
-      id   = string
-      zone = string
-      cidr = optional(string)
-    })
-  )
+variable "existing_subnet_id" {
+  description = "The ID of an existing subnet"
+  type        = string
 }
 
 ##############################################################################
@@ -67,29 +75,48 @@ variable "subnets" {
 # VSI Variables
 ##############################################################################
 
+variable "vsi_name" {
+  description = ""
+  type        = string
+  default     = "vsi"
+}
+
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region"
   type        = string
+  default     = "r006-cc341965-a523-464e-969f-391e2661c125"
 }
 
-variable "ssh_key_ids" {
+variable "ssh_public_key" {
+  description = "A public SSH Key for VSI creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing key, enter a value for the variable 'existing_ssh_key_name' instead."
+  type        = string
+  default     = null
+  validation {
+    error_message = "Public SSH Key must be a valid ssh rsa public key."
+    condition     = var.ssh_public_key == null || can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", var.ssh_public_key))
+  }
+  validation {
+    condition     = var.ssh_public_key != null || length(var.existing_ssh_key_ids) > 0 ? true : false
+    error_message = "Please provide a value for either `ssh_public_key` or `existing_ssh_key_ids`."
+  }
+}
+
+variable "existing_ssh_key_ids" {
   description = "ssh key ids to use in creating vsi"
   type        = list(string)
+  default     = []
 }
 
 variable "machine_type" {
   description = "VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles"
   type        = string
-}
-
-variable "vsi_per_subnet" {
-  description = "Number of VSI instances for each subnet"
-  type        = number
+  default     = "cx2-2x4"
 }
 
 variable "user_data" {
   description = "User data to initialize VSI deployment"
   type        = string
+  default     = null
 }
 
 variable "use_boot_volume_key_as_default" {
@@ -144,6 +171,7 @@ variable "allow_ip_spoofing" {
 variable "create_security_group" {
   description = "Create security group for VSI. If this is passed as false, the default will be used"
   type        = bool
+  default     = false
 }
 
 variable "placement_group_id" {
@@ -182,27 +210,6 @@ variable "security_group" {
       })
     )
   })
-
-  validation {
-    error_message = "Each security group rule must have a unique name."
-    condition = (
-      var.security_group == null
-      ? true
-      : length(distinct(var.security_group.rules[*].name)) == length(var.security_group.rules[*].name)
-    )
-  }
-
-  validation {
-    error_message = "Security group rule direction can only be `inbound` or `outbound`."
-    condition = var.security_group == null ? true : length(
-      distinct(
-        flatten([
-          for rule in var.security_group.rules :
-          false if !contains(["inbound", "outbound"], rule.direction)
-        ])
-      )
-    ) == 0
-  }
   default = null
 }
 
@@ -210,16 +217,6 @@ variable "security_group_ids" {
   description = "IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups."
   type        = list(string)
   default     = []
-
-  validation {
-    error_message = "Security group IDs must be unique."
-    condition     = length(var.security_group_ids) == length(distinct(var.security_group_ids))
-  }
-
-  validation {
-    error_message = "No more than 5 security groups can be added to a VSI deployment."
-    condition     = length(var.security_group_ids) <= 5
-  }
 }
 
 variable "kms_encryption_enabled" {
@@ -249,11 +246,6 @@ variable "block_storage_volumes" {
     })
   )
   default = []
-
-  validation {
-    error_message = "Each block storage volume must have a unique name."
-    condition     = length(distinct(var.block_storage_volumes[*].name)) == length(var.block_storage_volumes)
-  }
 }
 
 variable "load_balancers" {
@@ -317,100 +309,6 @@ variable "load_balancers" {
     })
   )
   default = []
-
-  validation {
-    error_message = "Load balancer names must match the regex pattern ^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$."
-    condition = length(distinct(
-      flatten([
-        # Check through rules
-        for load_balancer in var.load_balancers :
-        # Return false if direction is not valid
-        false if !can(regex("^([a-z]|[a-z][-a-z0-9]*[a-z0-9])$", load_balancer.name))
-      ])
-    )) == 0
-  }
-
-  validation {
-    error_message = "Load balancer idle_connection_timeout must be between 50 and 7200."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        load_balancer.idle_connection_timeout != null ?
-        (load_balancer.idle_connection_timeout < 50 || load_balancer.idle_connection_timeout > 7200) ? [true] : []
-        : []
-      ])
-    ) == 0
-  }
-
-
-  validation {
-    error_message = "Load Balancer Pool algorithm can only be `round_robin`, `weighted_round_robin`, or `least_connections`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["round_robin", "weighted_round_robin", "least_connections"], load_balancer.algorithm)
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Load Balancer Pool Protocol can only be `http`, `https`, or `tcp`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["http", "https", "tcp"], load_balancer.protocol)
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Pool health delay must be greater than the timeout."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if load_balancer.health_delay < load_balancer.health_timeout
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Load Balancer Pool Health Check Type can only be `http`, `https`, or `tcp`."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        true if !contains(["http", "https", "tcp"], load_balancer.health_type)
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Each load balancer must have a unique name."
-    condition     = length(distinct(var.load_balancers[*].name)) == length(var.load_balancers[*].name)
-  }
-
-  validation {
-    error_message = "Application load balancer connection_limit can not be null."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        load_balancer.profile != "network-fixed" ?
-        (load_balancer.connection_limit == null) ? [true] : []
-        : []
-      ])
-    ) == 0
-  }
-
-  validation {
-    error_message = "Application load balancer listener_port can not be null."
-    condition = length(
-      flatten([
-        for load_balancer in var.load_balancers :
-        load_balancer.profile != "network-fixed" ?
-        (load_balancer.listener_port == null) ? [true] : []
-        : []
-      ])
-    ) == 0
-  }
 }
 
 ##############################################################################
@@ -420,17 +318,10 @@ variable "load_balancers" {
 # Secondary Interface Variables
 ##############################################################################
 
-variable "secondary_subnets" {
-  description = "List of secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI."
-  type = list(
-    object({
-      name = string
-      id   = string
-      zone = string
-      cidr = optional(string)
-    })
-  )
-  default = []
+variable "existing_secondary_subnet_id" {
+  description = "A secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI."
+  type        = string
+  default     = null
 }
 
 variable "secondary_use_vsi_security_group" {
@@ -448,27 +339,12 @@ variable "secondary_security_groups" {
     })
   )
   default = []
-
-  validation {
-    error_message = "Security group IDs must be unique."
-    condition     = length(var.secondary_security_groups) == length(distinct(var.secondary_security_groups))
-  }
-
-  validation {
-    error_message = "No more than 5 security groups can be added to a VSI deployment."
-    condition     = length(var.secondary_security_groups) <= 5
-  }
 }
 
 variable "secondary_floating_ips" {
   description = "List of secondary interfaces to add floating ips"
   type        = list(string)
   default     = []
-
-  validation {
-    error_message = "Secondary floating IPs must contain a unique list of interfaces."
-    condition     = length(var.secondary_floating_ips) == length(distinct(var.secondary_floating_ips))
-  }
 }
 
 variable "secondary_allow_ip_spoofing" {
@@ -519,11 +395,6 @@ variable "dedicated_host_id" {
   type        = string
   default     = null
   description = "ID of the dedicated host for hosting the VSI's. The enable_dedicated_host input shoud be set to true if passing a dedicated host ID"
-
-  validation {
-    condition     = var.enable_dedicated_host == false || (var.enable_dedicated_host == true && var.dedicated_host_id != null)
-    error_message = "When enable_dedicated_host is set to true, provide a valid dedicated_host_id."
-  }
 }
 
 ##############################################################################
