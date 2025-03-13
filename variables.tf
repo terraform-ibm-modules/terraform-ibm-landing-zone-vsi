@@ -413,8 +413,48 @@ variable "load_balancers" {
   }
 }
 
-##############################################################################
+variable "custom_vsi_volume_names" {
+  description = "A map of subnets, VSI names, and storage volume names. Subnet names should correspond to existing subnets, while VSI and storage volume names are used for resource creation. Format example: { 'subnet_name_1': { 'vsi_name_1': [ 'storage_volume_name_1', 'storage_volume_name_2' ] } }"
+  type        = map(map(list(string)))
+  default     = {}
+  nullable    = false
 
+  # Validation to ensure the map has the same number of volumes as the number of block storage volumes defiend in 'block_storage_volumes'
+  validation {
+    condition = alltrue([
+      for subnet_key, subnet_value in coalesce(var.custom_vsi_volume_names, {}) : alltrue([
+        for vsi_key, volumes in subnet_value : length(volumes) == length(var.block_storage_volumes)
+      ])
+    ])
+    error_message = "The number of storage volume names must be the same as the number of block storage volumes defined in 'block_storage_volumes' input variable."
+  }
+
+  # Validation to ensure that volume names are unique
+  validation {
+    condition = alltrue([
+      for subnet, vsi_map in var.custom_vsi_volume_names :
+      alltrue([
+        for vsi_name, volumes in vsi_map :
+        length(volumes) == length(distinct(volumes))
+      ])
+    ])
+    error_message = "Each member of a list of storage volume names for a vsi_name must be unique."
+  }
+
+  # Validation to ensure that number of subnets is not higher than the number of subnets defined in var.subnets
+  validation {
+    condition     = length(keys(var.custom_vsi_volume_names)) <= length(var.subnets)
+    error_message = "The number of subnets defined in the custom_vsi_volume_names input variable should not exceed the number of subnets defined in the subnets input variable."
+  }
+
+  # Validation to ensure that number of VSIs is not higher than then number defined in vsi_per_subnet
+  validation {
+    condition     = length(var.custom_vsi_volume_names) > 0 ? sort([for subnet, vsis in var.custom_vsi_volume_names : length(keys(vsis))])[length([for subnet, vsis in var.custom_vsi_volume_names : length(keys(vsis))]) - 1] <= var.vsi_per_subnet : true
+    error_message = "The number of VSIs defined in the custom_vsi_volume_names input variable should not exceed the number specified in the vsi_per_subnet input variable."
+  }
+}
+
+##############################################################################
 
 ##############################################################################
 # Secondary Interface Variables
