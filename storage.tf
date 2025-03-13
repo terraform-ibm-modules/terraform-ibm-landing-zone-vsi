@@ -11,10 +11,11 @@ locals {
       # For each number in a range from 0 to VSI per subnet
       for count in range(var.vsi_per_subnet) : [
         # For each volume
-        for volume in var.block_storage_volumes :
+        for idx, volume in(var.block_storage_volumes) :
         {
-          name           = "${var.subnets[subnet].name}-${count}-${volume.name}"
-          vol_name       = "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}-${volume.name}"
+          name = "${var.subnets[subnet].name}-${count}-${volume.name}"
+          # try to lookup for a volume name inside custom_vsi_volume_names input variable for that specific subnet, if not found then dynamic volume name is used
+          vol_name       = try(values(lookup(var.custom_vsi_volume_names, var.subnets[subnet].name, {}))[count][idx], "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}-${volume.name}")
           zone           = var.subnets[subnet].zone
           profile        = volume.profile
           capacity       = (volume.snapshot_id == null) ? volume.capacity : null
@@ -52,7 +53,7 @@ resource "ibm_is_volume" "volume" {
   capacity        = each.value.capacity
   encryption_key  = each.value.encryption_key
   resource_group  = each.value.resource_group
-  tags            = distinct(concat(var.tags, each.value.tags))
+  tags            = var.tags != null ? distinct(concat(var.tags, each.value.tags)) : null
   access_tags     = var.access_tags
   source_snapshot = each.value.snapshot_id
 }

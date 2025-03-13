@@ -166,6 +166,12 @@ locals {
       cidr = subnet.ipv4_cidr_block
     }
   ]
+  custom_vsi_volume_names = {
+    for idx, subnet in module.slz_vpc.subnet_zone_list : subnet.name =>
+    {
+      "${subnet.name}-vsi-name-1" = ["${subnet.name}-vol-1a"]
+    }
+  }
 }
 
 #############################################################################
@@ -173,6 +179,7 @@ locals {
 #############################################################################
 
 module "slz_vsi" {
+  depends_on                      = [module.slz_vpc]
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = var.image_id
@@ -193,6 +200,7 @@ module "slz_vsi" {
   ssh_key_ids                     = [local.ssh_key_id]
   secondary_subnets               = local.secondary_subnet_zone_list
   secondary_security_groups       = local.secondary_security_groups
+  custom_vsi_volume_names         = local.custom_vsi_volume_names
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [
     for subnet in local.secondary_subnet_zone_list :
