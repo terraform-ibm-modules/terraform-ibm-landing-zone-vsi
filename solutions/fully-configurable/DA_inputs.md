@@ -117,7 +117,7 @@ The `load_balancers` input variable allows you to provide of a list Load balance
         - `icmp`(optional): (List) A nested block describes the icmp protocol of this security group rule.
           - `type`(required): The ICMP traffic type to allow. Valid values from 0 to 254.
           - `code`(required): The ICMP traffic code to allow. Valid values from 0 to 255.
-  
+
 - Default value: An empty list ([]).
 
 
