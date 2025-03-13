@@ -447,7 +447,7 @@ variable "custom_vsi_volume_names" {
     error_message = "The number of subnets defined in the custom_vsi_volume_names input variable should not exceed the number of subnets defined in the subnets input variable."
   }
 
-  # Validation to ensure that number of VSIs is not higher than then number defined in vsi_per_subnet
+  # Validation to ensure that number of VSIs is not higher then number defined in vsi_per_subnet
   validation {
     condition     = length(var.custom_vsi_volume_names) > 0 ? sort([for subnet, vsis in var.custom_vsi_volume_names : length(keys(vsis))])[length([for subnet, vsis in var.custom_vsi_volume_names : length(keys(vsis))]) - 1] <= var.vsi_per_subnet : true
     error_message = "The number of VSIs defined in the custom_vsi_volume_names input variable should not exceed the number specified in the vsi_per_subnet input variable."
