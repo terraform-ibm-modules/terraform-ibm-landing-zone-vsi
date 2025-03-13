@@ -19,19 +19,22 @@ data "ibm_is_subnet" "secondary_subnet" {
 locals {
   prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
 
-  subnet = {
+  subnet = [{
     name = data.ibm_is_subnet.subnet.name
     id   = data.ibm_is_subnet.subnet.id
     zone = data.ibm_is_subnet.subnet.zone
-  }
+  }]
 
-  secondary_subnet = var.existing_secondary_subnet_id != null ? {
+  secondary_subnet = var.existing_secondary_subnet_id != null ? [{
     name = data.ibm_is_subnet.secondary_subnet[0].name
     id   = data.ibm_is_subnet.secondary_subnet[0].id
     zone = data.ibm_is_subnet.secondary_subnet[0].zone
-  } : {}
+  }] : []
 
   ssh_keys = concat(var.existing_ssh_key_ids, var.ssh_public_key != null ? [ibm_is_ssh_key.ssh_key[0].id] : [])
+
+  custom_vsi_volume_names = { (data.ibm_is_subnet.subnet.name) = {
+  "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
 }
 
 
@@ -55,7 +58,7 @@ resource "ibm_is_ssh_key" "ssh_key" {
 module "vsi" {
   source                           = "../../"
   resource_group_id                = module.resource_group.resource_group_id
-  prefix                           = var.prefix
+  prefix                           = "${local.prefix}${var.vsi_name}"
   tags                             = var.resource_tags
   vpc_id                           = var.existing_vpc_id
   subnets                          = local.subnet
@@ -91,4 +94,5 @@ module "vsi" {
   secondary_subnets                = local.secondary_subnet
   placement_group_id               = var.placement_group_id
   primary_vni_additional_ip_count  = var.primary_vni_additional_ip_count
+  custom_vsi_volume_names          = local.custom_vsi_volume_names
 }

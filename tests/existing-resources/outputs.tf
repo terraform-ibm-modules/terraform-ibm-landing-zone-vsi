@@ -17,7 +17,7 @@ output "vpc_id" {
   description = "VPC id"
 }
 
-output "subnet_zone_list" {
-  value       = module.vpc.subnet_zone_list
+output "subnet_id" {
+  value       = module.vpc.subnet_zone_list[0].id
   description = "A list containing subnet IDs and subnet zones"
 }
