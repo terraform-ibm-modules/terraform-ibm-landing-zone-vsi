@@ -93,6 +93,6 @@ module "vsi" {
   secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
   secondary_subnets                = local.secondary_subnet
   placement_group_id               = var.placement_group_id
-  primary_vni_additional_ip_count  = var.primary_vni_additional_ip_count
+  primary_vni_additional_ip_count  = var.primary_virtual_network_interface_additional_ip_count
   custom_vsi_volume_names          = local.custom_vsi_volume_names
 }

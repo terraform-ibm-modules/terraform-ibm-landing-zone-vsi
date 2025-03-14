@@ -11,7 +11,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   nullable    = false
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To not use any prefix value, you can set this value to `null` or an empty string."
   validation {
     error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
     condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
@@ -76,13 +76,13 @@ variable "existing_subnet_id" {
 ##############################################################################
 
 variable "vsi_name" {
-  description = ""
+  description = "The name of the Virtual server instance."
   type        = string
   default     = "vsi"
 }
 
 variable "image_id" {
-  description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region"
+  description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region."
   type        = string
   default     = "r006-cc341965-a523-464e-969f-391e2661c125"
 }
@@ -102,7 +102,7 @@ variable "ssh_public_key" {
 }
 
 variable "existing_ssh_key_ids" {
-  description = "ssh key ids to use in creating vsi"
+  description = "IDs of existing SSH keys to use while creating VSI."
   type        = list(string)
   default     = []
 }
@@ -143,7 +143,7 @@ variable "manage_reserved_ips" {
   default     = false
 }
 
-variable "primary_vni_additional_ip_count" {
+variable "primary_virtual_network_interface_additional_ip_count" {
   description = "The number of secondary reversed IPs to attach to a Virtual Network Interface (VNI). Additional IPs are created only if `manage_reserved_ips` is set to true."
   type        = number
   nullable    = false

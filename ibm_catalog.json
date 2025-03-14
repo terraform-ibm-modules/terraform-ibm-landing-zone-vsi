@@ -2,7 +2,7 @@
     "products": [
         {
             "name": "add-ons-beta-deploy-arch-ibm-vsi-vpc",
-            "label": "[Add-ons Beta] Cloud automation for Virtual server instances on VPC",
+            "label": "[Add-ons Beta] Cloud automation for Virtual server instance on VPC",
             "product_kind": "solution",
             "tags": [
                 "compute",
@@ -19,15 +19,15 @@
                 "vsi",
                 "servers"
             ],
-            "short_description": "Provisions a Virtual server instances on IBM Cloud",
-            "long_description": "This architecture supports creation and configuration of Virtual server instances on IBM Cloud.",
+            "short_description": "Provisions a Virtual server instance on IBM Cloud",
+            "long_description": "This architecture supports creation and configuration of Virtual server instance on IBM Cloud.",
             "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
             "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/RH_OpenShift.svg",
             "provider_name": "IBM",
             "features": [
                 {
-                    "title": "Create Virtual server instances on IBM Cloud",
-                    "description": "Create Virtual server instances on IBM Cloud."
+                    "title": "Create Virtual server instance on IBM Cloud",
+                    "description": "Create Virtual server instance on IBM Cloud."
                 }
             ],
             "flavors": [
@@ -62,7 +62,7 @@
                         {
                             "key": "prefix",
                             "required": true,
-                            "description": "The prefix to add to all resources that this solution creates."
+                            "description": "Prefix to add to all projects created by this solution (e.g `prod`, `test`, `dev`). To not use any prefix value, you can enter the string `__NULL__`."
                         },
                         {
                             "key": "existing_resource_group_name",
@@ -200,7 +200,7 @@
                             "key": "placement_group_id"
                         },
                         {
-                            "key": "primary_vni_additional_ip_count"
+                            "key": "primary_virtual_network_interface_additional_ip_count"
                         },
                         {
                             "key": "secondary_allow_ip_spoofing"
