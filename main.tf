@@ -27,8 +27,9 @@ locals {
       # For each subnet
       for subnet in range(length(var.subnets)) :
       {
-        name           = "${var.subnets[subnet].name}-${count}"
-        vsi_name       = "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}"
+        name = "${var.subnets[subnet].name}-${count}"
+        # try to lookup for a vsi name inside custom_vsi_volume_names input variable for that specific subnet, if not found then dynamic vsi name is used
+        vsi_name       = try(keys(lookup(var.custom_vsi_volume_names, var.subnets[subnet].name, {}))[count], "${var.prefix}-${substr(var.subnets[subnet].id, -4, 4)}-${format("%03d", count + 1)}")
         subnet_id      = var.subnets[subnet].id
         zone           = var.subnets[subnet].zone
         subnet_name    = var.subnets[subnet].name
