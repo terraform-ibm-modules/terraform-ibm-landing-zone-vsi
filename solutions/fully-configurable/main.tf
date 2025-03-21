@@ -7,6 +7,122 @@ module "resource_group" {
   existing_resource_group_name = var.existing_resource_group_name
 }
 
+#######################################################################################################################
+# KMS Key
+#######################################################################################################################
+
+module "existing_kms_crn_parser" {
+  count   = var.existing_kms_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_kms_instance_crn
+}
+
+module "existing_kms_key_crn_parser" {
+  count   = var.existing_kms_key_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_kms_key_crn
+}
+
+locals {
+  boot_volume_key_ring_name        = "${local.prefix}${var.boot_volume_key_ring_name}"
+  boot_volume_key_name             = "${local.prefix}${var.boot_volume_key_name}"
+  kms_region                       = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].region : var.existing_kms_key_crn != null ? module.existing_kms_key_crn_parser[0].region : null
+  existing_kms_guid                = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].service_instance : var.existing_kms_key_crn != null ? module.existing_kms_key_crn_parser[0].service_instance : null
+  kms_service_name                 = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].service_name : var.existing_kms_key_crn != null ? module.existing_kms_key_crn_parser[0].service_name : null
+  kms_account_id                   = var.existing_kms_instance_crn != null ? module.existing_kms_crn_parser[0].account_id : var.existing_kms_key_crn != null ? module.existing_kms_key_crn_parser[0].account_id : null
+  kms_key_id                       = var.existing_kms_instance_crn != null ? module.kms[0].keys[format("%s.%s", local.boot_volume_key_ring_name, local.boot_volume_key_name)].key_id : var.existing_kms_key_crn != null ? module.existing_kms_key_crn_parser[0].resource : null
+  boot_volume_kms_key_crn          = var.kms_encryption_enabled_boot_volume ? var.existing_kms_key_crn != null ? var.existing_kms_key_crn : module.kms[0].keys[format("%s.%s", local.boot_volume_key_ring_name, local.boot_volume_key_name)].crn : null
+  create_cross_account_auth_policy = !var.skip_block_storage_kms_iam_auth_policy && var.ibmcloud_kms_api_key == null ? false : (module.scc.account_id != module.existing_kms_crn_parser[0].account_id)
+}
+
+
+data "ibm_iam_account_settings" "iam_account_settings" {
+  count = local.create_cross_account_auth_policy ? 1 : 0
+}
+
+
+resource "ibm_iam_authorization_policy" "block_storage_kms_policy" {
+  count                  = local.create_cross_account_auth_policy ? 1 : 0
+  provider               = ibm.kms
+  source_service_account = data.ibm_iam_account_settings.iam_account_settings.account_id
+  source_service_name    = "server-protect"
+  roles                  = ["Reader"]
+  description            = "Allow block storage volumes to be encrypted by Key Management instance."
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.kms_service_name
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.existing_kms_guid
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_authorization_policy" {
+  depends_on = [ibm_iam_authorization_policy.cos_kms_policy]
+  count      = local.create_cross_account_auth_policy ? 1 : 0
+
+  create_duration = "30s"
+}
+
+# KMS root key for SCC COS bucket
+module "kms" {
+  providers = {
+    ibm = ibm.kms
+  }
+  count                       = var.existing_kms_key_crn == null ? 1 : 0
+  source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
+  version                     = "4.21.2"
+  create_key_protect_instance = false
+  region                      = local.kms_region
+  existing_kms_instance_crn   = var.existing_kms_instance_crn
+  key_ring_endpoint_type      = var.kms_endpoint_type
+  key_endpoint_type           = var.kms_endpoint_type
+  keys = [
+    {
+      key_ring_name     = local.boot_volume_key_ring_name
+      existing_key_ring = false
+      keys = [
+        {
+          key_name                 = local.boot_volume_key_name
+          standard_key             = false
+          rotation_interval_month  = 3
+          dual_auth_delete_enabled = false
+          force_delete             = var.force_delete_kms_key
+        }
+      ]
+    }
+  ]
+}
+
+#######################################################################################################################
+# VSI
+#######################################################################################################################
 data "ibm_is_subnet" "subnet" {
   identifier = var.existing_subnet_id
 }
@@ -67,11 +183,11 @@ module "vsi" {
   machine_type                     = var.machine_type
   vsi_per_subnet                   = 1
   user_data                        = var.user_data
-  existing_kms_instance_guid       = var.existing_kms_instance_guid
-  skip_iam_authorization_policy    = var.skip_iam_authorization_policy
-  boot_volume_encryption_key       = var.boot_volume_encryption_key
+  existing_kms_instance_guid       = local.existing_kms_guid
+  skip_iam_authorization_policy    = local.create_cross_account_auth_policy ? false : var.skip_block_storage_kms_iam_auth_policy
+  boot_volume_encryption_key       = local.boot_volume_kms_key_crn
   use_boot_volume_key_as_default   = var.use_boot_volume_key_as_default
-  kms_encryption_enabled           = var.kms_encryption_enabled
+  kms_encryption_enabled           = var.kms_encryption_enabled_boot_volume
   manage_reserved_ips              = var.manage_reserved_ips
   use_static_boot_volume_name      = var.use_static_boot_volume_name
   enable_floating_ip               = var.enable_floating_ip

@@ -167,7 +167,7 @@
                             "key": "block_storage_volumes"
                         },
                         {
-                            "key": "boot_volume_encryption_key"
+                            "key": "boot_volume_key_name"
                         },
                         {
                             "key": "boot_volume_snapshot_id"
@@ -185,10 +185,10 @@
                             "key": "enable_floating_ip"
                         },
                         {
-                            "key": "kms_encryption_enabled"
+                            "key": "kms_encryption_enabled_boot_volume"
                         },
                         {
-                            "key": "existing_kms_instance_guid"
+                            "key": "existing_kms_instance_crn"
                         },
                         {
                             "key": "load_balancers"
@@ -224,13 +224,28 @@
                             "key": "security_group_ids"
                         },
                         {
-                            "key": "skip_iam_authorization_policy"
+                            "key": "skip_block_storage_kms_iam_auth_policy"
                         },
                         {
                             "key": "snapshot_consistency_group_id"
                         },
                         {
                             "key": "ssh_public_key"
+                        },
+                        {
+                            "key": "boot_volume_key_ring_name"
+                        },
+                        {
+                            "key": "existing_kms_key_crn"
+                        },
+                        {
+                            "key": "force_delete_kms_key"
+                        },
+                        {
+                            "key": "ibmcloud_kms_api_key"
+                        },
+                        {
+                            "key": "kms_endpoint_type"
                         },
                         {
                             "key": "existing_ssh_key_ids",

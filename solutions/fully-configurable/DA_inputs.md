@@ -171,7 +171,7 @@ This variable allows you to pass details of security group IDs to add to the VSI
 ```hcl
 secondary_security_groups = [
   {
-    security_group_id  = "3451a1debe2674472817209601dde6a"
+    security_group_id  = "3451a1debe2674472817209601dde6a" #pragma: allowlist secret
     interface_name     = "example-vni"
   },
 ]

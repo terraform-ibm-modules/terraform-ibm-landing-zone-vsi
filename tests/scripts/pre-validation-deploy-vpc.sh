@@ -33,7 +33,7 @@ TF_VARS_FILE="terraform.tfvars"
   existing_vpc_name="existing_vpc_id"
   existing_vpc_value=$(terraform output -state=terraform.tfstate -raw vpc_id)
 
-  echo "Appending '${existing_resource_group_name}', '${existing_vpc_id}' and '${existing_cos_instance_crn}' input variable values to ${JSON_FILE}.."
+  echo "Appending '${existing_resource_group_name}' and '${existing_vpc_name}'  input variable values to ${JSON_FILE}.."
 
   cd "${cwd}"
   jq -r --arg region_var_name "${region_var_name}" \
