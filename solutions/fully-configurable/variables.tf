@@ -124,7 +124,7 @@ variable "user_data" {
 ########################################################################################################################
 
 variable "use_boot_volume_key_as_default" {
-  description = "Set to true to use the key specified in the `boot_volume_encryption_key` input as default for all volumes, overriding any key value that may be specified in the `encryption_key` option of the `block_storage_volumes` input variable. If set to `false`,  the value passed for the `encryption_key` option of the `block_storage_volumes` will be used instead."
+  description = "Set to true to use the boot volume encryption key as default for all volumes, overriding any key value that may be specified in the `encryption_key` option of the `block_storage_volumes` input variable. If set to `false`,  the value passed for the `encryption_key` option of the `block_storage_volumes` will be used instead."
   type        = bool
   default     = false
 }
@@ -141,34 +141,34 @@ variable "kms_encryption_enabled_boot_volume" {
   }
 
   validation {
-    condition     = var.existing_kms_key_crn != null ? var.kms_encryption_enabled_boot_volume : true
-    error_message = "If passing a value for 'existing_kms_key_crn', you should set 'kms_encryption_enabled_boot_volume' to true."
+    condition     = var.existing_boot_volume_kms_key_crn != null ? var.kms_encryption_enabled_boot_volume : true
+    error_message = "If passing a value for 'existing_boot_volume_kms_key_crn', you should set 'kms_encryption_enabled_boot_volume' to true."
   }
 
   validation {
-    condition     = var.kms_encryption_enabled_boot_volume ? ((var.existing_kms_key_crn != null || var.existing_kms_instance_crn != null) ? true : false) : true
-    error_message = "Either 'existing_kms_key_crn' or 'existing_kms_instance_crn' is required if 'kms_encryption_enabled_boot_volume' is set to true."
+    condition     = var.kms_encryption_enabled_boot_volume ? ((var.existing_boot_volume_kms_key_crn != null || var.existing_kms_instance_crn != null) ? true : false) : true
+    error_message = "Either 'existing_boot_volume_kms_key_crn' or 'existing_kms_instance_crn' is required if 'kms_encryption_enabled_boot_volume' is set to true."
   }
 }
 
-variable "existing_kms_key_crn" {
+variable "existing_boot_volume_kms_key_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS key to use to encrypt the Security and Compliance Center Object Storage bucket. If no value is set for this variable, specify a value for either the `existing_kms_instance_crn` variable to create a key ring and key, or for the `existing_scc_cos_bucket_name` variable to use an existing bucket."
+  description = "The CRN of an existing KMS key to use to encrypt the the block storage volumes for VPC. If no value is set for this variable, specify a value for either the `existing_kms_instance_crn` variable to create a key ring and key."
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_kms_key_crn)),
-      var.existing_kms_key_crn == null,
+      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
+      var.existing_boot_volume_kms_key_crn == null,
     ])
-    error_message = "The provided KMS key CRN in the input 'existing_kms_key_crn' in not valid."
+    error_message = "The provided KMS key CRN in the input 'existing_boot_volume_kms_key_crn' in not valid."
   }
 }
 
 variable "existing_kms_instance_crn" {
   type        = string
   default     = null
-  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). Used to create a new KMS key unless an existing key is passed using the `existing_scc_cos_kms_key_crn` input. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`. A value should not be passed passing existing SCC instance using the `existing_scc_instance_crn` input."
+  description = "The CRN of an existing KMS instance (Hyper Protect Crypto Services or Key Protect). Used to create a new KMS key unless an existing key is passed using the `existing_boot_volume_kms_key_crn` input. If the KMS instance is in different account you must also provide a value for `ibmcloud_kms_api_key`."
 
   validation {
     condition = anytrue([
@@ -186,29 +186,27 @@ variable "force_delete_kms_key" {
   description = "If creating a new KMS key, toggle whether is should be force deleted or not on undeploy."
 }
 
-
-
 variable "skip_block_storage_kms_iam_auth_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled_boot_volume is set to false."
   default     = false
 }
 
 variable "boot_volume_key_ring_name" {
   type        = string
-  default     = "scc-cos-key-ring"
-  description = "The name for the key ring created for the Security and Compliance Center Object Storage bucket key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  default     = "boot-volume-key-ring"
+  description = "The name for the key ring created for the block storage volumes key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "boot_volume_key_name" {
   type        = string
-  default     = "scc-cos-key"
-  description = "The name for the key created for the Security and Compliance Center Object Storage bucket. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  default     = "boot-volume-key"
+  description = "The name for the key created for the block storage volumes. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "kms_endpoint_type" {
   type        = string
-  description = "The endpoint for communicating with the KMS instance. Possible values: `public`, `private`. Applies only if `kms_encryption_enabled_bucket` is true"
+  description = "The endpoint for communicating with the KMS instance. Possible values: `public`, `private`. Applies only if `kms_encryption_enabled_boot_volume` is true"
   default     = "private"
   nullable    = false
   validation {
@@ -219,15 +217,11 @@ variable "kms_endpoint_type" {
 
 variable "ibmcloud_kms_api_key" {
   type        = string
-  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the Security and Compliance Centre instance. Leave this input empty if the same account owns both instances."
+  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the Virtual server instance. Leave this input empty if the same account owns both instances."
   sensitive   = true
   default     = null
-
-  validation {
-    condition     = var.ibmcloud_kms_api_key != null ? var.existing_scc_instance_crn == null : true
-    error_message = "A value should not be passed for 'ibmcloud_kms_api_key' when passing an existing SCC instance using the 'existing_scc_instance_crn' input."
-  }
 }
+
 ########################################################################################################################
 
 variable "manage_reserved_ips" {

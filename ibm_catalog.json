@@ -236,7 +236,7 @@
                             "key": "boot_volume_key_ring_name"
                         },
                         {
-                            "key": "existing_kms_key_crn"
+                            "key": "existing_boot_volume_kms_key_crn"
                         },
                         {
                             "key": "force_delete_kms_key"

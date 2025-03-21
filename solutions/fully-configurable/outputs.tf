@@ -12,14 +12,14 @@ output "vsi_security_group" {
   value       = module.vsi.vsi_security_group
 }
 
-output "list" {
+output "vsi_data" {
   description = "A list of VSI with name, id, zone, and primary ipv4 address"
   value       = module.vsi.list
 }
 
 output "fip_list" {
   description = "A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached."
-  value       = module.vsi.fip_list
+  value       = length(module.vsi.fip_list) > 0 ? module.vsi.fip_list : null
 }
 
 ##############################################################################
@@ -30,7 +30,7 @@ output "fip_list" {
 
 output "lb_hostnames" {
   description = "Hostnames for the Load Balancer created"
-  value       = module.vsi.lb_hostnames
+  value       = length(module.vsi.lb_hostnames) > 0 ? module.vsi.lb_hostnames : null
 }
 
 output "lb_security_groups" {
