@@ -1,7 +1,7 @@
 {
     "products": [
         {
-            "name": "add-ons-beta-deploy-arch-ibm-vsi-vpc",
+            "name": "deploy-arch-ibm-vsi-vpc",
             "label": "[Add-ons Beta] Cloud automation for Virtual server instance on VPC",
             "product_kind": "solution",
             "tags": [

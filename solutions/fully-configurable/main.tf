@@ -39,7 +39,6 @@ locals {
 
 
 data "ibm_iam_account_settings" "iam_account_settings" {
-  # count = local.create_cross_account_auth_policy ? 1 : 0
 }
 
 
