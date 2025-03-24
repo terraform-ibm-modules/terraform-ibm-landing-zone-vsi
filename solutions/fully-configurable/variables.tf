@@ -256,7 +256,7 @@ variable "primary_virtual_network_interface_additional_ip_count" {
 }
 
 variable "use_static_boot_volume_name" {
-  description = "Sets the boot volume name for each Virtual server instance to a static name in the format `{hostname}_boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when Virtual server instance is recreated."
+  description = "Sets the boot volume name for each Virtual server instance to a static name in the format `{hostname}-boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when Virtual server instance is recreated."
   type        = bool
   default     = false
 }

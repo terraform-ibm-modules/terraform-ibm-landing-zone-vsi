@@ -2,7 +2,7 @@
     "products": [
         {
             "name": "deploy-arch-ibm-vsi-vpc",
-            "label": "[Add-ons Beta] Cloud automation for Virtual server instance on VPC",
+            "label": "Cloud automation for Virtual server instance on VPC",
             "product_kind": "solution",
             "tags": [
                 "compute",
@@ -17,17 +17,32 @@
                 "terraform",
                 "virtualservers",
                 "vsi",
-                "servers"
+                "servers",
+                "solution",
+                "IaC",
+                "infrastructure as code"
             ],
             "short_description": "Provisions a Virtual server instance on IBM Cloud",
             "long_description": "This architecture supports creation and configuration of Virtual server instance on IBM Cloud.",
             "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
-            "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/documentation/main/icons/RH_OpenShift.svg",
+            "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
             "provider_name": "IBM",
             "features": [
                 {
-                    "title": "Create Virtual server instance on IBM Cloud",
-                    "description": "Create Virtual server instance on IBM Cloud."
+                    "title": "Virtual server instance",
+                    "description": "Creates and configures a Virtual server instance."
+                },
+                {
+                    "title": "KMS encryption",
+                    "description": "Supports creating a new key, or using an existing one to encrypt the Object Storage bucket."
+                },
+                {
+                    "title": "Load balancer",
+                    "description": "Supports creating and configuring Load balancers for the Virtual server instance."
+                },
+                {
+                    "title": "Block storage volumes",
+                    "description": "Supports creating and configuring Block storage volumes for the Virtual server instance."
                 }
             ],
             "flavors": [
@@ -36,22 +51,12 @@
                     "name": "fully-configurable",
                     "install_type": "fullstack",
                     "working_directory": "solutions/fully-configurable",
-                    "architecture": {
-                        "descriptions": "This architecture creates a fully-configurable virtual server instances.",
-                        "features": [
+                    "compliance": {
+                        "authority": "scc-v3",
+                        "profiles": [
                             {
-                                "title": "Creates Virtual server instances",
-                                "description": "Creates Virtual server instances"
-                            }
-                        ],
-                        "diagrams": [
-                            {
-                                "diagram": {
-                                    "caption": "Virtual server instances for IBM Cloud.",
-                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-base-ocp-vpc/main/reference-architecture/deployable-architecture-ocp-cluster-qs.svg",
-                                    "type": "image/svg+xml"
-                                },
-                                "description": "This architecture creates a fully-configurable Virtual server instances."
+                                "profile_name": "IBM Cloud Framework for Financial Services",
+                                "profile_version": "1.7.0"
                             }
                         ]
                     },
@@ -62,7 +67,7 @@
                         {
                             "key": "prefix",
                             "required": true,
-                            "description": "Prefix to add to all projects created by this solution (e.g `prod`, `test`, `dev`). To not use any prefix value, you can enter the string `__NULL__`."
+                            "description": "Prefix to add to all resources that this solution creates. To not use any prefix value, you can enter the string `__NULL__`."
                         },
                         {
                             "key": "existing_resource_group_name",
@@ -115,6 +120,10 @@
                             }
                         },
                         {
+                            "key": "image_id",
+                            "required": true
+                        },
+                        {
                             "key": "provider_visibility",
                             "options": [
                                 {
@@ -130,6 +139,9 @@
                                     "value": "public-and-private"
                                 }
                             ]
+                        },
+                        {
+                            "key": "vsi_name"
                         },
                         {
                             "key": "vsi_resource_tags",
@@ -152,13 +164,24 @@
                             }
                         },
                         {
-                            "key": "vsi_name"
+                            "key": "auto_generate_ssh_key"
+                        },
+                        {
+                            "key": "ssh_public_key"
+                        },
+                        {
+                            "key": "existing_ssh_key_ids",
+                            "custom_config": {
+                                "type": "vpc_ssh_key",
+                                "grouping": "deployment",
+                                "original_grouping": "deployment",
+                                "config_constraints": {
+                                    "selection": "multi_select"
+                                }
+                            }
                         },
                         {
                             "key": "machine_type"
-                        },
-                        {
-                            "key": "image_id"
                         },
                         {
                             "key": "allow_ip_spoofing"
@@ -167,25 +190,59 @@
                             "key": "block_storage_volumes"
                         },
                         {
-                            "key": "boot_volume_key_name"
-                        },
-                        {
-                            "key": "boot_volume_snapshot_id"
-                        },
-                        {
-                            "key": "auto_generate_ssh_key"
-                        },
-                        {
-                            "key": "dedicated_host_id"
-                        },
-                        {
-                            "key": "enable_floating_ip"
+                            "key": "ibmcloud_kms_api_key"
                         },
                         {
                             "key": "kms_encryption_enabled_boot_volume"
                         },
                         {
                             "key": "existing_kms_instance_crn"
+                        },
+                        {
+                            "key": "skip_block_storage_kms_iam_auth_policy"
+                        },
+                        {
+                            "key": "kms_endpoint_type",
+                            "options": [
+                                {
+                                    "displayname": "Public",
+                                    "value": "public"
+                                },
+                                {
+                                    "displayname": "Private",
+                                    "value": "private"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "boot_volume_key_ring_name"
+                        },
+                        {
+                            "key": "existing_boot_volume_kms_key_crn"
+                        },
+                        {
+                            "key": "force_delete_kms_key"
+                        },
+                        {
+                            "key": "use_boot_volume_key_as_default"
+                        },
+                        {
+                            "key": "security_group"
+                        },
+                        {
+                            "key": "security_group_ids"
+                        },
+                        {
+                            "key": "boot_volume_key_name"
+                        },
+                        {
+                            "key": "boot_volume_snapshot_id"
+                        },
+                        {
+                            "key": "dedicated_host_id"
+                        },
+                        {
+                            "key": "enable_floating_ip"
                         },
                         {
                             "key": "load_balancers"
@@ -215,48 +272,7 @@
                             "key": "secondary_use_vsi_security_group"
                         },
                         {
-                            "key": "security_group"
-                        },
-                        {
-                            "key": "security_group_ids"
-                        },
-                        {
-                            "key": "skip_block_storage_kms_iam_auth_policy"
-                        },
-                        {
                             "key": "snapshot_consistency_group_id"
-                        },
-                        {
-                            "key": "ssh_public_key"
-                        },
-                        {
-                            "key": "boot_volume_key_ring_name"
-                        },
-                        {
-                            "key": "existing_boot_volume_kms_key_crn"
-                        },
-                        {
-                            "key": "force_delete_kms_key"
-                        },
-                        {
-                            "key": "ibmcloud_kms_api_key"
-                        },
-                        {
-                            "key": "kms_endpoint_type"
-                        },
-                        {
-                            "key": "existing_ssh_key_ids",
-                            "custom_config": {
-                                "type": "vpc_ssh_key",
-                                "grouping": "deployment",
-                                "original_grouping": "deployment",
-                                "config_constraints": {
-                                    "selection": "multi_select"
-                                }
-                            }
-                        },
-                        {
-                            "key": "use_boot_volume_key_as_default"
                         },
                         {
                             "key": "use_static_boot_volume_name"
@@ -265,6 +281,77 @@
                             "key": "user_data"
                         }
                     ],
+                    "iam_permissions": [
+                        {
+                            "service_name": "is",
+                            "role_crns": [
+                                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                                "crn:v1:bluemix:public:iam::::role:Editor"
+                            ]
+                        },
+                        {
+                            "role_crns": [
+                                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                                "crn:v1:bluemix:public:iam::::role:Editor"
+                            ],
+                            "service_name": "kms"
+                        }
+                    ],
+                    "architecture": {
+                        "descriptions": "This architecture supports creating and configuring a Virtual server instance",
+                        "features": [
+                            {
+                                "title": "Virtual server instance creation",
+                                "description": "Yes"
+                            },
+                            {
+                                "title": "New resource group creation",
+                                "description": "No"
+                            },
+                            {
+                                "title": "Use existing resource group",
+                                "description": "Yes"
+                            },
+                            {
+                                "title": "Block storage volumes creation",
+                                "description": "Yes"
+                            },
+                            {
+                                "title": "Enforced KMS encryption",
+                                "description": "No"
+                            },
+                            {
+                                "title": "KMS instance creation",
+                                "description": "No"
+                            },
+                            {
+                                "title": "KMS key ring and key creation",
+                                "description": "Yes"
+                            },
+                            {
+                                "title": "Use existing KMS key",
+                                "description": "Yes"
+                            },
+                            {
+                                "title": "IAM s2s auth policies creation",
+                                "description": "Yes"
+                            },
+                            {
+                                "title": "Load balancer creation",
+                                "description": "Yes"
+                            }
+                        ],
+                        "diagrams": [
+                            {
+                                "diagram": {
+                                    "caption": "Virtual server instance",
+                                    "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architecture/vsi.svg",
+                                    "type": "image/svg+xml"
+                                },
+                                "description": "This architecture supports creating and configuring IBM Virtual server instance resources."
+                            }
+                        ]
+                    },
                     "dependencies": [
                         {
                             "name": "deploy-arch-ibm-account-infra-base",
