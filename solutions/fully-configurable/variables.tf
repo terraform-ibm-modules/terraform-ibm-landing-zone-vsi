@@ -4,50 +4,60 @@
 
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud api key"
+  description = "The IBM Cloud API key used to provision resources."
   sensitive   = true
-}
-
-variable "prefix" {
-  type        = string
-  nullable    = false
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To not use any prefix value, you can set this value to `null` or an empty string."
-  validation {
-    error_message = "Prefix must begin and end with a letter and contain only letters, numbers, and - characters."
-    condition     = can(regex("^([A-z]|[a-z][-a-z0-9]*[a-z0-9])$", var.prefix))
-  }
 }
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the VSIs."
+  description = "The name of an existing resource group to provision resources in."
+  default     = "Default"
+  nullable    = false
 }
 
-variable "region" {
+variable "prefix" {
   type        = string
-  description = "Region where resources are created"
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To not use any prefix value, you can set this value to `null` or an empty string."
+  nullable    = true
+  validation {
+    condition = (var.prefix == null ? true :
+      alltrue([
+        can(regex("^[a-z]{0,1}[-a-z0-9]{0,14}[a-z0-9]{0,1}$", var.prefix)),
+        length(regexall("^.*--.*", var.prefix)) == 0
+      ])
+    )
+    error_message = "Prefix must begin with a lowercase letter, contain only lowercase letters, numbers, and - characters. Prefixes must end with a lowercase letter or number and be 16 or fewer characters."
+  }
 }
 
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
   default     = "private"
+  nullable    = false
 
   validation {
     condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
-    error_message = "Invalid visibility option. Allowed values are 'public', 'private', or 'public-and-private'."
+    error_message = "Invalid value for 'provider_visibility'. Allowed values are 'public', 'private', or 'public-and-private'."
   }
 }
 
-variable "resource_tags" {
-  description = "List of tags to apply to resources created by this module."
+variable "region" {
+  type        = string
+  default     = "us-south"
+  description = "The region to provision Virtual server instance resources in."
+  nullable    = false
+}
+
+variable "vsi_resource_tags" {
+  description = "The list of tags to add to the Virtual server instance."
   type        = list(string)
   default     = []
 }
 
-variable "access_tags" {
+variable "vsi_access_tags" {
   type        = list(string)
-  description = "A list of access tags to apply to the VSI resources created by the module. For more information, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial."
+  description = "The list of access tags to add to the Virtual server instance. For more information, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial."
   default     = []
 }
 
@@ -64,7 +74,7 @@ variable "existing_vpc_id" {
 }
 
 variable "existing_subnet_id" {
-  description = "The ID of an existing subnet"
+  description = "The ID of an existing subnet."
   type        = string
 }
 
@@ -72,7 +82,7 @@ variable "existing_subnet_id" {
 
 
 ##############################################################################
-# VSI Variables
+# Virtual server instance Variables
 ##############################################################################
 
 variable "vsi_name" {
@@ -82,39 +92,47 @@ variable "vsi_name" {
 }
 
 variable "image_id" {
-  description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region."
+  description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
   type        = string
-  default     = "r006-cc341965-a523-464e-969f-391e2661c125"
+  nullable    = false
 }
 
 variable "ssh_public_key" {
-  description = "A public SSH Key for VSI creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing key, enter a value for the variable 'existing_ssh_key_name' instead."
+  description = "A public SSH Key for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing key, enter a value for the variable 'existing_ssh_key_name' instead."
   type        = string
   default     = null
+
   validation {
     error_message = "Public SSH Key must be a valid ssh rsa public key."
     condition     = var.ssh_public_key == null || can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", var.ssh_public_key))
   }
   validation {
-    condition     = var.ssh_public_key != null || length(var.existing_ssh_key_ids) > 0 ? true : false
+    condition     = var.auto_generate_ssh_key ? true : var.ssh_public_key != null || length(var.existing_ssh_key_ids) > 0 ? true : false
     error_message = "Please provide a value for either `ssh_public_key` or `existing_ssh_key_ids`."
   }
 }
 
 variable "existing_ssh_key_ids" {
-  description = "IDs of existing SSH keys to use while creating VSI."
+  description = "The IDs of existing SSH keys to use while creating Virtual server instance."
   type        = list(string)
   default     = []
 }
 
+variable "auto_generate_ssh_key" {
+  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secret mananger. The public key is stored in your VPC and you can download it from the SSH key details page."
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
 variable "machine_type" {
-  description = "VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles"
+  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles."
   type        = string
   default     = "cx2-2x4"
 }
 
 variable "user_data" {
-  description = "User data to initialize VSI deployment"
+  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recongnized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
   type        = string
   default     = null
 }
@@ -225,7 +243,7 @@ variable "ibmcloud_kms_api_key" {
 ########################################################################################################################
 
 variable "manage_reserved_ips" {
-  description = "Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP."
+  description = "Set to `true` if you want this terraform to manage the reserved IP addresses that are assigned to Virtual server instance. If this option is enabled, when any Virtual server instance is recreated it should retain its original IP."
   type        = bool
   default     = false
 }
@@ -238,7 +256,7 @@ variable "primary_virtual_network_interface_additional_ip_count" {
 }
 
 variable "use_static_boot_volume_name" {
-  description = "Sets the boot volume name for each VSI to a static name in the format `{hostname}_boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when VSIs are recreated."
+  description = "Sets the boot volume name for each Virtual server instance to a static name in the format `{hostname}_boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when Virtual server instance is recreated."
   type        = bool
   default     = false
 }
@@ -255,12 +273,6 @@ variable "allow_ip_spoofing" {
   default     = false
 }
 
-variable "create_security_group" {
-  description = "Create security group for VSI. If this is passed as false, the default will be used"
-  type        = bool
-  default     = false
-}
-
 variable "placement_group_id" {
   description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host"
   type        = string
@@ -268,7 +280,7 @@ variable "placement_group_id" {
 }
 
 variable "security_group" {
-  description = "Security group created for VSI"
+  description = "The security group for Virtual server instance. If no value is passed, the VPC default security group will be used. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-security-group)."
   type = object({
     name = string
     rules = list(
@@ -301,13 +313,13 @@ variable "security_group" {
 }
 
 variable "security_group_ids" {
-  description = "IDs of additional security groups to be added to VSI deployment primary interface. A VSI interface can have a maximum of 5 security groups."
+  description = "IDs of additional security groups to be added to Virtual server instance deployment primary interface. A Virtual server instance interface can have a maximum of 5 security groups."
   type        = list(string)
   default     = []
 }
 
 variable "block_storage_volumes" {
-  description = "List describing the block storage volumes that will be attached to each vsi"
+  description = "The list describing the block storage volumes that will be attached to the Virtual server instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-block-vol)."
   type = list(
     object({
       name              = string
@@ -324,7 +336,7 @@ variable "block_storage_volumes" {
 }
 
 variable "load_balancers" {
-  description = "Load balancers to add to VSI"
+  description = "The load balancers to add to Virtual server instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-load-balancers)."
   type = list(
     object({
       name                       = string
@@ -394,19 +406,19 @@ variable "load_balancers" {
 ##############################################################################
 
 variable "existing_secondary_subnet_id" {
-  description = "A secondary network interfaces to add to vsi secondary subnets must be in the same zone as VSI. This is only recommended for use with a deployment of 1 VSI."
+  description = "A secondary network interfaces to add to Virtual server instance secondary subnets must be in the same zone as Virtual server instance. This is only recommended for use with a deployment of 1 Virtual server instance."
   type        = string
   default     = null
 }
 
 variable "secondary_use_vsi_security_group" {
-  description = "Use the security group created by this module in the secondary interface"
+  description = "Use the security group created by this deployable architecture in the secondary interface."
   type        = bool
   default     = false
 }
 
 variable "secondary_security_groups" {
-  description = "The security group IDs to add to the VSI deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface."
+  description = "The security group IDs to add to the Virtual server instance deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-secondary-security-groups)."
   type = list(
     object({
       security_group_id = string
@@ -447,29 +459,13 @@ variable "snapshot_consistency_group_id" {
 }
 
 ##############################################################################
-
-variable "use_legacy_network_interface" {
-  description = "Set this to true to use legacy network interface for the created instances."
-  type        = bool
-  nullable    = false
-  default     = false
-}
-
-##############################################################################
 # Dedicated Host Variables
 ##############################################################################
-
-variable "enable_dedicated_host" {
-  type        = bool
-  default     = false
-  nullable    = false
-  description = "Enabling this option will activate dedicated hosts for the VSIs. When enabled, the dedicated_host_id input is required. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details"
-}
 
 variable "dedicated_host_id" {
   type        = string
   default     = null
-  description = "ID of the dedicated host for hosting the VSI's. The enable_dedicated_host input shoud be set to true if passing a dedicated host ID"
+  description = "The ID of the dedicated host for hosting the Virtual server instance's."
 }
 
 ##############################################################################

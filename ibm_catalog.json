@@ -132,7 +132,7 @@
                             ]
                         },
                         {
-                            "key": "resource_tags",
+                            "key": "vsi_resource_tags",
                             "custom_config": {
                                 "grouping": "deployment",
                                 "original_grouping": "deployment",
@@ -142,7 +142,7 @@
                             }
                         },
                         {
-                            "key": "access_tags",
+                            "key": "vsi_access_tags",
                             "custom_config": {
                                 "grouping": "deployment",
                                 "original_grouping": "deployment",
@@ -173,13 +173,10 @@
                             "key": "boot_volume_snapshot_id"
                         },
                         {
-                            "key": "create_security_group"
+                            "key": "auto_generate_ssh_key"
                         },
                         {
                             "key": "dedicated_host_id"
-                        },
-                        {
-                            "key": "enable_dedicated_host"
                         },
                         {
                             "key": "enable_floating_ip"
@@ -260,9 +257,6 @@
                         },
                         {
                             "key": "use_boot_volume_key_as_default"
-                        },
-                        {
-                            "key": "use_legacy_network_interface"
                         },
                         {
                             "key": "use_static_boot_volume_name"

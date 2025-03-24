@@ -1,15 +1,15 @@
-# Configuring complex inputs for VSI in IBM Cloud projects
-Several optional input variables in the VSI [deployable architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You specify these inputs when you configure your deployable architecture.
+# Configuring complex inputs for Virtual server instance in IBM Cloud projects
+Several optional input variables in the Virtual server instance [deployable architecture](https://cloud.ibm.com/catalog#deployable_architecture) use complex object types. You specify these inputs when you configure your deployable architecture.
 
 - [Security Group](#options-with-security-group) (`security_group`)
-- [Block Storage Volumes](#options-with-block-volumes) (`block_storage_volumes`)
+- [Block Storage Volumes](#options-with-block-vol) (`block_storage_volumes`)
 - [Load Balancers](#options-with-load-balancers) (`load_balancers`)
 - [Secondary Security Groups](#options-with-secondary-security-groups) (`secondary_security_groups`)
 
 
 ## Options with Security Group <a name="options-with-security-group"></a>
 
-The `security_group` input variable allows you to provide of a security group which needs to be created for VSI.
+The `security_group` input variable allows you to provide of a security group which needs to be created for Virtual server instance.
 
 - Variable name: `security_group`.
 - Type: A object. Allows only one object representing a security group
@@ -33,7 +33,7 @@ The `security_group` input variable allows you to provide of a security group wh
 ### Example Rule For Security Group Configuration
 
 ```hcl
-security_group = {
+{
   name = "example-sg"
   rules = [{
     name      = "example-rule"
@@ -48,9 +48,9 @@ security_group = {
 ```
 
 
-## Options with Block Storage Volumes <a name="options-with-block-volumes"></a>
+## Options with Block Storage Volumes <a name="options-with-block-vol"></a>
 
-The `block_storage_volumes` input variable allows you to provide of a List describing the block storage volumes that will be attached to each VSI.
+The `block_storage_volumes` input variable allows you to provide of a List describing the block storage volumes that will be attached to each Virtual server instance.
 
 - Variable name: `block_storage_volumes`.
 - Type: A list of objects.
@@ -68,7 +68,7 @@ The `block_storage_volumes` input variable allows you to provide of a List descr
 ### Example Rule For Block Storage Volumes Configuration
 
 ```hcl
-block_storage_volumes = [{
+[{
     name    = var.prefix
     profile = "10iops-tier"
 }]
@@ -77,7 +77,7 @@ block_storage_volumes = [{
 
 ## Options with Load Balancers <a name="options-with-load-balancers"></a>
 
-The `load_balancers` input variable allows you to provide of a list Load balancers to add to VSI. **Important** This load balancer will only have a single VSI has its backend pool member.
+The `load_balancers` input variable allows you to provide of a list Load balancers to add to Virtual server instance. **Important** This load balancer will only have a single Virtual server instance has its backend pool member.
 
 - Variable name: `load_balancers`.
 - Type: A list of objects.
@@ -124,7 +124,7 @@ The `load_balancers` input variable allows you to provide of a list Load balance
 ### Example Rule For Load Balancers Configuration
 
 ```hcl
-load_balancers = [
+[
   {
     name                    = "${var.prefix}-lb"
     type                    = "public"
@@ -159,7 +159,7 @@ load_balancers = [
 
 ## Options with Secondary Security Groups <a name="options-with-secondary-security-groups"></a>
 
-This variable allows you to pass details of security group IDs to add to the VSI deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface.
+This variable allows you to pass details of security group IDs to add to the Virtual server instance deployment secondary interfaces (5 maximum). Use the same value for interface_name as for name in secondary_subnets to avoid applying the default VPC security group on the secondary network interface.
 
 - Variable name: `secondary_security_groups`.
 - Type: A list of objects.
@@ -169,7 +169,7 @@ This variable allows you to pass details of security group IDs to add to the VSI
 ### Example for subnets
 
 ```hcl
-secondary_security_groups = [
+[
   {
     security_group_id  = "3451a1debe2674472817209601dde6a" #pragma: allowlist secret
     interface_name     = "example-vni"

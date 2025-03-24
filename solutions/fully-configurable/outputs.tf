@@ -55,3 +55,13 @@ output "consistency_group_storage_snapshot_ids" {
 }
 
 ##############################################################################
+
+##############################################################################
+# SSH Key
+##############################################################################
+
+output "ssh_private_key" {
+  value       = var.auto_generate_ssh_key ? ibm_is_ssh_key.auto_generate_ssh_key[0].private_key_pem : null
+  description = "The ssh private key data in [PEM (RFC 1421)](https://datatracker.ietf.org/doc/html/rfc1421) format."
+  sensitive   = true
+}

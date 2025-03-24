@@ -94,7 +94,7 @@ module "kms" {
   providers = {
     ibm = ibm.kms
   }
-  count                       = var.existing_boot_volume_kms_key_crn == null ? 1 : 0
+  count                       = var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
   version                     = "4.21.2"
   create_key_protect_instance = false
@@ -146,7 +146,7 @@ locals {
     zone = data.ibm_is_subnet.secondary_subnet[0].zone
   }] : []
 
-  ssh_keys = concat(var.existing_ssh_key_ids, var.ssh_public_key != null ? [ibm_is_ssh_key.ssh_key[0].id] : [])
+  ssh_keys = var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : concat(var.existing_ssh_key_ids, var.ssh_public_key != null ? [ibm_is_ssh_key.ssh_key[0].id] : [])
 
   custom_vsi_volume_names = { (data.ibm_is_subnet.subnet.name) = {
   "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
@@ -162,9 +162,20 @@ resource "ibm_is_ssh_key" "ssh_key" {
   name           = "${local.prefix}${var.vsi_name}-ssh-key"
   public_key     = replace(var.ssh_public_key, "/==.*$/", "==")
   resource_group = module.resource_group.resource_group_id
-  tags           = var.resource_tags
+  tags           = var.vsi_resource_tags
 }
 
+resource "tls_private_key" "auto_generate_ssh_key" {
+  count     = var.auto_generate_ssh_key ? 1 : 0
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "ibm_is_ssh_key" "auto_generate_ssh_key" {
+  count      = var.auto_generate_ssh_key ? 1 : 0
+  name       = "${var.prefix}${var.vsi_name}-ssh-key"
+  public_key = resource.tls_private_key.auto_generate_ssh_key[0].public_key_openssh
+}
 
 ########################################################################################################################
 # Virtual Server Instance
@@ -175,7 +186,7 @@ module "vsi" {
   depends_on                       = [time_sleep.wait_for_authorization_policy[0]]
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
-  tags                             = var.resource_tags
+  tags                             = var.vsi_resource_tags
   vpc_id                           = var.existing_vpc_id
   subnets                          = local.subnet
   image_id                         = var.image_id
@@ -192,17 +203,17 @@ module "vsi" {
   use_static_boot_volume_name      = var.use_static_boot_volume_name
   enable_floating_ip               = var.enable_floating_ip
   allow_ip_spoofing                = var.allow_ip_spoofing
-  create_security_group            = var.create_security_group
+  create_security_group            = var.security_group != null ? true : false
   security_group                   = var.security_group
   security_group_ids               = var.security_group_ids
   block_storage_volumes            = var.block_storage_volumes
   load_balancers                   = var.load_balancers
-  access_tags                      = var.access_tags
+  access_tags                      = var.vsi_access_tags
   snapshot_consistency_group_id    = var.snapshot_consistency_group_id
   boot_volume_snapshot_id          = var.boot_volume_snapshot_id
-  enable_dedicated_host            = var.enable_dedicated_host
+  enable_dedicated_host            = var.dedicated_host_id != null ? true : false
   dedicated_host_id                = var.dedicated_host_id
-  use_legacy_network_interface     = var.use_legacy_network_interface
+  use_legacy_network_interface     = false
   secondary_allow_ip_spoofing      = var.secondary_allow_ip_spoofing
   secondary_floating_ips           = var.secondary_floating_ips
   secondary_security_groups        = var.secondary_security_groups
