@@ -98,16 +98,16 @@ variable "image_id" {
 }
 
 variable "ssh_public_key" {
-  description = "A public SSH Key for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing key, enter a value for the variable 'existing_ssh_key_name' instead."
-  type        = string
-  default     = null
+  description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead."
+  type        = list(string)
+  default     = []
 
   validation {
     error_message = "Public SSH Key must be a valid ssh rsa public key."
     condition     = var.ssh_public_key == null || can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", var.ssh_public_key))
   }
   validation {
-    condition     = var.auto_generate_ssh_key ? true : var.ssh_public_key != null || length(var.existing_ssh_key_ids) > 0 ? true : false
+    condition     = var.auto_generate_ssh_key ? true : length(var.ssh_public_key) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
     error_message = "Please provide a value for either `ssh_public_key` or `existing_ssh_key_ids`."
   }
 }
@@ -121,7 +121,7 @@ variable "existing_ssh_key_ids" {
 variable "auto_generate_ssh_key" {
   description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secret mananger. The public key is stored in your VPC and you can download it from the SSH key details page."
   type        = bool
-  default     = false
+  default     = true
   nullable    = false
 }
 
