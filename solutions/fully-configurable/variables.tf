@@ -97,18 +97,19 @@ variable "image_id" {
   nullable    = false
 }
 
-variable "ssh_public_key" {
+variable "ssh_public_keys" {
   description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead."
   type        = list(string)
   default     = []
 
   validation {
     error_message = "Public SSH Key must be a valid ssh rsa public key."
-    condition     = var.ssh_public_key == null || can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", var.ssh_public_key))
+    condition     = alltrue([for ssh in var.ssh_public_keys : can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", ssh))])
   }
+
   validation {
-    condition     = var.auto_generate_ssh_key ? true : length(var.ssh_public_key) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
-    error_message = "Please provide a value for either `ssh_public_key` or `existing_ssh_key_ids`."
+    condition     = var.auto_generate_ssh_key ? true : length(var.ssh_public_keys) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
+    error_message = "Please provide a value for either `ssh_public_keys` or `existing_ssh_key_ids`, when `auto_generate_ssh_key` is set to false."
   }
 }
 
