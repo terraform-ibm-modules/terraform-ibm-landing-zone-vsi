@@ -82,26 +82,6 @@
                             }
                         },
                         {
-                            "key": "existing_vpc_id",
-                            "required": true,
-                            "custom_config": {
-                                "type": "vpc",
-                                "grouping": "deployment",
-                                "original_grouping": "deployment",
-                                "config_constraints": {
-                                    "type": "mixed"
-                                },
-                                "associations": {
-                                    "parameters": [
-                                        {
-                                            "name": "region",
-                                            "optionsRefresh": true
-                                        }
-                                    ]
-                                }
-                            }
-                        },
-                        {
                             "key": "existing_subnet_id",
                             "required": true,
                             "custom_config": {

@@ -68,11 +68,6 @@ variable "vsi_access_tags" {
 # VPC Variables
 ##############################################################################
 
-variable "existing_vpc_id" {
-  description = "The ID of an existing VPC."
-  type        = string
-}
-
 variable "existing_subnet_id" {
   description = "The ID of an existing subnet."
   type        = string

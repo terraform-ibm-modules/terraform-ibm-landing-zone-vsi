@@ -188,7 +188,7 @@ module "vsi" {
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
   tags                             = var.vsi_resource_tags
-  vpc_id                           = var.existing_vpc_id
+  vpc_id                           = data.ibm_is_subnet.subnet.vpc
   subnets                          = local.subnet
   image_id                         = var.image_id
   ssh_key_ids                      = local.ssh_keys
