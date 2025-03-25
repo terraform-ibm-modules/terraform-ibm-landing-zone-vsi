@@ -224,3 +224,39 @@ module "vsi" {
   primary_vni_additional_ip_count  = var.primary_virtual_network_interface_additional_ip_count
   custom_vsi_volume_names          = local.custom_vsi_volume_names
 }
+
+########################################################################################################################
+# Secret Mananger
+########################################################################################################################
+
+module "existing_secret_manager_crn_parser" {
+  count   = var.existing_secrets_manager_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_secrets_manager_instance_crn
+}
+locals {
+  existing_secrets_manager_instance_guid   = var.existing_secrets_manager_instance_crn != null ? module.existing_secret_manager_crn_parser[0].service_instance : null
+  existing_secrets_manager_instance_region = var.existing_secrets_manager_instance_crn != null ? module.existing_secret_manager_crn_parser[0].region : null
+}
+
+module "secrets_manager_service_credentials" {
+  count                       = var.auto_generate_ssh_key ? 1 : 0
+  source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
+  version                     = "1.25.5"
+  existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
+  existing_sm_instance_region = local.existing_secrets_manager_instance_region
+  endpoint_type               = var.existing_secrets_manager_endpoint_type
+  secrets = [{
+    secret_group_name        = "${local.prefix}${var.ssh_key_secret_group_name}"
+    secret_group_description = "The ssh private key secret group."
+    secrets = [
+      {
+        secret_name             = "${local.prefix}${var.ssh_key_secret_name}"
+        secret_description      = "The ssh private key data in [PEM (RFC 1421)](https://datatracker.ietf.org/doc/html/rfc1421) format."
+        secret_type             = "arbitrary"
+        secret_payload_password = tls_private_key.auto_generate_ssh_key[0].private_key_pem
+      }
+    ]
+  }]
+}

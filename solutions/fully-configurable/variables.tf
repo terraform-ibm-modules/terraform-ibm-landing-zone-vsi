@@ -465,3 +465,41 @@ variable "dedicated_host_id" {
 }
 
 ##############################################################################
+
+##############################################################################
+## Secrets Manager Service Credentials
+##############################################################################
+
+variable "existing_secrets_manager_instance_crn" {
+  type        = string
+  default     = null
+  description = "The CRN of existing secrets manager to use to store the SSH private key which was auto generated when `auto_generate_ssh_key` was set to true."
+  validation {
+    condition     = var.auto_generate_ssh_key ? var.existing_secrets_manager_instance_crn != null ? true : false : true
+    error_message = "`existing_secrets_manager_instance_crn` is a required value when `auto_generate_ssh_key` is set to true."
+  }
+}
+
+variable "existing_secrets_manager_endpoint_type" {
+  type        = string
+  description = "The endpoint type to use if `existing_secrets_manager_instance_crn` is specified. Possible values: public, private."
+  default     = "private"
+  validation {
+    condition     = contains(["public", "private"], var.existing_secrets_manager_endpoint_type)
+    error_message = "Only \"public\" and \"private\" are allowed values for 'existing_secrets_endpoint_type'."
+  }
+}
+
+variable "ssh_key_secret_group_name" {
+  type        = string
+  default     = "ssh-key-secret-group"
+  nullable    = false
+  description = "The name for the secret group created for the auto generated ssh private key."
+}
+
+variable "ssh_key_secret_name" {
+  type        = string
+  default     = "ssh-key-secret"
+  nullable    = false
+  description = "The name for the secret created for the auto generated ssh private key."
+}

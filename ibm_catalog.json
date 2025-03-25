@@ -177,6 +177,18 @@
                             }
                         },
                         {
+                            "key": "existing_secrets_manager_instance_crn"
+                        },
+                        {
+                            "key": "existing_secrets_manager_endpoint_type"
+                        },
+                        {
+                            "key": "ssh_key_secret_group_name"
+                        },
+                        {
+                            "key": "ssh_key_secret_name"
+                        },
+                        {
                             "key": "machine_type"
                         },
                         {
@@ -506,6 +518,10 @@
                                     "dependency_input": "use_existing_resource_group",
                                     "version_input": "prefix",
                                     "reference_version": true
+                                },
+                                {
+                                    "dependency_output": "secrets_manager_crn",
+                                    "version_input": "existing_secrets_manager_instance_crn"
                                 }
                             ]
                         },
