@@ -82,6 +82,26 @@
                             }
                         },
                         {
+                            "key": "existing_vpc_id",
+                            "required": true,
+                            "custom_config": {
+                                "type": "vpc",
+                                "grouping": "deployment",
+                                "original_grouping": "deployment",
+                                "config_constraints": {
+                                    "type": "mixed"
+                                },
+                                "associations": {
+                                    "parameters": [
+                                        {
+                                            "name": "region",
+                                            "optionsRefresh": true
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
                             "key": "existing_subnet_id",
                             "required": true,
                             "custom_config": {
@@ -274,7 +294,25 @@
                             "key": "secondary_security_groups"
                         },
                         {
-                            "key": "existing_secondary_subnet_id"
+                            "key": "existing_secondary_subnet_id",
+                            "custom_config": {
+                                "type": "platform_resource",
+                                "grouping": "deployment",
+                                "original_grouping": "deployment",
+                                "config_constraints": {
+                                    "resourceType": "subnet",
+                                    "selection": "single_select",
+                                    "valueType": "id"
+                                },
+                                "associations": {
+                                    "parameters": [
+                                        {
+                                            "name": "region",
+                                            "optionsRefresh": true
+                                        }
+                                    ]
+                                }
+                            }
                         },
                         {
                             "key": "secondary_use_vsi_security_group"
@@ -362,6 +400,36 @@
                     },
                     "dependencies": [
                         {
+                            "name": "deploy-arch-ibm-vpc",
+                            "id": "2af61763-f8ef-4527-a815-b92166f29bc8",
+                            "version": "^v1.0.2",
+                            "flavors": [
+                                "fully-configurable"
+                            ],
+                            "catalog_id": "f64499c8-eb50-4985-bf91-29f9e605a433",
+                            "optional": true,
+                            "on_by_default": true,
+                            "ignore_auto_referencing": [
+                                "*"
+                            ],
+                            "input_mapping": [
+                                {
+                                    "dependency_input": "prefix",
+                                    "version_input": "prefix",
+                                    "reference_version": true
+                                },
+                                {
+                                    "dependency_input": "existing_resource_group_name",
+                                    "version_input": "existing_resource_group_name",
+                                    "reference_version": true
+                                },
+                                {
+                                    "dependency_output": "vpc_id",
+                                    "version_input": "existing_vpc_id"
+                                }
+                            ]
+                        },
+                        {
                             "name": "deploy-arch-ibm-account-infra-base",
                             "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
                             "flavors": [
@@ -374,7 +442,7 @@
                             "input_mapping": [
                                 {
                                     "dependency_output": "workload_resource_group_name",
-                                    "version_input": "resource_group_name"
+                                    "version_input": "existing_resource_group_name"
                                 },
                                 {
                                     "dependency_input": "prefix",
@@ -392,12 +460,12 @@
                         },
                         {
                             "name": "testing-deploy-arch-ibm-kms",
-                            "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9",
-                            "version": "^1.0.6",
+                            "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
+                            "version": "^v1.2.1",
                             "flavors": [
                                 "standard"
                             ],
-                            "catalog_id": "f64499c8-eb50-4985-bf91-29f9e605a433",
+                            "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
                             "optional": true,
                             "on_by_default": true,
                             "ignore_auto_referencing": [
@@ -410,7 +478,7 @@
                                 },
                                 {
                                     "dependency_input": "resource_group_name",
-                                    "version_input": "resource_group_name",
+                                    "version_input": "existing_resource_group_name",
                                     "reference_version": true
                                 },
                                 {
@@ -433,7 +501,7 @@
                         {
                             "name": "deploy-arch-ibm-cos",
                             "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-                            "version": "^v8.19.2",
+                            "version": "^v8.20.1",
                             "flavors": [
                                 "instance"
                             ],
@@ -455,7 +523,7 @@
                                 },
                                 {
                                     "dependency_input": "resource_group_name",
-                                    "version_input": "resource_group_name",
+                                    "version_input": "existing_resource_group_name",
                                     "reference_version": true
                                 },
                                 {
@@ -500,6 +568,7 @@
                             ],
                             "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
                             "optional": true,
+                            "on_by_default": true,
                             "ignore_auto_referencing": [
                                 "*"
                             ],
@@ -510,13 +579,18 @@
                                     "reference_version": true
                                 },
                                 {
+                                    "dependency_input": "prefix",
+                                    "version_input": "prefix",
+                                    "reference_version": true
+                                },
+                                {
                                     "dependency_input": "resource_group_name",
-                                    "version_input": "resource_group_name",
+                                    "version_input": "existing_resource_group_name",
                                     "reference_version": true
                                 },
                                 {
                                     "dependency_input": "use_existing_resource_group",
-                                    "version_input": "prefix",
+                                    "value": true,
                                     "reference_version": true
                                 },
                                 {
@@ -524,20 +598,6 @@
                                     "version_input": "existing_secrets_manager_instance_crn"
                                 }
                             ]
-                        },
-                        {
-                            "name": "testing-deploy-arch-ibm-observability-agents",
-                            "id": "d4c29f77-c55d-4a53-a218-4f026cde32c0",
-                            "version": "^1.2.3",
-                            "flavors": [
-                                "standard"
-                            ],
-                            "catalog_id": "f64499c8-eb50-4985-bf91-29f9e605a433",
-                            "optional": true,
-                            "ignore_auto_referencing": [
-                                "*"
-                            ],
-                            "input_mapping": []
                         }
                     ],
                     "dependency_version_2": true

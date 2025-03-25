@@ -68,9 +68,20 @@ variable "vsi_access_tags" {
 # VPC Variables
 ##############################################################################
 
+variable "existing_vpc_id" {
+  description = "The ID of an existing VPC. If the user provides only the `existing_vpc_id` the VSI will be provisioned on the first subnet."
+  type        = string
+  default     = null
+  validation {
+    condition     = var.existing_vpc_id == null && var.existing_subnet_id == null ? false : true
+    error_message = "A value for either `existing_vpc_id` or `existing_subnet_id` should be passed."
+  }
+}
+
 variable "existing_subnet_id" {
   description = "The ID of an existing subnet."
   type        = string
+  default     = null
 }
 
 ##############################################################################

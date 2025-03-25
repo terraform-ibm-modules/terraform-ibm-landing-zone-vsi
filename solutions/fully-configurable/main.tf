@@ -123,7 +123,13 @@ module "kms" {
 # VSI
 #######################################################################################################################
 data "ibm_is_subnet" "subnet" {
+  count      = var.existing_subnet_id != null ? 1 : 0
   identifier = var.existing_subnet_id
+}
+
+data "ibm_is_vpc" "vpc" {
+  count      = var.existing_vpc_id != null ? 1 : 0
+  identifier = var.existing_vpc_id
 }
 
 data "ibm_is_subnet" "secondary_subnet" {
@@ -134,10 +140,14 @@ data "ibm_is_subnet" "secondary_subnet" {
 locals {
   prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
 
-  subnet = [{
-    name = data.ibm_is_subnet.subnet.name
-    id   = data.ibm_is_subnet.subnet.id
-    zone = data.ibm_is_subnet.subnet.zone
+  subnet = var.existing_subnet_id != null ? [{
+    name = data.ibm_is_subnet.subnet[0].name
+    id   = data.ibm_is_subnet.subnet[0].id
+    zone = data.ibm_is_subnet.subnet[0].zone
+    }] : [{
+    name = data.ibm_is_vpc.vpc[0].subnets[0].name
+    id   = data.ibm_is_vpc.vpc[0].subnets[0].id
+    zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
   }]
 
   secondary_subnet = var.existing_secondary_subnet_id != null ? [{
@@ -148,7 +158,7 @@ locals {
 
   ssh_keys = var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : concat(var.existing_ssh_key_ids, length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [])
 
-  custom_vsi_volume_names = { (data.ibm_is_subnet.subnet.name) = {
+  custom_vsi_volume_names = { (var.existing_subnet_id != null ? data.ibm_is_subnet.subnet[0].name : data.ibm_is_vpc.vpc[0].subnets[0].name) = {
   "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
 }
 
@@ -188,7 +198,7 @@ module "vsi" {
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
   tags                             = var.vsi_resource_tags
-  vpc_id                           = data.ibm_is_subnet.subnet.vpc
+  vpc_id                           = var.existing_vpc_id != null ? var.existing_vpc_id : data.ibm_is_subnet.subnet[0].vpc
   subnets                          = local.subnet
   image_id                         = var.image_id
   ssh_key_ids                      = local.ssh_keys

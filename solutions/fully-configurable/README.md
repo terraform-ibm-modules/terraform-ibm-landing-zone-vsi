@@ -48,6 +48,7 @@ This solution supports provisioning and configuring the following infrastructure
 | [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.2/docs/data-sources/iam_account_settings) | data source |
 | [ibm_is_subnet.secondary_subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.2/docs/data-sources/is_subnet) | data source |
 | [ibm_is_subnet.subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.2/docs/data-sources/is_subnet) | data source |
+| [ibm_is_vpc.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.76.2/docs/data-sources/is_vpc) | data source |
 
 ### Inputs
 
@@ -68,7 +69,8 @@ This solution supports provisioning and configuring the following infrastructure
 | <a name="input_existing_secrets_manager_endpoint_type"></a> [existing\_secrets\_manager\_endpoint\_type](#input\_existing\_secrets\_manager\_endpoint\_type) | The endpoint type to use if `existing_secrets_manager_instance_crn` is specified. Possible values: public, private. | `string` | `"private"` | no |
 | <a name="input_existing_secrets_manager_instance_crn"></a> [existing\_secrets\_manager\_instance\_crn](#input\_existing\_secrets\_manager\_instance\_crn) | The CRN of existing secrets manager to use to store the SSH private key which was auto generated when `auto_generate_ssh_key` was set to true. | `string` | `null` | no |
 | <a name="input_existing_ssh_key_ids"></a> [existing\_ssh\_key\_ids](#input\_existing\_ssh\_key\_ids) | The IDs of existing SSH keys to use while creating Virtual server instance. | `list(string)` | `[]` | no |
-| <a name="input_existing_subnet_id"></a> [existing\_subnet\_id](#input\_existing\_subnet\_id) | The ID of an existing subnet. | `string` | n/a | yes |
+| <a name="input_existing_subnet_id"></a> [existing\_subnet\_id](#input\_existing\_subnet\_id) | The ID of an existing subnet. | `string` | `null` | no |
+| <a name="input_existing_vpc_id"></a> [existing\_vpc\_id](#input\_existing\_vpc\_id) | The ID of an existing VPC. If the user provides only the `existing_vpc_id` the VSI will be provisioned on the first subnet. | `string` | `null` | no |
 | <a name="input_force_delete_kms_key"></a> [force\_delete\_kms\_key](#input\_force\_delete\_kms\_key) | If creating a new KMS key, toggle whether is should be force deleted or not on undeploy. | `bool` | `false` | no |
 | <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | The IBM Cloud API key used to provision resources. | `string` | n/a | yes |
 | <a name="input_ibmcloud_kms_api_key"></a> [ibmcloud\_kms\_api\_key](#input\_ibmcloud\_kms\_api\_key) | The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud\_api\_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the Virtual server instance. Leave this input empty if the same account owns both instances. | `string` | `null` | no |
