@@ -245,6 +245,13 @@ variable "access_tags" {
   default     = []
 }
 
+variable "custom_vsi_volume_names" {
+  description = "A map of subnets, VSI names, and storage volume names. Subnet names should correspond to existing subnets, while VSI and storage volume names are used for resource creation. Format example: { 'subnet_name_1': { 'vsi_name_1': [ 'storage_volume_name_1', 'storage_volume_name_2' ] } }"
+  type        = map(map(list(string)))
+  default     = {}
+  nullable    = false
+}
+
 ##############################################################################
 # Snapshot Restore Variables
 ##############################################################################
