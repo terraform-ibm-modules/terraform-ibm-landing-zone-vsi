@@ -21,3 +21,18 @@ output "subnet_id" {
   value       = module.vpc.subnet_zone_list[0].id
   description = "A list containing subnet IDs and subnet zones"
 }
+
+output "prefix" {
+  description = "Prefix to append to all resources created by this example"
+  value       = var.prefix
+}
+
+output "region" {
+  value       = var.region
+  description = "region"
+}
+
+output "image_id" {
+  value       = data.ibm_is_image.image.id
+  description = "Image ID"
+}

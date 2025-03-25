@@ -28,3 +28,7 @@ module "vpc" {
     ]
   }
 }
+
+data "ibm_is_image" "image" {
+  name = "ibm-ubuntu-24-04-6-minimal-amd64-3"
+}
