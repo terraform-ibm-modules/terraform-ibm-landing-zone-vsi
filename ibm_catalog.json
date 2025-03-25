@@ -485,7 +485,7 @@
                         },
                         {
                             "name": "testing-deploy-arch-ibm-secrets-manager",
-                            "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa",
+                            "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
                             "version": "^1.2.2",
                             "flavors": [
                                 "standard"
