@@ -486,11 +486,11 @@
                         {
                             "name": "testing-deploy-arch-ibm-secrets-manager",
                             "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa",
-                            "version": "^1.2.4",
+                            "version": "^1.2.2",
                             "flavors": [
                                 "standard"
                             ],
-                            "catalog_id": "f64499c8-eb50-4985-bf91-29f9e605a433",
+                            "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
                             "optional": false,
                             "ignore_auto_referencing": [
                                 "*"
