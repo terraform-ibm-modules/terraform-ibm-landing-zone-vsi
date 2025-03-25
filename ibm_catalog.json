@@ -92,6 +92,14 @@
                                     "resourceType": "subnet",
                                     "selection": "single_select",
                                     "valueType": "id"
+                                },
+                                "associations": {
+                                    "parameters": [
+                                        {
+                                            "name": "region",
+                                            "optionsRefresh": true
+                                        }
+                                    ]
                                 }
                             }
                         },
