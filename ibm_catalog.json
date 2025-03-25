@@ -499,7 +499,7 @@
                                 "standard"
                             ],
                             "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
-                            "optional": false,
+                            "optional": true,
                             "ignore_auto_referencing": [
                                 "*"
                             ],
