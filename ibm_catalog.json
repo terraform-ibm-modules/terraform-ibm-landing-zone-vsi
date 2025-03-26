@@ -87,18 +87,7 @@
                             "custom_config": {
                                 "type": "vpc",
                                 "grouping": "deployment",
-                                "original_grouping": "deployment",
-                                "config_constraints": {
-                                    "type": "mixed"
-                                },
-                                "associations": {
-                                    "parameters": [
-                                        {
-                                            "name": "region",
-                                            "optionsRefresh": true
-                                        }
-                                    ]
-                                }
+                                "original_grouping": "deployment"
                             }
                         },
                         {
