@@ -12,9 +12,9 @@ output "resource_group_name" {
   value       = module.resource_group.resource_group_name
 }
 
-output "vpc_id" {
-  value       = module.vpc.vpc_id
-  description = "VPC id"
+output "vpc_crn" {
+  value       = module.vpc.vpc_crn
+  description = "VPC CRN"
 }
 
 output "subnet_id" {

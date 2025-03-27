@@ -258,11 +258,10 @@ func TestFullyConfigurable(t *testing.T) {
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "region", Value: terraform.Output(t, existingTerraformOptions, "region"), DataType: "string"},
 			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
 			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_id", Value: terraform.Output(t, existingTerraformOptions, "vpc_id"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
 			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
 		}
@@ -315,11 +314,10 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "region", Value: terraform.Output(t, existingTerraformOptions, "region"), DataType: "string"},
 			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
 			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_id", Value: terraform.Output(t, existingTerraformOptions, "vpc_id"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
 			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
 			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
@@ -374,11 +372,10 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "region", Value: terraform.Output(t, existingTerraformOptions, "region"), DataType: "string"},
 			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
 			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_id", Value: terraform.Output(t, existingTerraformOptions, "vpc_id"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
 			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
 			{Name: "existing_secrets_manager_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "secret_manager_crn"), DataType: "string"},
