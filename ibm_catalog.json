@@ -10,7 +10,7 @@
                 "terraform",
                 "solution",
                 "support_ibm",
-                "ibm_created",
+                "ibm_beta",
                 "virtualservers"
             ],
             "keywords": [
@@ -79,15 +79,6 @@
                                 "config_constraints": {
                                     "identifier": "rg_name"
                                 }
-                            }
-                        },
-                        {
-                            "key": "existing_vpc_id",
-                            "required": true,
-                            "custom_config": {
-                                "type": "vpc",
-                                "grouping": "deployment",
-                                "original_grouping": "deployment"
                             }
                         },
                         {
@@ -269,6 +260,9 @@
                         },
                         {
                             "key": "placement_group_id"
+                        },
+                        {
+                            "key": "existing_vpc_id"
                         },
                         {
                             "key": "primary_virtual_network_interface_additional_ip_count"
