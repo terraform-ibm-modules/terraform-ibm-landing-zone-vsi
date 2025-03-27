@@ -44,8 +44,7 @@ variable "provider_visibility" {
 
 variable "region" {
   type        = string
-  default     = "us-south"
-  description = "The region to provision Virtual server instance resources in."
+  description = "The region in which the VPC resources are provisioned."
   nullable    = false
 }
 

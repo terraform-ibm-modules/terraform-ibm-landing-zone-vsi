@@ -82,6 +82,9 @@
                             }
                         },
                         {
+                            "key": "existing_vpc_id"
+                        },
+                        {
                             "key": "existing_subnet_id",
                             "required": true,
                             "custom_config": {
@@ -260,9 +263,6 @@
                         },
                         {
                             "key": "placement_group_id"
-                        },
-                        {
-                            "key": "existing_vpc_id"
                         },
                         {
                             "key": "primary_virtual_network_interface_additional_ip_count"

@@ -139,7 +139,7 @@ data "ibm_is_subnet" "secondary_subnet" {
 
 locals {
   prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
-
+  # When `existing_subnet_id` is not provided, use the first subnet from the existing VPC.
   subnet = var.existing_subnet_id != null ? [{
     name = data.ibm_is_subnet.subnet[0].name
     id   = data.ibm_is_subnet.subnet[0].id
