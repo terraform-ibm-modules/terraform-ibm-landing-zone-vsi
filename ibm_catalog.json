@@ -451,6 +451,10 @@
                   "dependency_input": "use_existing_resource_group",
                   "value": true,
                   "reference_version": true
+                },
+                {
+                  "version_input": "kms_encryption_enabled_boot_volume",
+                  "value": true
                 }
               ]
             },
