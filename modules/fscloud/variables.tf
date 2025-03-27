@@ -246,7 +246,7 @@ variable "access_tags" {
 }
 
 variable "custom_vsi_volume_names" {
-  description = "A map of subnets, VSI names, and storage volume names. Subnet names should correspond to existing subnets, while VSI and storage volume names are used for resource creation. Format example: { 'subnet_name_1': { 'vsi_name_1': [ 'storage_volume_name_1', 'storage_volume_name_2' ] } }"
+  description = "A map of subnets, VSI names, and storage volume names. Subnet names should correspond to existing subnets, while VSI and storage volume names are used for resource creation. Example format: { 'subnet_name_1': { 'vsi_name_1': [ 'storage_volume_name_1', 'storage_volume_name_2' ] } }. If the 'custom_vsi_volume_names' input variable is not set, VSI and volume names are automatically determined using a prefix, the first 4 digits of the subnet_id, and number padding. In addition, for volume names, the name from the 'block_storage_volumes' input variable is also used."
   type        = map(map(list(string)))
   default     = {}
   nullable    = false
