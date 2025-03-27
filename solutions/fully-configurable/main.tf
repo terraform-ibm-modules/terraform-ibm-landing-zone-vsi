@@ -48,7 +48,7 @@ resource "ibm_iam_authorization_policy" "block_storage_kms_policy" {
   source_service_account = data.ibm_iam_account_settings.iam_account_settings.account_id
   source_service_name    = "server-protect"
   roles                  = ["Reader"]
-  description            = "Allow block storage volumes to be encrypted by Key Management instance."
+  description            = "Allow block storage volumes to read the ${local.kms_service_name} key ${local.kms_key_id} from the instance ${local.existing_kms_guid}"
   resource_attributes {
     name     = "serviceName"
     operator = "stringEquals"
