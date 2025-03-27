@@ -123,6 +123,10 @@
                             "required": true
                         },
                         {
+                            "key": "existing_secrets_manager_instance_crn",
+                            "required": true
+                        },
+                        {
                             "key": "provider_visibility",
                             "options": [
                                 {
@@ -178,9 +182,6 @@
                                     "selection": "multi_select"
                                 }
                             }
-                        },
-                        {
-                            "key": "existing_secrets_manager_instance_crn"
                         },
                         {
                             "key": "existing_secrets_manager_endpoint_type"
