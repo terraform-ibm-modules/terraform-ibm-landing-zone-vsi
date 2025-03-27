@@ -263,6 +263,7 @@ func TestFullyConfigurable(t *testing.T) {
 			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
 			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
 			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
+			{Name: "existing_secrets_manager_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "secret_manager_crn"), DataType: "string"},
 		}
 		err := options.RunSchematicTest()
 		assert.Nil(t, err, "This should not have errored")
