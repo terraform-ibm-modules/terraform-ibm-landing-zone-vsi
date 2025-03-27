@@ -98,7 +98,6 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		Region:        region,
 		TerraformVars: map[string]interface{}{
 			"skip_iam_authorization_policy": true, // The test account already has got a s2s policy setup that would clash
-			"existing_kms_instance_guid":    permanentResources["hpcs_south"],
 			"boot_volume_encryption_key":    permanentResources["hpcs_south_root_key_crn"],
 			"access_tags":                   permanentResources["accessTags"],
 		},

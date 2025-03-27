@@ -104,12 +104,6 @@ variable "boot_volume_encryption_key" {
   type        = string
 }
 
-variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto Services instance in which the key specified in var.boot_volume_encryption_key is coming from."
-  type        = string
-  default     = null
-}
-
 variable "manage_reserved_ips" {
   description = "Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP."
   type        = bool
@@ -226,11 +220,27 @@ variable "kms_encryption_enabled" {
   type        = bool
   description = "Set this to true to control the encryption keys used to encrypt the data that for the block storage volumes for VPC. If set to false, the data is encrypted by using randomly generated keys. For more info on encrypting block storage volumes, see https://cloud.ibm.com/docs/vpc?topic=vpc-creating-instances-byok"
   default     = false
+  nullable    = false
+
+  validation {
+    condition     = !var.kms_encryption_enabled && var.boot_volume_encryption_key != null ? false : true
+    error_message = "When passing values for var.boot_volume_encryption_key, you must set var.kms_encryption_enabled to true. Otherwise unset them to use default encryption"
+  }
+
+  validation {
+    condition     = var.kms_encryption_enabled && var.boot_volume_encryption_key == null ? false : true
+    error_message = "When setting var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key"
+  }
+
+  validation {
+    condition     = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.boot_volume_encryption_key == null ? false : true
+    error_message = "When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key in order to create the auth policy."
+  }
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all Storage Blocks to read the encryption key from the KMS instance. If set to false, pass in a value for the boot volume encryption key in the `boot_volume_encryption_key` variable. In addition, no policy is created if var.kms_encryption_enabled is set to false."
   default     = false
 }
 

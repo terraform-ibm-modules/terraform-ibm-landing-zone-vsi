@@ -1,20 +1,3 @@
-locals {
-  # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
-  # tflint-ignore: terraform_unused_declarations
-  validate_kms_values = !var.kms_encryption_enabled && var.boot_volume_encryption_key != null ? tobool("When passing values for var.boot_volume_encryption_key, you must set var.kms_encryption_enabled to true. Otherwise unset them to use default encryption") : true
-  # tflint-ignore: terraform_unused_declarations
-  validate_kms_vars = var.kms_encryption_enabled && var.boot_volume_encryption_key == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key") : true
-  # tflint-ignore: terraform_unused_declarations
-  validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
-
-  # Determine what KMS service is being used for database encryption
-  kms_service = var.boot_volume_encryption_key != null ? (
-    can(regex(".*kms.*", var.boot_volume_encryption_key)) ? "kms" : (
-      can(regex(".*hs-crypto.*", var.boot_volume_encryption_key)) ? "hs-crypto" : null
-    )
-  ) : null
-}
-
 ##############################################################################
 # Virtual Server Data
 ##############################################################################
@@ -195,16 +178,58 @@ resource "ibm_is_virtual_network_interface" "secondary_vni" {
 # Create Virtual Servers
 ##############################################################################
 
+module "existing_boot_volume_kms_key_crn_parser" {
+  count   = local.create_auth_policy ? 0 : 1
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.boot_volume_encryption_key
+}
+
+locals {
+  existing_kms_guid  = local.create_auth_policy ? null : module.existing_boot_volume_kms_key_crn_parser[0].service_instance
+  kms_service_name   = local.create_auth_policy ? null : module.existing_boot_volume_kms_key_crn_parser[0].service_name
+  kms_account_id     = local.create_auth_policy ? null : module.existing_boot_volume_kms_key_crn_parser[0].account_id
+  kms_key_id         = local.create_auth_policy ? null : module.existing_boot_volume_kms_key_crn_parser[0].resource
+  create_auth_policy = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy
+}
+
 # NOTE: The below auth policy cannot be scoped to a source resource group due to
 # the fact that the Block storage volume does not yet exist in the resource group.
-
 resource "ibm_iam_authorization_policy" "block_storage_policy" {
-  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name         = "server-protect"
-  target_service_name         = local.kms_service
-  target_resource_instance_id = var.existing_kms_instance_guid
-  roles                       = ["Reader"]
-  description                 = "Allow block storage volumes to be encrypted by Key Management instance."
+  count               = local.create_auth_policy ? 0 : 1
+  source_service_name = "server-protect"
+  roles               = ["Reader"]
+  description         = "Allow block storage volumes to be encrypted by Key Management instance."
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.kms_service_name
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.existing_kms_guid
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "ibm_is_subnet_reserved_ip" "vsi_ip" {

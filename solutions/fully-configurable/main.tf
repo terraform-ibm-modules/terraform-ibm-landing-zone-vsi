@@ -216,7 +216,6 @@ module "vsi" {
   machine_type                     = var.machine_type
   vsi_per_subnet                   = 1
   user_data                        = var.user_data
-  existing_kms_instance_guid       = local.existing_kms_guid
   skip_iam_authorization_policy    = local.create_cross_account_auth_policy ? false : var.skip_block_storage_kms_iam_auth_policy
   boot_volume_encryption_key       = local.boot_volume_kms_key_crn
   use_boot_volume_key_as_default   = var.use_boot_volume_key_as_default
