@@ -385,7 +385,7 @@
                         {
                             "name": "deploy-arch-ibm-vpc",
                             "id": "2af61763-f8ef-4527-a815-b92166f29bc8",
-                            "version": "^v1.0.2",
+                            "version": "^v7.21.0",
                             "flavors": [
                                 "fully-configurable"
                             ],
