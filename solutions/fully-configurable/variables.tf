@@ -42,11 +42,11 @@ variable "provider_visibility" {
   }
 }
 
-variable "region" {
-  type        = string
-  description = "The region in which the VPC resources are provisioned."
-  nullable    = false
-}
+# variable "region" {
+#   type        = string
+#   description = "The region in which the VPC resources are provisioned."
+#   nullable    = false
+# }
 
 variable "vsi_resource_tags" {
   description = "The list of tags to add to the Virtual server instance."
@@ -67,14 +67,10 @@ variable "vsi_access_tags" {
 # VPC Variables
 ##############################################################################
 
-variable "existing_vpc_id" {
-  description = "The ID of an existing VPC. If the user provides only the `existing_vpc_id` the VSI will be provisioned on the first subnet."
+variable "existing_vpc_crn" {
+  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the VSI will be provisioned in the first subnet of the VPC."
   type        = string
-  default     = null
-  validation {
-    condition     = var.existing_vpc_id == null && var.existing_subnet_id == null ? false : true
-    error_message = "A value for either `existing_vpc_id` or `existing_subnet_id` should be passed."
-  }
+  nullable    = false
 }
 
 variable "existing_subnet_id" {

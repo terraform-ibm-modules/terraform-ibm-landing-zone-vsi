@@ -122,14 +122,25 @@ module "kms" {
 #######################################################################################################################
 # VSI
 #######################################################################################################################
+
+module "existing_vpc_crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.existing_vpc_crn
+}
+
+locals {
+  vpc_region      = module.existing_vpc_crn_parser.region
+  existing_vpc_id = module.existing_vpc_crn_parser.resource
+}
+
 data "ibm_is_subnet" "subnet" {
   count      = var.existing_subnet_id != null ? 1 : 0
   identifier = var.existing_subnet_id
 }
 
 data "ibm_is_vpc" "vpc" {
-  count      = var.existing_vpc_id != null ? 1 : 0
-  identifier = var.existing_vpc_id
+  identifier = local.existing_vpc_id
 }
 
 data "ibm_is_subnet" "secondary_subnet" {
@@ -145,9 +156,9 @@ locals {
     id   = data.ibm_is_subnet.subnet[0].id
     zone = data.ibm_is_subnet.subnet[0].zone
     }] : [{
-    name = data.ibm_is_vpc.vpc[0].subnets[0].name
-    id   = data.ibm_is_vpc.vpc[0].subnets[0].id
-    zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
+    name = data.ibm_is_vpc.vpc.subnets[0].name
+    id   = data.ibm_is_vpc.vpc.subnets[0].id
+    zone = data.ibm_is_vpc.vpc.subnets[0].zone
   }]
 
   secondary_subnet = var.existing_secondary_subnet_id != null ? [{
@@ -158,7 +169,7 @@ locals {
 
   ssh_keys = var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : concat(var.existing_ssh_key_ids, length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [])
 
-  custom_vsi_volume_names = { (var.existing_subnet_id != null ? data.ibm_is_subnet.subnet[0].name : data.ibm_is_vpc.vpc[0].subnets[0].name) = {
+  custom_vsi_volume_names = { (var.existing_subnet_id != null ? data.ibm_is_subnet.subnet[0].name : data.ibm_is_vpc.vpc.subnets[0].name) = {
   "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
 }
 
@@ -198,7 +209,7 @@ module "vsi" {
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
   tags                             = var.vsi_resource_tags
-  vpc_id                           = var.existing_vpc_id != null ? var.existing_vpc_id : data.ibm_is_subnet.subnet[0].vpc
+  vpc_id                           = local.existing_vpc_id
   subnets                          = local.subnet
   image_id                         = var.image_id
   ssh_key_ids                      = local.ssh_keys

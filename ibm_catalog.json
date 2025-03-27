@@ -23,7 +23,7 @@
                 "infrastructure as code"
             ],
             "short_description": "Provisions a Virtual server instance on IBM Cloud",
-            "long_description": "This architecture supports creation and configuration of Virtual server instance on IBM Cloud.",
+            "long_description": "The VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. This is an experimental tile and not suitable for production workloads. Stay here if you want to try an experimental version with the [Optional and swappable components](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-choose-plan-process#optional-swappable) capability.",
             "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
             "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
             "provider_name": "IBM",
@@ -34,7 +34,7 @@
                 },
                 {
                     "title": "KMS encryption",
-                    "description": "Supports creating a new key, or using an existing one to encrypt the Object Storage bucket."
+                    "description": "Supports creating a new key, or using an existing one to encrypt the Block storage volume."
                 },
                 {
                     "title": "Load balancer",
@@ -82,7 +82,8 @@
                             }
                         },
                         {
-                            "key": "existing_vpc_id"
+                            "key": "existing_vpc_crn",
+                            "required": true
                         },
                         {
                             "key": "existing_subnet_id",
@@ -104,18 +105,6 @@
                                         }
                                     ]
                                 }
-                            }
-                        },
-                        {
-                            "key": "region",
-                            "required": true,
-                            "custom_config": {
-                                "config_constraints": {
-                                    "generationType": "2"
-                                },
-                                "grouping": "deployment",
-                                "original_grouping": "deployment",
-                                "type": "vpc_region"
                             }
                         },
                         {
