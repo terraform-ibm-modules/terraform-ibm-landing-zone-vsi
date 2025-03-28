@@ -69,7 +69,6 @@ module "slz_vsi" {
   machine_type               = var.machine_type
   user_data                  = var.user_data
   boot_volume_encryption_key = var.boot_volume_encryption_key
-  existing_kms_instance_guid = var.existing_kms_instance_guid
   vsi_per_subnet             = var.vsi_per_subnet
   ssh_key_ids                = [local.ssh_key_id]
   access_tags                = var.access_tags
