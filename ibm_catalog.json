@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "deploy-arch-ibm-vsi-vpc",
-      "label": "[Add-ons Beta] Cloud automation for Virtual server instance on VPC",
+      "label": "[Add-ons Beta] Cloud automation for virtual server instances for VPC",
       "product_kind": "solution",
       "tags": [
         "compute",
@@ -112,10 +112,6 @@
               "required": true
             },
             {
-              "key": "existing_secrets_manager_instance_crn",
-              "required": true
-            },
-            {
               "key": "provider_visibility",
               "options": [
                 {
@@ -171,6 +167,9 @@
                   "selection": "multi_select"
                 }
               }
+            },
+            {
+              "key": "existing_secrets_manager_instance_crn"
             },
             {
               "key": "existing_secrets_manager_endpoint_type"
@@ -297,7 +296,12 @@
               "key": "use_static_boot_volume_name"
             },
             {
-              "key": "user_data"
+              "key": "user_data",
+              "custom_config": {
+                "type": "textarea",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             }
           ],
           "iam_permissions": [
@@ -376,11 +380,15 @@
               "name": "deploy-arch-ibm-vpc",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8",
               "version": "^v7.21.0",
-              "flavors": ["fully-configurable"],
+              "flavors": [
+                "fully-configurable"
+              ],
               "catalog_id": "f64499c8-eb50-4985-bf91-29f9e605a433",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": ["*"],
+              "ignore_auto_referencing": [
+                "*"
+              ],
               "input_mapping": [
                 {
                   "dependency_input": "prefix",
@@ -401,9 +409,13 @@
             {
               "name": "deploy-arch-ibm-account-infra-base",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
-              "flavors": ["standard"],
+              "flavors": [
+                "standard"
+              ],
               "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
-              "ignore_auto_referencing": ["*"],
+              "ignore_auto_referencing": [
+                "*"
+              ],
               "input_mapping": [
                 {
                   "dependency_output": "workload_resource_group_name",
@@ -427,11 +439,15 @@
               "name": "testing-deploy-arch-ibm-kms",
               "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
               "version": "^v1.2.1",
-              "flavors": ["standard"],
+              "flavors": [
+                "standard"
+              ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": ["*"],
+              "ignore_auto_referencing": [
+                "*"
+              ],
               "input_mapping": [
                 {
                   "dependency_output": "kms_instance_crn",
@@ -462,11 +478,15 @@
               "name": "deploy-arch-ibm-cos",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
               "version": "^v8.20.1",
-              "flavors": ["instance"],
+              "flavors": [
+                "instance"
+              ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": ["*"],
+              "ignore_auto_referencing": [
+                "*"
+              ],
               "input_mapping": [
                 {
                   "dependency_output": "cos_instance_id",
@@ -493,11 +513,15 @@
               "name": "testing-deploy-arch-ibm-observability",
               "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
               "version": "^1.3.0",
-              "flavors": ["standard"],
+              "flavors": [
+                "standard"
+              ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": ["*"],
+              "ignore_auto_referencing": [
+                "*"
+              ],
               "input_mapping": [
                 {
                   "dependency_input": "prefix",
@@ -510,11 +534,15 @@
               "name": "testing-deploy-arch-ibm-secrets-manager",
               "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
               "version": "^1.2.2",
-              "flavors": ["standard"],
+              "flavors": [
+                "standard"
+              ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": ["*"],
+              "ignore_auto_referencing": [
+                "*"
+              ],
               "input_mapping": [
                 {
                   "dependency_input": "prefix",

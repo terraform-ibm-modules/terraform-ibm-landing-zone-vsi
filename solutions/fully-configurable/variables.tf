@@ -42,12 +42,6 @@ variable "provider_visibility" {
   }
 }
 
-# variable "region" {
-#   type        = string
-#   description = "The region in which the VPC resources are provisioned."
-#   nullable    = false
-# }
-
 variable "vsi_resource_tags" {
   description = "The list of tags to add to the Virtual server instance."
   type        = list(string)
@@ -99,7 +93,7 @@ variable "image_id" {
 }
 
 variable "ssh_public_keys" {
-  description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead."
+  description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or select existing ssh keys created in the cloud using this variable `existing_ssh_key_ids`."
   type        = list(string)
   default     = []
 
@@ -109,19 +103,19 @@ variable "ssh_public_keys" {
   }
 
   validation {
-    condition     = var.auto_generate_ssh_key ? true : length(var.ssh_public_keys) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
-    error_message = "Please provide a value for either `ssh_public_keys` or `existing_ssh_key_ids`, when `auto_generate_ssh_key` is set to false."
+    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
+    error_message = "Please provide a value for either `ssh_public_keys` or `existing_ssh_key_ids`, or `auto_generate_ssh_key` must be set to true."
   }
 }
 
 variable "existing_ssh_key_ids" {
-  description = "The IDs of existing SSH keys to use while creating Virtual server instance."
+  description = "The IDs of existing SSH keys to use while creating Virtual server instance. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
   type        = list(string)
   default     = []
 }
 
 variable "auto_generate_ssh_key" {
-  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secret mananger. The public key is stored in your VPC and you can download it from the SSH key details page."
+  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secret mananger. The public key is stored in your VPC and you can download it from the SSH key details page. Alternately, if you want to bring your own ssh keys you either select the existing ssh keys created in the cloud using this variable `existing_ssh_key_ids` or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
   type        = bool
   default     = true
   nullable    = false
@@ -480,10 +474,6 @@ variable "existing_secrets_manager_instance_crn" {
   type        = string
   default     = null
   description = "The CRN of existing secrets manager to use to store the SSH private key which was auto generated when `auto_generate_ssh_key` was set to true."
-  validation {
-    condition     = var.auto_generate_ssh_key ? var.existing_secrets_manager_instance_crn != null ? true : false : true
-    error_message = "`existing_secrets_manager_instance_crn` is a required value when `auto_generate_ssh_key` is set to true."
-  }
 }
 
 variable "existing_secrets_manager_endpoint_type" {

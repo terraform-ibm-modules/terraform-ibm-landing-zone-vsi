@@ -30,3 +30,9 @@ variable "resource_tags" {
   description = "Optional list of tags to be added to created resources"
   default     = []
 }
+
+variable "image_name" {
+  type        = string
+  default     = "ibm-ubuntu-24-04-6-minimal-amd64-3"
+  description = "Image name to retrive the image ID for that region."
+}
