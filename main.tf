@@ -119,10 +119,9 @@ data "ibm_is_vpc" "vpc" {
 # Create Virtual Network Interface
 ##############################################################################
 resource "ibm_is_virtual_network_interface" "primary_vni" {
-  for_each       = { for vsi_key, vsi_value in local.vsi_map : vsi_key => vsi_value if !var.use_legacy_network_interface }
-  name           = "${each.value.vsi_name}-vni"
-  subnet         = each.value.subnet_id
-  resource_group = var.resource_group_id
+  for_each = { for vsi_key, vsi_value in local.vsi_map : vsi_key => vsi_value if !var.use_legacy_network_interface }
+  name     = "${each.value.vsi_name}-vni"
+  subnet   = each.value.subnet_id
   security_groups = flatten([
     (var.create_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
     var.security_group_ids,
@@ -146,10 +145,9 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
 }
 
 resource "ibm_is_virtual_network_interface" "secondary_vni" {
-  for_each       = { for key, value in local.secondary_vni_map : key => value if !var.use_legacy_network_interface }
-  name           = each.value.name
-  subnet         = each.value.subnet_id
-  resource_group = var.resource_group_id
+  for_each = { for key, value in local.secondary_vni_map : key => value if !var.use_legacy_network_interface }
+  name     = each.value.name
+  subnet   = each.value.subnet_id
   # If security_groups is empty(list is len(0)) then default list to data.ibm_is_vpc.vpc.default_security_group.
   # If list is empty it will fail on reapply as when vsi is passed an empty security group list it will attach the default security group.
   allow_ip_spoofing = var.secondary_allow_ip_spoofing
