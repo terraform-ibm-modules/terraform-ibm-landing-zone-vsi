@@ -1,0 +1,5 @@
+{
+  "ibmcloud_api_key": $VALIDATION_APIKEY,
+  "vsi_resource_tags": $TAGS,
+  "prefix": $PREFIX
+}

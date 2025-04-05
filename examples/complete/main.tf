@@ -194,7 +194,6 @@ module "slz_vsi" {
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
   kms_encryption_enabled          = true
-  existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
   vsi_per_subnet                  = 1
   primary_vni_additional_ip_count = 2
   ssh_key_ids                     = [local.ssh_key_id]
@@ -294,7 +293,6 @@ module "slz_vsi_dh" {
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsidh.${var.prefix}-vsidh"].crn
   kms_encryption_enabled          = true
-  existing_kms_instance_guid      = module.key_protect_all_inclusive.kms_guid
   vsi_per_subnet                  = 1
   primary_vni_additional_ip_count = 2
   ssh_key_ids                     = [local.ssh_key_id]
