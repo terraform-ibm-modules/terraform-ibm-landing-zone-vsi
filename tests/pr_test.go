@@ -131,7 +131,7 @@ func TestRunExistingSnapshotGroupExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"access_tags":                   permanentResources["accessTags"],
 			"snapshot_consistency_group_id": snapGroupId,
-			"image_id":                      "r014-0606d617-b866-4ae8-9588-84935b13ff55", // for au-syd region
+			"image_id":                      "r026-979eb199-efe0-4bb6-baf9-8b3f9a6e8f52", // for au-syd region
 		},
 	})
 
