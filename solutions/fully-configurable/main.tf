@@ -89,7 +89,7 @@ resource "time_sleep" "wait_for_authorization_policy" {
   create_duration = "30s"
 }
 
-# KMS root key for SCC COS bucket
+# KMS root key for boot volume encryption
 module "kms" {
   providers = {
     ibm = ibm.kms
