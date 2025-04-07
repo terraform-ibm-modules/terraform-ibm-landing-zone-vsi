@@ -22,7 +22,7 @@ const basicExampleTerraformDir = "examples/basic"
 const completeExampleTerraformDir = "examples/complete"
 const fsCloudExampleTerraformDir = "examples/fscloud"
 
-// const snapshotExampleTerraformDir = "examples/snapshot"
+const snapshotExampleTerraformDir = "examples/snapshot"
 const fullyConfigFlavorDir = "solutions/fully-configurable"
 
 const resourceGroup = "geretain-test-resources"
@@ -124,62 +124,62 @@ func TestRunFSCloudExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-// func TestRunExistingSnapshotGroupExample(t *testing.T) {
-// 	t.Parallel()
+func TestRunExistingSnapshotGroupExample(t *testing.T) {
+	t.Parallel()
 
-// 	snapGroupId := permanentResources["snapshot_group_au_syd_group_id"]
+	snapGroupId := permanentResources["snapshot_group_au_syd_group_id"]
 
-// 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-// 		Testing:       t,
-// 		TerraformDir:  snapshotExampleTerraformDir,
-// 		Prefix:        "slz-vsi-snap",
-// 		ResourceGroup: resourceGroup,
-// 		Region:        "au-syd", // hardcode due to image requirement
-// 		TerraformVars: map[string]interface{}{
-// 			"access_tags":                   permanentResources["accessTags"],
-// 			"snapshot_consistency_group_id": snapGroupId,
-// 			"image_id":                      "r014-0606d617-b866-4ae8-9588-84935b13ff55", // for au-syd region
-// 		},
-// 	})
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  snapshotExampleTerraformDir,
+		Prefix:        "slz-vsi-snap",
+		ResourceGroup: resourceGroup,
+		Region:        "au-syd", // hardcode due to image requirement
+		TerraformVars: map[string]interface{}{
+			"access_tags":                   permanentResources["accessTags"],
+			"snapshot_consistency_group_id": snapGroupId,
+			"image_id":                      "r014-0606d617-b866-4ae8-9588-84935b13ff55", // for au-syd region
+		},
+	})
 
-// 	// Add a post-apply verfication
-// 	options.PostApplyHook = verifyVolumeSnapshots
+	// Add a post-apply verfication
+	options.PostApplyHook = verifyVolumeSnapshots
 
-// 	output, err := options.RunTestConsistency()
-// 	assert.Nil(t, err, "This should not have errored.")
-// 	assert.NotNil(t, output, "Expected some output")
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored.")
+	assert.NotNil(t, output, "Expected some output")
 
-// }
+}
 
-// func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
+func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 
-// 	if assert.Equal(options.Testing, "examples/snapshot", snapshotExampleTerraformDir) {
-// 		options.Testing.Logf("DEBUG: value of global pr_test variable is: %s", snapshotExampleTerraformDir)
-// 	}
+	if assert.Equal(options.Testing, "examples/snapshot", snapshotExampleTerraformDir) {
+		options.Testing.Logf("DEBUG: value of global pr_test variable is: %s", snapshotExampleTerraformDir)
+	}
 
-// 	snapBootId := permanentResources["snapshot_group_au_syd_boot_id"]
-// 	snapVol1Id := permanentResources["snapshot_group_au_syd_vol1_id"]
-// 	snapVol2Id := permanentResources["snapshot_group_au_syd_vol2_id"]
+	snapBootId := permanentResources["snapshot_group_au_syd_boot_id"]
+	snapVol1Id := permanentResources["snapshot_group_au_syd_vol1_id"]
+	snapVol2Id := permanentResources["snapshot_group_au_syd_vol2_id"]
 
-// 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
+	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
-// 	// get ouput of last apply
-// 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	// get ouput of last apply
+	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
 
-// 	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
-// 		// first, verify the outputs for snapshot IDs were correctly used from group
-// 		assert.Equal(options.Testing, snapBootId, outputs["slz_vsi"].(map[string]interface{})["consistency_group_boot_snapshot_id"])
-// 		// check to make sure that TWO attachment snapshots were configured from group
-// 		if assert.Equal(options.Testing, 2, len(outputs["slz_vsi"].(map[string]interface{})["consistency_group_storage_snapshot_ids"].(map[string]interface{}))) {
-// 			assert.Equal(options.Testing, snapVol1Id, outputs["slz_vsi"].(map[string]interface{})["consistency_group_storage_snapshot_ids"].(map[string]interface{})["vsi-block-1"].(string))
-// 			assert.Equal(options.Testing, snapVol2Id, outputs["slz_vsi"].(map[string]interface{})["consistency_group_storage_snapshot_ids"].(map[string]interface{})["vsi-block-2"].(string))
-// 		}
-// 	}
+	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
+		// first, verify the outputs for snapshot IDs were correctly used from group
+		assert.Equal(options.Testing, snapBootId, outputs["slz_vsi"].(map[string]interface{})["consistency_group_boot_snapshot_id"])
+		// check to make sure that TWO attachment snapshots were configured from group
+		if assert.Equal(options.Testing, 2, len(outputs["slz_vsi"].(map[string]interface{})["consistency_group_storage_snapshot_ids"].(map[string]interface{}))) {
+			assert.Equal(options.Testing, snapVol1Id, outputs["slz_vsi"].(map[string]interface{})["consistency_group_storage_snapshot_ids"].(map[string]interface{})["vsi-block-1"].(string))
+			assert.Equal(options.Testing, snapVol2Id, outputs["slz_vsi"].(map[string]interface{})["consistency_group_storage_snapshot_ids"].(map[string]interface{})["vsi-block-2"].(string))
+		}
+	}
 
-// 	options.Testing.Log("====== END VERIFY OF SNAPSHOTS ========")
+	options.Testing.Log("====== END VERIFY OF SNAPSHOTS ========")
 
-// 	return nil
-// }
+	return nil
+}
 
 func sshPublicKey(t *testing.T) string {
 	pubKey, keyErr := common.GenerateSshRsaPublicKey()
