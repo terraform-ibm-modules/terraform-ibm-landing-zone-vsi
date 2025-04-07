@@ -1,12 +1,4 @@
 locals {
-  # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
-  # tflint-ignore: terraform_unused_declarations
-  validate_kms_values = !var.kms_encryption_enabled && var.boot_volume_encryption_key != null ? tobool("When passing values for var.boot_volume_encryption_key, you must set var.kms_encryption_enabled to true. Otherwise unset them to use default encryption") : true
-  # tflint-ignore: terraform_unused_declarations
-  validate_kms_vars = var.kms_encryption_enabled && var.boot_volume_encryption_key == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key") : true
-  # tflint-ignore: terraform_unused_declarations
-  validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
-
   # Determine what KMS service is being used for database encryption
   kms_service = var.boot_volume_encryption_key != null ? (
     can(regex(".*kms.*", var.boot_volume_encryption_key)) ? "kms" : (

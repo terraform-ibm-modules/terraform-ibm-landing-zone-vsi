@@ -226,6 +226,18 @@ variable "kms_encryption_enabled" {
   type        = bool
   description = "Set this to true to control the encryption keys used to encrypt the data that for the block storage volumes for VPC. If set to false, the data is encrypted by using randomly generated keys. For more info on encrypting block storage volumes, see https://cloud.ibm.com/docs/vpc?topic=vpc-creating-instances-byok"
   default     = false
+  validation {
+    condition     = var.boot_volume_encryption_key != null ? var.kms_encryption_enabled == true : true
+    error_message = "When passing values for var.boot_volume_encryption_key, you must set var.kms_encryption_enabled to true. Otherwise unset them to use default encryption"
+  }
+  validation {
+    condition     = var.kms_encryption_enabled ? var.boot_volume_encryption_key != null : true
+    error_message = "When setting var.kms_encryption_enabled to true, a value must be passed for var.boot_volume_encryption_key"
+  }
+  validation {
+    condition     = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false ? var.existing_kms_instance_guid != null : true
+    error_message = "When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy."
+  }
 }
 
 variable "skip_iam_authorization_policy" {
