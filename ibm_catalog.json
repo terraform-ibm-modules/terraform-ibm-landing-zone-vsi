@@ -112,21 +112,8 @@
               "required": true
             },
             {
-              "key": "provider_visibility",
-              "options": [
-                {
-                  "displayname": "private",
-                  "value": "private"
-                },
-                {
-                  "displayname": "public",
-                  "value": "public"
-                },
-                {
-                  "displayname": "public-and-private",
-                  "value": "public-and-private"
-                }
-              ]
+              "key": "machine_type",
+              "required": true
             },
             {
               "key": "vsi_name"
@@ -179,9 +166,6 @@
             },
             {
               "key": "ssh_key_secret_name"
-            },
-            {
-              "key": "machine_type"
             },
             {
               "key": "allow_ip_spoofing"
@@ -302,6 +286,23 @@
                 "grouping": "deployment",
                 "original_grouping": "deployment"
               }
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
             }
           ],
           "iam_permissions": [
