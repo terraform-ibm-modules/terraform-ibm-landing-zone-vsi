@@ -190,7 +190,7 @@ func sshPublicKey(t *testing.T) string {
 	return pubKey
 }
 
-func provisionPreReq(t *testing.T) (error, *terraform.Options, string) {
+func provisionPreReq(t *testing.T) (string, *terraform.Options, error) {
 	// ------------------------------------------------------------------------------------
 	// Provision existing resources first
 	// ------------------------------------------------------------------------------------
@@ -223,16 +223,16 @@ func provisionPreReq(t *testing.T) (error, *terraform.Options, string) {
 	_, existErr := terraform.InitAndApplyE(t, existingTerraformOptions)
 	if existErr != nil {
 		// assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-		return existErr, nil, ""
+		return "", nil, existErr
 	}
-	return nil, existingTerraformOptions, prefix
+	return prefix, existingTerraformOptions, nil
 }
 
 // Test the fully-configurable DA with defaults
 func TestFullyConfigurable(t *testing.T) {
 	t.Parallel()
 
-	existErr, existingTerraformOptions, prefix := provisionPreReq(t)
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -289,7 +289,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 
 	sshPublicKey := sshPublicKey(t)
 
-	existErr, existingTerraformOptions, prefix := provisionPreReq(t)
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -347,7 +347,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 func TestUpgradeFullyConfigurable(t *testing.T) {
 	t.Parallel()
 
-	existErr, existingTerraformOptions, prefix := provisionPreReq(t)
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
