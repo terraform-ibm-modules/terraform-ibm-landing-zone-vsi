@@ -34,8 +34,6 @@ TF_VARS_FILE="terraform.tfvars"
   existing_subnet_value=$(terraform output -state=terraform.tfstate -raw subnet_id)
   existing_image_name="image_id"
   existing_image_value=$(terraform output -state=terraform.tfstate -raw image_id)
-  existing_sm_name="existing_secrets_manager_instance_crn"
-  existing_sm_value=$(terraform output -state=terraform.tfstate -raw secret_manager_crn)
 
   echo "Appending '${existing_resource_group_name}' and '${existing_vpc_name}' input variable values to ${JSON_FILE}.."
 
@@ -48,9 +46,7 @@ TF_VARS_FILE="terraform.tfvars"
     --arg existing_subnet_value "${existing_subnet_value}" \
     --arg existing_image_name "${existing_image_name}" \
     --arg existing_image_value "${existing_image_value}" \
-    --arg existing_sm_name "${existing_sm_name}" \
-    --arg existing_sm_value "${existing_sm_value}" \
-    '. + {($existing_resource_group_name): $existing_resource_group_value, ($existing_vpc_name): $existing_vpc_value, ($existing_subnet_name): $existing_subnet_value, ($existing_image_name): $existing_image_value, ($existing_sm_name): $existing_sm_value}' "${JSON_FILE}" >tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
+    '. + {($existing_resource_group_name): $existing_resource_group_value, ($existing_vpc_name): $existing_vpc_value, ($existing_subnet_name): $existing_subnet_value, ($existing_image_name): $existing_image_value}' "${JSON_FILE}" >tmpfile && mv tmpfile "${JSON_FILE}" || exit 1
 
   echo "Pre-validation complete successfully"
 )
