@@ -36,8 +36,3 @@ output "image_id" {
   value       = data.ibm_is_image.image.id
   description = "Image ID"
 }
-
-output "secret_manager_crn" {
-  value       = module.secrets_manager.secrets_manager_crn
-  description = "Secret manager CRN"
-}

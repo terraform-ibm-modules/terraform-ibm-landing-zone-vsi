@@ -68,7 +68,7 @@ variable "existing_vpc_crn" {
 }
 
 variable "existing_subnet_id" {
-  description = "The ID of an existing subnet."
+  description = "The ID of an existing subnet. If no value is passed, the Virtual server instance is deployed to the first subnet from the Virtual Private Cloud(VPC)."
   type        = string
   default     = null
 }

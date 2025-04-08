@@ -260,7 +260,7 @@ locals {
   existing_secrets_manager_instance_region = var.existing_secrets_manager_instance_crn != null ? module.existing_secret_manager_crn_parser[0].region : null
 }
 
-module "secrets_manager_service_credentials" {
+module "secrets_manager_arbitrary_secret" {
   count                       = var.existing_secrets_manager_instance_crn != null && var.auto_generate_ssh_key ? 1 : 0
   source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
   version                     = "1.25.5"

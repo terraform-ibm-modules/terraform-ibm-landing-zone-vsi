@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "deploy-arch-ibm-vsi-vpc",
-      "label": "[Add-ons Beta] Cloud automation for Virtual Server Instances for VPC",
+      "label": "[Add-ons Beta] Cloud automation for Virtual Servers for Virtual Private Cloud",
       "product_kind": "solution",
       "tags": [
         "compute",
@@ -315,10 +315,17 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Editor"
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
-              "service_name": "kms"
+              "service_name": "kms",
+              "additional_text": "This role is only required if you are using Key Protect for encryption"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+              "service_name": "hs-crypto",
+              "additional_text": "This role is only required if you are using Hyper Protect for encryption"
             }
           ],
           "architecture": {

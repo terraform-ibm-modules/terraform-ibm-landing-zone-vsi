@@ -34,7 +34,7 @@ This solution supports provisioning and configuring the following infrastructure
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 4.21.2 |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.1.6 |
-| <a name="module_secrets_manager_service_credentials"></a> [secrets\_manager\_service\_credentials](#module\_secrets\_manager\_service\_credentials) | terraform-ibm-modules/secrets-manager/ibm//modules/secrets | 1.25.5 |
+| <a name="module_secrets_manager_arbitrary_secret"></a> [secrets\_manager\_arbitrary\_secret](#module\_secrets\_manager\_arbitrary\_secret) | terraform-ibm-modules/secrets-manager/ibm//modules/secrets | 1.25.5 |
 | <a name="module_vsi"></a> [vsi](#module\_vsi) | ../../ | n/a |
 
 ### Resources
@@ -70,7 +70,7 @@ This solution supports provisioning and configuring the following infrastructure
 | <a name="input_existing_secrets_manager_endpoint_type"></a> [existing\_secrets\_manager\_endpoint\_type](#input\_existing\_secrets\_manager\_endpoint\_type) | The endpoint type to use if `existing_secrets_manager_instance_crn` is specified. Possible values: public, private. | `string` | `"private"` | no |
 | <a name="input_existing_secrets_manager_instance_crn"></a> [existing\_secrets\_manager\_instance\_crn](#input\_existing\_secrets\_manager\_instance\_crn) | The CRN of existing secrets manager to use to store the SSH private key which was auto generated when `auto_generate_ssh_key` was set to true. | `string` | `null` | no |
 | <a name="input_existing_ssh_key_ids"></a> [existing\_ssh\_key\_ids](#input\_existing\_ssh\_key\_ids) | The IDs of existing SSH keys to use while creating Virtual server instance. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own. | `list(string)` | `[]` | no |
-| <a name="input_existing_subnet_id"></a> [existing\_subnet\_id](#input\_existing\_subnet\_id) | The ID of an existing subnet. | `string` | `null` | no |
+| <a name="input_existing_subnet_id"></a> [existing\_subnet\_id](#input\_existing\_subnet\_id) | The ID of an existing subnet. If no value is passed, the Virtual server instance is deployed to the first subnet from the Virtual Private Cloud(VPC). | `string` | `null` | no |
 | <a name="input_existing_vpc_crn"></a> [existing\_vpc\_crn](#input\_existing\_vpc\_crn) | The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the VSI will be provisioned in the first subnet of the VPC. | `string` | n/a | yes |
 | <a name="input_force_delete_kms_key"></a> [force\_delete\_kms\_key](#input\_force\_delete\_kms\_key) | If creating a new KMS key, toggle whether is should be force deleted or not on undeploy. | `bool` | `false` | no |
 | <a name="input_ibmcloud_api_key"></a> [ibmcloud\_api\_key](#input\_ibmcloud\_api\_key) | The IBM Cloud API key used to provision resources. | `string` | n/a | yes |
