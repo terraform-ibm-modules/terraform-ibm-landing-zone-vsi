@@ -8,7 +8,7 @@
 set -e
 
 DA_DIR="solutions/fully-configurable"
-TERRAFORM_SOURCE_DIR="tests/resources/existing-resources"
+TERRAFORM_SOURCE_DIR="tests/existing-resources"
 JSON_FILE="${DA_DIR}/catalogValidationValues.json"
 REGION="us-south"
 TF_VARS_FILE="terraform.tfvars"
