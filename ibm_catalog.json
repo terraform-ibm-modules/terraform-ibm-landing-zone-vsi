@@ -318,14 +318,14 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "kms",
-              "additional_text": "This role is only required if you are using Key Protect for encryption"
+              "notes": "This role is only required if you are using Key Protect for encryption"
             },
             {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "hs-crypto",
-              "additional_text": "This role is only required if you are using Hyper Protect for encryption"
+              "notes": "This role is only required if you are using Hyper Protect for encryption"
             }
           ],
           "architecture": {
