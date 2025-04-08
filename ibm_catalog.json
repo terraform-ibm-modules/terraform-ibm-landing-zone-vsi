@@ -1,0 +1,582 @@
+{
+  "products": [
+    {
+      "name": "deploy-arch-ibm-vsi-vpc",
+      "label": "[Add-ons Beta] Cloud automation for Virtual Servers for Virtual Private Cloud",
+      "product_kind": "solution",
+      "tags": [
+        "compute",
+        "target_terraform",
+        "terraform",
+        "solution",
+        "support_ibm",
+        "ibm_beta",
+        "virtualservers"
+      ],
+      "keywords": [
+        "terraform",
+        "virtualservers",
+        "vsi",
+        "servers",
+        "solution",
+        "IaC",
+        "infrastructure as code"
+      ],
+      "short_description": "Provisions a Virtual server instance on IBM Cloud",
+      "long_description": "The VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. This is an experimental tile and not suitable for production workloads. Stay here if you want to try an experimental version with the [Optional and swappable components](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-choose-plan-process#optional-swappable) capability.",
+      "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
+      "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
+      "provider_name": "IBM",
+      "features": [
+        {
+          "title": "Virtual server instance",
+          "description": "Creates and configures a Virtual server instance."
+        },
+        {
+          "title": "KMS encryption",
+          "description": "Supports creating a new key, or using an existing one to encrypt the Block storage volume."
+        },
+        {
+          "title": "Load balancer",
+          "description": "Supports creating and configuring Load balancers for the Virtual server instance."
+        },
+        {
+          "title": "Block storage volumes",
+          "description": "Supports creating and configuring Block storage volumes for the Virtual server instance."
+        }
+      ],
+      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in that repository [https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/issues](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/issues). Please note this product is not supported via the IBM Cloud Support Center.",
+      "flavors": [
+        {
+          "label": "Fully configurable",
+          "name": "fully-configurable",
+          "install_type": "fullstack",
+          "working_directory": "solutions/fully-configurable",
+          "compliance": {
+            "authority": "scc-v3",
+            "profiles": [
+              {
+                "profile_name": "IBM Cloud Framework for Financial Services",
+                "profile_version": "1.7.0"
+              }
+            ]
+          },
+          "configuration": [
+            {
+              "key": "ibmcloud_api_key"
+            },
+            {
+              "key": "prefix",
+              "required": true
+            },
+            {
+              "key": "existing_resource_group_name",
+              "required": true,
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
+            },
+            {
+              "key": "existing_vpc_crn",
+              "required": true
+            },
+            {
+              "key": "existing_subnet_id",
+              "required": true,
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "subnet",
+                  "selection": "single_select",
+                  "valueType": "id"
+                },
+                "associations": {
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "optionsRefresh": true
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "image_id",
+              "required": true
+            },
+            {
+              "key": "machine_type",
+              "required": true
+            },
+            {
+              "key": "vsi_name"
+            },
+            {
+              "key": "vsi_resource_tags",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "vsi_access_tags",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "auto_generate_ssh_key"
+            },
+            {
+              "key": "ssh_public_keys"
+            },
+            {
+              "key": "existing_ssh_key_ids",
+              "custom_config": {
+                "type": "vpc_ssh_key",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "selection": "multi_select"
+                }
+              }
+            },
+            {
+              "key": "existing_secrets_manager_instance_crn"
+            },
+            {
+              "key": "existing_secrets_manager_endpoint_type"
+            },
+            {
+              "key": "ssh_key_secret_group_name"
+            },
+            {
+              "key": "ssh_key_secret_name"
+            },
+            {
+              "key": "allow_ip_spoofing"
+            },
+            {
+              "key": "block_storage_volumes"
+            },
+            {
+              "key": "ibmcloud_kms_api_key"
+            },
+            {
+              "key": "kms_encryption_enabled_boot_volume"
+            },
+            {
+              "key": "existing_kms_instance_crn"
+            },
+            {
+              "key": "skip_block_storage_kms_iam_auth_policy"
+            },
+            {
+              "key": "kms_endpoint_type",
+              "options": [
+                {
+                  "displayname": "Public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "Private",
+                  "value": "private"
+                }
+              ]
+            },
+            {
+              "key": "boot_volume_key_ring_name"
+            },
+            {
+              "key": "existing_boot_volume_kms_key_crn"
+            },
+            {
+              "key": "force_delete_kms_key"
+            },
+            {
+              "key": "use_boot_volume_key_as_default"
+            },
+            {
+              "key": "security_group"
+            },
+            {
+              "key": "security_group_ids"
+            },
+            {
+              "key": "boot_volume_key_name"
+            },
+            {
+              "key": "boot_volume_snapshot_id"
+            },
+            {
+              "key": "dedicated_host_id"
+            },
+            {
+              "key": "enable_floating_ip"
+            },
+            {
+              "key": "load_balancers"
+            },
+            {
+              "key": "manage_reserved_ips"
+            },
+            {
+              "key": "placement_group_id"
+            },
+            {
+              "key": "primary_virtual_network_interface_additional_ip_count"
+            },
+            {
+              "key": "secondary_allow_ip_spoofing"
+            },
+            {
+              "key": "secondary_floating_ips"
+            },
+            {
+              "key": "secondary_security_groups"
+            },
+            {
+              "key": "existing_secondary_subnet_id",
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "subnet",
+                  "selection": "single_select",
+                  "valueType": "id"
+                },
+                "associations": {
+                  "parameters": [
+                    {
+                      "name": "region",
+                      "optionsRefresh": true
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "key": "secondary_use_vsi_security_group"
+            },
+            {
+              "key": "snapshot_consistency_group_id"
+            },
+            {
+              "key": "use_static_boot_volume_name"
+            },
+            {
+              "key": "user_data",
+              "custom_config": {
+                "type": "textarea",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
+            }
+          ],
+          "iam_permissions": [
+            {
+              "service_name": "is",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ]
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+              "service_name": "kms",
+              "notes": "This role is only required if you are using Key Protect for encryption"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+              "service_name": "hs-crypto",
+              "notes": "This role is only required if you are using Hyper Protect for encryption"
+            }
+          ],
+          "architecture": {
+            "descriptions": "This architecture supports creating and configuring a Virtual server instance",
+            "features": [
+              {
+                "title": "Virtual server instance creation",
+                "description": "Yes"
+              },
+              {
+                "title": "New resource group creation",
+                "description": "No"
+              },
+              {
+                "title": "Use existing resource group",
+                "description": "Yes"
+              },
+              {
+                "title": "Block storage volumes creation",
+                "description": "Yes"
+              },
+              {
+                "title": "Enforced KMS encryption",
+                "description": "No"
+              },
+              {
+                "title": "KMS instance creation",
+                "description": "No"
+              },
+              {
+                "title": "KMS key ring and key creation",
+                "description": "Yes"
+              },
+              {
+                "title": "Use existing KMS key",
+                "description": "Yes"
+              },
+              {
+                "title": "IAM s2s auth policies creation",
+                "description": "Yes"
+              },
+              {
+                "title": "Load balancer creation",
+                "description": "Yes"
+              }
+            ],
+            "diagrams": [
+              {
+                "diagram": {
+                  "caption": "Virtual server instance",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architecture/vsi.svg",
+                  "type": "image/svg+xml"
+                },
+                "description": "This architecture supports creating and configuring IBM Virtual server instance resources."
+              }
+            ]
+          },
+          "dependencies": [
+            {
+              "name": "deploy-arch-ibm-vpc",
+              "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
+              "version": "^v7.22.0",
+              "flavors": [
+                "fully-configurable"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_output": "vpc_crn",
+                  "version_input": "existing_vpc_crn"
+                }
+              ]
+            },
+            {
+              "name": "deploy-arch-ibm-account-infra-base",
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "flavors": [
+                "standard"
+              ],
+              "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_output": "workload_resource_group_name",
+                  "version_input": "existing_resource_group_name"
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "version_input": "use_existing_resource_group",
+                  "value": true
+                }
+              ],
+              "optional": true,
+              "on_by_default": true,
+              "version": "^v1.18.0"
+            },
+            {
+              "name": "testing-deploy-arch-ibm-kms",
+              "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
+              "version": "^v1.2.1",
+              "flavors": [
+                "standard"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_output": "kms_instance_crn",
+                  "version_input": "existing_kms_instance_crn"
+                },
+                {
+                  "dependency_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "use_existing_resource_group",
+                  "value": true,
+                  "reference_version": true
+                },
+                {
+                  "version_input": "kms_encryption_enabled_boot_volume",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "name": "deploy-arch-ibm-cos",
+              "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
+              "version": "^v8.20.1",
+              "flavors": [
+                "instance"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_output": "cos_instance_id",
+                  "version_input": "existing_cos_instance_crn"
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "use_existing_resource_group",
+                  "value": true,
+                  "reference_version": true
+                }
+              ]
+            },
+            {
+              "name": "testing-deploy-arch-ibm-observability",
+              "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
+              "version": "^1.3.0",
+              "flavors": [
+                "standard"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                }
+              ]
+            },
+            {
+              "name": "testing-deploy-arch-ibm-secrets-manager",
+              "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
+              "version": "^1.2.2",
+              "flavors": [
+                "standard"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "ignore_auto_referencing": [
+                "*"
+              ],
+              "input_mapping": [
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "use_existing_resource_group",
+                  "value": true,
+                  "reference_version": true
+                },
+                {
+                  "dependency_output": "secrets_manager_crn",
+                  "version_input": "existing_secrets_manager_instance_crn"
+                }
+              ]
+            }
+          ],
+          "dependency_version_2": true
+        }
+      ]
+    }
+  ]
+}

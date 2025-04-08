@@ -10,7 +10,6 @@ module "fscloud_vsi" {
   machine_type                   = var.machine_type
   vsi_per_subnet                 = var.vsi_per_subnet
   user_data                      = var.user_data
-  existing_kms_instance_guid     = var.existing_kms_instance_guid
   skip_iam_authorization_policy  = var.skip_iam_authorization_policy
   boot_volume_encryption_key     = var.boot_volume_encryption_key
   use_boot_volume_key_as_default = var.use_boot_volume_key_as_default
