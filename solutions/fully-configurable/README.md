@@ -20,7 +20,7 @@ This solution supports provisioning and configuring the following infrastructure
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.77.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.77.1 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | 0.13.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | 4.0.6 |
 
@@ -41,15 +41,15 @@ This solution supports provisioning and configuring the following infrastructure
 
 | Name | Type |
 |------|------|
-| [ibm_iam_authorization_policy.block_storage_kms_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/iam_authorization_policy) | resource |
-| [ibm_is_ssh_key.auto_generate_ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_ssh_key) | resource |
-| [ibm_is_ssh_key.ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/resources/is_ssh_key) | resource |
+| [ibm_iam_authorization_policy.block_storage_kms_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/resources/iam_authorization_policy) | resource |
+| [ibm_is_ssh_key.auto_generate_ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/resources/is_ssh_key) | resource |
+| [ibm_is_ssh_key.ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/resources/is_ssh_key) | resource |
 | [time_sleep.wait_for_authorization_policy](https://registry.terraform.io/providers/hashicorp/time/0.13.0/docs/resources/sleep) | resource |
 | [tls_private_key.auto_generate_ssh_key](https://registry.terraform.io/providers/hashicorp/tls/4.0.6/docs/resources/private_key) | resource |
-| [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/iam_account_settings) | data source |
-| [ibm_is_subnet.secondary_subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/is_subnet) | data source |
-| [ibm_is_subnet.subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/is_subnet) | data source |
-| [ibm_is_vpc.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.0/docs/data-sources/is_vpc) | data source |
+| [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/data-sources/iam_account_settings) | data source |
+| [ibm_is_subnet.secondary_subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/data-sources/is_subnet) | data source |
+| [ibm_is_subnet.subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/data-sources/is_subnet) | data source |
+| [ibm_is_vpc.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.77.1/docs/data-sources/is_vpc) | data source |
 
 ### Inputs
 
