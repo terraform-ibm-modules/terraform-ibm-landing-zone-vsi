@@ -34,7 +34,7 @@ This solution supports provisioning and configuring the following infrastructure
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.0.1 |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.0 |
-| <a name="module_secrets_manager_arbitrary_secret"></a> [secrets\_manager\_arbitrary\_secret](#module\_secrets\_manager\_arbitrary\_secret) | terraform-ibm-modules/secrets-manager/ibm//modules/secrets | 2.1.1 |
+| <a name="module_secrets_manager_arbitrary_secret"></a> [secrets\_manager\_arbitrary\_secret](#module\_secrets\_manager\_arbitrary\_secret) | terraform-ibm-modules/secrets-manager/ibm//modules/secrets | 2.2.1 |
 | <a name="module_vsi"></a> [vsi](#module\_vsi) | ../../ | n/a |
 
 ### Resources
