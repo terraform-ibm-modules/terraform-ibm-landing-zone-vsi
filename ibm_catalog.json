@@ -329,7 +329,6 @@
             }
           ],
           "architecture": {
-            "descriptions": "This architecture supports creating and configuring a Virtual server instance",
             "features": [
               {
                 "title": "Virtual server instance creation",
