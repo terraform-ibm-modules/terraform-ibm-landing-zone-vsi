@@ -27,7 +27,7 @@ locals {
       # For each subnet
       for subnet in range(length(var.secondary_subnets)) :
       {
-        name        = "${var.secondary_subnets[subnet].name}-${count}"
+        name        = "${var.prefix}-${substr(var.secondary_subnets[subnet].id, -4, 4)}-${count}"
         subnet_id   = var.secondary_subnets[subnet].id
         zone        = var.secondary_subnets[subnet].zone
         subnet_name = var.secondary_subnets[subnet].name
