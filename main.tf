@@ -27,10 +27,13 @@ locals {
       # For each subnet
       for subnet in range(length(var.secondary_subnets)) :
       {
-        name        = "${var.prefix}-${substr(var.secondary_subnets[subnet].id, -4, 4)}-${count}"
-        subnet_id   = var.secondary_subnets[subnet].id
-        zone        = var.secondary_subnets[subnet].zone
-        subnet_name = var.secondary_subnets[subnet].name
+        # DEV NOTE: needed to change format of resource name, but to prevent breaking change
+        # we needed to keep the key (name field) as-is, which is why we introduced a resource_name here
+        name          = "${var.secondary_subnets[subnet].name}-${count}"
+        resource_name = "${var.prefix}-${substr(var.secondary_subnets[subnet].id, -4, 4)}-${count}"
+        subnet_id     = var.secondary_subnets[subnet].id
+        zone          = var.secondary_subnets[subnet].zone
+        subnet_name   = var.secondary_subnets[subnet].name
       }
     ]
   ])
@@ -147,7 +150,7 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
 
 resource "ibm_is_virtual_network_interface" "secondary_vni" {
   for_each       = { for key, value in local.secondary_vni_map : key => value if !var.use_legacy_network_interface }
-  name           = each.value.name
+  name           = each.value.resource_name
   subnet         = each.value.subnet_id
   resource_group = var.resource_group_id
   # If security_groups is empty(list is len(0)) then default list to data.ibm_is_vpc.vpc.default_security_group.
