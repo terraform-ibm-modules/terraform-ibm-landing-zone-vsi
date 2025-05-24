@@ -20,7 +20,7 @@ This solution supports provisioning and configuring the following infrastructure
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.78.2 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | 1.78.3 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | 0.13.1 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | 4.1.0 |
 
@@ -32,24 +32,24 @@ This solution supports provisioning and configuring the following infrastructure
 | <a name="module_existing_kms_crn_parser"></a> [existing\_kms\_crn\_parser](#module\_existing\_kms\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_secret_manager_crn_parser"></a> [existing\_secret\_manager\_crn\_parser](#module\_existing\_secret\_manager\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
 | <a name="module_existing_vpc_crn_parser"></a> [existing\_vpc\_crn\_parser](#module\_existing\_vpc\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.1.0 |
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.1.5 |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-ibm-modules/kms-all-inclusive/ibm | 5.1.7 |
 | <a name="module_resource_group"></a> [resource\_group](#module\_resource\_group) | terraform-ibm-modules/resource-group/ibm | 1.2.0 |
-| <a name="module_secrets_manager_arbitrary_secret"></a> [secrets\_manager\_arbitrary\_secret](#module\_secrets\_manager\_arbitrary\_secret) | terraform-ibm-modules/secrets-manager/ibm//modules/secrets | 2.2.10 |
+| <a name="module_secrets_manager_arbitrary_secret"></a> [secrets\_manager\_arbitrary\_secret](#module\_secrets\_manager\_arbitrary\_secret) | terraform-ibm-modules/secrets-manager/ibm//modules/secrets | 2.3.0 |
 | <a name="module_vsi"></a> [vsi](#module\_vsi) | ../../ | n/a |
 
 ### Resources
 
 | Name | Type |
 |------|------|
-| [ibm_iam_authorization_policy.block_storage_kms_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/resources/iam_authorization_policy) | resource |
-| [ibm_is_ssh_key.auto_generate_ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/resources/is_ssh_key) | resource |
-| [ibm_is_ssh_key.ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/resources/is_ssh_key) | resource |
+| [ibm_iam_authorization_policy.block_storage_kms_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/resources/iam_authorization_policy) | resource |
+| [ibm_is_ssh_key.auto_generate_ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/resources/is_ssh_key) | resource |
+| [ibm_is_ssh_key.ssh_key](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/resources/is_ssh_key) | resource |
 | [time_sleep.wait_for_authorization_policy](https://registry.terraform.io/providers/hashicorp/time/0.13.1/docs/resources/sleep) | resource |
 | [tls_private_key.auto_generate_ssh_key](https://registry.terraform.io/providers/hashicorp/tls/4.1.0/docs/resources/private_key) | resource |
-| [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/data-sources/iam_account_settings) | data source |
-| [ibm_is_subnet.secondary_subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/data-sources/is_subnet) | data source |
-| [ibm_is_subnet.subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/data-sources/is_subnet) | data source |
-| [ibm_is_vpc.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.2/docs/data-sources/is_vpc) | data source |
+| [ibm_iam_account_settings.iam_account_settings](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/data-sources/iam_account_settings) | data source |
+| [ibm_is_subnet.secondary_subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/data-sources/is_subnet) | data source |
+| [ibm_is_subnet.subnet](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/data-sources/is_subnet) | data source |
+| [ibm_is_vpc.vpc](https://registry.terraform.io/providers/IBM-Cloud/ibm/1.78.3/docs/data-sources/is_vpc) | data source |
 
 ### Inputs
 
