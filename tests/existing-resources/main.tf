@@ -11,7 +11,7 @@ module "resource_group" {
 
 module "vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.23.10"
+  version           = "7.23.11"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   name              = "vpc"
