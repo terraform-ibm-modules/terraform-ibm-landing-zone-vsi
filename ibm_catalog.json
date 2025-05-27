@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "deploy-arch-ibm-vsi-vpc",
-      "label": "[Add-ons Beta] Cloud automation for Virtual Servers for Virtual Private Cloud",
+      "label": "Cloud automation for Virtual Servers for Virtual Private Cloud",
       "product_kind": "solution",
       "tags": [
         "compute",
@@ -72,6 +72,7 @@
             {
               "key": "existing_resource_group_name",
               "required": true,
+              "display_name": "resource_group",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -196,7 +197,8 @@
                   "displayname": "Private",
                   "value": "private"
                 }
-              ]
+              ],
+              "hidden":true
             },
             {
               "key": "boot_volume_key_ring_name"
@@ -302,7 +304,8 @@
                   "displayname": "public-and-private",
                   "value": "public-and-private"
                 }
-              ]
+              ],
+              "hidden":true
             }
           ],
           "iam_permissions": [
@@ -385,8 +388,9 @@
           "dependencies": [
             {
               "name": "deploy-arch-ibm-vpc",
+              "description":"Cloud automation for Virtual Private Cloud (VPC)",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
-              "version": "^v7.22.0",
+              "version": "^v7.23.11",
               "flavors": [
                 "fully-configurable"
               ],
@@ -415,9 +419,11 @@
             },
             {
               "name": "deploy-arch-ibm-account-infra-base",
+              "description": "Cloud automation for Account Configuration organizes your IBM Cloud account with a ready-made set of resource groups by default—and, when you enable the \"with Account Settings\" option, it also applies baseline security and governance settings.",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
-                "standard"
+                "resource-group-only",
+                "resource-groups-with-account-settings"
               ],
               "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
               "ignore_auto_referencing": [
@@ -440,12 +446,13 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "^v1.18.0"
+              "version": "v3.0.9"
             },
             {
               "name": "testing-deploy-arch-ibm-kms",
+              "description":" Cloud automation for Key Management Services Creates and configures IBM Cloud Key Management resources",
               "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
-              "version": "^v1.2.1",
+              "version": "^v1.3.0",
               "flavors": [
                 "standard"
               ],
@@ -483,8 +490,9 @@
             },
             {
               "name": "deploy-arch-ibm-cos",
+              "description" : "Cloud automation for Object Storage creates and configures an IBM Cloud Object Storage instance and buckets",
               "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "^v8.20.1",
+              "version": "^v9.0.0",
               "flavors": [
                 "instance"
               ],
@@ -518,6 +526,7 @@
             },
             {
               "name": "testing-deploy-arch-ibm-observability",
+              "description":"Cloud automation for Observability configures IBM Cloud Observability resources",
               "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
               "version": "^1.3.0",
               "flavors": [
@@ -573,7 +582,8 @@
               ]
             }
           ],
-          "dependency_version_2": true
+          "dependency_version_2": true,
+          "terraform_version": "1.10.5"
         }
       ]
     }
