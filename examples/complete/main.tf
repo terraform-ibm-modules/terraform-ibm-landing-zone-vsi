@@ -193,6 +193,8 @@ module "slz_vsi" {
   machine_type                    = "cx2-2x4"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  use_static_boot_volume_name     = true
+  boot_volume_size                = 150
   kms_encryption_enabled          = true
   vsi_per_subnet                  = 1
   primary_vni_additional_ip_count = 2
