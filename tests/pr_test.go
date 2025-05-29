@@ -125,7 +125,6 @@ func TestRunFSCloudExample(t *testing.T) {
 }
 
 func TestRunExistingSnapshotGroupExample(t *testing.T) {
-	t.Skip("Skip until we determine cause of unexpected error 'unevaluatedProperty auto_delete not allowed on VirtualNetworkInterfacePrimaryIPPrototype'")
 	t.Parallel()
 
 	snapGroupId := permanentResources["snapshot_group_au_syd_group_id"]
