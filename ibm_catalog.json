@@ -73,6 +73,7 @@
               "key":"region",
               "required": true,
               "virtual": true,
+              "default": "us-south",
               "custom_config": {
                 "config_constraints": {
                   "generationType": "2"
