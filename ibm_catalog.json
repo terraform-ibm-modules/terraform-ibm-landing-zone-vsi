@@ -74,14 +74,8 @@
               "required": true,
               "virtual": true,
               "default": "us-south",
-              "custom_config": {
-                "config_constraints": {
-                  "generationType": "2"
-                },
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "type": "vpc_region"
-              }
+              "type":"string"
+
             },
             {
               "key": "existing_resource_group_name",
