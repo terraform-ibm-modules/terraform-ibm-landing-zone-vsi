@@ -70,12 +70,9 @@
               "required": true
             },
             {
-              "key":"region",
-              "required": true,
+              "key": "region",
               "virtual": true,
-              "default": "us-south",
-              "type":"string"
-
+              "default_value": "us-south"
             },
             {
               "key": "existing_resource_group_name",
