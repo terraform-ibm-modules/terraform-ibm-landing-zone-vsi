@@ -202,6 +202,9 @@ resource "ibm_is_ssh_key" "auto_generate_ssh_key" {
 ########################################################################################################################
 # Virtual Server Instance
 ########################################################################################################################
+data "ibm_is_image" "image" {
+  name = var.image_name
+}
 
 module "vsi" {
   source                           = "../../"
@@ -211,7 +214,7 @@ module "vsi" {
   tags                             = var.vsi_resource_tags
   vpc_id                           = local.existing_vpc_id
   subnets                          = local.subnet
-  image_id                         = var.image_id
+  image_id                         = data.ibm_is_image.image.id
   ssh_key_ids                      = local.ssh_keys
   machine_type                     = var.machine_type
   vsi_per_subnet                   = 1

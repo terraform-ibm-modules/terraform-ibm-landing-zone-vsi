@@ -113,8 +113,18 @@
               }
             },
             {
-              "key": "image_id",
-              "required": true
+              "key": "image_name",
+              "required": true,
+              "options": [
+                {
+                  "displayname": "ubuntu-22-04-amd64",
+                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-2"
+                },
+                {
+                  "displayname": " ubuntu-24-04-amd64",
+                  "value": "ibm-ubuntu-24-04-2-minimal-amd64-2 "
+                }
+              ]
             },
             {
               "key": "machine_type",
@@ -452,13 +462,13 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v3.0.9"
+              "version": "v3.0.7"
             },
             {
               "name": "deploy-arch-ibm-kms",
               "description":" Cloud automation for Key Management Services Creates and configures IBM Cloud Key Management resources",
               "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
-              "version": "^v5.7.1",
+              "version": "^v5.1.4",
               "flavors": [
                 "fully-configurable"
               ],
@@ -489,7 +499,7 @@
               "name": "testing-deploy-arch-ibm-observability",
               "description":"Cloud automation for Observability configures IBM Cloud Observability resources",
               "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
-              "version": "^1.3.0",
+              "version": "^3.0.3",
               "flavors": [
                 "standard"
               ],
@@ -508,9 +518,9 @@
               ]
             },
             {
-              "name": "testing-deploy-arch-ibm-secrets-manager",
+              "name": "deploy-arch-ibm-secrets-manager",
               "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
-              "version": "^1.2.2",
+              "version": "2.4.0",
               "flavors": [
                 "standard"
               ],
