@@ -467,8 +467,8 @@
             {
               "name": "deploy-arch-ibm-kms",
               "description":" Cloud automation for Key Management Services Creates and configures IBM Cloud Key Management resources",
-              "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
-              "version": "^v5.7.1",
+              "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
+              "version": "^v5.1.4",
               "flavors": [
                 "fully-configurable"
               ],
