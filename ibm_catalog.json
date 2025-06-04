@@ -496,9 +496,9 @@
               ]
             },
             {
-              "name": "testing-deploy-arch-ibm-observability",
+              "name": "deploy-arch-ibm-observability",
               "description":"Cloud automation for Observability configures IBM Cloud Observability resources",
-              "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
+              "id": "a3137d28-79e0-479d-8a24-758ebd5a0eab-global",
               "version": "^v3.0.3",
               "flavors": [
                 "standard"
@@ -519,8 +519,8 @@
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
-              "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
-              "version": "^2.4.0",
+              "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
+              "version": "^v2.4.0",
               "flavors": [
                 "standard"
               ],
