@@ -23,7 +23,7 @@
         "infrastructure as code"
       ],
       "short_description": "Provisions a Virtual server instance on IBM Cloud",
-      "long_description": "The VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. Stay here if you want to try an experimental version with the [Optional and swappable components](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-choose-plan-process#optional-swappable) capability.",
+      "long_description": "IBM Cloud Virtual Servers for VPC provide fast-provisioned, high-performance instances with network isolation and security. Choose from x86 or s390x profiles to match your compute and memory needs, and manage your resources flexibly .The VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. For more details on Virtual server instance. [refer here](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers) ",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
       "provider_name": "IBM",
@@ -350,31 +350,15 @@
             "features": [
               {
                 "title": "Virtual server instance",
-                "description": "Creates and configures a Virtual server instance."
-              },
-              {
-                "title": "existing resource group",
-                "description": "Uses only an existing resource group."
+                "description": "Configures a Virtual server instance."
               },
               {
                 "title": "Block storage volumes ",
                 "description": "Creates block storage volumes."
               },
               {
-                "title": "Enforced KMS encryption",
-                "description": "Does not enforce KMS encryption."
-              },
-              {
-                "title": "KMS instance",
-                "description": "Does not create a new KMS instance."
-              },
-              {
-                "title": "KMS key ring and key",
-                "description": "Creates Key Rings and Keys for either Key Protect or Hyper Protect Crypto Services instances."
-              },
-              {
-                "title": "Use existing KMS key",
-                "description": "Uses an existing KMS key."
+                "title": "KMS encryption",
+                "description": "Supports creating a new key, or using an existing one to encrypt the Block storage volume."
               },
               {
                 "title": "IAM s2s auth policies",
