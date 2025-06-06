@@ -88,10 +88,10 @@ variable "vsi_name" {
   default     = "vsi"
 }
 
-variable "image_name" {
+variable "image_id" {
+  description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
   type        = string
-  default     = "ibm-ubuntu-22-04-5-minimal-amd64-2"
-  description = "Image name to retrive the image ID for that region."
+  nullable    = false
 }
 
 variable "ssh_public_keys" {

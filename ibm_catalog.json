@@ -113,18 +113,8 @@
               }
             },
             {
-              "key": "image_name",
-              "required": true,
-              "options": [
-                {
-                  "displayname": "ubuntu-22-04-amd64",
-                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-2"
-                },
-                {
-                  "displayname": " ubuntu-24-04-amd64",
-                  "value": "ibm-ubuntu-24-04-2-minimal-amd64-2 "
-                }
-              ]
+              "key": "image_id",
+              "required": true
             },
             {
               "key": "machine_type",
