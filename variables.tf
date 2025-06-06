@@ -104,6 +104,17 @@ variable "boot_volume_encryption_key" {
   type        = string
 }
 
+variable "boot_volume_size" {
+  description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB"
+  default     = null
+  type        = number
+
+  validation {
+    condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 250 : true
+    error_message = "Boot Volume size must be a number between 100 and 250"
+  }
+}
+
 variable "manage_reserved_ips" {
   description = "Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP."
   type        = bool

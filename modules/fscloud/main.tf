@@ -12,6 +12,7 @@ module "fscloud_vsi" {
   user_data                      = var.user_data
   skip_iam_authorization_policy  = var.skip_iam_authorization_policy
   boot_volume_encryption_key     = var.boot_volume_encryption_key
+  boot_volume_size               = var.boot_volume_size
   use_boot_volume_key_as_default = var.use_boot_volume_key_as_default
   kms_encryption_enabled         = true
   manage_reserved_ips            = var.manage_reserved_ips
