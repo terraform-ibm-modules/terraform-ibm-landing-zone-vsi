@@ -283,6 +283,9 @@
               "key": "snapshot_consistency_group_id"
             },
             {
+              "key": "boot_volume_size"
+            },
+            {
               "key": "use_static_boot_volume_name"
             },
             {

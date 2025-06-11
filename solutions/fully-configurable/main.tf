@@ -217,6 +217,7 @@ module "vsi" {
   user_data                        = var.user_data
   skip_iam_authorization_policy    = local.create_cross_account_auth_policy ? false : var.skip_block_storage_kms_iam_auth_policy
   boot_volume_encryption_key       = local.boot_volume_kms_key_crn
+  boot_volume_size                 = var.boot_volume_size
   use_boot_volume_key_as_default   = var.use_boot_volume_key_as_default
   kms_encryption_enabled           = var.kms_encryption_enabled_boot_volume
   manage_reserved_ips              = var.manage_reserved_ips

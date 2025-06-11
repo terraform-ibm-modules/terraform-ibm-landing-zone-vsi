@@ -129,6 +129,17 @@ variable "machine_type" {
   default     = "bx3d-2x10"
 }
 
+variable "boot_volume_size" {
+  description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB"
+  default     = null
+  type        = number
+
+  validation {
+    condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 250 : true
+    error_message = "Boot Volume size must be a number between 100 and 250"
+  }
+}
+
 variable "user_data" {
   description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recongnized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
   type        = string
