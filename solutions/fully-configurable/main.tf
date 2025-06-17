@@ -203,6 +203,30 @@ resource "ibm_is_ssh_key" "auto_generate_ssh_key" {
 # Virtual Server Instance
 ########################################################################################################################
 
+data "ibm_is_image" "image_name" {
+  identifier = var.image_id
+}
+
+locals {
+  logs_agent_string = "https://logs-router-agent-install-packages.s3.us.cloud-object-storage.appdomain.cloud/"
+  os_image_version  = data.ibm_is_image.image_name.os
+  package_extension = [
+    length(regex("^debian-11.*$", local.os_image_version)) > 0 ? "logs-router-agent-deb11-1.6.0.deb" :
+    length(regex("^debian-12.*$", local.os_image_version)) > 0 ? "logs-router-agent-1.6.0.deb" :
+    length(regex("^red.*-8.*$", local.os_image_version)) > 0 ? "logs-router-agent-rhel8-1.6.0.rpm" :
+  "logs-router-agent-1.6.0.rpm"][0]
+  logs_config_url        = join("", [local.logs_agent_string, local.package_extension])
+  user_data_agent_string = <<-EOT
+  #cloud-config
+  run-cmd:
+    - [ sh, "${length(regex("^ubuntu.*$|^debian.*$", data.ibm_is_image.image_name.os)) > 0 ? "dpkg -i" : "rpm -ivh"} ${local.logs_config_url}" ]
+    - [ sh, "curl -X GET -o /run/logs-agent-config.sh https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/post-config.sh" ]
+    - [ sh, "/run/logs-agent-config.sh -h ${var.logs_target_host} -p ${var.logs_target_port} -t ${var.logs_target_path} -a ${var.logs_auth_mode} ${var.logs_auth_mode == "IAMAPIKey" ? "-k ${var.logs_api_key}" : "-d ${var.logs_trusted_profile_id}"} -i ${var.logs_use_private_endpoint ? "PrivateProduction" : "Production"}" ]
+    - [ sh, "curl -sL -o /run/monitoring-agent.sh https://ibm.biz/install-sysdig-agent" ]
+    - [ sh, "/run/monitoring-agent.sh --access-key ${var.monitoring_access_key} --collector-endpoint ${var.monitoring_collector_endpoint} --collector-port ${var.monitoring_collector_port} --secure true --check-certificate false ${var.monitoring_tags != null ? "--tags ${join(",", var.monitoring_tags)}" : ""}" ]
+  EOT
+}
+
 module "vsi" {
   source                           = "../../"
   depends_on                       = [time_sleep.wait_for_authorization_policy[0]]
@@ -215,7 +239,7 @@ module "vsi" {
   ssh_key_ids                      = local.ssh_keys
   machine_type                     = var.machine_type
   vsi_per_subnet                   = 1
-  user_data                        = var.user_data
+  user_data                        = var.install_agents ? join("\n", [var.user_data, local.user_data_agent_string]) : var.user_data
   skip_iam_authorization_policy    = local.create_cross_account_auth_policy ? false : var.skip_block_storage_kms_iam_auth_policy
   boot_volume_encryption_key       = local.boot_volume_kms_key_crn
   boot_volume_size                 = var.boot_volume_size
