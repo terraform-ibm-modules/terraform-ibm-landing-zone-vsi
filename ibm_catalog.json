@@ -537,8 +537,7 @@
                 },
                 {
                   "version_input": "kms_encryption_enabled_boot_volume",
-                  "value": true,
-                  "reference_version": true
+                  "value": true
                 },
                 {
                   "dependency_input": "prefix",
@@ -592,6 +591,10 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
+                },
+                {
+                  "dependency_input": "service_plan",
+                  "value": "standard"
                 },
                 {
                   "dependency_input": "existing_resource_group_name",
