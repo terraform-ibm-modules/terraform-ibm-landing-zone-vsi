@@ -21,27 +21,27 @@
         "IaC",
         "infrastructure as code"
       ],
-      "short_description": "Automates the deployment of Virtual server instance IBM Cloud with optional integration of security and logging services.",
-      "long_description": "IBM Cloud Virtual Servers for VPC provide fast-provisioned, high-performance instances with network isolation and security. Choose from x86 or s390x profiles to match your compute and memory needs, and manage your resources flexibly .This VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. For more details on Virtual server instance. [refer here](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers).",
+      "short_description": "Automates the deployment of Virtual Server Instance IBM Cloud with optional integration of security and logging services.",
+      "long_description": "IBM Cloud Virtual Servers for VPC provide fast-provisioned, high-performance instances with network isolation and security. Choose from x86 or s390x profiles to match your compute and memory needs, and manage your resources flexibly. This VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. For more details on Virtual Server Instance, [refer here](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers).",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
       "provider_name": "IBM",
       "features": [
         {
-          "title": "Virtual server instance",
+          "title": "Virtual Server Instance",
           "description": "Creates an [IBM Cloud Virtual Server Instance (VSI)](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers) that provides flexible, scalable, and secure compute resources for running workloads in the cloud. VSIs enable businesses to deploy virtual machines quickly, customize configurations, and integrate with networking and storage services to support a wide range of applications."
         },
         {
           "title": "Block storage volumes",
-          "description": "Supports creating and configuring [Block storage volumes](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about) for the Virtual server instance."
+          "description": "Supports creating and configuring [Block storage volumes](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about) for the Virtual Server Instance."
         },
         {
           "title": "KMS encryption",
-          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) to encrypt the Block storage volumes of the Virtual server instance using either a newly created key or an existing one"
+          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) to encrypt the Block storage volumes of the Virtual Server Instance using either a newly created key or an existing one"
         },
         {
           "title": "Load balancer",
-          "description": "Sets up [Load balancers](https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb) for the Virtual server instance."
+          "description": "Sets up [Load balancers](https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb) for the Virtual Server Instance."
         },
         {
           "title": "Secrets Manager",
@@ -79,6 +79,17 @@
             },
             {
               "key": "region",
+              "required": true,
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              },
+              "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
               "virtual": true,
               "default_value": "us-south"
             },
@@ -363,14 +374,21 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "[Optional] Required when setting up foundational IBM Cloud account components such as IAM settings, trusted profiles, access groups, and resource groups."
+              "notes": "Required for creating Virtual Server Instance and Virtual Private Cloud(VPC)."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
+              "service_name": "iam-identity",
+              "notes": "[Optional] Required if Cloud automation for account configuration is enabled."
             },
             {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "kms",
-              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of Block storage volumes of the Virtual server instance."
+              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of Block storage volumes of the Virtual Server Instance."
             },
             {
               "role_crns": [
@@ -378,7 +396,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "hs-crypto",
-              "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Block storage volumes of the Virtual server instance."
+              "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Block storage volumes of the Virtual Server Instance."
             },
             {
               "service_name": "sysdig-monitor",
@@ -430,11 +448,11 @@
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Virtual server instance",
+                  "caption": "Virtual Server Instance",
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architecture/vsi.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture supports creating and configuring IBM Virtual server instance resources."
+               "description": "This architecture supports provisioning an IBM Virtual Server Instance (VSI) within a Virtual Private Cloud (VPC), with optional integrations for security, storage, load balancing, and observability."
               }
             ]
           },
