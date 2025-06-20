@@ -22,7 +22,7 @@
         "infrastructure as code"
       ],
       "short_description": "Automates the deployment of Virtual Server Instance IBM Cloud with optional integration of security and logging services.",
-      "long_description": "IBM Cloud Virtual Servers for VPC provide fast-provisioned, high-performance instances with network isolation and security. Choose from x86 or s390x profiles to match your compute and memory needs, and manage your resources flexibly. This VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. For more details on Virtual Server Instance, [refer here](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers).",
+      "long_description": "IBM Cloud Virtual Servers for VPC provide fast-provisioned, high-performance instances with network isolation and security. Choose from x86 or s390x profiles to match your compute and memory needs, and manage your resources flexibly. This VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. For more details on Virtual Server Instance, [refer here](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers). \n\nℹ️ This Terraform-based automation is part of a broader suite of IBM-maintained Infrastructure as Code (IaC) assets, each following the naming pattern \"Cloud automation for *servicename*\" and focusing on single IBM Cloud service. These single-service deployable architectures can be used on their own to streamline and automate service deployments through an [IaC approach](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-understanding-projects), or assembled together into a broader [automated IaC stack](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-config-stack) to automate the deployment of an end-to-end solution architecture.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
       "provider_name": "IBM",
@@ -33,7 +33,7 @@
         },
         {
           "title": "Block storage volumes",
-          "description": "Supports creating and configuring [Block storage volumes](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about) for the Virtual Server Instance."
+          "description": "Supports creating and configuring [Block storage volumes](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about) which provides high-performance data storage for your virtual server instances that you can provision within an IBM Cloud® Virtual Private Cloud (VPC)."
         },
         {
           "title": "KMS encryption",
@@ -41,7 +41,7 @@
         },
         {
           "title": "Load balancer",
-          "description": "Sets up [Load balancers](https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb) for the Virtual Server Instance."
+          "description": "Sets up IBM Cloud [Load Balancers](https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb) for Virtual Server Instances, supporting both Network (Layer 4) and Application (Layer 7) types to distribute traffic, enable high availability, and provide health checks."
         },
         {
           "title": "Secrets Manager",
@@ -377,6 +377,13 @@
               "notes": "Required for creating Virtual Server Instance and Virtual Private Cloud(VPC)."
             },
             {
+               "service_name": "Resource group only",
+               "role_crns": [
+                    "crn:v1:bluemix:public:iam::::role:Viewer"
+                ],
+               "notes": "Viewer access is required in the resource group you want to provision in."
+            },
+            {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
@@ -452,7 +459,7 @@
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architecture/vsi.svg",
                   "type": "image/svg+xml"
                 },
-               "description": "This architecture supports provisioning an IBM Virtual Server Instance (VSI) within a Virtual Private Cloud (VPC), with optional integrations for security, storage, load balancing, and observability."
+               "description": "This architecture provisions an IBM Virtual Server Instance (VSI) within a Virtual Private Cloud (VPC), supporting optional integrations for enhanced security, storage, load balancing, and observability. It includes optional use of IBM Key Management Service (KMS) for boot volume encryption, Secrets Manager for secure SSH key storage, and block volumes for additional storage. The VSI is deployed within a subnet and can be assigned a floating IP for external access. Security groups control network access, while integrated load balancer components (pool, listener) enable scalable and highly available traffic distribution. Optional observability features, such as Cloud Monitoring and Cloud Logs, provide operational insights and logging."
               }
             ]
           },
