@@ -17,7 +17,7 @@ variable "existing_resource_group_name" {
 
 variable "prefix" {
   type        = string
-  description = "TThe prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and can not contain consecutive hyphens ('--'). Example: prod-0205-vsi.[Learn more](https://terraform-ibm-modules.github.io/documentation/#/da-implementation-guidelines?id=prefix)"
+  description = "TThe prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and can not contain consecutive hyphens ('--'). Example: prod-0205-vsi.[Learn more](https://terraform-ibm-modules.github.io/documentation/#/da-implementation-guidelines?id=prefix)."
   nullable    = true
   validation {
     condition = var.prefix == null || var.prefix == "" ? true : alltrue([
@@ -130,13 +130,13 @@ variable "machine_type" {
 }
 
 variable "boot_volume_size" {
-  description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB"
+  description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB."
   default     = null
   type        = number
 
   validation {
     condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 250 : true
-    error_message = "Boot Volume size must be a number between 100 and 250"
+    error_message = "Boot Volume size must be a number between 100 and 250."
   }
 }
 
@@ -233,7 +233,7 @@ variable "boot_volume_key_name" {
 
 variable "kms_endpoint_type" {
   type        = string
-  description = "The endpoint for communicating with the KMS instance. Possible values: `public`, `private`. Applies only if `kms_encryption_enabled_boot_volume` is true"
+  description = "The endpoint for communicating with the KMS instance. Possible values: `public`, `private`. Applies only if `kms_encryption_enabled_boot_volume` is true."
   default     = "private"
   nullable    = false
   validation {
@@ -271,19 +271,19 @@ variable "use_static_boot_volume_name" {
 }
 
 variable "enable_floating_ip" {
-  description = "Create a floating IP for each virtual server created"
+  description = "Create a floating IP for each virtual server created."
   type        = bool
   default     = false
 }
 
 variable "allow_ip_spoofing" {
-  description = "Allow IP spoofing on the primary network interface"
+  description = "Allow IP spoofing on the primary network interface."
   type        = bool
   default     = false
 }
 
 variable "placement_group_id" {
-  description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host"
+  description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host."
   type        = string
   default     = null
 }
@@ -438,13 +438,13 @@ variable "secondary_security_groups" {
 }
 
 variable "secondary_floating_ips" {
-  description = "List of secondary interfaces to add floating ips"
+  description = "List of secondary interfaces to add floating ips."
   type        = list(string)
   default     = []
 }
 
 variable "secondary_allow_ip_spoofing" {
-  description = "Allow IP spoofing on additional network interfaces"
+  description = "Allow IP spoofing on additional network interfaces."
   type        = bool
   default     = false
 }
@@ -456,7 +456,7 @@ variable "secondary_allow_ip_spoofing" {
 ##############################################################################
 
 variable "boot_volume_snapshot_id" {
-  description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)"
+  description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)."
   type        = string
   default     = null
 }

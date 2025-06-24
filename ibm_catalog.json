@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "deploy-arch-ibm-vsi-vpc",
-      "label": "Cloud automation for Virtual Servers for Virtual Private Cloud",
+      "label": "Cloud automation for Virtual Server Instance on VPC",
       "product_kind": "solution",
       "tags": [
         "compute",
@@ -37,7 +37,7 @@
         },
         {
           "title": "KMS encryption",
-          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) to encrypt the Block storage volumes of the Virtual Server Instance using either a newly created key or an existing one"
+          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) to encrypt the Block storage volumes of the Virtual Server Instance using either a newly created key or an existing one."
         },
         {
           "title": "Load balancer",
@@ -584,7 +584,7 @@
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
-              "description":"Creates and configures a Secrets Manager instance to store the ssh private key for the virtual server instance",
+              "description":"Creates and configures a Secrets Manager instance to store the ssh private key for the virtual server instance.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
               "version": "v2.4.0",
               "flavors": [
