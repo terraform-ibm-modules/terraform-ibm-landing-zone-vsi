@@ -33,7 +33,7 @@
         },
         {
           "title": "Block storage volumes",
-          "description": "Supports creating and configuring [Block storage volumes](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about) which provides high-performance data storage for your virtual server instances that you can provision within an IBM Cloud® Virtual Private Cloud (VPC)."
+          "description": "Supports creating and configuring [Block storage volumes](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about) which provides high-performance data storage for your virtual server instances that you can provision within an IBM Cloud Virtual Private Cloud (VPC)."
         },
         {
           "title": "KMS encryption",
@@ -45,7 +45,7 @@
         },
         {
           "title": "Secrets Manager",
-          "description": "Optional integration with [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for centrally managing the ssh private key for the virtual server instance"
+          "description": "Optional integration with [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for managing the ssh private key for the virtual server instance and other secrets."
         },
         {
           "title": "Observability",
