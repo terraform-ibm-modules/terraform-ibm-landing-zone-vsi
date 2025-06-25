@@ -201,7 +201,7 @@
             },
             {
               "key": "existing_secrets_manager_endpoint_type",
-              "hidden":true
+              "hidden": true
             },
             {
               "key": "ssh_key_secret_group_name"
@@ -239,7 +239,7 @@
                   "value": "private"
                 }
               ],
-              "hidden":true
+              "hidden": true
             },
             {
               "key": "boot_volume_key_ring_name"
@@ -349,7 +349,7 @@
                   "value": "public-and-private"
                 }
               ],
-              "hidden":true
+              "hidden": true
             }
           ],
           "iam_permissions": [
@@ -444,7 +444,7 @@
           "dependencies": [
             {
               "name": "deploy-arch-ibm-vpc",
-              "description":"Defines the VPC instance and subnets where Virtual Server Instance will be created. ",
+              "description":" Defines the VPC instance and subnets where Virtual Server Instance will be created. ",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
               "version": "v7.24.0",
               "flavors": [
