@@ -40,5 +40,5 @@ locals {
 
   # re-encode the user data into yaml format after adding in the combined runcmd commands
   # note the comment to the top to let cloud-init know this is a cloud config file
-  user_data_yaml = join("\n", ["#cloud-config"], [yamlencode(merge(try(yamldecode(var.user_data), {}), { "runcmd" = local.merged_runcmd }))])
+  user_data_yaml = var.user_data != null || var.install_logging_agent || var.install_monitoring_agent ? join("\n", ["#cloud-config"], [yamlencode(merge(try(yamldecode(var.user_data), {}), { "runcmd" = local.merged_runcmd }))]) : null
 }
