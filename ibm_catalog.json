@@ -352,19 +352,19 @@
               "hidden": true
             },
             {
-              "key": "install_agents"
+              "key": "install_logging_agent"
             },
             {
-              "key": "logs_target_host"
+              "key": "logging_target_host"
             },
             {
-              "key": "logs_target_port"
+              "key": "logging_target_port"
             },
             {
-              "key": "logs_target_path"
+              "key": "logging_target_path"
             },
             {
-              "key": "logs_auth_mode",
+              "key": "logging_auth_mode",
               "options": [
                 {
                   "displayname": "IAM API Key",
@@ -377,13 +377,16 @@
               ]
             },
             {
-              "key": "logs_api_key"
+              "key": "logging_api_key"
             },
             {
-              "key": "logs_trusted_profile_id"
+              "key": "logging_trusted_profile_id"
             },
             {
-              "key": "logs_use_private_endpoint"
+              "key": "logging_use_private_endpoint"
+            },
+            {
+              "key": "install_monitoring_agent"
             },
             {
               "key": "monitoring_access_key"

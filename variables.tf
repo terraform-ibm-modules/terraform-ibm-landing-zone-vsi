@@ -602,3 +602,121 @@ variable "dedicated_host_id" {
 }
 
 ##############################################################################
+# Logging Agent Variables
+########################################################################################################################
+
+variable "install_logging_agent" {
+  type        = bool
+  default     = false
+  description = "Set to true to enable installing the logging agent into your VSI at time of creation."
+}
+
+variable "logging_target_host" {
+  type        = string
+  default     = ""
+  description = "Ingestion endpoint that corresponds to the IBM Cloud Logs instance the logging agent connects to."
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_target_host != "" : true
+    error_message = "If `install_agents` is true, a value for `logging_target_host` must be provided."
+  }
+}
+
+variable "logging_target_port" {
+  type        = string
+  default     = "443"
+  description = "Port the logging agent targets when sending logs, defaults to `443` for sending logs to an IBM Cloud Logs instance."
+}
+
+variable "logging_target_path" {
+  type        = string
+  default     = "/logs/v1/singles"
+  description = "Path the logging agent targets when sending logs, defaults to `/logs/v1/singles` for sending logs to an IBM Cloud Logs instance."
+}
+
+variable "logging_auth_mode" {
+  type        = string
+  default     = "IAMAPIKey"
+  description = "Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
+
+  validation {
+    condition     = length(regex("IAMAPIKey|VSITrustedProfile", var.logging_auth_mode)) > 0
+    error_message = "Value for `logging_auth_mode` must be either `IAMAPIKey` or `VSITrustedProfile`."
+  }
+}
+
+variable "logging_api_key" {
+  type        = string
+  default     = ""
+  sensitive   = true
+  description = "API key used by the logging agent to authenticate with IBM Cloud, must be provided if `logging_auth_mode` is set to `IAMAPIKey`. For more information on creating an API key for the logging agent, see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-iam-ingestion-serviceid-api-key."
+
+  validation {
+    condition     = var.install_logging_agent && var.logging_auth_mode == "IAMAPIKey" ? var.logging_api_key != "" : true
+    error_message = "Value for `logging_api_key` must be provided when `logging_auth_mode` is set to `IAMAPIKey`."
+  }
+}
+
+variable "logging_trusted_profile_id" {
+  type        = string
+  default     = ""
+  description = "Trusted Profile used by the logging agent to access the IBM Cloud Logs instance, must be provided if `logging_auth_mode` is set to `VSITrustedProfile`."
+
+  validation {
+    condition     = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" ? var.logging_trusted_profile_id != "" : true
+    error_message = "Value for `logging_trusted_profile_id` must be provided when `logging_auth_mode` is set to `VSITrustedProfile`."
+  }
+}
+
+variable "logging_use_private_endpoint" {
+  type        = bool
+  default     = false
+  description = "Set to true to use the private endpoint when sending logs to the IBM Cloud Logs instance."
+}
+
+########################################################################################################################
+# Monitoring Agent Variables
+########################################################################################################################
+
+variable "install_monitoring_agent" {
+  type        = bool
+  default     = false
+  description = "Set to true to enable installing the monitoring agent into your VSI at time of creation."
+}
+
+variable "monitoring_access_key" {
+  type        = string
+  default     = ""
+  sensitive   = true
+  description = "Access key used by the monitoring agent to authenticate, required when `install_agents` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
+
+  validation {
+    condition     = var.install_monitoring_agent ? var.monitoring_access_key != "" : true
+    error_message = "Value for `monitoring_access_key` must be provided when `install_agents` is true."
+  }
+}
+
+variable "monitoring_collector_endpoint" {
+  type        = string
+  default     = ""
+  description = "Endpoint the monitoring agent sends metrics to, required when `install_agents` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
+
+  validation {
+    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != "" : true
+    error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_agents` is true."
+  }
+}
+
+variable "monitoring_collector_port" {
+  type        = string
+  default     = "6443"
+  description = "Port the monitoring agent targets when sending metrics, defaults to `6443`."
+}
+
+variable "monitoring_tags" {
+  type        = list(string)
+  default     = []
+  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the monitoring agent."
+}
+
+########################################################################################################################
