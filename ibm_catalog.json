@@ -2,15 +2,14 @@
   "products": [
     {
       "name": "deploy-arch-ibm-vsi-vpc",
-      "label": "[Add-ons Beta] Cloud automation for Virtual Servers for Virtual Private Cloud",
+      "label": "Cloud automation for Virtual Server Instance on VPC",
       "product_kind": "solution",
       "tags": [
         "compute",
         "target_terraform",
         "terraform",
         "solution",
-        "support_ibm",
-        "ibm_beta",
+        "ibm_created",
         "virtualservers"
       ],
       "keywords": [
@@ -22,34 +21,43 @@
         "IaC",
         "infrastructure as code"
       ],
-      "short_description": "Provisions a Virtual server instance on IBM Cloud",
-      "long_description": "The VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. This is an experimental tile and not suitable for production workloads. Stay here if you want to try an experimental version with the [Optional and swappable components](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-choose-plan-process#optional-swappable) capability.",
+      "short_description": "Automates the deployment of Virtual Server Instance on IBM Cloud with optional integration of security and logging services.",
+      "long_description": "IBM Cloud Virtual Server Instance on VPC provide fast-provisioned, high-performance instances with network isolation and security. Choose from x86 or s390x profiles to match your compute and memory needs, and manage your resources flexibly. This VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. For more details on Virtual Server Instance, [refer here](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers). \n\nℹ️ This Terraform-based automation is part of a broader suite of IBM-maintained Infrastructure as Code (IaC) assets, each following the naming pattern \"Cloud automation for *servicename*\" and focusing on single IBM Cloud service. These single-service deployable architectures can be used on their own to streamline and automate service deployments through an [IaC approach](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-understanding-projects), or assembled together into a broader [automated IaC stack](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-config-stack) to automate the deployment of an end-to-end solution architecture.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
       "provider_name": "IBM",
       "features": [
         {
-          "title": "Virtual server instance",
-          "description": "Creates and configures a Virtual server instance."
-        },
-        {
-          "title": "KMS encryption",
-          "description": "Supports creating a new key, or using an existing one to encrypt the Block storage volume."
-        },
-        {
-          "title": "Load balancer",
-          "description": "Supports creating and configuring Load balancers for the Virtual server instance."
+          "title": "Virtual Server Instance",
+          "description": "Creates an [IBM Cloud Virtual Server Instance (VSI)](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers) that provides flexible, scalable, and secure compute resources for running workloads in the cloud. VSIs enable businesses to deploy virtual machines quickly, customize configurations, and integrate with networking and storage services to support a wide range of applications."
         },
         {
           "title": "Block storage volumes",
-          "description": "Supports creating and configuring Block storage volumes for the Virtual server instance."
+          "description": "Supports creating and configuring [Block storage volumes](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about) which provides high-performance data storage for your virtual server instances that you can provision within an IBM Cloud Virtual Private Cloud (VPC)."
+        },
+        {
+          "title": "KMS encryption",
+          "description": "Optionally you can enable key management services(KMS) [encryption](https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-secrets) to encrypt the Block storage volumes of the Virtual Server Instance using either a newly created key or an existing one."
+        },
+        {
+          "title": "Load balancer",
+          "description": "Sets up IBM Cloud [Load Balancers](https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb) for Virtual Server Instances, supporting both Network (Layer 4) and Application (Layer 7) types to distribute traffic, enable high availability, and provide health checks."
+        },
+        {
+          "title": "Secrets Manager",
+          "description": "Optional integration with [Cloud automation for Secrets Manager](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-secrets-manager-6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global) for managing the ssh private key for the virtual server instance and other secrets."
+        },
+        {
+          "title": "Observability",
+          "description": "This solution can leverage [Cloud automation for Observability](https://cloud.ibm.com/catalog/7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3/architecture/deploy-arch-ibm-observability-a3137d28-79e0-479d-8a24-758ebd5a0eab-global) that supports configuring resources for logging, monitoring and activity tracker event routing (optional)."
         }
       ],
-      "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in that repository [https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/issues](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/issues). Please note this product is not supported via the IBM Cloud Support Center.",
+      "support_details": "This product is in the community registry. As such support is handled through the originated repo. If you experience issues please open an issue in that repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "flavors": [
         {
           "label": "Fully configurable",
           "name": "fully-configurable",
+          "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
@@ -70,8 +78,24 @@
               "required": true
             },
             {
-              "key": "existing_resource_group_name",
+              "key": "region",
               "required": true,
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              },
+              "description": "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region).",
+              "virtual": true,
+              "default_value": "us-south"
+            },
+            {
+              "key": "existing_resource_group_name",
+              "display_name": "resource_group",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -86,8 +110,25 @@
               "required": true
             },
             {
-              "key": "existing_subnet_id",
+              "key": "enable_platform_metrics",
+              "type": "string",
+              "default_value": "true",
+              "description": "When set to `true`, the IBM Cloud Monitoring instance will be configured to collect platform metrics from the provided region. ⚠️ You can configure 1 instance only of the IBM Cloud Monitoring service per region to collect platform metrics in that location. Check with the account or service administrator if another monitoring instance has already been configured. You may not have permissions to see all monitoring instances in the region. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_enabling).",
               "required": true,
+              "virtual": true,
+              "options": [
+                {
+                  "displayname": "true",
+                  "value": "true"
+                },
+                {
+                  "displayname": "false",
+                  "value": "false"
+                }
+              ]
+            },
+            {
+              "key": "existing_subnet_id",
               "custom_config": {
                 "type": "platform_resource",
                 "grouping": "deployment",
@@ -159,7 +200,8 @@
               "key": "existing_secrets_manager_instance_crn"
             },
             {
-              "key": "existing_secrets_manager_endpoint_type"
+              "key": "existing_secrets_manager_endpoint_type",
+              "hidden": true
             },
             {
               "key": "ssh_key_secret_group_name"
@@ -196,7 +238,8 @@
                   "displayname": "Private",
                   "value": "private"
                 }
-              ]
+              ],
+              "hidden": true
             },
             {
               "key": "boot_volume_key_ring_name"
@@ -305,7 +348,8 @@
                   "displayname": "public-and-private",
                   "value": "public-and-private"
                 }
-              ]
+              ],
+              "hidden": true
             },
             {
               "key": "install_agents"
@@ -360,95 +404,110 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
-              ]
+              ],
+              "notes": "Required for creating Virtual Server Instance and Virtual Private Cloud(VPC)."
+            },
+            {
+               "service_name": "Resource group only",
+               "role_crns": [
+                    "crn:v1:bluemix:public:iam::::role:Viewer"
+                ],
+               "notes": "Viewer access is required in the resource group you want to provision in."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
+              "service_name": "iam-identity",
+              "notes": "[Optional] Required if Cloud automation for account configuration is enabled."
             },
             {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "kms",
-              "notes": "This role is only required if you are using Key Protect for encryption"
+              "notes": "[Optional] Required if KMS encryption is enabled and Key protect is used for encryption of Block storage volumes of the Virtual Server Instance."
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "hs-crypto",
-              "notes": "This role is only required if you are using Hyper Protect for encryption"
+              "notes": "[Optional] Required if KMS encryption is enabled and IBM Hyper Protect Crypto Services is used to encrypt the Block storage volumes of the Virtual Server Instance."
+            },
+            {
+              "service_name": "sysdig-monitor",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Cloud monitoring."
+            },
+            {
+              "service_name": "logs",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Cloud logs."
+            },
+            {
+              "service_name": "atracker",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Writer",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Activity Tracker Event Routing."
+            },
+            {
+              "service_name": "secrets-manager",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+              "notes": "[Optional] Required for creating an Secrets Manager instance. 'Manager' access required to create new secret groups."
             }
           ],
           "architecture": {
             "features": [
               {
-                "title": "Virtual server instance creation",
-                "description": "Yes"
-              },
-              {
-                "title": "New resource group creation",
-                "description": "No"
-              },
-              {
-                "title": "Use existing resource group",
-                "description": "Yes"
-              },
-              {
-                "title": "Block storage volumes creation",
-                "description": "Yes"
-              },
-              {
-                "title": "Enforced KMS encryption",
-                "description": "No"
-              },
-              {
-                "title": "KMS instance creation",
-                "description": "No"
-              },
-              {
-                "title": "KMS key ring and key creation",
-                "description": "Yes"
-              },
-              {
-                "title": "Use existing KMS key",
-                "description": "Yes"
-              },
-              {
-                "title": "IAM s2s auth policies creation",
-                "description": "Yes"
-              },
-              {
-                "title": "Load balancer creation",
-                "description": "Yes"
+                "title": " ",
+                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
               }
             ],
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Virtual server instance",
+                  "caption": "Virtual Server Instance",
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architecture/vsi.svg",
                   "type": "image/svg+xml"
                 },
-                "description": "This architecture supports creating and configuring IBM Virtual server instance resources."
+               "description": "This architecture supports deployment of a <b>Virtual Server Instance</b> within an IBM Cloud <b>Virtual Private Cloud (VPC)</b> environment.<br><br>The VPC is hosted within a designated resource group in a specific region. You can either provision a new VPC or use an existing one, depending on your workload requirements. The VPC includes a subnet for network segmentation and connectivity of compute resources.<br><br>At the core of this setup is the <b>Virtual Server Instance on VPC</b>, which can be optionally associated with block volumes for additional data storage. These block volumes can be encrypted using key management services (KMS), where a boot-volume key is managed under a defined key ring.<br><br>To enhance secure access and centralized credential management, <b>Secrets Manager</b> can be integrated. This enables storage and retrieval of sensitive information such as ssh private keys, helping ensure secure and auditable server access.<br><br>For external connectivity, the architecture supports optional assignment of a floating ip to the virtual server, allowing public network access as needed.<br><br>A security group is defined to control inbound and outbound traffic to the virtual server. It includes a load balancer setup, consisting of a <b>Load Balancer Listener</b>, <b>Load Balancer</b>, and <b>Load Balancer Pool</b> to distribute traffic efficiently across backend resources.<br><br>Observability capabilities can be optionally enabled to monitor and manage the health and performance of deployed resources. This includes <b>Cloud Monitoring</b> for metrics and <b>Cloud Logs</b> for log aggregation and analysis.<br><br>This architecture provides a scalable, secure, and flexible foundation for deploying applications on IBM Cloud, integrating optional services such as encryption, observability, and secure key management for enterprise-grade workloads."
               }
             ]
           },
           "dependencies": [
             {
               "name": "deploy-arch-ibm-vpc",
+              "description":" Defines the VPC instance and subnets where Virtual Server Instance will be created. ",
               "id": "2af61763-f8ef-4527-a815-b92166f29bc8-global",
-              "version": "^v7.22.0",
+              "version": "v7.24.0",
               "flavors": [
                 "fully-configurable"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "region",
+                  "version_input": "region",
                   "reference_version": true
                 },
                 {
@@ -464,14 +523,13 @@
             },
             {
               "name": "deploy-arch-ibm-account-infra-base",
+              "description": "Cloud automation for Account Configuration organizes your IBM Cloud account with a ready-made set of resource groups by default and, when you enable the \"with Account Settings\" option, it also applies baseline security and governance settings. ",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "flavors": [
-                "standard"
+                "resource-group-only",
+                "resource-groups-with-account-settings"
               ],
               "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "dependency_output": "workload_resource_group_name",
@@ -481,138 +539,92 @@
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
-                },
-                {
-                  "version_input": "use_existing_resource_group",
-                  "value": true
                 }
               ],
               "optional": true,
-              "on_by_default": true,
-              "version": "^v1.18.0"
+              "on_by_default": false,
+              "version": "v3.0.11"
             },
             {
-              "name": "testing-deploy-arch-ibm-kms",
-              "id": "85fdbd7a-8c77-4abd-b716-653a31f3aba9-global",
-              "version": "^v1.2.1",
+              "name": "deploy-arch-ibm-kms",
+              "description":"Enable Cloud Automation for Key Protect when you want services to use your own managed encryption keys. If disabled, it will fall back on IBM Cloud's default service-managed encryption. ",
+              "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
+              "version": "v5.1.4",
               "flavors": [
-                "standard"
+                "fully-configurable"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
                 {
                   "dependency_output": "kms_instance_crn",
                   "version_input": "existing_kms_instance_crn"
                 },
                 {
-                  "dependency_input": "resource_group_name",
+                  "dependency_input": "existing_resource_group_name",
                   "version_input": "existing_resource_group_name",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "prefix",
-                  "version_input": "prefix",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "use_existing_resource_group",
-                  "value": true,
                   "reference_version": true
                 },
                 {
                   "version_input": "kms_encryption_enabled_boot_volume",
                   "value": true
+                },
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
                 }
               ]
             },
             {
-              "name": "deploy-arch-ibm-cos",
-              "id": "68921490-2778-4930-ac6d-bae7be6cd958-global",
-              "version": "^v8.20.1",
+              "name": "deploy-arch-ibm-observability",
+              "description": "Configure IBM Cloud Logs and Cloud Monitoring for analysing logs and metrics generated by the virtual server instance. ",
+              "id": "a3137d28-79e0-479d-8a24-758ebd5a0eab-global",
+              "version": "v3.0.3",
               "flavors": [
-                "instance"
+                "instances"
               ],
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "optional": true,
               "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
               "input_mapping": [
-                {
-                  "dependency_output": "cos_instance_id",
-                  "version_input": "existing_cos_instance_crn"
-                },
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "resource_group_name",
+                  "dependency_input": "enable_platform_metrics",
+                  "version_input": "enable_platform_metrics",
+                  "reference_version": true
+                }
+              ]
+            },
+            {
+              "name": "deploy-arch-ibm-secrets-manager",
+              "description":"Creates and configures a Secrets Manager instance to store the ssh private key for the virtual server instance. ",
+              "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
+              "version": "v2.4.0",
+              "flavors": [
+                "fully-configurable"
+              ],
+              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
+              "optional": true,
+              "on_by_default": true,
+              "input_mapping": [
+                {
+                  "dependency_input": "prefix",
+                  "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "service_plan",
+                  "value": "standard"
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
                   "version_input": "existing_resource_group_name",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "use_existing_resource_group",
-                  "value": true,
-                  "reference_version": true
-                }
-              ]
-            },
-            {
-              "name": "testing-deploy-arch-ibm-observability",
-              "id": "daf2cf91-2384-4205-b7f4-621299a4896d-global",
-              "version": "^1.3.0",
-              "flavors": [
-                "standard"
-              ],
-              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
-              "optional": true,
-              "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
-              "input_mapping": [
-                {
-                  "dependency_input": "prefix",
-                  "version_input": "prefix",
-                  "reference_version": true
-                }
-              ]
-            },
-            {
-              "name": "testing-deploy-arch-ibm-secrets-manager",
-              "id": "5f149ae6-d781-460a-977d-c8c4171ad0fa-global",
-              "version": "^1.2.2",
-              "flavors": [
-                "standard"
-              ],
-              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
-              "optional": true,
-              "on_by_default": true,
-              "ignore_auto_referencing": [
-                "*"
-              ],
-              "input_mapping": [
-                {
-                  "dependency_input": "prefix",
-                  "version_input": "prefix",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "resource_group_name",
-                  "version_input": "existing_resource_group_name",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "use_existing_resource_group",
-                  "value": true,
                   "reference_version": true
                 },
                 {
@@ -622,7 +634,8 @@
               ]
             }
           ],
-          "dependency_version_2": true
+          "dependency_version_2": true,
+          "terraform_version": "1.10.5"
         }
       ]
     }
