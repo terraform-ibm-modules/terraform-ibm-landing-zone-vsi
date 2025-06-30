@@ -52,6 +52,29 @@ module "key_protect_all_inclusive" {
 }
 
 ##############################################################################
+# Observability
+##############################################################################
+
+module "logging" {
+  source            = "terraform-ibm-modules/cloud-logs/ibm"
+  version           = "1.5.0"
+  resource_group_id = module.resource_group.resource_group_id
+  region            = var.region
+  resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
+}
+
+module "monitoring" {
+  source            = "terraform-ibm-modules/cloud-monitoring/ibm"
+  version           = "1.2.14"
+  resource_group_id = module.resource_group.resource_group_id
+  region            = var.region
+  resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
+  instance_name     = "${var.prefix}-vsi-agent-monitoring"
+}
+
+##############################################################################
 # Create new SSH key
 ##############################################################################
 
@@ -202,6 +225,19 @@ module "slz_vsi" {
   secondary_subnets               = local.secondary_subnet_zone_list
   secondary_security_groups       = local.secondary_security_groups
   custom_vsi_volume_names         = local.custom_vsi_volume_names
+
+  # Enable logging agent
+  install_logging_agent        = true
+  logging_target_host          = module.logging.ingress_endpoint
+  logging_auth_mode            = "IAMAPIKey"
+  logging_api_key              = var.ibmcloud_api_key
+  logging_use_private_endpoint = false
+
+  # Enable monitoring agent
+  install_monitoring_agent      = true
+  monitoring_access_key         = module.monitoring.access_key
+  monitoring_collector_endpoint = "ingress.${var.region}.monitoring.cloud.ibm.com"
+
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [
     for subnet in local.secondary_subnet_zone_list :
