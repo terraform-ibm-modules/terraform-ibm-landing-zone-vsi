@@ -670,7 +670,7 @@ variable "logging_trusted_profile_id" {
 
 variable "logging_use_private_endpoint" {
   type        = bool
-  default     = false
+  default     = true
   description = "Set to true to use the private endpoint when sending logs to the IBM Cloud Logs instance."
 }
 
