@@ -32,7 +32,7 @@ locals {
     "mkdir -p /run/monitoring-agent",
     "curl -sL -o /run/monitoring-agent/monitoring-agent.sh https://ibm.biz/install-sysdig-agent",
     "chmod +x /run/monitoring-agent/monitoring-agent.sh",
-    "/run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} --collector ${var.monitoring_collector_endpoint} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""}"
+    "/run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} --collector ${var.monitoring_collector_endpoint != null ? var.monitoring_collector_endpoint : ""} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""}"
   ]
 
   # conditionally merge all 3 of the run cmd lists (user, logging, monitoring) based on boolean switches
