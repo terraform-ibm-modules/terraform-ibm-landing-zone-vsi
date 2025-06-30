@@ -24,7 +24,7 @@ locals {
     "${length(regexall("^.*deb$", local.package_extension)) > 0 ? "dpkg -i" : "rpm -ivh"} /run/logging-agent/${local.package_extension}",
     "curl -X GET -o /run/logging-agent/logs-agent-config.sh https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/post-config.sh",
     "chmod +x /run/logging-agent/logs-agent-config.sh",
-    "/run/logging-agent/logs-agent-config.sh -h ${var.logging_target_host} -p ${var.logging_target_port} -t ${var.logging_target_path} -a ${var.logging_auth_mode} ${var.logging_auth_mode == "IAMAPIKey" ? "-k" : "-d"} ${var.logging_auth_mode == "IAMAPIKey" ? var.logging_api_key : var.logging_trusted_profile_id} -i ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} --send-directly-to-icl"
+    "/run/logging-agent/logs-agent-config.sh -h ${var.logging_target_host != null ? var.logging_target_host : ""} -p ${var.logging_target_port} -t ${var.logging_target_path} -a ${var.logging_auth_mode} ${var.logging_auth_mode == "IAMAPIKey" ? "-k" : "-d"} ${var.logging_auth_mode == "IAMAPIKey" ? (var.logging_api_key != null ? var.logging_api_key : "") : (var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : "")} -i ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} --send-directly-to-icl"
   ]
 
   # list of commands that will be run to install the monitoring agent
@@ -32,7 +32,7 @@ locals {
     "mkdir -p /run/monitoring-agent",
     "curl -sL -o /run/monitoring-agent/monitoring-agent.sh https://ibm.biz/install-sysdig-agent",
     "chmod +x /run/monitoring-agent/monitoring-agent.sh",
-    "/run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key} --collector ${var.monitoring_collector_endpoint} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""}"
+    "/run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} --collector ${var.monitoring_collector_endpoint} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""}"
   ]
 
   # conditionally merge all 3 of the run cmd lists (user, logging, monitoring) based on boolean switches
