@@ -350,6 +350,55 @@
                 }
               ],
               "hidden": true
+            },
+            {
+              "key": "install_logging_agent"
+            },
+            {
+              "key": "logging_target_host"
+            },
+            {
+              "key": "logging_target_port"
+            },
+            {
+              "key": "logging_target_path"
+            },
+            {
+              "key": "logging_auth_mode",
+              "options": [
+                {
+                  "displayname": "IAM API Key",
+                  "value": "IAMAPIKey"
+                },
+                {
+                  "displayname": "VSI Trusted Profile",
+                  "value": "VSITrustedProfile"
+                }
+              ]
+            },
+            {
+              "key": "logging_api_key"
+            },
+            {
+              "key": "logging_trusted_profile_id"
+            },
+            {
+              "key": "logging_use_private_endpoint"
+            },
+            {
+              "key": "install_monitoring_agent"
+            },
+            {
+              "key": "monitoring_access_key"
+            },
+            {
+              "key": "monitoring_collector_endpoint"
+            },
+            {
+              "key": "monitoring_collector_port"
+            },
+            {
+              "key": "monitoring_tags"
             }
           ],
           "iam_permissions": [

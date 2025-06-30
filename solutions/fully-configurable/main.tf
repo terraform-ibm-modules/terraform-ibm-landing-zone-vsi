@@ -202,6 +202,7 @@ resource "ibm_is_ssh_key" "auto_generate_ssh_key" {
 ########################################################################################################################
 # Virtual Server Instance
 ########################################################################################################################
+
 module "vsi" {
   source                           = "../../"
   depends_on                       = [time_sleep.wait_for_authorization_policy[0]]
@@ -243,6 +244,19 @@ module "vsi" {
   placement_group_id               = var.placement_group_id
   primary_vni_additional_ip_count  = var.primary_virtual_network_interface_additional_ip_count
   custom_vsi_volume_names          = local.custom_vsi_volume_names
+  install_logging_agent            = var.install_logging_agent
+  logging_target_host              = var.logging_target_host
+  logging_target_port              = var.logging_target_port
+  logging_target_path              = var.logging_target_path
+  logging_auth_mode                = var.logging_auth_mode
+  logging_api_key                  = var.logging_api_key
+  logging_trusted_profile_id       = var.logging_trusted_profile_id
+  logging_use_private_endpoint     = var.logging_use_private_endpoint
+  install_monitoring_agent         = var.install_monitoring_agent
+  monitoring_access_key            = var.monitoring_access_key
+  monitoring_collector_endpoint    = var.monitoring_collector_endpoint
+  monitoring_collector_port        = var.monitoring_collector_port
+  monitoring_tags                  = var.monitoring_tags
 }
 
 ########################################################################################################################

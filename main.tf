@@ -266,7 +266,7 @@ resource "ibm_is_instance" "vsi" {
   resource_group  = var.resource_group_id
   vpc             = var.vpc_id
   zone            = each.value.zone
-  user_data       = var.user_data
+  user_data       = (!var.install_logging_agent && !var.install_monitoring_agent) ? var.user_data : local.user_data_yaml # see agents.tf local block
   keys            = var.ssh_key_ids
   placement_group = var.placement_group_id
   dedicated_host  = var.enable_dedicated_host ? var.dedicated_host_id : null
