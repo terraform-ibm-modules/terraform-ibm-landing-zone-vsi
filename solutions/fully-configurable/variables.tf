@@ -525,11 +525,11 @@ variable "install_logging_agent" {
 
 variable "logging_target_host" {
   type        = string
-  default     = ""
+  default     = null
   description = "Ingestion endpoint that corresponds to the IBM Cloud Logs instance the logging agent connects to."
 
   validation {
-    condition     = var.install_logging_agent ? var.logging_target_host != "" : true
+    condition     = var.install_logging_agent ? var.logging_target_host != null : true
     error_message = "If `install_agents` is true, a value for `logging_target_host` must be provided."
   }
 }
@@ -559,30 +559,30 @@ variable "logging_auth_mode" {
 
 variable "logging_api_key" {
   type        = string
-  default     = ""
+  default     = null
   sensitive   = true
   description = "API key used by the logging agent to authenticate with IBM Cloud, must be provided if `logging_auth_mode` is set to `IAMAPIKey`. For more information on creating an API key for the logging agent, see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-iam-ingestion-serviceid-api-key."
 
   validation {
-    condition     = var.install_logging_agent && var.logging_auth_mode == "IAMAPIKey" ? var.logging_api_key != "" : true
+    condition     = var.install_logging_agent && var.logging_auth_mode == "IAMAPIKey" ? var.logging_api_key != null : true
     error_message = "Value for `logging_api_key` must be provided when `logging_auth_mode` is set to `IAMAPIKey`."
   }
 }
 
 variable "logging_trusted_profile_id" {
   type        = string
-  default     = ""
+  default     = null
   description = "Trusted Profile used by the logging agent to access the IBM Cloud Logs instance, must be provided if `logging_auth_mode` is set to `VSITrustedProfile`."
 
   validation {
-    condition     = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" ? var.logging_trusted_profile_id != "" : true
+    condition     = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" ? var.logging_trusted_profile_id != null : true
     error_message = "Value for `logging_trusted_profile_id` must be provided when `logging_auth_mode` is set to `VSITrustedProfile`."
   }
 }
 
 variable "logging_use_private_endpoint" {
   type        = bool
-  default     = false
+  default     = true
   description = "Set to true to use the private endpoint when sending logs to the IBM Cloud Logs instance."
 }
 
@@ -598,23 +598,23 @@ variable "install_monitoring_agent" {
 
 variable "monitoring_access_key" {
   type        = string
-  default     = ""
+  default     = null
   sensitive   = true
   description = "Access key used by the monitoring agent to authenticate, required when `install_agents` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_access_key != "" : true
+    condition     = var.install_monitoring_agent ? var.monitoring_access_key != null : true
     error_message = "Value for `monitoring_access_key` must be provided when `install_agents` is true."
   }
 }
 
 variable "monitoring_collector_endpoint" {
   type        = string
-  default     = ""
+  default     = null
   description = "Endpoint the monitoring agent sends metrics to, required when `install_agents` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != "" : true
+    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null : true
     error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_agents` is true."
   }
 }
