@@ -37,7 +37,7 @@ variable "access_tags" {
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
   type        = string
-  default     = "r006-88da7a09-2f59-4324-ac85-e3165f6323f5"
+  default     = "r006-54d5aadd-1907-48ed-8717-22df4fc662b1"
 }
 
 variable "machine_type" {
