@@ -164,6 +164,7 @@ resource "ibm_is_subnet" "secondary_subnet" {
   name            = each.key
   vpc             = module.slz_vpc.vpc_id
   zone            = each.value.zone
+  resource_group  = module.resource_group.resource_group_id
 }
 
 #############################################################################
@@ -180,8 +181,9 @@ locals {
 }
 
 resource "ibm_is_security_group" "secondary_security_group" {
-  name = "${var.prefix}-sg"
-  vpc  = module.slz_vpc.vpc_id
+  name           = "${var.prefix}-sg"
+  vpc            = module.slz_vpc.vpc_id
+  resource_group = module.resource_group.resource_group_id
 }
 
 #############################################################################
@@ -197,12 +199,6 @@ locals {
       cidr = subnet.ipv4_cidr_block
     }
   ]
-  custom_vsi_volume_names = {
-    for idx, subnet in module.slz_vpc.subnet_zone_list : subnet.name =>
-    {
-      "${subnet.name}-vsi-name-1" = ["${subnet.name}-vol-1a"]
-    }
-  }
 }
 
 #############################################################################
