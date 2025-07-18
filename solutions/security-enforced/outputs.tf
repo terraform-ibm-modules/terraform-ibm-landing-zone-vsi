@@ -14,7 +14,7 @@ output "vsi_security_group" {
 
 output "vsi_data" {
   description = "A list of VSI with name, id, zone, and primary ipv4 address."
-  value       = module.vsi.list
+  value       = module.vsi.vsi_data
 }
 
 output "fip_list" {
