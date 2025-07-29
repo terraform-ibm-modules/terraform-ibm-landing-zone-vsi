@@ -34,6 +34,11 @@ output "list" {
   ]
 }
 
+output "full_vsi_detail_map" {
+  description = "A list of all deployed VSI with their full detail map, organized by VSI name"
+  value       = { for vsi_key, virtual_server in ibm_is_instance.vsi : virtual_server.name => virtual_server }
+}
+
 output "fip_list" {
   description = "A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached."
   value = [
