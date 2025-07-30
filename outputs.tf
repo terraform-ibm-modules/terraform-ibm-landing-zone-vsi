@@ -37,6 +37,7 @@ output "list" {
 output "vsi_full_detail_map" {
   description = "A list of all deployed VSI with their full detail map, organized by VSI name"
   value       = { for vsi_key, virtual_server in ibm_is_instance.vsi : virtual_server.name => virtual_server }
+  sensitive   = true
 }
 
 output "fip_list" {
