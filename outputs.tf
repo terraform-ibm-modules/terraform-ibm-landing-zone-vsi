@@ -20,16 +20,18 @@ output "list" {
   value = [
     for vsi_key, virtual_server in ibm_is_instance.vsi :
     {
-      name                   = virtual_server.name
-      id                     = virtual_server.id
-      zone                   = virtual_server.zone
-      ipv4_address           = virtual_server.primary_network_interface[0].primary_ipv4_address
-      secondary_ipv4_address = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0].primary_ipv4_address
-      floating_ip            = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
-      floating_ip_id         = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].id : null
-      floating_ip_crn        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].crn : null
-      vpc_id                 = var.vpc_id
-      snapshot_id            = one(virtual_server.boot_volume[*].snapshot)
+      name                               = virtual_server.name
+      id                                 = virtual_server.id
+      zone                               = virtual_server.zone
+      ipv4_address                       = virtual_server.primary_network_interface[0].primary_ip[0].address
+      primary_network_interface_detail   = virtual_server.primary_network_interface[0]
+      secondary_ipv4_address             = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0].primary_ip[0].address
+      secondary_network_interface_detail = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0]
+      floating_ip                        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
+      floating_ip_id                     = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].id : null
+      floating_ip_crn                    = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].crn : null
+      vpc_id                             = var.vpc_id
+      snapshot_id                        = one(virtual_server.boot_volume[*].snapshot)
     }
   ]
 }
@@ -39,15 +41,17 @@ output "fip_list" {
   value = [
     for vsi_key, virtual_server in ibm_is_instance.vsi :
     {
-      name                   = virtual_server.name
-      id                     = virtual_server.id
-      zone                   = virtual_server.zone
-      ipv4_address           = virtual_server.primary_network_interface[0].primary_ipv4_address
-      secondary_ipv4_address = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0].primary_ipv4_address
-      floating_ip            = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
-      floating_ip_id         = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].id : null
-      floating_ip_crn        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].crn : null
-      vpc_id                 = var.vpc_id
+      name                               = virtual_server.name
+      id                                 = virtual_server.id
+      zone                               = virtual_server.zone
+      ipv4_address                       = virtual_server.primary_network_interface[0].primary_ip[0].address
+      primary_network_interface_detail   = virtual_server.primary_network_interface[0]
+      secondary_ipv4_address             = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0].primary_ip[0].address
+      secondary_network_interface_detail = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0]
+      floating_ip                        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
+      floating_ip_id                     = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].id : null
+      floating_ip_crn                    = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].crn : null
+      vpc_id                             = var.vpc_id
     } if var.enable_floating_ip == true
   ]
 }
