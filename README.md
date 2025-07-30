@@ -19,6 +19,7 @@ This module creates Virtual Server Instances (VSI) across multiple subnets with 
     * [Basic example using a Snapshot Consistency Group for volumes](./examples/snapshot)
     * [Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](./examples/complete)
     * [End to end basic example](./examples/basic)
+    * [Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.](./examples/multi-profile-one-vpc)
     * [Financial Services Cloud profile example](./examples/fscloud)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->

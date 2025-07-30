@@ -54,8 +54,9 @@ locals {
     for count in range(var.primary_vni_additional_ip_count) : [
       for vsi_key, vsi_value in local.vsi_map :
       {
-        name      = "${vsi_key}-${count}"
-        subnet_id = vsi_value.subnet_id
+        name          = "${vsi_key}-${count}"
+        resource_name = "${vsi_value.vsi_name}-${count}-ip"
+        subnet_id     = vsi_value.subnet_id
       }
     ]
   ])
@@ -239,14 +240,14 @@ resource "ibm_iam_authorization_policy" "block_storage_policy" {
 
 resource "ibm_is_subnet_reserved_ip" "vsi_ip" {
   for_each    = { for vsi_key, vsi_value in local.vsi_map : vsi_key => vsi_value if var.manage_reserved_ips }
-  name        = "${each.value.name}-ip"
+  name        = "${each.value.vsi_name}-ip"
   subnet      = each.value.subnet_id
   auto_delete = false
 }
 
 resource "ibm_is_subnet_reserved_ip" "secondary_vsi_ip" {
   for_each    = { for key, value in local.secondary_reserved_ips_map : key => value if var.primary_vni_additional_ip_count > 0 && !var.use_legacy_network_interface }
-  name        = "${var.prefix}-${substr(md5(each.value.name), -4, 4)}-ip"
+  name        = each.value.resource_name
   subnet      = each.value.subnet_id
   auto_delete = false
 }
@@ -388,7 +389,7 @@ resource "ibm_is_floating_ip" "secondary_fip" {
 
 resource "ibm_is_floating_ip" "vni_secondary_fip" {
   for_each       = local.secondary_fip_map
-  name           = each.key
+  name           = "${each.value.vni_name}-fip"
   target         = each.value.vni_id
   tags           = var.tags
   access_tags    = var.access_tags

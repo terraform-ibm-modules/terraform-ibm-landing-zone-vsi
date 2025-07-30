@@ -22,6 +22,9 @@ const basicExampleTerraformDir = "examples/basic"
 const completeExampleTerraformDir = "examples/complete"
 const fsCloudExampleTerraformDir = "examples/fscloud"
 
+// calls vsi module twice on same subnets to check for duplicate names
+const multiModuleOneVpcTerraformDir = "examples/multi-profile-one-vpc"
+
 const snapshotExampleTerraformDir = "examples/snapshot"
 const fullyConfigFlavorDir = "solutions/fully-configurable"
 
@@ -398,4 +401,26 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (prereq resources)")
 	}
+}
+
+// This test will include TWO calls to the VSI module on the same VPC and subnets.
+// To plug a test gap where we found that the module prefix was not used to name some resources
+// and if deployed to same subnets would have duplicate names.
+func TestRunMultiProfileExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  multiModuleOneVpcTerraformDir,
+		Prefix:        "slz-vsi-mp",
+		ResourceGroup: resourceGroup,
+		Region:        region,
+		TerraformVars: map[string]interface{}{
+			"access_tags": permanentResources["accessTags"],
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
