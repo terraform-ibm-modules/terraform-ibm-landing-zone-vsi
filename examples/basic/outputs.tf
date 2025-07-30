@@ -4,6 +4,6 @@ output "slz_vpc" {
 }
 
 output "slz_vsi" {
-  value       = module.slz_vsi
+  value       = module.slz_vsi.list
   description = "VSI module values"
 }

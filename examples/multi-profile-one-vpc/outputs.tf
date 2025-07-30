@@ -4,12 +4,12 @@ output "slz_vpc" {
 }
 
 output "slz_vsi_cx" {
-  value       = module.slz_vsi_cx
+  value       = module.slz_vsi_cx.list
   description = "VSI cx profile module values"
 }
 
 output "slz_vsi_bx" {
-  value       = module.slz_vsi_bx
+  value       = module.slz_vsi_bx.list
   description = "VSI bx profile module values"
 }
 

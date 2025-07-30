@@ -259,6 +259,7 @@ You need the following permissions to run this module.
 | <a name="output_lb_hostnames"></a> [lb\_hostnames](#output\_lb\_hostnames) | Hostnames for the Load Balancer created |
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
+| <a name="output_vsi_full_detail_map"></a> [vsi\_full\_detail\_map](#output\_vsi\_full\_detail\_map) | A list of all deployed VSI with their full detail map, organized by VSI name |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
