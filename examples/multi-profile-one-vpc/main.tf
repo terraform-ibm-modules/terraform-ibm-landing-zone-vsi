@@ -38,40 +38,59 @@ module "key_protect_all_inclusive" {
           force_delete = true
         }
       ]
-    },
-    {
-      key_ring_name = "slz-vsidh"
-      keys = [
-        {
-          key_name     = "${var.prefix}-vsidh"
-          force_delete = true
-        }
-      ]
     }
   ]
 }
 
-##############################################################################
-# Observability
-##############################################################################
-
-module "logging" {
-  source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.6.0"
-  resource_group_id = module.resource_group.resource_group_id
-  region            = var.region
-  resource_tags     = var.resource_tags
-  access_tags       = var.access_tags
+module "existing_boot_volume_kms_key_crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.2.0"
+  crn     = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
 }
 
-module "monitoring" {
-  source            = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version           = "1.6.0"
-  resource_group_id = module.resource_group.resource_group_id
-  region            = var.region
-  resource_tags     = var.resource_tags
-  access_tags       = var.access_tags
-  instance_name     = "${var.prefix}-vsi-agent-monitoring"
+locals {
+  existing_kms_guid = module.existing_boot_volume_kms_key_crn_parser.service_instance
+  kms_service_name  = module.existing_boot_volume_kms_key_crn_parser.service_name
+  kms_account_id    = module.existing_boot_volume_kms_key_crn_parser.account_id
+  kms_key_id        = module.existing_boot_volume_kms_key_crn_parser.resource
+}
+
+# NOTE: The below auth policy cannot be scoped to a source resource group due to
+# the fact that the Block storage volume does not yet exist in the resource group.
+resource "ibm_iam_authorization_policy" "block_storage_policy" {
+  source_service_name = "server-protect"
+  roles               = ["Reader"]
+  description         = "Allow block storage volumes to read the ${local.kms_service_name} key ${local.kms_key_id} from the instance ${local.existing_kms_guid}"
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.kms_service_name
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.existing_kms_guid
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 ##############################################################################
@@ -110,17 +129,6 @@ module "slz_vpc" {
 }
 
 #############################################################################
-# Placement group
-#############################################################################
-
-resource "ibm_is_placement_group" "placement_group" {
-  name           = "${var.prefix}-host-spread"
-  resource_group = module.resource_group.resource_group_id
-  strategy       = "host_spread"
-  tags           = var.resource_tags
-}
-
-#############################################################################
 # Provision Secondary Subnets
 #############################################################################
 
@@ -156,6 +164,7 @@ resource "ibm_is_subnet" "secondary_subnet" {
   name            = each.key
   vpc             = module.slz_vpc.vpc_id
   zone            = each.value.zone
+  resource_group  = module.resource_group.resource_group_id
 }
 
 #############################################################################
@@ -172,8 +181,9 @@ locals {
 }
 
 resource "ibm_is_security_group" "secondary_security_group" {
-  name = "${var.prefix}-sg"
-  vpc  = module.slz_vpc.vpc_id
+  name           = "${var.prefix}-sg"
+  vpc            = module.slz_vpc.vpc_id
+  resource_group = module.resource_group.resource_group_id
 }
 
 #############################################################################
@@ -189,19 +199,13 @@ locals {
       cidr = subnet.ipv4_cidr_block
     }
   ]
-  custom_vsi_volume_names = {
-    for idx, subnet in module.slz_vpc.subnet_zone_list : subnet.name =>
-    {
-      "${subnet.name}-vsi-name-1" = ["${subnet.name}-vol-1a"]
-    }
-  }
 }
 
 #############################################################################
-# VSI with Placement Group
+# First VSI on cx2
 #############################################################################
 
-module "slz_vsi" {
+module "slz_vsi_cx" {
   depends_on                      = [module.slz_vpc]
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
@@ -211,41 +215,32 @@ module "slz_vsi" {
   access_tags                     = var.access_tags
   subnets                         = module.slz_vpc.subnet_zone_list
   vpc_id                          = module.slz_vpc.vpc_id
-  prefix                          = var.prefix
-  placement_group_id              = ibm_is_placement_group.placement_group.id
+  prefix                          = "${var.prefix}-cx"
   machine_type                    = "cx2-2x4"
   user_data                       = null
   boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  skip_iam_authorization_policy   = true # is done globally above
   use_static_boot_volume_name     = true
   boot_volume_size                = 150
   kms_encryption_enabled          = true
   vsi_per_subnet                  = 1
   primary_vni_additional_ip_count = 2
-  ssh_key_ids                     = [local.ssh_key_id]
-  secondary_subnets               = local.secondary_subnet_zone_list
-  secondary_security_groups       = local.secondary_security_groups
-  custom_vsi_volume_names         = local.custom_vsi_volume_names
+  manage_reserved_ips             = true
 
-  # Enable logging agent
-  install_logging_agent        = true
-  logging_target_host          = module.logging.ingress_endpoint
-  logging_auth_mode            = "IAMAPIKey"
-  logging_api_key              = var.ibmcloud_api_key
-  logging_use_private_endpoint = false
-
-  # Enable monitoring agent
-  install_monitoring_agent      = true
-  monitoring_access_key         = module.monitoring.access_key
-  monitoring_collector_endpoint = "ingress.${var.region}.monitoring.cloud.ibm.com"
+  ssh_key_ids               = [local.ssh_key_id]
+  secondary_subnets         = local.secondary_subnet_zone_list
+  secondary_security_groups = local.secondary_security_groups
 
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [
     for subnet in local.secondary_subnet_zone_list :
     subnet.name
   ]
+
   # Create a floating IP for each virtual server created
   enable_floating_ip               = true
-  secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
+  secondary_use_vsi_security_group = true
+
   # Add 1 additional data volume to each VSI
   block_storage_volumes = [
     {
@@ -254,7 +249,7 @@ module "slz_vsi" {
   }]
   load_balancers = [
     {
-      name                    = "${var.prefix}-lb"
+      name                    = "${var.prefix}-cx-lb"
       type                    = "public"
       listener_port           = 9080
       listener_protocol       = "http"
@@ -269,7 +264,7 @@ module "slz_vsi" {
       pool_member_port        = 8080
     },
     {
-      name              = "${var.prefix}-nlb"
+      name              = "${var.prefix}-cx-nlb"
       type              = "public"
       profile           = "network-fixed"
       listener_port     = 3128
@@ -286,62 +281,80 @@ module "slz_vsi" {
 }
 
 #############################################################################
-# Dedicated Host
+# Second VSI with Placement Group on bx2
 #############################################################################
 
-module "dedicated_host" {
-  count   = var.enable_dedicated_host ? 1 : 0
-  source  = "terraform-ibm-modules/dedicated-host/ibm"
-  version = "2.0.0"
-  dedicated_hosts = [
-    {
-      host_group_name     = "${var.prefix}-dhgroup"
-      existing_host_group = false
-      resource_group_id   = module.resource_group.resource_group_id
-      class               = "bx2"
-      family              = "balanced"
-      zone                = "${var.region}-1"
-      dedicated_host = [
-        {
-          name    = "${var.prefix}-dhhost"
-          profile = "bx2-host-152x608"
-        }
-      ]
-    }
-  ]
-}
-
-#############################################################################
-# VSI with Dedicated Host
-#############################################################################
-
-module "slz_vsi_dh" {
-  count                           = var.enable_dedicated_host ? 1 : 0
-  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
+module "slz_vsi_bx" {
+  depends_on                      = [module.slz_vpc]
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = var.image_id
   create_security_group           = false
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
-  subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
+  subnets                         = module.slz_vpc.subnet_zone_list
   vpc_id                          = module.slz_vpc.vpc_id
-  prefix                          = "${var.prefix}-dh"
+  prefix                          = "${var.prefix}-bx"
   machine_type                    = "bx2-2x8"
   user_data                       = null
-  boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsidh.${var.prefix}-vsidh"].crn
+  boot_volume_encryption_key      = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
+  skip_iam_authorization_policy   = true # is done globally above
+  use_static_boot_volume_name     = true
+  boot_volume_size                = 150
   kms_encryption_enabled          = true
   vsi_per_subnet                  = 1
   primary_vni_additional_ip_count = 2
-  ssh_key_ids                     = [local.ssh_key_id]
+  manage_reserved_ips             = true
+
+  ssh_key_ids               = [local.ssh_key_id]
+  secondary_subnets         = local.secondary_subnet_zone_list
+  secondary_security_groups = local.secondary_security_groups
+
+  # Create a floating IPs for the additional VNI
+  secondary_floating_ips = [
+    for subnet in local.secondary_subnet_zone_list :
+    subnet.name
+  ]
 
   # Create a floating IP for each virtual server created
-  enable_floating_ip               = false
-  secondary_use_vsi_security_group = var.secondary_use_vsi_security_group
+  enable_floating_ip               = true
+  secondary_use_vsi_security_group = true
+
   # Add 1 additional data volume to each VSI
   block_storage_volumes = [
     {
-      name    = "${var.prefix}-dh"
+      name    = var.prefix
       profile = "10iops-tier"
   }]
+  load_balancers = [
+    {
+      name                    = "${var.prefix}-bx-lb"
+      type                    = "public"
+      listener_port           = 9080
+      listener_protocol       = "http"
+      connection_limit        = 100
+      idle_connection_timeout = 50
+      algorithm               = "round_robin"
+      protocol                = "http"
+      health_delay            = 60
+      health_retries          = 5
+      health_timeout          = 30
+      health_type             = "http"
+      pool_member_port        = 8080
+    },
+    {
+      name              = "${var.prefix}-bx-nlb"
+      type              = "public"
+      profile           = "network-fixed"
+      listener_port     = 3128
+      listener_protocol = "tcp"
+      algorithm         = "round_robin"
+      protocol          = "tcp"
+      health_delay      = 60
+      health_retries    = 5
+      health_timeout    = 30
+      health_type       = "tcp"
+      pool_member_port  = 3120
+    }
+  ]
 }
