@@ -528,11 +528,6 @@ variable "secondary_security_groups" {
     error_message = "Security group IDs must be unique."
     condition     = length(var.secondary_security_groups) == length(distinct(var.secondary_security_groups))
   }
-
-  validation {
-    error_message = "No more than 5 security groups can be added to a VSI deployment."
-    condition     = length(var.secondary_security_groups) <= 5
-  }
 }
 
 variable "secondary_floating_ips" {
