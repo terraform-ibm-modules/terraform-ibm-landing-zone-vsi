@@ -275,7 +275,8 @@ resource "ibm_is_instance" "vsi" {
   access_tags     = var.access_tags
   lifecycle {
     ignore_changes = [
-      image
+      image,
+      user_data
     ]
   }
 
