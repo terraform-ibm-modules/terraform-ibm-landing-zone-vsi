@@ -161,13 +161,13 @@ resource "ibm_is_virtual_network_interface" "secondary_vni" {
     (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
     [
       for group in var.secondary_security_groups :
-      group.security_group_id if group.interface_name == each.value.name
+      group.security_group_id if group.interface_name == each.value.subnet_name
     ]
     ])) == 0 ? [data.ibm_is_vpc.vpc.default_security_group] : flatten([
     (var.create_security_group && var.secondary_use_vsi_security_group ? [ibm_is_security_group.security_group[var.security_group.name].id] : []),
     [
       for group in var.secondary_security_groups :
-      group.security_group_id if group.interface_name == each.value.name
+      group.security_group_id if group.interface_name == each.value.subnet_name
     ]
   ])
   auto_delete               = false
