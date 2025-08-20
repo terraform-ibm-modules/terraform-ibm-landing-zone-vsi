@@ -27,6 +27,7 @@ const multiModuleOneVpcTerraformDir = "examples/multi-profile-one-vpc"
 
 const snapshotExampleTerraformDir = "examples/snapshot"
 const fullyConfigFlavorDir = "solutions/fully-configurable"
+const quickStartConfigFlavorDir = "solutions/quickstart"
 
 const resourceGroup = "geretain-test-resources"
 const region = "us-south"
@@ -145,7 +146,7 @@ func TestRunExistingSnapshotGroupExample(t *testing.T) {
 		},
 	})
 
-	// Add a post-apply verfication
+	// Add a post-apply verification
 	options.PostApplyHook = verifyVolumeSnapshots
 
 	output, err := options.RunTestConsistency()
@@ -166,7 +167,7 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 
 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
-	// get ouput of last apply
+	// get output of last apply
 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
 
 	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
@@ -423,4 +424,55 @@ func TestRunMultiProfileExample(t *testing.T) {
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestQuickstartSchematics(t *testing.T) {
+	t.Parallel()
+
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+
+	if existErr != nil {
+		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
+	} else {
+		// ------------------------------------------------------------------------------------
+		// Deploy DA
+		// ------------------------------------------------------------------------------------
+		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+			Testing: t,
+			Region:  region,
+			Prefix:  prefix,
+			TarIncludePatterns: []string{
+				"*.tf",
+				"modules/*/*.tf",
+				quickStartConfigFlavorDir + "/*.tf",
+			},
+			TemplateFolder:         fullyConfigFlavorDir,
+			Tags:                   []string{"vsi-qs-da"},
+			DeleteWorkspaceOnFail:  false,
+			WaitJobCompleteMinutes: 60,
+		})
+
+		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+			{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+			{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
+			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
+		}
+		err := options.RunSchematicTest()
+		assert.Nil(t, err, "This should not have errored")
+	}
+
+	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
+	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
+	// Destroy the temporary existing resources if required
+	if t.Failed() && strings.ToLower(envVal) == "true" {
+		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
+	} else {
+		logger.Log(t, "START: Destroy (prereq resources)")
+		terraform.Destroy(t, existingTerraformOptions)
+		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		logger.Log(t, "END: Destroy (prereq resources)")
+	}
 }
