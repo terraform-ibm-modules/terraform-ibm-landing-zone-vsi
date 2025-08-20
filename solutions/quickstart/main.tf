@@ -9,9 +9,8 @@ module "resource_group" {
 
 locals {
   ssh_key_id = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
-  prefix       = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+  prefix     = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
 }
-
 
 ##############################################################################
 # Create new SSH key
@@ -25,7 +24,7 @@ resource "tls_private_key" "tls_key" {
 
 resource "ibm_is_ssh_key" "ssh_key" {
   count      = var.ssh_key != null ? 0 : 1
-  name       = "${var.prefix}-ssh-key"
+  name       = "${local.prefix}-ssh-key"
   public_key = resource.tls_private_key.tls_key[0].public_key_openssh
 }
 
@@ -43,7 +42,7 @@ module "vpc" {
   version           = "8.0.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
-  prefix            = var.prefix
+  prefix            = local.prefix
   tags              = var.resource_tags
   name              = var.vpc_name
 }
@@ -53,20 +52,20 @@ module "vpc" {
 ########################################################################################################################
 
 module "vsi" {
-  source                     = "../../"
-  resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
-  create_security_group      = var.create_security_group
-  security_group             = var.security_group
-  tags                       = var.resource_tags
-  access_tags                = var.access_tags
-  subnets                    = module.vpc.subnet_zone_list
-  vpc_id                     = module.vpc.vpc_id
-  prefix                     = var.prefix
-  placement_group_id         = var.placement_group_id
-  machine_type               = var.machine_type
-  user_data                  = var.user_data
-  vsi_per_subnet             = var.vsi_per_subnet
-  ssh_key_ids                = [local.ssh_key_id]
-  enable_floating_ip               = var.enable_floating_ip
+  source                = "../../"
+  resource_group_id     = module.resource_group.resource_group_id
+  image_id              = var.image_id
+  create_security_group = var.create_security_group
+  security_group        = var.security_group
+  tags                  = var.resource_tags
+  access_tags           = var.access_tags
+  subnets               = module.vpc.subnet_zone_list
+  vpc_id                = module.vpc.vpc_id
+  prefix                = local.prefix
+  placement_group_id    = var.placement_group_id
+  machine_type          = var.machine_type
+  user_data             = var.user_data
+  vsi_per_subnet        = var.vsi_per_subnet
+  ssh_key_ids           = [local.ssh_key_id]
+  enable_floating_ip    = var.enable_floating_ip
 }

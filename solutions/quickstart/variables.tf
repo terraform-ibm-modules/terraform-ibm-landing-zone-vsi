@@ -34,7 +34,7 @@ variable "prefix" {
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
-  default     = "public"
+  default     = "private"
   nullable    = false
 
   validation {
@@ -76,26 +76,6 @@ variable "user_data" {
   type        = string
   default     = null
 }
-
-variable "manage_reserved_ips" {
-  description = "Set to `true` if you want this terraform to manage the reserved IP addresses that are assigned to Virtual server instance. If this option is enabled, when any Virtual server instance is recreated it should retain its original IP."
-  type        = bool
-  default     = false
-}
-
-variable "primary_virtual_network_interface_additional_ip_count" {
-  description = "The number of secondary reversed IPs to attach to a Virtual Network Interface (VNI). Additional IPs are created only if `manage_reserved_ips` is set to true."
-  type        = number
-  nullable    = false
-  default     = 0
-}
-
-variable "use_static_boot_volume_name" {
-  description = "Sets the boot volume name for each Virtual server instance to a static name in the format `{hostname}-boot`, instead of a random name. Set this to `true` to have a consistent boot volume name even when Virtual server instance is recreated."
-  type        = bool
-  default     = false
-}
-
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created."
   type        = bool
@@ -140,87 +120,6 @@ variable "security_group" {
   })
   default = null
 }
-
-variable "block_storage_volumes" {
-  description = "The list describing the block storage volumes that will be attached to the Virtual server instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-block-vol)."
-  type = list(
-    object({
-      name              = string
-      profile           = string
-      capacity          = optional(number)
-      iops              = optional(number)
-      encryption_key    = optional(string)
-      resource_group_id = optional(string)
-      snapshot_id       = optional(string) # set if you would like to base volume on a snapshot
-      tags              = optional(list(string), [])
-    })
-  )
-  default = []
-}
-
-variable "load_balancers" {
-  description = "The load balancers to add to Virtual server instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-load-balancers)."
-  type = list(
-    object({
-      name                       = string
-      type                       = string
-      listener_port              = optional(number)
-      listener_port_max          = optional(number)
-      listener_port_min          = optional(number)
-      listener_protocol          = string
-      connection_limit           = optional(number)
-      idle_connection_timeout    = optional(number)
-      algorithm                  = string
-      protocol                   = string
-      health_delay               = number
-      health_retries             = number
-      health_timeout             = number
-      health_type                = string
-      pool_member_port           = string
-      profile                    = optional(string)
-      accept_proxy_protocol      = optional(bool)
-      subnet_id_to_provision_nlb = optional(string) # Required for Network Load Balancer. If no value is provided, the first one from the VPC subnet list will be selected.
-      dns = optional(
-        object({
-          instance_crn = string
-          zone_id      = string
-        })
-      )
-      security_group = optional(
-        object({
-          name = string
-          rules = list(
-            object({
-              name      = string
-              direction = string
-              source    = string
-              tcp = optional(
-                object({
-                  port_max = number
-                  port_min = number
-                })
-              )
-              udp = optional(
-                object({
-                  port_max = number
-                  port_min = number
-                })
-              )
-              icmp = optional(
-                object({
-                  type = number
-                  code = number
-                })
-              )
-            })
-          )
-        })
-      )
-    })
-  )
-  default = []
-}
-
 variable "ssh_key" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
