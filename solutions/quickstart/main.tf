@@ -42,7 +42,7 @@ module "vpc" {
   version           = "8.0.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
-  prefix            = local.prefix
+  prefix            = "${local.prefix}${var.vpc_name}"
   tags              = var.resource_tags
   name              = var.vpc_name
 }
@@ -61,7 +61,7 @@ module "vsi" {
   access_tags           = var.access_tags
   subnets               = module.vpc.subnet_zone_list
   vpc_id                = module.vpc.vpc_id
-  prefix                = local.prefix
+  prefix                = "${local.prefix}${var.vsi_name}"
   placement_group_id    = var.placement_group_id
   machine_type          = var.machine_type
   user_data             = var.user_data

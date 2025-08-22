@@ -446,7 +446,7 @@ func TestQuickstartSchematics(t *testing.T) {
 				"modules/*/*.tf",
 				quickStartConfigFlavorDir + "/*.tf",
 			},
-			TemplateFolder:         fullyConfigFlavorDir,
+			TemplateFolder:         quickStartConfigFlavorDir,
 			Tags:                   []string{"vsi-qs-da"},
 			DeleteWorkspaceOnFail:  false,
 			WaitJobCompleteMinutes: 60,

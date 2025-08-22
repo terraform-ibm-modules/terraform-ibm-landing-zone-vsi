@@ -72,7 +72,7 @@ variable "machine_type" {
 }
 
 variable "user_data" {
-  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recongnized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
+  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recognized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
   type        = string
   default     = null
 }
@@ -130,6 +130,12 @@ variable "region" {
   description = "The region to which to deploy the VPC"
   type        = string
   default     = "us-south"
+}
+
+variable "vsi_name" {
+  description = "The name of the Virtual server instance."
+  type        = string
+  default     = "vsi"
 }
 
 variable "vpc_name" {
