@@ -8,6 +8,12 @@ variable "ibmcloud_api_key" {
   sensitive   = true
 }
 
+variable "region" {
+  description = "The region to which to deploy the VPC"
+  type        = string
+  default     = "us-south"
+}
+
 variable "existing_resource_group_name" {
   type        = string
   description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
@@ -24,13 +30,17 @@ variable "prefix" {
     ])
     error_message = "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--')."
   }
-
   validation {
     condition     = var.prefix == null || var.prefix == "" ? true : length(var.prefix) <= 16
     error_message = "Prefix must not exceed 16 characters."
   }
 }
 
+variable "vpc_name" {
+  type        = string
+  description = "Name for VPC"
+  default     = "qs-vpc"
+}
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
@@ -59,6 +69,12 @@ variable "access_tags" {
 # Virtual server instance Variables
 ##############################################################################
 
+variable "vsi_name" {
+  description = "The name of the Virtual server instance."
+  type        = string
+  default     = "vsi"
+}
+
 variable "image_id" {
   description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
   type        = string
@@ -86,6 +102,12 @@ variable "placement_group_id" {
   description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host."
   type        = string
   default     = null
+}
+
+variable "create_security_group" {
+  description = "Create security group for VSI"
+  type        = string
+  default     = false
 }
 
 variable "security_group" {
@@ -124,34 +146,4 @@ variable "ssh_key" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
   default     = null
-}
-
-variable "region" {
-  description = "The region to which to deploy the VPC"
-  type        = string
-  default     = "us-south"
-}
-
-variable "vsi_name" {
-  description = "The name of the Virtual server instance."
-  type        = string
-  default     = "vsi"
-}
-
-variable "vpc_name" {
-  type        = string
-  description = "Name for VPC"
-  default     = "qs-vpc"
-}
-
-variable "create_security_group" {
-  description = "Create security group for VSI"
-  type        = string
-  default     = false
-}
-
-variable "vsi_per_subnet" {
-  description = "Number of VSI instances for each subnet"
-  type        = number
-  default     = 1
 }

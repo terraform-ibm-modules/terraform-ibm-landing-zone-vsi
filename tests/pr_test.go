@@ -365,7 +365,6 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 			Prefix:  prefix,
 			TarIncludePatterns: []string{
 				"*.tf",
-				"modules/*/*.tf",
 				fullyConfigFlavorDir + "/*.tf",
 			},
 			TemplateFolder:         fullyConfigFlavorDir,
@@ -443,7 +442,6 @@ func TestQuickstartSchematics(t *testing.T) {
 			Prefix:  prefix,
 			TarIncludePatterns: []string{
 				"*.tf",
-				"modules/*/*.tf",
 				quickStartConfigFlavorDir + "/*.tf",
 			},
 			TemplateFolder:         quickStartConfigFlavorDir,

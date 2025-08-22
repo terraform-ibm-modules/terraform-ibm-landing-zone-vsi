@@ -65,7 +65,7 @@ module "vsi" {
   placement_group_id    = var.placement_group_id
   machine_type          = var.machine_type
   user_data             = var.user_data
-  vsi_per_subnet        = var.vsi_per_subnet
+  vsi_per_subnet        = 1
   ssh_key_ids           = [local.ssh_key_id]
   enable_floating_ip    = var.enable_floating_ip
 }
