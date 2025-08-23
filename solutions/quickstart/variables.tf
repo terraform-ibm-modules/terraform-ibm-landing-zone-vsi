@@ -78,6 +78,7 @@ variable "vsi_name" {
 variable "image_id" {
   description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
   type        = string
+  default     = "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962"
   nullable    = false
 }
 
@@ -105,9 +106,9 @@ variable "placement_group_id" {
 }
 
 variable "create_security_group" {
-  description = "Create security group for VSI"
-  type        = string
-  default     = false
+  description = "Create security group for VSI. If this is passed as false, the default will be used"
+  type        = bool
+  default     = true
 }
 
 variable "security_group" {
