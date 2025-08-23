@@ -430,7 +430,7 @@ func TestQuickstartSchematics(t *testing.T) {
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
-		Region:  region,
+		Region:  "us-south", // hardcode due to image requirement
 		Prefix:  "vsi-qs",
 		TarIncludePatterns: []string{
 			"*.tf",
@@ -447,7 +447,7 @@ func TestQuickstartSchematics(t *testing.T) {
 		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
 		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "image_id", Value: "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962", DataType: "string"},
+		{Name: "image_id", Value: "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962", DataType: "string"}, // for us-south region
 	}
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
