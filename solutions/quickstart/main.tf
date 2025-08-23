@@ -8,33 +8,29 @@ module "resource_group" {
 }
 
 locals {
-  ssh_keys = concat(var.existing_ssh_key_ids, length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [], var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : [])
-  prefix   = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+  ssh_key_id = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
+  prefix     = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
 }
 
 ##############################################################################
 # Create new SSH key
 ##############################################################################
 
-resource "ibm_is_ssh_key" "ssh_key" {
-  for_each = { for idx, ssh in var.ssh_public_keys :
-  idx => ssh }
-  name           = "${local.prefix}${var.vsi_name}-ssh-key-${each.key}"
-  public_key     = replace(each.value, "/==.*$/", "==")
-  resource_group = module.resource_group.resource_group_id
-  tags           = var.resource_tags
-}
-
-resource "tls_private_key" "auto_generate_ssh_key" {
-  count     = var.auto_generate_ssh_key ? 1 : 0
+resource "tls_private_key" "tls_key" {
+  count     = var.ssh_key != null ? 0 : 1
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "ibm_is_ssh_key" "auto_generate_ssh_key" {
-  count      = var.auto_generate_ssh_key ? 1 : 0
-  name       = "${var.prefix}${var.vsi_name}-ssh-key"
-  public_key = resource.tls_private_key.auto_generate_ssh_key[0].public_key_openssh
+resource "ibm_is_ssh_key" "ssh_key" {
+  count      = var.ssh_key != null ? 0 : 1
+  name       = "${local.prefix}-ssh-key"
+  public_key = resource.tls_private_key.tls_key[0].public_key_openssh
+}
+
+data "ibm_is_ssh_key" "existing_ssh_key" {
+  count = var.ssh_key != null ? 1 : 0
+  name  = var.ssh_key
 }
 
 #############################################################################
@@ -70,6 +66,6 @@ module "vsi" {
   machine_type          = var.machine_type
   user_data             = var.user_data
   vsi_per_subnet        = 1
-  ssh_key_ids           = local.ssh_keys
+  ssh_key_ids           = [local.ssh_key_id]
   enable_floating_ip    = var.enable_floating_ip
 }

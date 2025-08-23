@@ -103,7 +103,6 @@ variable "placement_group_id" {
   type        = string
   default     = null
 }
-
 variable "security_group" {
   description = "The security group for Virtual server instance. If no value is passed, the VPC default security group will be used. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-security-group)."
   type = object({
@@ -136,31 +135,8 @@ variable "security_group" {
   })
   default = null
 }
-variable "existing_ssh_key_ids" {
-  description = "The IDs of existing SSH keys to use while creating Virtual server instance. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
-  type        = list(string)
-  default     = []
-}
-
-variable "auto_generate_ssh_key" {
-  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secret manager. The public key is stored in your VPC and you can download it from the SSH key details page. Alternately, if you want to bring your own ssh keys you either select the existing ssh keys created in the cloud using this variable `existing_ssh_key_ids` or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
-  type        = bool
-  default     = true
-  nullable    = false
-}
-
-variable "ssh_public_keys" {
-  description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or select existing ssh keys created in the cloud using this variable `existing_ssh_key_ids`."
-  type        = list(string)
-  default     = []
-
-  validation {
-    error_message = "Public SSH Key must be a valid ssh rsa public key."
-    condition     = alltrue([for ssh in var.ssh_public_keys : can(regex("ssh-rsa AAAA[0-9A-Za-z+/]+[=]{0,3} ?([^@]+@[^@]+)?", ssh))])
-  }
-
-  validation {
-    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
-    error_message = "Please provide a value for either `ssh_public_keys` or `existing_ssh_key_ids`, or `auto_generate_ssh_key` must be set to true."
-  }
+variable "ssh_key" {
+  type        = string
+  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
+  default     = null
 }
