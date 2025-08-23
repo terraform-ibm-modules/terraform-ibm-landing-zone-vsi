@@ -95,7 +95,7 @@ variable "user_data" {
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "placement_group_id" {
