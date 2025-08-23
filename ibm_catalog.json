@@ -100,13 +100,24 @@
               "required": true
             },
             {
-              "key": "ssh_key"
-            },
-            {
-              "key": "create_security_group"
-            },
-            {
               "key": "security_group"
+            },
+            {
+              "key": "auto_generate_ssh_key"
+            },
+            {
+              "key": "ssh_public_keys"
+            },
+            {
+              "key": "existing_ssh_key_ids",
+              "custom_config": {
+                "type": "vpc_ssh_key",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "selection": "multi_select"
+                }
+              }
             },
             {
               "key": "enable_floating_ip"
