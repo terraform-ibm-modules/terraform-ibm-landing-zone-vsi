@@ -428,49 +428,27 @@ func TestRunMultiProfileExample(t *testing.T) {
 func TestQuickstartSchematics(t *testing.T) {
 	t.Parallel()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Region:  region,
+		Prefix:  "vsi-qs",
+		TarIncludePatterns: []string{
+			"*.tf",
+			quickStartConfigFlavorDir + "/*.tf",
+		},
+		TemplateFolder:         quickStartConfigFlavorDir,
+		Tags:                   []string{"vsi-qs-da"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 60,
+	})
 
-	if existErr != nil {
-		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-	} else {
-		// ------------------------------------------------------------------------------------
-		// Deploy DA
-		// ------------------------------------------------------------------------------------
-		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-			Testing: t,
-			Region:  region,
-			Prefix:  prefix,
-			TarIncludePatterns: []string{
-				"*.tf",
-				quickStartConfigFlavorDir + "/*.tf",
-			},
-			TemplateFolder:         quickStartConfigFlavorDir,
-			Tags:                   []string{"vsi-qs-da"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 60,
-		})
-
-		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
-			{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
-		}
-		err := options.RunSchematicTest()
-		assert.Nil(t, err, "This should not have errored")
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "image_id", Value: "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962", DataType: "string"},
 	}
-
-	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
-	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
-	// Destroy the temporary existing resources if required
-	if t.Failed() && strings.ToLower(envVal) == "true" {
-		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
-	} else {
-		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
-		logger.Log(t, "END: Destroy (prereq resources)")
-	}
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
 }
