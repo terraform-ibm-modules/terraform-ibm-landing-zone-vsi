@@ -27,6 +27,7 @@ const multiModuleOneVpcTerraformDir = "examples/multi-profile-one-vpc"
 
 const snapshotExampleTerraformDir = "examples/snapshot"
 const fullyConfigFlavorDir = "solutions/fully-configurable"
+const quickStartConfigFlavorDir = "solutions/quickstart"
 
 const resourceGroup = "geretain-test-resources"
 const region = "us-south"
@@ -145,7 +146,7 @@ func TestRunExistingSnapshotGroupExample(t *testing.T) {
 		},
 	})
 
-	// Add a post-apply verfication
+	// Add a post-apply verification
 	options.PostApplyHook = verifyVolumeSnapshots
 
 	output, err := options.RunTestConsistency()
@@ -166,7 +167,7 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 
 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
-	// get ouput of last apply
+	// get output of last apply
 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
 
 	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
@@ -364,7 +365,6 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 			Prefix:  prefix,
 			TarIncludePatterns: []string{
 				"*.tf",
-				"modules/*/*.tf",
 				fullyConfigFlavorDir + "/*.tf",
 			},
 			TemplateFolder:         fullyConfigFlavorDir,
@@ -423,4 +423,32 @@ func TestRunMultiProfileExample(t *testing.T) {
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestQuickstartSchematics(t *testing.T) {
+	t.Parallel()
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Region:  "us-south", // hardcode due to image requirement
+		Prefix:  "vsi-qs",
+		TarIncludePatterns: []string{
+			"*.tf",
+			quickStartConfigFlavorDir + "/*.tf",
+		},
+		TemplateFolder:         quickStartConfigFlavorDir,
+		Tags:                   []string{"vsi-qs-da"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 60,
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "image_id", Value: "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962", DataType: "string"}, // for us-south region
+	}
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
 }

@@ -78,14 +78,14 @@ module "slz_vsi" {
     {
       name    = "vsi-block-1"
       profile = "general-purpose"
-      # snapshot_id = <you can also specify a specific snapshot ID if requried>
+      # snapshot_id = <you can also specify a specific snapshot ID if required>
     },
     {
       name    = "vsi-block-2"
       profile = "general-purpose"
-      # snapshot_id = <you can also specify a specific snapshot ID if requried>
+      # snapshot_id = <you can also specify a specific snapshot ID if required>
   }]
   # if specifying a group ID, snapshot IDs will be automatically determined from group using system labels
   snapshot_consistency_group_id = var.snapshot_consistency_group_id
-  # boot_volume_snapshot_id = <you can also specify a specific snapshot ID if requried>
+  # boot_volume_snapshot_id = <you can also specify a specific snapshot ID if required>
 }
