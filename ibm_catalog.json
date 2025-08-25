@@ -329,7 +329,7 @@
             {
               "key": "user_data",
               "custom_config": {
-                "type": "textarea",
+                "type": "code_editor",
                 "grouping": "deployment",
                 "original_grouping": "deployment"
               }
