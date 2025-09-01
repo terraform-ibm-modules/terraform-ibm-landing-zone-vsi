@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.1.20"
+  version                   = "5.1.22"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.6.18"
+  version           = "1.6.20"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -66,7 +66,7 @@ module "logging" {
 
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version           = "1.6.5"
+  version           = "1.6.6"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
