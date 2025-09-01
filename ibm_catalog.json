@@ -139,9 +139,9 @@
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                "type": "string"
+                  "type": "string"
                 }
-            },
+              },
               "virtual": true
             },
             {
