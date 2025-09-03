@@ -64,26 +64,26 @@ output "fip_list" {
 
 output "lb_hostnames" {
   description = "Hostnames for the Load Balancer created"
-  value = [
+  value = {
     for load_balancer in ibm_is_lb.lb :
-    load_balancer.hostname
-  ]
+    load_balancer.name => load_balancer.hostname
+  }
 }
 
 output "lb_public_ips" {
   description = "Public IPs for the Load Balancer created"
-  value = [
+  value = {
     for load_balancer in ibm_is_lb.lb :
-    load_balancer.public_ips
-  ]
+    load_balancer.name => load_balancer.public_ips
+  }
 }
 
 output "lb_private_ips" {
   description = "Private IPs for the Load Balancer created"
-  value = [
+  value = {
     for load_balancer in ibm_is_lb.lb :
-    load_balancer.private_ips
-  ]
+    load_balancer.name => load_balancer.private_ips
+  }
 }
 
 output "lb_security_groups" {
