@@ -3,5 +3,6 @@
   "resource_tags": $TAGS,
   "existing_resource_group_name": "geretain-test-resources",
   "prefix": $PREFIX,
-  "image_id": "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962"
+  "image_id": "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962",
+  "region": "us-south"
 }

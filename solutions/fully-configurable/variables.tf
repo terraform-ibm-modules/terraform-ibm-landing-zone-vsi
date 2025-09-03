@@ -123,7 +123,7 @@ variable "auto_generate_ssh_key" {
 }
 
 variable "machine_type" {
-  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles."
+  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui)."
   type        = string
   default     = "bx3d-2x10"
 }

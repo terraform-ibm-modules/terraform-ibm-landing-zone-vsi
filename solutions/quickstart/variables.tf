@@ -41,6 +41,7 @@ variable "vpc_name" {
   description = "Name for VPC"
   default     = "qs-vpc"
 }
+
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
@@ -82,7 +83,7 @@ variable "image_id" {
 }
 
 variable "machine_type" {
-  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles."
+  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui)."
   type        = string
   default     = "cx2-2x4"
 }
@@ -92,6 +93,7 @@ variable "user_data" {
   type        = string
   default     = null
 }
+
 variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created."
   type        = bool
@@ -103,6 +105,7 @@ variable "placement_group_id" {
   type        = string
   default     = null
 }
+
 variable "security_group" {
   description = "The security group for Virtual server instance. If no value is passed, the VPC default security group will be used. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-security-group)."
   type = object({
@@ -135,6 +138,7 @@ variable "security_group" {
   })
   default = null
 }
+
 variable "ssh_key" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"

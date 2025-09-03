@@ -186,7 +186,7 @@
               {
                 "diagram": {
                   "caption": "Virtual Server Instance - Quickstart",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/quickstart/reference-architecture/vsi-qs.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architecture/vsi-qs.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture supports deployment of a <b>Virtual Server Instance</b> within an IBM Cloud <b>Virtual Private Cloud (VPC)</b> environment.<br><br>The VPC is hosted within a designated resource group in a specific region.The VPC includes a subnet for network segmentation and connectivity of compute resources.<br><br>For external connectivity, the architecture supports optional assignment of a floating ip to the virtual server, allowing public network access as needed.<br><br>A security group is defined to control inbound and outbound traffic to the virtual server."
