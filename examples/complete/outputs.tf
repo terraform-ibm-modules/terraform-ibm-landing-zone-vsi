@@ -22,3 +22,23 @@ output "secondary_security_groups" {
   description = "Secondary security groups created"
   value       = local.secondary_security_groups
 }
+
+output "lb_hostnames" {
+  description = "Hostnames for the Load Balancer created"
+  value       = module.slz_vsi.lb_hostnames
+}
+
+output "lb_public_ips" {
+  description = "Public IPs for the Load Balancer created"
+  value       = module.slz_vsi.lb_public_ips
+}
+
+output "lb_private_ips" {
+  description = "Private IPs for the Load Balancer created"
+  value       = module.slz_vsi.lb_private_ips
+}
+
+output "lb_security_groups" {
+  description = "Load Balancer security groups"
+  value       = module.slz_vsi.lb_security_groups
+}

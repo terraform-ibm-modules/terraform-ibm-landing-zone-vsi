@@ -70,6 +70,22 @@ output "lb_hostnames" {
   ]
 }
 
+output "lb_public_ips" {
+  description = "Public IPs for the Load Balancer created"
+  value = [
+    for load_balancer in ibm_is_lb.lb :
+    load_balancer.public_ips
+  ]
+}
+
+output "lb_private_ips" {
+  description = "Private IPs for the Load Balancer created"
+  value = [
+    for load_balancer in ibm_is_lb.lb :
+    load_balancer.private_ips
+  ]
+}
+
 output "lb_security_groups" {
   description = "Load Balancer security groups"
   value = {

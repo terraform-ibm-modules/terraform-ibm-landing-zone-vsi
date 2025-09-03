@@ -33,6 +33,16 @@ output "lb_hostnames" {
   value       = length(module.vsi.lb_hostnames) > 0 ? module.vsi.lb_hostnames : null
 }
 
+output "lb_public_ips" {
+  description = "Public IPs for the Load Balancer created"
+  value       = length(module.vsi.lb_public_ips) > 0 ? module.vsi.lb_public_ips : null
+}
+
+output "lb_private_ips" {
+  description = "Private IPs for the Load Balancer created"
+  value       = length(module.vsi.lb_private_ips) > 0 ? module.vsi.lb_private_ips : null
+}
+
 output "lb_security_groups" {
   description = "Load Balancer security groups."
   value       = module.vsi.lb_security_groups
