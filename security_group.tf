@@ -72,7 +72,7 @@ resource "ibm_is_security_group_rule" "security_group_rules" {
 
 
   ##############################################################################
-  # Dynamicaly create ICMP Block
+  # Dynamically create ICMP Block
   ##############################################################################
 
   dynamic "icmp" {
