@@ -283,7 +283,7 @@ variable "enable_dedicated_host" {
 variable "dedicated_host_id" {
   type        = string
   default     = null
-  description = "ID of the dedicated host for hosting the VSI's. The enable_dedicated_host input shoud be set to true if passing a dedicated host ID"
+  description = "ID of the dedicated host for hosting the VSI's. The enable_dedicated_host input should be set to true if passing a dedicated host ID"
 }
 
 ##############################################################################
