@@ -66,6 +66,7 @@ module "logging" {
 
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
+  plan              = "graduated-tier"
   version           = "1.6.6"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
