@@ -93,7 +93,7 @@ resource "ibm_is_security_group_rule" "security_group_rules" {
       ? [] # if all values null empty array
       : [each.value]
     )
-    # Conditianally add content if sg has icmp
+    # Conditionally add content if sg has icmp
     content {
       type = lookup(
         each.value["icmp"],
