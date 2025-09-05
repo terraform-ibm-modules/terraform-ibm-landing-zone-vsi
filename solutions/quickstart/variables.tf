@@ -72,7 +72,7 @@ variable "access_tags" {
 variable "vsi_name" {
   description = "The name of the Virtual server instance."
   type        = string
-  default     = "vsi"
+  default     = "qs-vsi"
 }
 
 variable "image_name" {
