@@ -131,7 +131,7 @@ variable "security_group" {
   default = null
 }
 
-variable "existing_ssh_key" {
+variable "existing_ssh_key_name" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
   default     = null

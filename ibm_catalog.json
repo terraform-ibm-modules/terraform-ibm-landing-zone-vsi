@@ -103,13 +103,7 @@
             },
             {
               "key": "image_name",
-              "required": true,
-              "options": [
-                {
-                  "displayname": "ibm-centos-stream-9-amd64-11",
-                  "value": "ibm-centos-stream-9-amd64-11"
-                }
-              ]
+              "required": true
             },
             {
               "key": "machine_type",
@@ -122,7 +116,7 @@
               ]
             },
             {
-              "key": "existing_ssh_key"
+              "key": "existing_ssh_key_name"
             },
             {
               "key": "enable_floating_ip"
