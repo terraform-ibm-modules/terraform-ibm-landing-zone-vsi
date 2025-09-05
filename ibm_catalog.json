@@ -204,7 +204,7 @@
             "diagrams": [
               {
                 "diagram": {
-                  "caption": "Virtual Server Instance - Quickstart",
+                  "caption": "Virtual Server Instance - QuickStart",
                   "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/quickstart/reference-architecture/vsi-qs.svg",
                   "type": "image/svg+xml"
                 },
