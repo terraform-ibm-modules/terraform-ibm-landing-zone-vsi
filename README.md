@@ -256,9 +256,9 @@ You need the following permissions to run this module.
 | <a name="output_consistency_group_storage_snapshot_ids"></a> [consistency\_group\_storage\_snapshot\_ids](#output\_consistency\_group\_storage\_snapshot\_ids) | Map of attached storage volumes requested, and the Snapshot Ids that will be used, determined from an optionally supplied consistency group, and mapped |
 | <a name="output_fip_list"></a> [fip\_list](#output\_fip\_list) | A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached. |
 | <a name="output_ids"></a> [ids](#output\_ids) | The IDs of the VSI |
-| <a name="output_lb_hostnames"></a> [lb\_hostnames](#output\_lb\_hostnames) | Hostnames for the Load Balancer created |
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
+| <a name="output_load_balancers_metadata"></a> [load\_balancers\_metadata](#output\_load\_balancers\_metadata) | Load Balancers metadata. |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

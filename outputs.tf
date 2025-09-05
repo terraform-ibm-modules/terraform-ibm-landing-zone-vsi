@@ -62,12 +62,18 @@ output "fip_list" {
 # Load Balancer Outputs
 ##############################################################################
 
-output "lb_hostnames" {
-  description = "Hostnames for the Load Balancer created"
-  value = [
-    for load_balancer in ibm_is_lb.lb :
-    load_balancer.hostname
-  ]
+output "load_balancers_metadata" {
+  description = "Load Balancers metadata."
+  value = {
+    for lb in ibm_is_lb.lb :
+    lb.name => {
+      crn           = lb.crn
+      hostname      = lb.hostname
+      public_ips    = lb.public_ips
+      private_ips   = lb.private_ips
+      udp_supported = lb.udp_supported
+    }
+  }
 }
 
 output "lb_security_groups" {
