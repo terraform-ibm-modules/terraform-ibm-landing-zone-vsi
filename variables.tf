@@ -440,7 +440,7 @@ variable "custom_vsi_volume_names" {
   default     = {}
   nullable    = false
 
-  # Validation to ensure the map has the same number of volumes as the number of block storage volumes defiend in 'block_storage_volumes'
+  # Validation to ensure the map has the same number of volumes as the number of block storage volumes defined in 'block_storage_volumes'
   validation {
     condition = alltrue([
       for subnet_key, subnet_value in coalesce(var.custom_vsi_volume_names, {}) : alltrue([
@@ -588,7 +588,7 @@ variable "enable_dedicated_host" {
 variable "dedicated_host_id" {
   type        = string
   default     = null
-  description = "ID of the dedicated host for hosting the VSI's. The enable_dedicated_host input shoud be set to true if passing a dedicated host ID"
+  description = "ID of the dedicated host for hosting the VSI's. The enable_dedicated_host input should be set to true if passing a dedicated host ID"
 
   validation {
     condition     = var.enable_dedicated_host == false || (var.enable_dedicated_host == true && var.dedicated_host_id != null)

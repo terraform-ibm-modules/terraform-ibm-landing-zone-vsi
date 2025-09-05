@@ -204,7 +204,7 @@ You need the following permissions to run this module.
 | <a name="input_boot_volume_snapshot_id"></a> [boot\_volume\_snapshot\_id](#input\_boot\_volume\_snapshot\_id) | The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used) | `string` | `null` | no |
 | <a name="input_create_security_group"></a> [create\_security\_group](#input\_create\_security\_group) | Create security group for VSI. If this is passed as false, the default will be used | `bool` | n/a | yes |
 | <a name="input_custom_vsi_volume_names"></a> [custom\_vsi\_volume\_names](#input\_custom\_vsi\_volume\_names) | A map of subnets, VSI names, and storage volume names. Subnet names should correspond to existing subnets, while VSI and storage volume names are used for resource creation. Example format: { 'subnet\_name\_1': { 'vsi\_name\_1': [ 'storage\_volume\_name\_1', 'storage\_volume\_name\_2' ] } }. If the 'custom\_vsi\_volume\_names' input variable is not set, VSI and volume names are automatically determined using a prefix, the first 4 digits of the subnet\_id, and number padding. In addition, for volume names, the name from the 'block\_storage\_volumes' input variable is also used. | `map(map(list(string)))` | `{}` | no |
-| <a name="input_dedicated_host_id"></a> [dedicated\_host\_id](#input\_dedicated\_host\_id) | ID of the dedicated host for hosting the VSI's. The enable\_dedicated\_host input shoud be set to true if passing a dedicated host ID | `string` | `null` | no |
+| <a name="input_dedicated_host_id"></a> [dedicated\_host\_id](#input\_dedicated\_host\_id) | ID of the dedicated host for hosting the VSI's. The enable\_dedicated\_host input should be set to true if passing a dedicated host ID | `string` | `null` | no |
 | <a name="input_enable_dedicated_host"></a> [enable\_dedicated\_host](#input\_enable\_dedicated\_host) | Enabling this option will activate dedicated hosts for the VSIs. When enabled, the dedicated\_host\_id input is required. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details | `bool` | `false` | no |
 | <a name="input_enable_floating_ip"></a> [enable\_floating\_ip](#input\_enable\_floating\_ip) | Create a floating IP for each virtual server created | `bool` | `false` | no |
 | <a name="input_image_id"></a> [image\_id](#input\_image\_id) | Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region | `string` | n/a | yes |
@@ -256,9 +256,9 @@ You need the following permissions to run this module.
 | <a name="output_consistency_group_storage_snapshot_ids"></a> [consistency\_group\_storage\_snapshot\_ids](#output\_consistency\_group\_storage\_snapshot\_ids) | Map of attached storage volumes requested, and the Snapshot Ids that will be used, determined from an optionally supplied consistency group, and mapped |
 | <a name="output_fip_list"></a> [fip\_list](#output\_fip\_list) | A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached. |
 | <a name="output_ids"></a> [ids](#output\_ids) | The IDs of the VSI |
-| <a name="output_lb_hostnames"></a> [lb\_hostnames](#output\_lb\_hostnames) | Hostnames for the Load Balancer created |
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
+| <a name="output_load_balancers_metadata"></a> [load\_balancers\_metadata](#output\_load\_balancers\_metadata) | Load Balancers metadata. |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

@@ -22,3 +22,13 @@ output "secondary_security_groups" {
   description = "Secondary security groups created"
   value       = local.secondary_security_groups
 }
+
+output "load_balancers_metadata" {
+  description = "Load Balancers metadata."
+  value       = module.slz_vsi.load_balancers_metadata
+}
+
+output "lb_security_groups" {
+  description = "Load Balancer security groups"
+  value       = module.slz_vsi.lb_security_groups
+}
