@@ -689,7 +689,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.2.12"
+              "version": "v1.2.25"
             },
             {
               "name": "deploy-arch-ibm-scc-workload-protection",
@@ -713,13 +713,13 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.11.1"
+              "version": "v1.11.4"
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Configure a Secrets Manager instance to manage the ssh private key for the virtual server instance.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.4.0",
+              "version": "v2.8.6",
               "flavors": [
                 "fully-configurable"
               ],
