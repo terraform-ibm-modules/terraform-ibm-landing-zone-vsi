@@ -9,8 +9,8 @@ variable "ibmcloud_api_key" {
 }
 
 variable "region" {
-  description = "The region to which to deploy the VPC"
   type        = string
+  description = "Region in which all the resources will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region)."
   default     = "us-south"
 }
 
@@ -38,15 +38,14 @@ variable "prefix" {
 
 variable "vpc_name" {
   type        = string
-  description = "Name for VPC"
+  description = "Name of the Virtual Private Cloud (VPC) in which resources will be deployed. [Learn more](https://cloud.ibm.com/docs/vpc)"
   default     = "qs-vpc"
 }
 
 variable "provider_visibility" {
-  description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
+  description = "Set the visibility value for the IBM terraform provider. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
   default     = "private"
-  nullable    = false
 
   validation {
     condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
@@ -76,16 +75,15 @@ variable "vsi_name" {
   default     = "vsi"
 }
 
-variable "image_id" {
-  description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
+variable "image_name" {
+  description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-about-images)"
   type        = string
-  nullable    = false
 }
 
 variable "machine_type" {
   description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui)."
   type        = string
-  default     = "cx2-2x4"
+  default     = "bx2-2x8"
 }
 
 variable "user_data" {
@@ -98,12 +96,6 @@ variable "enable_floating_ip" {
   description = "Create a floating IP for each virtual server created."
   type        = bool
   default     = true
-}
-
-variable "placement_group_id" {
-  description = "Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host."
-  type        = string
-  default     = null
 }
 
 variable "security_group" {
@@ -139,7 +131,7 @@ variable "security_group" {
   default = null
 }
 
-variable "ssh_key" {
+variable "existing_ssh_key" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
   default     = null

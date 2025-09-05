@@ -8,7 +8,7 @@ module "resource_group" {
 }
 
 locals {
-  ssh_key_id = var.ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
+  ssh_key_id = var.existing_ssh_key != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
   prefix     = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
 }
 
@@ -17,20 +17,20 @@ locals {
 ##############################################################################
 
 resource "tls_private_key" "tls_key" {
-  count     = var.ssh_key != null ? 0 : 1
+  count     = var.existing_ssh_key != null ? 0 : 1
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 resource "ibm_is_ssh_key" "ssh_key" {
-  count      = var.ssh_key != null ? 0 : 1
+  count      = var.existing_ssh_key != null ? 0 : 1
   name       = "${local.prefix}-ssh-key"
   public_key = resource.tls_private_key.tls_key[0].public_key_openssh
 }
 
 data "ibm_is_ssh_key" "existing_ssh_key" {
-  count = var.ssh_key != null ? 1 : 0
-  name  = var.ssh_key
+  count = var.existing_ssh_key != null ? 1 : 0
+  name  = var.existing_ssh_key
 }
 
 #############################################################################
@@ -47,6 +47,7 @@ module "vpc" {
   name              = var.vpc_name
 }
 
+
 ########################################################################################################################
 # Virtual Server Instance
 ########################################################################################################################
@@ -54,7 +55,7 @@ module "vpc" {
 module "vsi" {
   source                = "../../"
   resource_group_id     = module.resource_group.resource_group_id
-  image_id              = var.image_id
+  image_id              = data.ibm_is_image.image.id
   create_security_group = var.security_group != null ? true : false
   security_group        = var.security_group
   tags                  = var.resource_tags
@@ -62,10 +63,13 @@ module "vsi" {
   subnets               = module.vpc.subnet_zone_list
   vpc_id                = module.vpc.vpc_id
   prefix                = "${local.prefix}${var.vsi_name}"
-  placement_group_id    = var.placement_group_id
   machine_type          = var.machine_type
   user_data             = var.user_data
   vsi_per_subnet        = 1
   ssh_key_ids           = [local.ssh_key_id]
   enable_floating_ip    = var.enable_floating_ip
+}
+
+data "ibm_is_image" "image" {
+  name = var.image_name
 }
