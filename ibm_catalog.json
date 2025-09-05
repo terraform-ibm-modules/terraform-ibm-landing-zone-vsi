@@ -103,7 +103,13 @@
             },
             {
               "key": "image_name",
-              "required": true
+              "required": true,
+              "options": [
+                {
+                  "displayname": "ibm-centos-stream-9-amd64-11",
+                  "value": "ibm-centos-stream-9-amd64-11"
+                }
+              ]
             },
             {
               "key": "machine_type",
