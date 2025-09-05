@@ -145,7 +145,7 @@ func TestRunExistingSnapshotGroupExample(t *testing.T) {
 		},
 	})
 
-	// Add a post-apply verfication
+	// Add a post-apply verification
 	options.PostApplyHook = verifyVolumeSnapshots
 
 	output, err := options.RunTestConsistency()
@@ -166,7 +166,7 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 
 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
-	// get ouput of last apply
+	// get output of last apply
 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
 
 	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {

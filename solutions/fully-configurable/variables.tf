@@ -116,7 +116,7 @@ variable "existing_ssh_key_ids" {
 }
 
 variable "auto_generate_ssh_key" {
-  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secret mananger. The public key is stored in your VPC and you can download it from the SSH key details page. Alternately, if you want to bring your own ssh keys you either select the existing ssh keys created in the cloud using this variable `existing_ssh_key_ids` or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
+  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secrets manager. The public key is stored in your VPC and you can download it from the SSH key details page. Alternately, if you want to bring your own ssh keys you either select the existing ssh keys created in the cloud using this variable `existing_ssh_key_ids` or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
   type        = bool
   default     = true
   nullable    = false
@@ -140,7 +140,7 @@ variable "boot_volume_size" {
 }
 
 variable "user_data" {
-  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recongnized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
+  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recognized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
   type        = string
   default     = null
 }

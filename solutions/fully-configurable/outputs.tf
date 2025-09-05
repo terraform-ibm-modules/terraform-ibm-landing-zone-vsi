@@ -28,9 +28,9 @@ output "fip_list" {
 # Load Balancer Outputs
 ##############################################################################
 
-output "lb_hostnames" {
-  description = "Hostnames for the Load Balancer created."
-  value       = length(module.vsi.lb_hostnames) > 0 ? module.vsi.lb_hostnames : null
+output "load_balancers_metadata" {
+  description = "Load balancers metadata."
+  value       = length(module.vsi.load_balancers_metadata) > 0 ? module.vsi.load_balancers_metadata : null
 }
 
 output "lb_security_groups" {
