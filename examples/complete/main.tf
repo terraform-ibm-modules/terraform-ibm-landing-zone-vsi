@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan              = "graduated-tier"
-  version           = "1.6.8"
+  version           = "1.6.9"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -102,7 +102,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.2.1"
+  version           = "8.2.2"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
