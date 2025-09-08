@@ -97,40 +97,6 @@ variable "enable_floating_ip" {
   type        = bool
   default     = true
 }
-
-variable "security_group" {
-  description = "The security group for Virtual server instance. If no value is passed, the VPC default security group will be used. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-security-group)."
-  type = object({
-    name = string
-    rules = list(
-      object({
-        name      = string
-        direction = string
-        source    = string
-        tcp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        udp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        icmp = optional(
-          object({
-            type = number
-            code = number
-          })
-        )
-      })
-    )
-  })
-  default = null
-}
-
 variable "existing_ssh_key_name" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"

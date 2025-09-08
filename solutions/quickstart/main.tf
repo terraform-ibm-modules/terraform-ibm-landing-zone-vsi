@@ -56,8 +56,7 @@ module "vsi" {
   source                = "../../"
   resource_group_id     = module.resource_group.resource_group_id
   image_id              = data.ibm_is_image.image.id
-  create_security_group = var.security_group != null ? true : false
-  security_group        = var.security_group
+  create_security_group = true
   tags                  = var.resource_tags
   access_tags           = var.access_tags
   subnets               = module.vpc.subnet_zone_list
