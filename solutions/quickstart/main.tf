@@ -37,20 +37,54 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 # Provision VPC
 #############################################################################
 
-module "vpc" {
-  source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.0.0"
-  resource_group_id = module.resource_group.resource_group_id
-  region            = var.region
-  prefix            = "${local.prefix}${var.vpc_name}"
-  tags              = var.resource_tags
-  name              = var.vpc_name
-}
+# module "vpc" {
+#   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
+#   version           = "8.0.0"
+#   resource_group_id = module.resource_group.resource_group_id
+#   region            = var.region
+#   prefix            = "${local.prefix}${var.vpc_name}"
+#   tags              = var.resource_tags
+#   name              = var.vpc_name
+# }
 
 
 ########################################################################################################################
 # Virtual Server Instance
 ########################################################################################################################
+
+data "ibm_is_image" "image" {
+  name = var.image_name
+}
+
+module "existing_vpc_crn_parser" {
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.2.0"
+  crn     = var.existing_vpc_crn
+}
+
+data "ibm_is_subnet" "subnet" {
+  count      = var.existing_subnet_id != null ? 1 : 0
+  identifier = var.existing_subnet_id
+}
+
+data "ibm_is_vpc" "vpc" {
+  identifier = local.existing_vpc_id
+}
+locals {
+
+  existing_vpc_id = module.existing_vpc_crn_parser.resource
+
+  # When `existing_subnet_id` is not provided, use the first subnet from the existing VPC.
+  subnet = var.existing_subnet_id != null ? [{
+    name = data.ibm_is_subnet.subnet[0].name
+    id   = data.ibm_is_subnet.subnet[0].id
+    zone = data.ibm_is_subnet.subnet[0].zone
+    }] : [{
+    name = data.ibm_is_vpc.vpc.subnets[0].name
+    id   = data.ibm_is_vpc.vpc.subnets[0].id
+    zone = data.ibm_is_vpc.vpc.subnets[0].zone
+  }]
+}
 
 module "vsi" {
   source                = "../../"
@@ -59,16 +93,12 @@ module "vsi" {
   create_security_group = true
   tags                  = var.resource_tags
   access_tags           = var.access_tags
-  subnets               = module.vpc.subnet_zone_list
-  vpc_id                = module.vpc.vpc_id
+  subnets               = local.subnet
+  vpc_id                = local.existing_vpc_id
   prefix                = "${local.prefix}${var.vsi_name}"
   machine_type          = var.machine_type
   user_data             = var.user_data
   vsi_per_subnet        = 1
   ssh_key_ids           = [local.ssh_key_id]
   enable_floating_ip    = var.enable_floating_ip
-}
-
-data "ibm_is_image" "image" {
-  name = var.image_name
 }

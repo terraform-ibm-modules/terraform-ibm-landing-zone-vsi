@@ -36,10 +36,20 @@ variable "prefix" {
   }
 }
 
-variable "vpc_name" {
+##############################################################################
+# VPC Variables
+##############################################################################
+
+variable "existing_vpc_crn" {
+  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the VSI will be provisioned in the first subnet of the VPC."
   type        = string
-  description = "Name of the Virtual Private Cloud (VPC) in which resources will be deployed. [Learn more](https://cloud.ibm.com/docs/vpc)"
-  default     = "qs-vpc"
+  nullable    = false
+}
+
+variable "existing_subnet_id" {
+  description = "The ID of an existing subnet. If no value is passed, the Virtual server instance is deployed to the first subnet from the Virtual Private Cloud(VPC)."
+  type        = string
+  default     = null
 }
 
 variable "provider_visibility" {
