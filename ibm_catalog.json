@@ -108,20 +108,6 @@
               }
             },
             {
-              "key": "existing_subnet_id",
-              "required": true,
-              "custom_config": {
-                "type": "platform_resource",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "resourceType": "subnet",
-                  "selection": "single_select",
-                  "valueType": "id"
-                }
-              }
-            },
-            {
               "key": "vsi_name"
             },
             {
@@ -129,7 +115,23 @@
               "required": true,
               "options": [
                 {
-                  "displayname": "ibm-centos-stream-9-amd64-11",
+                  "displayname": "Redhat",
+                  "value": "ibm-redhat-9-4-minimal-amd64-9"
+                },
+                {
+                  "displayname": "Ubuntu",
+                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-6"
+                },
+                {
+                  "displayname": "Debian",
+                  "value": "ibm-debian-13-minimal-amd64-1"
+                },
+                {
+                  "displayname": "Fedora",
+                  "value": "ibm-fedora-coreos-42-stable-2"
+                },
+                {
+                  "displayname": "CentOS",
                   "value": "ibm-centos-stream-9-amd64-11"
                 }
               ]

@@ -62,24 +62,13 @@ module "existing_vpc_crn_parser" {
   crn     = var.existing_vpc_crn
 }
 
-data "ibm_is_subnet" "subnet" {
-  count      = var.existing_subnet_id != null ? 1 : 0
-  identifier = var.existing_subnet_id
-}
-
 data "ibm_is_vpc" "vpc" {
   identifier = local.existing_vpc_id
 }
 locals {
 
   existing_vpc_id = module.existing_vpc_crn_parser.resource
-
-  # When `existing_subnet_id` is not provided, use the first subnet from the existing VPC.
-  subnet = var.existing_subnet_id != null ? [{
-    name = data.ibm_is_subnet.subnet[0].name
-    id   = data.ibm_is_subnet.subnet[0].id
-    zone = data.ibm_is_subnet.subnet[0].zone
-    }] : [{
+  subnet = [{
     name = data.ibm_is_vpc.vpc.subnets[0].name
     id   = data.ibm_is_vpc.vpc.subnets[0].id
     zone = data.ibm_is_vpc.vpc.subnets[0].zone
