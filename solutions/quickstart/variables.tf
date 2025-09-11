@@ -37,9 +37,9 @@ variable "prefix" {
 }
 
 variable "existing_vpc_crn" {
-  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the VSI will be provisioned in the first subnet of the VPC."
+  description = "The CRN of an existing VPC. VSI will be provisioned in the first subnet of the VPC."
   type        = string
-  nullable    = false
+  default     = null
 }
 
 variable "provider_visibility" {
@@ -81,9 +81,9 @@ variable "image_name" {
 }
 
 variable "machine_type" {
-  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui)."
   type        = string
-  default     = "bx2-2x8"
+  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui)."
+  default     = "mini"
 }
 
 variable "user_data" {

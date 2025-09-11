@@ -56,7 +56,7 @@
       "support_details": "This product is in the community registry. As such support is handled through the originated repo. If you experience issues please open an issue in that repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "flavors": [
         {
-          "label": "Quickstart",
+          "label": "Quickstart-Basic and Simple  ",
           "name": "quickstart",
           "index": 1,
           "install_type": "fullstack",
@@ -97,15 +97,7 @@
             },
             {
               "key": "existing_vpc_crn",
-              "required": true,
-              "custom_config": {
-                "type": "vpc",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "identifier": "existing_vpc_crn"
-                }
-              }
+              "required": true
             },
             {
               "key": "vsi_name"
