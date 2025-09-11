@@ -541,16 +541,6 @@
                 {
                   "dependency_output": "vpc_crn",
                   "version_input": "existing_vpc_crn"
-                },
-                {
-                  "dependency_input": "subnets",
-                  "version_input": "subnets",
-                  "reference_version": true
-                },
-                {
-                  "dependency_input": "network_acls",
-                  "version_input": "network_acls",
-                  "reference_version": true
                 }
               ]
             },
