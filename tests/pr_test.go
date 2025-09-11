@@ -446,6 +446,7 @@ func TestDefaultConfiguration(t *testing.T) {
 			"prefix":                       options.Prefix,
 			"existing_resource_group_name": resourceGroup,
 			"region":                       "us-south",
+			"secrets_manager_service_plan": "trial",
 			"image_id":                     "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1
 		},
 	)
@@ -485,6 +486,7 @@ func TestDependencyPermutations(t *testing.T) {
 			Inputs: map[string]interface{}{
 				"prefix":                                "es-perm",
 				"existing_resource_group_name":          resourceGroup,
+				"secrets_manager_service_plan":          "trial",
 				"existing_secrets_manager_instance_crn": permanentResources["secretsManagerCRN"],
 			},
 		},
