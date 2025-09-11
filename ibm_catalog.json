@@ -525,7 +525,7 @@
                 "fully-configurable"
               ],
               "catalog_id": "1082e7d2-5e2f-0a11-a3bc-f88a8e1931fc",
-              "optional": false,
+              "optional": true,
               "on_by_default": true,
               "input_mapping": [
                 {
@@ -619,10 +619,6 @@
               "id": "73debdbf-894f-4c14-81c7-5ece3a70b67d-global",
               "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
               "input_mapping": [
-                {
-                  "dependency_output": "cloud_monitoring_crn",
-                  "version_input": "existing_monitoring_crn"
-                },
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
