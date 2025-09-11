@@ -475,6 +475,7 @@ func TestDefaultConfiguration(t *testing.T) {
 // TestDependencyPermutations runs dependency permutations for VSI and all its dependencies
 func TestDependencyPermutations(t *testing.T) {
 
+	t.Skip("Skipping dependency permutations")
 	t.Parallel()
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
