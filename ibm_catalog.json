@@ -603,11 +603,6 @@
                   "version_input": "existing_kms_instance_crn"
                 },
                 {
-                  "dependency_input": "existing_resource_group_name",
-                  "version_input": "existing_resource_group_name",
-                  "reference_version": true
-                },
-                {
                   "version_input": "kms_encryption_enabled_boot_volume",
                   "value": true
                 },
@@ -742,13 +737,13 @@
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "service_plan",
-                  "version_input": "secrets_manager_service_plan",
+                  "dependency_input": "region",
+                  "version_input": "region",
                   "reference_version": true
                 },
                 {
-                  "dependency_input": "existing_resource_group_name",
-                  "version_input": "existing_resource_group_name",
+                  "dependency_input": "service_plan",
+                  "version_input": "secrets_manager_service_plan",
                   "reference_version": true
                 },
                 {

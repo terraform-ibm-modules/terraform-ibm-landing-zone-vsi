@@ -445,9 +445,9 @@ func TestDefaultConfiguration(t *testing.T) {
 		map[string]interface{}{
 			"prefix":                       options.Prefix,
 			"existing_resource_group_name": resourceGroup,
-			"region":                       "us-south",
+			"region":                       "eu-de",
 			"secrets_manager_service_plan": "trial",
-			"image_id":                     "r006-b3c09e6b-65c7-49c7-93cd-e041ea382962", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1
+			"image_id":                     "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
 		},
 	)
 
@@ -474,7 +474,7 @@ func TestDefaultConfiguration(t *testing.T) {
 
 // TestDependencyPermutations runs dependency permutations for VSI and all its dependencies
 func TestDependencyPermutations(t *testing.T) {
-	t.Skip("Skipping dependency permutations")
+
 	t.Parallel()
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
@@ -485,7 +485,9 @@ func TestDependencyPermutations(t *testing.T) {
 			OfferingFlavor: "fully-configurable",
 			Inputs: map[string]interface{}{
 				"prefix":                                "es-perm",
+				"region":                                "eu-de",
 				"existing_resource_group_name":          resourceGroup,
+				"image_id":                              "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
 				"secrets_manager_service_plan":          "trial",
 				"existing_secrets_manager_instance_crn": permanentResources["secretsManagerCRN"],
 			},
