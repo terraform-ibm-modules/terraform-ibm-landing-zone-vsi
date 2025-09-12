@@ -7,13 +7,16 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/IBM/go-sdk-core/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
@@ -423,4 +426,75 @@ func TestRunMultiProfileExample(t *testing.T) {
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestDefaultConfiguration(t *testing.T) {
+	t.Parallel()
+
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing:       t,
+		Prefix:        "vsideft",
+		ResourceGroup: resourceGroup,
+		QuietMode:     true, // Suppress logs except on failure
+	})
+
+	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
+		options.Prefix,
+		"deploy-arch-ibm-vsi-vpc",
+		"fully-configurable",
+		map[string]interface{}{
+			"prefix":                       options.Prefix,
+			"existing_resource_group_name": resourceGroup,
+			"region":                       "eu-de",
+			"secrets_manager_service_plan": "trial",
+			"image_id":                     "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
+		},
+	)
+
+	/*
+		Event notifications is manually disabled in this test because event notifications DA creates kms keys and during undeploy the order of key protect and event notifications
+		is not considered by projects as EN is not a direct dependency of VSI DA. So undeploy fails, because
+		key protect instance can't be deleted because of active keys created by EN. Hence for now, we don't want to deploy
+		EN.
+
+		Issue has been created for projects team. https://github.ibm.com/epx/projects/issues/4750
+		Once that is fixed, we can remove the logic to disable SM
+	*/
+	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
+		{
+			OfferingName:   "deploy-arch-ibm-event-notifications",
+			OfferingFlavor: "fully-configurable",
+			Enabled:        core.BoolPtr(false), // explicitly disabled
+		},
+	}
+
+	err := options.RunAddonTest()
+	require.NoError(t, err)
+}
+
+// TestDependencyPermutations runs dependency permutations for VSI and all its dependencies
+func TestDependencyPermutations(t *testing.T) {
+
+	t.Skip("Skipping dependency permutations")
+	t.Parallel()
+
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing: t,
+		Prefix:  "vsi-perm",
+		AddonConfig: cloudinfo.AddonConfig{
+			OfferingName:   "deploy-arch-ibm-vsi-vpc",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"prefix":                                "es-perm",
+				"region":                                "eu-de",
+				"existing_resource_group_name":          resourceGroup,
+				"image_id":                              "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
+				"secrets_manager_service_plan":          "trial",
+				"existing_secrets_manager_instance_crn": permanentResources["secretsManagerCRN"],
+			},
+		},
+	})
+
+	err := options.RunAddonPermutationTest()
+	assert.NoError(t, err, "Dependency permutation test should not fail")
 }
