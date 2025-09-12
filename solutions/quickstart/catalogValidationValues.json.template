@@ -2,7 +2,5 @@
   "ibmcloud_api_key": $VALIDATION_APIKEY,
   "resource_tags": $TAGS,
   "existing_resource_group_name": "geretain-test-resources",
-  "prefix": $PREFIX,
-  "image_name": "ibm-centos-stream-9-amd64-11",
-  "region": "us-south"
+  "prefix": $PREFIX
 }

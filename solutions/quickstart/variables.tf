@@ -30,8 +30,8 @@ variable "prefix" {
   }
 }
 
-variable "existing_vpc_id" {
-  description = "The ID of an existing VPC. VSI will be provisioned in the first subnet of the VPC."
+variable "existing_vpc_crn" {
+  description = "The CRN of an existing VPC. VSI will be provisioned in the first subnet of the VPC."
   type        = string
   default     = null
 }
@@ -72,6 +72,7 @@ variable "vsi_name" {
 variable "image_name" {
   description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-about-images)"
   type        = string
+  default     = "ibm-redhat-9-4-minimal-amd64-9"
 }
 
 variable "machine_type" {

@@ -82,20 +82,7 @@
               }
             },
             {
-              "key": "existing_vpc_id",
-              "type": "string",
-              "required": true,
-              "custom_config": {
-                "type": "platform_resource",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "resourceType": "vpc",
-                  "selection": "single_select",
-                  "valueType": "id"
-                }
-              },
-              "virtual": false
+              "key": "existing_vpc_crn"
             },
             {
               "key": "vsi_name"
@@ -131,8 +118,20 @@
               "required": true,
               "options": [
                 {
-                  "displayname": "bx2-2x8",
-                  "value": "bx2-2x8"
+                  "displayname": "mini",
+                  "value": "mini"
+                },
+                {
+                  "displayname": "small",
+                  "value": "small"
+                },
+                {
+                  "displayname": "medium",
+                  "value": "medium"
+                },
+                {
+                  "displayname": "large",
+                  "value": "large"
                 }
               ]
             },

@@ -38,11 +38,11 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 #############################################################################
 
 module "vpc" {
-  count             = var.existing_vpc_id != null ? 0 : 1
+  count             = var.existing_vpc_crn != null ? 0 : 1
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
   version           = "8.0.0"
   resource_group_id = module.resource_group.resource_group_id
-  region            = var.region
+  region            = local.vpc_region
   prefix            = local.prefix
   tags              = var.resource_tags
   name              = "${local.prefix}-qs-vpc"
@@ -57,11 +57,28 @@ data "ibm_is_image" "image" {
   name = var.image_name
 }
 
-data "ibm_is_vpc" "vpc" {
-  count      = var.existing_vpc_id != null ? 1 : 0
-  identifier = var.existing_vpc_id
+module "existing_vpc_crn_parser" {
+  count   = var.existing_vpc_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.2.0"
+  crn     = var.existing_vpc_crn
 }
+
+data "ibm_is_vpc" "vpc" {
+  count      = var.existing_vpc_crn != null ? 1 : 0
+  identifier = local.vpc_id
+}
+
 locals {
+
+  vpc_region = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser.region : "us-south"
+  vpc_id     = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser.resource : module.vpc.vpc_id
+
+  subnet = var.existing_vpc_crn != null ? [{
+    name = data.ibm_is_vpc.vpc[0].subnets[0].name
+    id   = data.ibm_is_vpc.vpc[0].subnets[0].id
+    zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
+  }] : module.vpc.subnet_zone_list
 
   machine_config = {
     mini = {
@@ -79,14 +96,6 @@ locals {
   }
 
   machine_type = lookup(local.machine_config, var.machine_type, local.machine_config[var.machine_type])
-
-  vpc_id = var.existing_vpc_id != null ? var.existing_vpc_id : module.vpc.vpc_id
-
-  subnet = var.existing_vpc_id != null ? [{
-    name = data.ibm_is_vpc.vpc[0].subnets[0].name
-    id   = data.ibm_is_vpc.vpc[0].subnets[0].id
-    zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
-  }] : module.vpc.subnet_zone_list
 }
 
 module "vsi" {
