@@ -72,6 +72,7 @@ variable "vsi_name" {
 variable "image_name" {
   description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-about-images)"
   type        = string
+  default     = "ibm-ubuntu-22-04-5-minimal-amd64-6"
 }
 
 variable "machine_type" {
