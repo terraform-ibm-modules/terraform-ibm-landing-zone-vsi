@@ -118,19 +118,19 @@
               "required": true,
               "options": [
                 {
-                  "displayname": "mini",
+                  "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "displayname": "small",
+                  "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "displayname": "medium",
+                  "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "displayname": "large",
+                  "displayname": "Large",
                   "value": "large"
                 }
               ]
