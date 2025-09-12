@@ -92,12 +92,12 @@
               "required": true,
               "options": [
                 {
-                  "displayname": "Redhat",
-                  "value": "ibm-redhat-9-4-minimal-amd64-9"
-                },
-                {
                   "displayname": "Ubuntu",
                   "value": "ibm-ubuntu-22-04-5-minimal-amd64-6"
+                },
+                {
+                  "displayname": "Redhat",
+                  "value": "ibm-redhat-9-4-minimal-amd64-9"
                 },
                 {
                   "displayname": "Debian",
