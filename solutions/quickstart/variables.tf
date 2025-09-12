@@ -36,8 +36,8 @@ variable "prefix" {
   }
 }
 
-variable "existing_vpc_crn" {
-  description = "The CRN of an existing VPC. VSI will be provisioned in the first subnet of the VPC."
+variable "existing_vpc_id" {
+  description = "The ID of an existing VPC. VSI will be provisioned in the first subnet of the VPC."
   type        = string
   default     = null
 }

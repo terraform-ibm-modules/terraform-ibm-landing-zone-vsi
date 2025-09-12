@@ -96,7 +96,7 @@
               }
             },
             {
-              "key": "existing_vpc_crn",
+              "key": "existing_vpc_id",
               "required": true
             },
             {

@@ -38,7 +38,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 #############################################################################
 
 module "vpc" {
-  count             = var.existing_vpc_crn != null ? 0 : 1
+  count             = var.existing_vpc_id != null ? 0 : 1
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
   version           = "8.0.0"
   resource_group_id = module.resource_group.resource_group_id
@@ -57,16 +57,9 @@ data "ibm_is_image" "image" {
   name = var.image_name
 }
 
-module "existing_vpc_crn_parser" {
-  count   = var.existing_vpc_crn != null ? 0 : 1
-  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
-  crn     = var.existing_vpc_crn
-}
-
 data "ibm_is_vpc" "vpc" {
-  count      = var.existing_vpc_crn != null ? 0 : 1
-  identifier = local.existing_vpc_id
+  count      = var.existing_vpc_id != null ? 1 : 0
+  identifier = var.existing_vpc_id
 }
 locals {
 
@@ -87,13 +80,13 @@ locals {
 
   machine_type = lookup(local.machine_config, var.machine_type, local.machine_config[var.machine_type])
 
-  existing_vpc_id = var.existing_vpc_crn != null ? module.vpc.vpc_id : module.existing_vpc_crn_parser.resource
+  vpc_id = var.existing_vpc_id != null ? var.existing_vpc_id : module.vpc.vpc_id
 
-  subnet = var.existing_vpc_crn != null ? module.vpc.subnet_zone_list : [{
+  subnet = var.existing_vpc_id != null ? [{
     name = data.ibm_is_vpc.vpc[0].subnets[0].name
     id   = data.ibm_is_vpc.vpc[0].subnets[0].id
     zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
-  }]
+  }] : module.vpc.subnet_zone_list
 }
 
 module "vsi" {
@@ -104,7 +97,7 @@ module "vsi" {
   tags                  = var.resource_tags
   access_tags           = var.access_tags
   subnets               = local.subnet
-  vpc_id                = local.existing_vpc_id
+  vpc_id                = local.vpc_id
   prefix                = "${local.prefix}${var.vsi_name}"
   machine_type          = local.machine_type
   user_data             = var.user_data
