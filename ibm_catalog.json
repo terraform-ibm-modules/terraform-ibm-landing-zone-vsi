@@ -82,7 +82,8 @@
               }
             },
             {
-              "key": "existing_vpc_crn"
+              "key": "existing_vpc_crn",
+              "required": true
             },
             {
               "key": "vsi_name"

@@ -71,28 +71,20 @@ data "ibm_is_vpc" "vpc" {
 
 locals {
 
-  vpc_region = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser.region : "us-south"
-  vpc_id     = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser.resource : module.vpc.vpc_id
+  vpc_region = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].region : "us-south"
+  vpc_id     = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].resource : module.vpc[0].vpc_id
 
   subnet = var.existing_vpc_crn != null ? [{
     name = data.ibm_is_vpc.vpc[0].subnets[0].name
     id   = data.ibm_is_vpc.vpc[0].subnets[0].id
     zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
-  }] : module.vpc.subnet_zone_list
+  }] : module.vpc[0].subnet_zone_list
 
   machine_config = {
-    mini = {
-      flavor = "bx2d-2x8"
-    }
-    small = {
-      flavor = "cx2d-2x4"
-    }
-    medium = {
-      flavor = "mx2d-2x16"
-    }
-    large = {
-      flavor = "vx3d-2x32"
-    }
+    mini   = "bx2d-2x8"
+    small  = "cx2d-2x4"
+    medium = "mx2d-2x16"
+    large  = "vx3d-2x32"
   }
 
   machine_type = lookup(local.machine_config, var.machine_type, local.machine_config[var.machine_type])
