@@ -17,7 +17,7 @@ The Fully configurable variation provides extensive customization options for de
 
 **Best for:** Production environments, complex applications requiring extensive customization, enterprise workloads with specific compliance requirements.
 
-### QuickStart Variation  
+### QuickStart Variation
 **File:** `deploy-arch-ibm-vsi-quickstart.md`
 
 The QuickStart variation offers a simplified deployment path with sensible defaults for rapid getting started:

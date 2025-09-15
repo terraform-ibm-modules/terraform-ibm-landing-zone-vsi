@@ -2,7 +2,7 @@
 
 copyright:
   years: 2025
-lastupdated: "2025-09-09"
+lastupdated: "2025-09-15"
 
 keywords: vsi, virtual server instance, vpc, landing zone, deployable architecture, terraform, quickstart
 
@@ -12,7 +12,7 @@ authors:
   - name: "Jordan Williams"
 
 # The release that the reference architecture describes
-version: 5.5.5
+version: 5.6.1
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -22,7 +22,7 @@ production: false
 # Value is the URL to land the user in the IBM Cloud catalog details page
 # for the deployable architecture.
 # See https://test.cloud.ibm.com/docs/get-coding?topic=get-coding-deploy-button
-deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-1ad5cb2d-31f0-4ba7-8312-96d17edbfc4e-global
+deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-28e2b12c-858f-4ae8-8717-60db8cec2e6e-global
 
 docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 
@@ -50,19 +50,19 @@ content-type: reference-architecture
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
-{: toc-version="5.5.5"}
+{: toc-version="5.6.1"}
 
 The QuickStart variation of the Virtual Server Instance on VPC deployable architecture provides a simplified and fast deployment path for getting started with virtual servers on IBM Cloud VPC. This variation is designed for rapid deployment with sensible defaults, making it ideal for demonstration, development, proof-of-concept environments, and users who want to get started quickly with minimal configuration.
 
 ## Architecture diagram
 {: #ra-vsi-qs-architecture-diagram}
 
-![Architecture diagram for the QuickStart variation of Virtual Server Instance on VPC](vsi-quickstart.svg "Architecture diagram of QuickStart variation of Virtual Server Instance on VPC"){: caption="Figure 1. QuickStart variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi-quickstart.svg"}
+![Architecture diagram for the QuickStart variation of Virtual Server Instance on VPC](vsi-quickstart.svg "Architecture diagram of QuickStart variation of Virtual Server Instance on VPC"){: caption="QuickStart variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi-quickstart.svg"}
 
 ## Design requirements
 {: #ra-vsi-qs-design-requirements}
 
-![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-quickstart.svg "Design requirements"){: caption="Figure 2. Scope of the design requirements" caption-side="bottom"}
+![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-quickstart.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
 
 <!--
 TODO: Add the typical use case for the architecture.
@@ -84,7 +84,7 @@ business challenge, or target cloud environments.
 | Provide essential network connectivity | Default Security Groups | Configure security groups with commonly needed ports and protocols | Extensive custom security group configurations |
 | Support basic storage needs | Standard Boot Volumes | Use default boot volume sizes with standard performance | Complex storage configurations with multiple volumes |
 | Enable simple placement | Automatic Placement | Allow IBM Cloud to optimally place instances without complex placement group configurations | Custom placement group configurations |
-{: caption="Table 1. Architecture decisions" caption-side="bottom"}
+{: caption="Architecture decisions" caption-side="bottom"}
 
 ### Network security architecture decisions
 {: #ra-vsi-qs-components-arch-net-sec}
@@ -95,7 +95,7 @@ business challenge, or target cloud environments.
 | Enable subnet-level security | Standard Network ACLs | Use default or slightly modified Network ACLs for subnet-level traffic control | Highly customized ACL configurations |
 | Support internet connectivity when needed | Optional Floating IP | Provide the option to assign floating IPs to instances that need internet access | Always assign floating IPs or never assign them |
 | Maintain consistent IP addressing | Standard IP Management | Use VPC's default IP allocation with optional reserved IP addresses | Complex IP address management schemes |
-{: caption="Table 2. Network security architecture decisions" caption-side="bottom"}
+{: caption="Network security architecture decisions" caption-side="bottom"}
 
 ### Storage architecture decisions
 {: #ra-vsi-qs-components-arch-storage}
@@ -105,7 +105,7 @@ business challenge, or target cloud environments.
 | Provide adequate boot storage | Standard Boot Volumes | Use default boot volume sizes that meet common application requirements | Oversized or undersized boot volumes |
 | Support basic data storage needs | Optional Block Storage | Provide option to attach additional block storage volumes when needed | Complex multi-volume configurations |
 | Enable basic backup capabilities | Simple Snapshot Support | Support basic snapshot functionality for backup purposes | Complex snapshot scheduling and lifecycle management |
-{: caption="Table 3. Storage architecture decisions" caption-side="bottom"}
+{: caption="Storage architecture decisions" caption-side="bottom"}
 
 ### Key and password management architecture decisions
 {: #ra-vsi-qs-components-arch-key-pw}
@@ -115,7 +115,7 @@ business challenge, or target cloud environments.
 | Provide secure access to virtual servers | SSH Key Authentication | Use SSH public keys for secure authentication to virtual server instances | Password-based authentication |
 | Simplify key management | Single SSH Key Configuration | Support a single SSH key for simplified access management | Complex multi-key management |
 | Enable encrypted storage | Default Volume Encryption | Use IBM-managed encryption keys for volume encryption with minimal configuration | Complex customer-managed key configurations |
-{: caption="Table 4. Key and password management architecture decisions" caption-side="bottom"}
+{: caption="Key and password management architecture decisions" caption-side="bottom"}
 
 ## Key features and benefits
 {: #ra-vsi-qs-key-features}

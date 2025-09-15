@@ -2,7 +2,7 @@
 
 copyright:
   years: 2025
-lastupdated: "2025-09-09"
+lastupdated: "2025-09-15"
 
 keywords: vsi, virtual server instance, vpc, landing zone, deployable architecture, terraform, fully configurable
 
@@ -12,7 +12,7 @@ authors:
   - name: "Jordan Williams"
 
 # The release that the reference architecture describes
-version: 5.5.5
+version: 5.6.1
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -22,7 +22,7 @@ production: false
 # Value is the URL to land the user in the IBM Cloud catalog details page
 # for the deployable architecture.
 # See https://test.cloud.ibm.com/docs/get-coding?topic=get-coding-deploy-button
-deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-1ad5cb2d-31f0-4ba7-8312-96d17edbfc4e-global
+deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-28e2b12c-858f-4ae8-8717-60db8cec2e6e-global
 
 docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 
@@ -59,12 +59,12 @@ The Fully configurable variation of the Virtual Server Instance on VPC deployabl
 ## Architecture diagram
 {: #ra-vsi-fc-architecture-diagram}
 
-![Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC](vsi-fully-configurable.svg "Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC"){: caption="Figure 1. Fully configurable variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi-fully-configurable.svg"}
+![Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC](vsi-fully-configurable.svg "Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC"){: caption="Fully configurable variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi-fully-configurable.svg"}
 
 ## Design requirements
 {: #ra-vsi-fc-design-requirements}
 
-![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-fully-configurable.svg "Design requirements"){: caption="Figure 2. Scope of the design requirements" caption-side="bottom"}
+![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-fully-configurable.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
 
 <!--
 TODO: Add the typical use case for the architecture.
@@ -87,7 +87,7 @@ business challenge, or target cloud environments.
 | Provide network isolation and security | Security Groups and Network ACLs | Control inbound and outbound traffic at both the instance and subnet levels | Open network access with minimal security controls |
 | Enable instance placement optimization | Placement Groups | Group VSI instances on the same physical hardware for low latency or spread across different hardware for high availability | Random instance placement without optimization |
 | Support network redundancy | Multiple Subnets | Deploy across multiple subnets in different zones for network redundancy and improved availability | Single subnet deployment with limited redundancy |
-{: caption="Table 1. Architecture decisions" caption-side="bottom"}
+{: caption="Architecture decisions" caption-side="bottom"}
 
 ### Network security architecture decisions
 {: #ra-vsi-fc-components-arch-net-sec}
@@ -99,7 +99,7 @@ business challenge, or target cloud environments.
 | Enable public internet access when needed | Floating IP Addresses | Assign public IP addresses to VSIs that require internet connectivity | Private-only networking without internet access |
 | Manage IP address allocation | Reserved IP Addresses | Control and maintain consistent IP addressing for VSI instances | Dynamic IP allocation without control |
 | Monitor network traffic | VPC Flow Logs | Collect and analyze network traffic patterns for security and troubleshooting | No network traffic monitoring |
-{: caption="Table 2. Network security architecture decisions" caption-side="bottom"}
+{: caption="Network security architecture decisions" caption-side="bottom"}
 
 ### Storage architecture decisions
 {: #ra-vsi-fc-components-arch-storage}
@@ -110,7 +110,7 @@ business challenge, or target cloud environments.
 | Support additional data storage | Block Storage Volumes | Attach multiple volumes with configurable size, IOPS, and encryption | Single boot volume without additional storage |
 | Enable volume snapshot capabilities | Volume Snapshots | Create point-in-time snapshots for backup and recovery purposes | No backup capabilities |
 | Support consistent snapshot management | Snapshot Consistency Groups | Manage snapshots across multiple volumes for data consistency | Individual volume snapshots without coordination |
-{: caption="Table 3. Storage architecture decisions" caption-side="bottom"}
+{: caption="Storage architecture decisions" caption-side="bottom"}
 
 ### Key and password management architecture decisions
 {: #ra-vsi-fc-components-arch-key-pw}
@@ -120,7 +120,7 @@ business challenge, or target cloud environments.
 | Secure access to virtual server instances | SSH Key Management | Use SSH public keys for secure, password-less authentication | Password-based authentication with security risks |
 | Support multiple access methods | Multiple SSH Keys | Allow configuration of multiple SSH keys for different users or purposes | Single SSH key with limited access control |
 | Enable encrypted storage | Volume Encryption | Encrypt boot and data volumes using customer-managed or IBM-managed keys | Unencrypted storage with potential data exposure |
-{: caption="Table 4. Key and password management architecture decisions" caption-side="bottom"}
+{: caption="Key and password management architecture decisions" caption-side="bottom"}
 
 ## Deployment options
 {: #ra-vsi-fc-deployment-options}
