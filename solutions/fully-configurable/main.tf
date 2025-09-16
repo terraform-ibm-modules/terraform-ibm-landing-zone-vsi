@@ -96,7 +96,7 @@ module "kms" {
   }
   count                       = var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.1.26"
+  version                     = "5.1.24"
   create_key_protect_instance = false
   region                      = local.kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -199,13 +199,22 @@ resource "ibm_is_ssh_key" "auto_generate_ssh_key" {
   public_key = resource.tls_private_key.auto_generate_ssh_key[0].public_key_openssh
 }
 
+resource "null_resource" "sleep" {
+  depends_on = [module.kms]
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "echo 'Sleeping for 60 seconds for kms keys destroying to start so boot disk deletion is completed' && sleep 60"
+  }
+}
+
 ########################################################################################################################
 # Virtual Server Instance
 ########################################################################################################################
 
 module "vsi" {
   source                           = "../../"
-  depends_on                       = [time_sleep.wait_for_authorization_policy[0]]
+  depends_on                       = [time_sleep.wait_for_authorization_policy[0],null_resource.sleep]
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
   tags                             = var.vsi_resource_tags
@@ -277,7 +286,7 @@ locals {
 module "secrets_manager_arbitrary_secret" {
   count                       = var.existing_secrets_manager_instance_crn != null && var.auto_generate_ssh_key ? 1 : 0
   source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "2.9.1"
+  version                     = "2.8.10"
   existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.existing_secrets_manager_instance_region
   endpoint_type               = var.existing_secrets_manager_endpoint_type
