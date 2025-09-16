@@ -462,7 +462,7 @@ func TestDefaultConfiguration(t *testing.T) {
 	*/
 	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
 		{
-			OfferingName:   "deploy-arch-ibm-event-notifications",
+			OfferingName:   "deploy-arch-ibm-secrets-manager",
 			OfferingFlavor: "fully-configurable",
 			Enabled:        core.BoolPtr(false), // explicitly disabled
 		},
