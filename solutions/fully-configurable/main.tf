@@ -214,7 +214,7 @@ resource "null_resource" "sleep" {
 
 module "vsi" {
   source                           = "../../"
-  depends_on                       = [time_sleep.wait_for_authorization_policy[0],null_resource.sleep]
+  depends_on                       = [time_sleep.wait_for_authorization_policy[0], null_resource.sleep]
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
   tags                             = var.vsi_resource_tags
