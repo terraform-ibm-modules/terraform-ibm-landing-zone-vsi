@@ -29,10 +29,10 @@ docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/reference-architectures/vsi-fully-configurable.svg
 
 related_links:
-  - title: "Virtual Server Instance on VPC - QuickStart variation"
+  - title: "Cloud automation for Virtual Server Instance on VPC - QuickStart"
     url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra-qs"
     description: "The Virtual Server Instance on VPC QuickStart variation is a deployable architecture that provides virtual servers in a VPC in a single region. The QuickStart variation is designed to deploy quickly for demonstration and development."
-  - title: "Landing zone VPC with VSI"
+  - title: "Cloud automation for Virtual Server Instance on VPC - Fully configurable"
     url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra"
     description: "A comprehensive landing zone deployable architecture that provides virtual servers in a secure VPC for enterprise workloads."
 
