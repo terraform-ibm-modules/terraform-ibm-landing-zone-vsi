@@ -70,6 +70,37 @@ variable "subnets" {
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region"
   type        = string
+  default     = null
+
+  validation {
+    condition     = (var.image_id != null && var.catalog_offering != null) == false
+    error_message = "image_id and catalog_offering are mutually exclusive, you can only use one of these options to specify an image, you must set one of these to `null`."
+  }
+
+  validation {
+    condition     = (var.image_id == null && var.catalog_offering == null) == false
+    error_message = "You must specify one (and only one) of either `image_id` or `catalog_offering` for your virtual server OS image."
+  }
+}
+
+variable "catalog_offering" {
+  description = "The catalog offering or offering version to use when provisioning this virtual server instance. If an offering is specified, the latest version of that offering will be used."
+  type = object({
+    offering_crn = optional(string)
+    version_crn  = optional(string)
+    plan_crn     = optional(string)
+  })
+  default = null
+
+  validation {
+    condition     = var.catalog_offering != null ? (var.catalog_offering.offering_crn == null && var.catalog_offering.version_crn == null) == false : true
+    error_message = "Must supply either an `offering_crn` or `version_crn` for a catalog_offering."
+  }
+
+  validation {
+    condition     = var.catalog_offering != null ? (var.catalog_offering.offering_crn != null && var.catalog_offering.version_crn != null) == false : true
+    error_message = "`catalog_offering.offering_crn` and `catalog_offering.version_crn` of a catalog_offering are mutually exclusive. You must supply only one of these two values."
+  }
 }
 
 variable "ssh_key_ids" {

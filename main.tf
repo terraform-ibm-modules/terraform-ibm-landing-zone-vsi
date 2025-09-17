@@ -279,6 +279,16 @@ resource "ibm_is_instance" "vsi" {
     ]
   }
 
+  # catalog offering for image, ignored if snapshot
+  dynamic "catalog_offering" {
+    for_each = (local.vsi_boot_volume_snapshot_id == null && var.catalog_offering != null) ? [1] : []
+    content {
+      offering_crn = var.catalog_offering.offering_crn
+      version_crn  = var.catalog_offering.version_crn
+      plan_crn     = var.catalog_offering.plan_crn
+    }
+  }
+
   # Primary Virtual Network Interface
   dynamic "primary_network_attachment" {
     for_each = var.use_legacy_network_interface ? [] : [1]
