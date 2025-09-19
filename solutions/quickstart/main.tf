@@ -71,8 +71,8 @@ module "vpc" {
 
             port_min        = 22
             port_max        = 22
-            source_port_min = 22
-            source_port_max = 22
+            source_port_min = 1024
+            source_port_max = 65535
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
