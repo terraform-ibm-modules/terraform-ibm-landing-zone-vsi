@@ -84,7 +84,26 @@ variable "machine_type" {
 variable "user_data" {
   description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recognized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
   type        = string
-  default     = null
+  default     = <<-EOT
+#!/bin/bash
+
+# Add welcome message only to profile.d (cleaner approach)
+cat > /etc/profile.d/welcome.sh << 'EOF'
+#!/bin/bash
+if [ -t 0 ] && [ "$PS1" ]; then
+    echo "=========================================="
+    echo "Welcome to Your IBM Cloud VSI!"
+    echo "=========================================="
+    echo "Server Information:"
+    echo "- Hostname: $(hostname)"
+    echo "- IP Address: $(hostname -I | awk '{print $1}')"
+    echo "- OS: $(if [ -f /etc/os-release ]; then grep PRETTY_NAME /etc/os-release | cut -d'"' -f2; elif [ -f /etc/redhat-release ]; then cat /etc/redhat-release; else uname -s; fi)"
+    echo ""
+fi
+EOF
+
+chmod +x /etc/profile.d/welcome.sh
+EOT
 }
 
 variable "enable_floating_ip" {
