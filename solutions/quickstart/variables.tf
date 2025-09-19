@@ -64,7 +64,7 @@ variable "access_tags" {
 ##############################################################################
 
 variable "vsi_name" {
-  description = "The name of the Virtual server instance."
+  description = "The name of the Virtual server instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/quickstart/ssh_connection_guide.md."
   type        = string
   default     = "qs-vsi"
 }
@@ -111,6 +111,7 @@ variable "enable_floating_ip" {
   type        = bool
   default     = true
 }
+
 variable "existing_ssh_key_name" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"

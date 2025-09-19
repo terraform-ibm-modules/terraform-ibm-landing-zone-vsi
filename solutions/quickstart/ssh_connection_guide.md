@@ -30,10 +30,10 @@ WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-s
 SCHEMATICS_URL="YOUR_REGION_SCHEMATICS_URL_HERE"  # example: "https://us-south.schematics.cloud.ibm.com"
 
 # Make sure IBMCLOUD_API_KEY environment variable is set
-# Run: export IBMCLOUD_API_KEY="your-api-key-here" before running this script
+# Run: export IBMCLOUD_API_KEY="your-api-key-here" before running this script # pragma: allowlist secret
 if [ -z "$IBMCLOUD_API_KEY" ]; then
     echo "Error: IBMCLOUD_API_KEY environment variable is not set"
-    echo "Please run: export IBMCLOUD_API_KEY=<IBMCLOUD_API_KEY>"
+    echo "Please run: export IBMCLOUD_API_KEY=<IBMCLOUD_API_KEY>" # pragma: allowlist secret
     exit 1
 fi
 
@@ -42,7 +42,7 @@ ACCESS_TOKEN=$(curl -X POST \
   --location 'https://iam.cloud.ibm.com/identity/token' \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/x-www-form-urlencoded' \
-  --data-urlencode 'grant_type=urn:ibm:params:oauth:grant-type:apikey' \
+  --data-urlencode 'grant_type=urn:ibm:params:oauth:grant-type:apikey' \ # pragma: allowlist secret
   --data-urlencode "apikey=$IBMCLOUD_API_KEY" | jq -r '.access_token')
   ```
 
@@ -104,7 +104,7 @@ For different operating systems, replace the placeholders with your actual value
 ssh -i private_key.pem ubuntu@150.240.69.61
 ```
 
-#### RHE, Debian, and CentOS:
+#### RHEL, Debian, and CentOS:
 ```bash
 ssh -i private_key.pem vpcuser@150.240.69.61
 ```
@@ -138,4 +138,3 @@ Server Information:
 - OS: Debian GNU/Linux 13 (trixie)
 
 ```
-
