@@ -64,7 +64,7 @@ variable "access_tags" {
 ##############################################################################
 
 variable "vsi_name" {
-  description = "The name of the Virtual server instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/quickstart/ssh_connection_guide.md."
+  description = "The name of the Virtual server instance."
   type        = string
   default     = "qs-vsi"
 }
@@ -82,7 +82,7 @@ variable "machine_type" {
 }
 
 variable "user_data" {
-  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recognized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
+  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recognized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-user-data)"
   type        = string
   default     = <<-EOT
 #!/bin/bash
@@ -114,6 +114,6 @@ variable "enable_floating_ip" {
 
 variable "existing_ssh_key_name" {
   type        = string
-  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
+  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/quickstart/ssh_connection_guide.md)."
   default     = null
 }
