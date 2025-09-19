@@ -27,7 +27,7 @@ output "fip_list" {
 ##############################################################################
 
 output "ssh_private_key" {
-  value       = tls_private_key.tls_key[0].private_key_pem
+  value       = var.existing_ssh_key_name == null ? tls_private_key.tls_key[0].private_key_pem : null
   description = "The ssh private key data in [PEM (RFC 1421)](https://datatracker.ietf.org/doc/html/rfc1421) format."
   sensitive   = true
 }

@@ -45,9 +45,55 @@ module "vpc" {
   region            = local.vpc_region
   prefix            = local.prefix
   tags              = var.resource_tags
-  name              = "${local.prefix}-qs-vpc"
-}
+  subnets = {
+    zone-1 = [
+      {
+        name           = "subnet-a"
+        cidr           = "10.10.10.0/24"
+        public_gateway = true
+        acl_name       = "vpc-acl"
+        no_addr_prefix = false
+      }
+  ] }
+  name = "${local.prefix}-qs-vpc"
+  network_acls = [
+    {
+      name                         = "vpc-acl"
+      add_ibm_cloud_internal_rules = true
+      add_vpc_connectivity_rules   = true
+      prepend_ibm_rules            = true
+      rules = [
+        {
+          name      = "allow-all-22-inbound"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
 
+            port_min        = 22
+            port_max        = 22
+            source_port_min = 22
+            source_port_max = 22
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-ephemeral-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            source_port_min = 1
+            source_port_max = 65535
+            port_min        = 1024
+            port_max        = 65535
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        }
+      ]
+    }
+  ]
+}
 
 ########################################################################################################################
 # Virtual Server Instance
@@ -94,7 +140,6 @@ module "vsi" {
   source                = "../../"
   resource_group_id     = module.resource_group.resource_group_id
   image_id              = data.ibm_is_image.image.id
-  create_security_group = false
   tags                  = var.resource_tags
   access_tags           = var.access_tags
   subnets               = local.subnet
@@ -105,4 +150,19 @@ module "vsi" {
   vsi_per_subnet        = 1
   ssh_key_ids           = [local.ssh_key_id]
   enable_floating_ip    = var.enable_floating_ip
+  create_security_group = true
+  security_group = {
+    name = "ssh-security-group"
+    rules = [
+      {
+        name      = "allow-ssh-inbound"
+        direction = "inbound"
+        source    = "0.0.0.0/0"
+        tcp = {
+          port_min = 22
+          port_max = 22
+        }
+      }
+    ]
+  }
 }

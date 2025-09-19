@@ -512,7 +512,7 @@ func TestQuickstartSchematics(t *testing.T) {
 		},
 		TemplateFolder:         quickStartConfigFlavorDir,
 		Tags:                   []string{"vsi-qs-da"},
-		DeleteWorkspaceOnFail:  false,
+		DeleteWorkspaceOnFail:  true,
 		WaitJobCompleteMinutes: 60,
 	})
 
