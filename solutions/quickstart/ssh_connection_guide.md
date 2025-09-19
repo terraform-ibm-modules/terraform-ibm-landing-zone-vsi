@@ -29,13 +29,8 @@ WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-s
 # Set your Schematics URL (replace with your region's URL)
 SCHEMATICS_URL="YOUR_REGION_SCHEMATICS_URL_HERE"  # example: "https://us-south.schematics.cloud.ibm.com"
 
-# Make sure IBMCLOUD_API_KEY environment variable is set
-# Run: export IBMCLOUD_API_KEY="your-api-key-here" before running this script # pragma: allowlist secret
-if [ -z "$IBMCLOUD_API_KEY" ]; then
-    echo "Error: IBMCLOUD_API_KEY environment variable is not set"
-    echo "Please run: export IBMCLOUD_API_KEY=<IBMCLOUD_API_KEY>" # pragma: allowlist secret
-    exit 1
-fi
+# Set your IBMCLOUD_API_KEY
+IBMCLOUD_API_KEY="your-api-key-here" # pragma: allowlist secret
 
 # Get access token
 ACCESS_TOKEN=$(curl -X POST \
