@@ -4,8 +4,8 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 
 ## Prerequisites
 
-- Your VSI has been successfully deployed
-- You have the SSH private key file
+- Your VSI has been successfully deployed.
+- You have the SSH private key file.
 - Your VSI is assigned a floating IP address. A floating IP is a system-provisioned public IP address that is accessible from the internet.
 
 ## Get Your SSH Private Key and Floating UP
@@ -35,7 +35,7 @@ ACCESS_TOKEN=$(curl -X POST \
   --data-urlencode "apikey=$IBMCLOUD_API_KEY" | jq -r '.access_token')
   ```
 
-Run this command to save your SSH private key, extract Floating IP address, and set file permission:
+Run the following command to download and save your SSH private key with proper permissions, and to extract the Floating IP address:
 
 ```bash
 
