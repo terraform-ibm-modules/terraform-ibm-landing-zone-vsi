@@ -6,18 +6,12 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 
 - Your VSI has been successfully deployed
 - You have the SSH private key file
-- Your VSI has a floating IP assigned
+- Your VSI is assigned a floating IP address. A floating IP is a system-provisioned public IP address that is accessible from the internet.
 
-## Step 1: Retrieve Your Connection Information
-
-From your Projects output, you'll need:
-- **Floating IP**: The public IP address to connect to
-- **SSH Private Key**: The private key for authentication
-- **Operating System**: To determine the correct username
-
-## Step 2: Get Your SSH Private Key
+## Get Your SSH Private Key and Floating UP
 
 Get Workspace ID from Projects:
+
 ![Projects](https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architectures/project.png)
 
 Set environment variables
@@ -32,7 +26,7 @@ SCHEMATICS_URL="YOUR_REGION_SCHEMATICS_URL_HERE"  # example: "https://us-south.s
 # Set your IBMCLOUD_API_KEY
 IBMCLOUD_API_KEY="your-api-key-here" # pragma: allowlist secret
 
-# Get access token
+# Set access token
 ACCESS_TOKEN=$(curl -X POST \
   --location 'https://iam.cloud.ibm.com/identity/token' \
   --header 'Accept: application/json' \
@@ -41,7 +35,7 @@ ACCESS_TOKEN=$(curl -X POST \
   --data-urlencode "apikey=$IBMCLOUD_API_KEY" | jq -r '.access_token')
   ```
 
-Run this command to extract and save your SSH private key:
+Run this command to save your SSH private key, extract Floating IP address, and set file permission:
 
 ```bash
 
