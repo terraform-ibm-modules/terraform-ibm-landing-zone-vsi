@@ -10,11 +10,11 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 
 ## Get Your SSH Private Key and Floating UP
 
-## Step 1:  Get Workspace ID from Projects:
+### Step 1:  Get Workspace ID from Projects:
 
 ![Projects](https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/quickstart/reference-architectures/project.png)
 
-## Step 2: Set environment variables
+### Step 2: Set environment variables
 
 ```bash
 # Set your workspace ID (replace with your workspace ID)
@@ -35,7 +35,7 @@ ACCESS_TOKEN=$(curl -X POST \
   --data-urlencode "apikey=$IBMCLOUD_API_KEY" | jq -r '.access_token')
   ```
 
-## Step 3: Run the following command to download and save your SSH private key with proper permissions, and to extract the Floating IP address:
+### Step 3: Run the following command to download and save your SSH private key with proper permissions, and to extract the Floating IP address:
 
 ```bash
 
@@ -63,7 +63,7 @@ This command will:
 - Extracts the SSH private key and saves it as `private_key.pem` with secure `400` permissions
 - Displays the floating IP address and private key file path
 
-## Step 4: Determine Your Username
+### Step 4: Determine Your Username
 
 The default username depends on your operating system:
 
@@ -76,7 +76,7 @@ The default username depends on your operating system:
 | CentOS | `vpcuser` |
 
 
-## Step 5: Connect via SSH
+### Step 5: Connect via SSH
 
 Use the following command template to connect to your VSI:
 
@@ -103,7 +103,7 @@ ssh -i private_key.pem vpcuser@150.240.69.61
 ssh -i private_key.pem core@150.240.69.61
 ```
 
-## Step 6: First Connection
+### Step 6: First Connection
 
 On your first connection, you'll see a message about host authenticity:
 
