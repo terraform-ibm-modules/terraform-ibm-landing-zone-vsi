@@ -17,10 +17,10 @@ Get Workspace ID from Projects:
 Set environment variables
 
 ```bash
-# Set your workspace ID (replace with your actual workspace ID)
+# Set your workspace ID
 WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-service.8f617fb9"
 
-# Set your Schematics URL (replace with your region's URL)
+# Set your Schematics URL
 SCHEMATICS_URL="YOUR_REGION_SCHEMATICS_URL_HERE"  # example: "https://us-south.schematics.cloud.ibm.com"
 
 # Set your IBMCLOUD_API_KEY
