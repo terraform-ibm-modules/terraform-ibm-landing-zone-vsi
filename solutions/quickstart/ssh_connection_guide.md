@@ -93,7 +93,7 @@ For different operating systems, replace the placeholders with your actual value
 ssh -i private_key.pem ubuntu@150.240.69.61
 ```
 
-#### RHEL, Debian, and CentOS:
+#### Redhat, Debian, and CentOS:
 ```bash
 ssh -i private_key.pem vpcuser@150.240.69.61
 ```
