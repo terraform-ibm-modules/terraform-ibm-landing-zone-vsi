@@ -117,7 +117,7 @@ data "ibm_is_vpc" "vpc" {
 
 locals {
 
-  vpc_region = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].region : "us-south"
+  vpc_region = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].region : var.vpc_region
   vpc_id     = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].resource : module.vpc[0].vpc_id
 
   subnet = var.existing_vpc_crn != null ? [{

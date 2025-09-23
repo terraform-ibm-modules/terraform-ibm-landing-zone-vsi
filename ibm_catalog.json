@@ -145,6 +145,19 @@
               ]
             },
             {
+              "key": "vpc_region",
+              "required": true,
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              }
+            },
+            {
               "key": "existing_ssh_key_name"
             },
             {

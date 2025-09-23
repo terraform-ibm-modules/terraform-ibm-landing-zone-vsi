@@ -36,6 +36,12 @@ variable "existing_vpc_crn" {
   default     = null
 }
 
+variable "vpc_region" {
+  type        = string
+  description = "Region in which VPC will be deployed. [Learn More](https://terraform-ibm-modules.github.io/documentation/#/region)."
+  default     = "us-south"
+}
+
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
@@ -87,7 +93,6 @@ variable "user_data" {
   default     = <<-EOT
 #!/bin/bash
 
-# Add welcome message only to profile.d (cleaner approach)
 cat > /etc/profile.d/welcome.sh << 'EOF'
 #!/bin/bash
 if [ -t 0 ] && [ "$PS1" ]; then
@@ -107,7 +112,7 @@ EOT
 }
 
 variable "enable_floating_ip" {
-  description = "Create a floating IP for each virtual server created."
+  description = "Allocate and assign a floating IP address to the virtual server instance."
   type        = bool
   default     = true
 }
