@@ -68,7 +68,6 @@ module "vpc" {
           action    = "allow"
           direction = "inbound"
           tcp = {
-
             port_min        = 22
             port_max        = 22
             source_port_min = 1024
