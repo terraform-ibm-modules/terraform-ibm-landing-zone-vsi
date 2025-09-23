@@ -19,13 +19,19 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 ```bash
 # Set your workspace ID (replace with your workspace ID)
 WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-service.8f617fb9"
+  ```
 
+```bash
 # Set your Schematics URL (replace with your region's URL)
 SCHEMATICS_URL="YOUR_REGION_SCHEMATICS_URL_HERE"  # example: "https://us-south.schematics.cloud.ibm.com"
+  ```
 
+  ```bash
 # Set your IBMCLOUD_API_KEY
 IBMCLOUD_API_KEY="your-api-key-here" # pragma: allowlist secret
+  ```
 
+```bash
 # Set access token
 ACCESS_TOKEN=$(curl -X POST \
   --location 'https://iam.cloud.ibm.com/identity/token' \
