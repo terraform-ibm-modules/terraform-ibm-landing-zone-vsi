@@ -76,14 +76,14 @@ variable "vsi_name" {
 }
 
 variable "image_name" {
-  description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-about-images)"
+  description = "Image ID used for Virtual server instance. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-about-images)"
   type        = string
   default     = "ibm-ubuntu-22-04-5-minimal-amd64-6"
 }
 
-variable "machine_type" {
+variable "size" {
   type        = string
-  description = "The Virtual server instance machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui)."
+  description = "The Virtual server instance machine size. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/quickstart/DA_docs.md)."
   default     = "mini"
 }
 

@@ -132,7 +132,7 @@ locals {
     large  = "vx3d-2x32"
   }
 
-  machine_type = lookup(local.machine_config, var.machine_type, local.machine_config[var.machine_type])
+  machine_type = lookup(local.machine_config, var.size, local.machine_config[var.size])
 }
 
 module "vsi" {

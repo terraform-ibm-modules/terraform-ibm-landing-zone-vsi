@@ -75,7 +75,14 @@
             },
             {
               "key": "prefix",
-              "required": true
+              "required": true,
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--'). It should not exceed 16 characters",
+                  "value": "^$|^__NULL__$|^[a-z](?!.*--)(?:[a-z0-9-]{0,14}[a-z0-9])?$"
+                }
+              ]
             },
             {
               "key": "existing_resource_group_name",
@@ -91,7 +98,14 @@
             },
             {
               "key": "existing_vpc_crn",
-              "required": true
+              "required": true,
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_vpc_crn' is not valid.",
+                  "value": "^crn:(.*:){3}is:(.*:){2}:vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                }
+              ]
             },
             {
               "key": "vsi_name"
@@ -101,15 +115,27 @@
               "required": true,
               "options": [
                 {
-                  "displayname": "Ubuntu",
+                  "displayname": "Ubuntu 22",
                   "value": "ibm-ubuntu-22-04-5-minimal-amd64-6"
                 },
                 {
-                  "displayname": "Redhat",
-                  "value": "ibm-redhat-9-4-minimal-amd64-9"
+                  "displayname": "Ubuntu 24",
+                  "value": "ibm-ubuntu-24-04-3-minimal-amd64-2"
                 },
                 {
-                  "displayname": "Debian",
+                  "displayname": "Redhat 8",
+                  "value": "ibm-redhat-8-10-minimal-amd64-7"
+                },
+                {
+                  "displayname": "Redhat 9",
+                  "value": "ibm-redhat-9-4-minimal-amd64-10"
+                },
+                {
+                  "displayname": "Debian 12",
+                  "value": "ibm-debian-12-11-minimal-amd64-1"
+                },
+                {
+                  "displayname": "Debian 13",
                   "value": "ibm-debian-13-minimal-amd64-1"
                 },
                 {
@@ -117,13 +143,17 @@
                   "value": "ibm-fedora-coreos-42-stable-2"
                 },
                 {
-                  "displayname": "CentOS",
-                  "value": "ibm-centos-stream-9-amd64-11"
+                  "displayname": "CentOS 9",
+                  "value": "ibm-centos-stream-9-amd64-12"
+                },
+                {
+                  "displayname": "CentOS 10",
+                  "value": "ibm-centos-stream-10-amd64-4"
                 }
               ]
             },
             {
-              "key": "machine_type",
+              "key": "size",
               "required": true,
               "options": [
                 {
