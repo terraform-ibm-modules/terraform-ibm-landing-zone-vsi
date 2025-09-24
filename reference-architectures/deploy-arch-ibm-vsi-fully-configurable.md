@@ -2,7 +2,7 @@
 
 copyright:
   years: 2025
-lastupdated: "2025-09-15"
+lastupdated: "2025-09-24"
 
 keywords: vsi, virtual server instance, vpc, landing zone, deployable architecture, terraform, fully configurable
 
@@ -56,6 +56,8 @@ content-type: reference-architecture
 
 The Fully configurable variation of the Virtual Server Instance on VPC deployable architecture provides a flexible and comprehensive solution for deploying virtual servers with extensive customization options. This architecture supports multiple VSI configurations, load balancers, block storage volumes, and advanced networking features across multiple subnets and availability zones.
 
+This variation is best suited for production environments and enterprise workloads that require advanced configurations, high availability across multiple zones, comprehensive security controls, and extensive customization options for networking, storage, and load balancing.
+
 ## Architecture diagram
 {: #ra-vsi-fc-architecture-diagram}
 
@@ -78,6 +80,8 @@ business challenge, or target cloud environments.
 ### VPC architecture decisions
 {: #ra-vsi-fc-components-arch}
 
+For detailed information about VPC capabilities, see the [Virtual Server Instance on VPC documentation](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers).
+
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
 | Create virtual server instances with flexible configurations | Virtual Server Instances | Support for multiple VSI profiles, custom boot volumes, and flexible placement across subnets | Single VSI configuration with limited customization |
@@ -92,6 +96,8 @@ business challenge, or target cloud environments.
 ### Network security architecture decisions
 {: #ra-vsi-fc-components-arch-net-sec}
 
+For comprehensive security guidance, review the [VPC security best practices](https://cloud.ibm.com/docs/vpc?topic=vpc-security-in-your-vpc).
+
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
 | Control instance-level network access | Security Groups | Define granular rules for inbound and outbound traffic at the VSI level | Default security group with minimal restrictions |
@@ -104,6 +110,8 @@ business challenge, or target cloud environments.
 ### Storage architecture decisions
 {: #ra-vsi-fc-components-arch-storage}
 
+For more information about storage options, explore [block storage options](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about).
+
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
 | Provide customizable boot storage | Custom Boot Volumes | Configure boot volume size, encryption, and performance characteristics | Default boot volumes with standard configuration |
@@ -114,6 +122,8 @@ business challenge, or target cloud environments.
 
 ### Key and password management architecture decisions
 {: #ra-vsi-fc-components-arch-key-pw}
+
+This architecture supports compliance requirements for regulated industries. Learn more about [IBM Cloud for Financial Services](/docs/framework-financial-services?topic=framework-financial-services-about).
 
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
@@ -151,11 +161,10 @@ The Fully configurable variation supports extensive customization options:
 - SSL termination and certificate management
 - Multiple load balancer configurations per deployment
 
+For detailed configuration options, learn about [load balancer configurations](https://cloud.ibm.com/docs/vpc?topic=vpc-load-balancers).
+
 ## Next steps
 {: #ra-vsi-fc-next-steps}
 
-- Review the [Virtual Server Instance on VPC documentation](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers)
-- Explore [block storage options](https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about)
-- Learn about [load balancer configurations](https://cloud.ibm.com/docs/vpc?topic=vpc-load-balancers)
-- Understand [VPC security best practices](https://cloud.ibm.com/docs/vpc?topic=vpc-security-in-your-vpc)
-- Read about [IBM Cloud for Financial Services](/docs/framework-financial-services?topic=framework-financial-services-about)
+- Deploy the Fully configurable variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-28e2b12c-858f-4ae8-8717-60db8cec2e6e-global)
+- Follow the [deployment guide](/docs/deployable-reference-architectures?topic=deployable-reference-architectures-deploy-arch-overview) for step-by-step instructions

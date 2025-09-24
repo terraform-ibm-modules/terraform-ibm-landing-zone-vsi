@@ -2,7 +2,7 @@
 
 copyright:
   years: 2025
-lastupdated: "2025-09-15"
+lastupdated: "2025-09-24"
 
 keywords: vsi, virtual server instance, vpc, landing zone, deployable architecture, terraform, quickstart
 
@@ -76,6 +76,8 @@ business challenge, or target cloud environments.
 ### VPC architecture decisions
 {: #ra-vsi-qs-components-arch}
 
+For detailed information about VPC capabilities, review the [Virtual Server Instance on VPC documentation](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers).
+
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
 | Provide quick deployment with minimal configuration | Simplified VSI Configuration | Deploy virtual servers with pre-configured, optimized settings for common use cases | Complex multi-step configuration process |
@@ -88,6 +90,8 @@ business challenge, or target cloud environments.
 
 ### Network security architecture decisions
 {: #ra-vsi-qs-components-arch-net-sec}
+
+Learn about [VPC networking fundamentals](https://cloud.ibm.com/docs/vpc?topic=vpc-about-networking-for-vpc) for more information about networking in VPC environments.
 
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
@@ -110,35 +114,14 @@ business challenge, or target cloud environments.
 ### Key and password management architecture decisions
 {: #ra-vsi-qs-components-arch-key-pw}
 
+This architecture supports compliance requirements for regulated industries. Read about [IBM Cloud for Financial Services](/docs/framework-financial-services?topic=framework-financial-services-about) for more information about compliance frameworks.
+
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
 | Provide secure access to virtual servers | SSH Key Authentication | Use SSH public keys for secure authentication to virtual server instances | Password-based authentication |
 | Simplify key management | Single SSH Key Configuration | Support a single SSH key for simplified access management | Complex multi-key management |
 | Enable encrypted storage | Default Volume Encryption | Use IBM-managed encryption keys for volume encryption with minimal configuration | Complex customer-managed key configurations |
 {: caption="Key and password management architecture decisions" caption-side="bottom"}
-
-## Key features and benefits
-{: #ra-vsi-qs-key-features}
-
-### Rapid Deployment
-- Minimal required inputs for quick setup
-- Pre-configured settings based on best practices
-- Automated resource creation with sensible defaults
-
-### Development-Friendly
-- Perfect for development and testing environments
-- Quick teardown and rebuild capabilities
-- Cost-effective for temporary workloads
-
-### Learning and Exploration
-- Ideal for learning IBM Cloud VPC concepts
-- Simple enough for proof-of-concept projects
-- Easy to understand and modify
-
-### Scalability Path
-- Can be extended with additional features as needed
-- Migration path to fully configurable variation available
-- Foundation for more complex architectures
 
 ## Deployment considerations
 {: #ra-vsi-qs-deployment-considerations}
@@ -159,11 +142,10 @@ business challenge, or target cloud environments.
 - Performance-critical applications
 - Complex networking requirements
 
+Explore the [Fully configurable variation](https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-fully-configurable-ra) for advanced features and extensive customization options.
+
 ## Next steps
 {: #ra-vsi-qs-next-steps}
 
-- Deploy the QuickStart variation to get familiar with IBM Cloud VPC concepts
-- Review the [Virtual Server Instance on VPC documentation](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers)
-- Explore the [Fully configurable variation](https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-fully-configurable-ra) for advanced features
-- Learn about [VPC networking fundamentals](https://cloud.ibm.com/docs/vpc?topic=vpc-about-networking-for-vpc)
-- Read about [IBM Cloud for Financial Services](/docs/framework-financial-services?topic=framework-financial-services-about)
+- Deploy the QuickStart variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-28e2b12c-858f-4ae8-8717-60db8cec2e6e-global)
+- Follow the [deployment guide](/docs/deployable-reference-architectures?topic=deployable-reference-architectures-deploy-arch-overview) for step-by-step instructions
