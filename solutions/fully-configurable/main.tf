@@ -199,12 +199,15 @@ resource "ibm_is_ssh_key" "auto_generate_ssh_key" {
   public_key = resource.tls_private_key.auto_generate_ssh_key[0].public_key_openssh
 }
 
-resource "null_resource" "sleep" {
+# This is a workaround for an expected provider issue where the disk might not be deleted in time, causing the KMS key deletion to fail due to its association with the disk.
+# https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6475
+
+resource "null_resource" "wait" {
   depends_on = [module.kms]
 
   provisioner "local-exec" {
     when    = destroy
-    command = "echo 'Sleeping for 60 seconds for kms keys destroying to start so boot disk deletion is completed' && sleep 60"
+    command = "echo 'Waiting 60 seconds before attempting to destroy the KMS key to ensure the boot disk deletion has completed.' && sleep 60"
   }
 }
 
@@ -214,7 +217,7 @@ resource "null_resource" "sleep" {
 
 module "vsi" {
   source                           = "../../"
-  depends_on                       = [time_sleep.wait_for_authorization_policy[0], null_resource.sleep]
+  depends_on                       = [time_sleep.wait_for_authorization_policy[0], null_resource.wait]
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
   tags                             = var.vsi_resource_tags
