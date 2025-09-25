@@ -242,12 +242,19 @@
           ],
           "iam_permissions": [
             {
-              "service_name": "is.vpc",
+              "service_name": "is",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating Virtual Server Instance and Virtual Private Cloud(VPC)."
+              "notes": "Required for creating Virtual Server Instance."
+            },
+            {
+              "service_name": "is.vpc",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "Required for creating Virtual Private Cloud(VPC)."
             },
             {
               "service_name": "Resource group only",
@@ -259,6 +266,10 @@
           ],
           "architecture": {
             "features": [
+              {
+                "title": " ",
+                "description": "Ideal for users new to IBM Cloud or Virtual Server Instance who want to get started without configuring underlying infrastructure."
+              },
               {
                 "title": " ",
                 "description": "A lightweight, experimental configuration for quickly provisioning Virtual Server Instance on IBM Cloud VPC. Not certified, not upgradeable, and not intended for production use."
