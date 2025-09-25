@@ -28,7 +28,7 @@ locals {
   ]
 
   # format the api endpoint from the provided collector endpoint
-  scc_wp_api_endpoint = replace(replace(replace(var.scc_wp_collector_endpoint, "ingest.", ""), "https://", ""), "/api", "")
+  scc_wp_api_endpoint = replace(replace(replace(var.scc_wp_collector_endpoint == null ? "" : var.scc_wp_collector_endpoint, "ingest.", ""), "https://", ""), "/api", "")
 
   # additional conf is for configuring the workload protect agent
   # conditionally used in monitoring user_data if both are enabled
