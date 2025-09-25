@@ -119,6 +119,6 @@ variable "enable_floating_ip" {
 
 variable "existing_ssh_key_name" {
   type        = string
-  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/quickstart/ssh_connection_guide.md)."
+  description = "An existing ssh key name to use for this example, if unset a new ssh key will be created."
   default     = null
 }
