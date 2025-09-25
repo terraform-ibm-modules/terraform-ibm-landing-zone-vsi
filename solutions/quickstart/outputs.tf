@@ -31,3 +31,18 @@ output "ssh_private_key" {
   description = "The ssh private key data in [PEM (RFC 1421)](https://datatracker.ietf.org/doc/html/rfc1421) format."
   sensitive   = true
 }
+
+output "next_steps_text" {
+  value       = "Now, you can SSH to the Virtual Server Instance."
+  description = "Next steps text"
+}
+
+output "next_step_primary_label" {
+  value       = "SSH Connection Guide"
+  description = "Primary label"
+}
+
+output "next_step_primary_url" {
+  value       = "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/quickstart/ssh_connection_guide.md"
+  description = "Primary URL"
+}
