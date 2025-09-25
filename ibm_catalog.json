@@ -242,7 +242,7 @@
           ],
           "iam_permissions": [
             {
-              "service_name": "is",
+              "service_name": "is.vpc",
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
@@ -261,14 +261,14 @@
             "features": [
               {
                 "title": " ",
-                "description": "Configures Quickstart deployment of a Virtual Server Instance on IBM Cloud VPC with limited options."
+                "description": "A lightweight, experimental configuration for quickly provisioning Virtual Server Instance on IBM Cloud VPC. Not certified, not upgradeable, and not intended for production use."
               }
             ],
             "diagrams": [
               {
                 "diagram": {
                   "caption": "Virtual Server Instance - Quickstart",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/quickstart/reference-architectures/vsi-qs.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architectures/vsi-qs.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture supports deployment of a <b>Virtual Server Instance</b> within an IBM Cloud <b>Virtual Private Cloud (VPC)</b> environment.<br><br>The VPC is hosted within a designated resource group in a specific region. The VPC includes a subnet for network segmentation and connectivity of compute resources.<br><br>For external connectivity, the architecture supports optional assignment of a floating IP to the virtual server, allowing public network access as needed.<br><br>A security group is defined to control inbound and outbound traffic to the virtual server."
