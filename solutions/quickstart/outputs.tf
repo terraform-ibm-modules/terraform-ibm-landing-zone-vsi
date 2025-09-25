@@ -48,7 +48,7 @@ output "next_step_primary_url" {
 }
 
 output "next_step_secondary_label" {
-  value       = "Red Hat OpenShift cluster overview page"
+  value       = "SSH Connection Guide"
   description = "SSH Connection Guide"
 }
 
