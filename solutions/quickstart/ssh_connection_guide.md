@@ -33,6 +33,8 @@ IBMCLOUD_API_KEY="your-api-key-here" # pragma: allowlist secret
 
 ```bash
 # Set access token
+# Copy only the functional code, excluding any '# pragma:' comments
+
 ACCESS_TOKEN=$(curl -X POST \
   --location 'https://iam.cloud.ibm.com/identity/token' \
   --header 'Accept: application/json' \
