@@ -715,3 +715,48 @@ variable "monitoring_tags" {
 }
 
 ########################################################################################################################
+
+########################################################################################################################
+# Workload Protect Agent Variables
+########################################################################################################################
+
+variable "install_scc_wp_agent" {
+  type        = bool
+  default     = false
+  description = "Set to true to enable installing the SCC workload protect agent into your VSI at time of creation."
+}
+
+variable "scc_wp_access_key" {
+  type        = string
+  default     = null
+  sensitive   = true
+  description = "Access key used by the SCC workload protect agent to authenticate, required when `install_scc_wp_agent` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
+
+  validation {
+    condition     = var.install_scc_wp_agent ? var.scc_wp_access_key != null : true
+    error_message = "Value for `scc_wp_access_key` must be provided when `install_scc_wp_agent` is true."
+  }
+}
+
+variable "scc_wp_collector_endpoint" {
+  type        = string
+  default     = null
+  description = "Endpoint the SCC workload protect agent sends metrics to, required when `install_scc_wp_agent` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
+
+  validation {
+    condition     = var.install_scc_wp_agent ? var.scc_wp_collector_endpoint != null : true
+    error_message = "Value for `scc_wp_collector_endpoint` must be provided when `install_scc_wp_agent` is true."
+  }
+}
+
+variable "scc_wp_collector_port" {
+  type        = string
+  default     = "6443"
+  description = "Port the SCC workload protect agent targets when sending metrics, defaults to `6443`."
+}
+
+variable "scc_wp_tags" {
+  type        = list(string)
+  default     = []
+  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the SCC workload protect agent."
+}

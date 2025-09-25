@@ -22,23 +22,38 @@ locals {
     "mkdir -p /run/logging-agent",
     "curl -X GET -o /run/logging-agent/${local.package_extension} ${local.logging_package_url}",
     "${length(regexall("^.*deb$", local.package_extension)) > 0 ? "dpkg -i" : "rpm -ivh"} /run/logging-agent/${local.package_extension}",
-    "curl -X GET -o /run/logging-agent/logs-agent-config.sh https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/post-config.sh",
+    "curl -X GET -o /run/logging-agent/logs-agent-config.sh https://logs-router-agent-config.s3.direct.us.cloud-object-storage.appdomain.cloud/post-config.sh",
     "chmod +x /run/logging-agent/logs-agent-config.sh",
     "/run/logging-agent/logs-agent-config.sh -h ${var.logging_target_host != null ? var.logging_target_host : ""} -p ${var.logging_target_port} -t ${var.logging_target_path} -a ${var.logging_auth_mode} ${var.logging_auth_mode == "IAMAPIKey" ? "-k" : "-d"} ${var.logging_auth_mode == "IAMAPIKey" ? (var.logging_api_key != null ? var.logging_api_key : "") : (var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : "")} -i ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} --send-directly-to-icl"
   ]
+
+  # format the api endpoint from the provided collector endpoint
+  scc_wp_api_endpoint = replace(replace(replace(var.scc_wp_collector_endpoint, "ingest.", ""), "https://", ""), "/api", "")
+
+  # additional conf is for configuring the workload protect agent
+  # conditionally used in monitoring user_data if both are enabled
+  # otherwise used in scc_wp user_data
+  scc_wp_user_data_additional_conf = "sysdig_api_endpoint: ${local.scc_wp_api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true"
 
   # list of commands that will be run to install the monitoring agent
   monitoring_user_data_runcmd = [
     "mkdir -p /run/monitoring-agent",
     "curl -sL -o /run/monitoring-agent/monitoring-agent.sh https://ibm.biz/install-sysdig-agent",
     "chmod +x /run/monitoring-agent/monitoring-agent.sh",
-    "/run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} --collector ${var.monitoring_collector_endpoint != null ? var.monitoring_collector_endpoint : ""} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""}"
+    "/run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} --collector ${var.monitoring_collector_endpoint != null ? var.monitoring_collector_endpoint : ""} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""} ${var.install_monitoring_agent && var.install_scc_wp_agent ? "--additional_conf '${local.scc_wp_user_data_additional_conf}'" : ""}"
+  ]
+
+  scc_wp_user_data_runcmd = [
+    "mkdir -p /run/scc-wp-agent",
+    "curl -sL -o /run/scc-wp-agent/scc-wp-agent.sh https://ibm.biz/install-sysdig-agent",
+    "chmod +x /run/scc-wp-agent/scc-wp-agent.sh",
+    "/run/scc-wp-agent/scc-wp-agent.sh --access_key ${var.scc_wp_access_key != null ? var.scc_wp_access_key : ""} --collector ${var.scc_wp_collector_endpoint != null ? var.scc_wp_collector_endpoint : ""} --collector_port ${var.scc_wp_collector_port} ${length(var.scc_wp_tags) > 0 ? "--tags" : ""} ${length(var.scc_wp_tags) > 0 ? join(",", var.scc_wp_tags) : ""} --secure true --additional_conf '${local.scc_wp_user_data_additional_conf}'"
   ]
 
   # conditionally merge all 3 of the run cmd lists (user, logging, monitoring) based on boolean switches
-  merged_runcmd = concat(flatten([local.provided_user_data_runcmd, [var.install_logging_agent ? local.logging_user_data_runcmd : []], [var.install_monitoring_agent ? local.monitoring_user_data_runcmd : []]]))
+  merged_runcmd = concat(flatten([local.provided_user_data_runcmd, [var.install_logging_agent ? local.logging_user_data_runcmd : []], [var.install_monitoring_agent ? local.monitoring_user_data_runcmd : []], [var.install_scc_wp_agent && !var.install_monitoring_agent ? local.scc_wp_user_data_runcmd : []]]))
 
   # re-encode the user data into yaml format after adding in the combined runcmd commands
   # note the comment to the top to let cloud-init know this is a cloud config file
-  user_data_yaml = var.user_data != null || var.install_logging_agent || var.install_monitoring_agent ? join("\n", ["#cloud-config"], [yamlencode(merge(try(yamldecode(var.user_data), {}), { "runcmd" = local.merged_runcmd }))]) : null
+  user_data_yaml = var.user_data != null || var.install_logging_agent || var.install_monitoring_agent || var.install_scc_wp_agent ? join("\n", ["#cloud-config"], [yamlencode(merge(try(yamldecode(var.user_data), {}), { "runcmd" = local.merged_runcmd }))]) : null
 }
