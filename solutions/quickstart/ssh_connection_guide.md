@@ -12,7 +12,7 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 
 ### Step 1:  Get Workspace ID from Projects:
 
-![Projects](https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architectures/project.png)
+![Projects](/reference-architectures/project.png)
 
 ### Step 2: Set environment variables
 

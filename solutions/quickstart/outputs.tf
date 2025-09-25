@@ -33,7 +33,7 @@ output "ssh_private_key" {
 }
 
 output "next_steps_text" {
-  value       = "Now, you can go to the created Virtual Server Instance."
+  value       = "Your Virtual Server Instance is ready."
   description = "Next steps text"
 }
 
@@ -45,4 +45,14 @@ output "next_step_primary_label" {
 output "next_step_primary_url" {
   value       = length(module.vsi.ids) > 0 ? "https://cloud.ibm.com/infrastructure/compute/vs/${var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].region : var.vpc_region}~${module.vsi.ids[0]}/overview" : null
   description = "Primary URL"
+}
+
+output "next_step_secondary_label" {
+  value       = "Red Hat OpenShift cluster overview page"
+  description = "SSH Connection Guide"
+}
+
+output "next_step_secondary_url" {
+  value       = "(https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/solutions/quickstart/ssh_connection_guide.md"
+  description = "secondary url"
 }
