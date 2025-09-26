@@ -59,7 +59,7 @@ The QuickStart variation of the Landing zone for applications with virtual serve
 ## Design requirements
 {: #ra-vsi-qs-design-requirements}
 
-![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-quickstart.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
+![Design requirements for Landing zone for applications with virtual servers](heat-map-deploy-arch-vsi-quickstart.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
 
 <!--
 TODO: Add the typical use case for the architecture.
@@ -73,7 +73,7 @@ business challenge, or target cloud environments.
 ### VPC architecture decisions
 {: #ra-vsi-qs-components-arch}
 
-For detailed information about VPC capabilities, review the [Virtual Server Instance on VPC documentation](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers).
+For detailed information about VPC capabilities, review the [Landing zone for applications with virtual servers documentation](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers).
 
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
