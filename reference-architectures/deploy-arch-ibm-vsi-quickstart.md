@@ -134,7 +134,7 @@ This architecture supports compliance requirements for regulated industries. Rea
 - Simple web applications
 - Basic compute requirements
 
-### When to consider Fully configurable variation
+### When to consider Standard variation
 - Production environments with complex requirements
 - Multi-tier applications requiring extensive customization
 - Compliance requirements needing specific configurations
@@ -142,7 +142,7 @@ This architecture supports compliance requirements for regulated industries. Rea
 - Performance-critical applications
 - Complex networking requirements
 
-Explore the [Fully configurable variation](https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-fully-configurable-ra) for advanced features and extensive customization options.
+Explore the [Standard variation](https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-fully-configurable-ra) for advanced features and extensive customization options.
 
 ## Next steps
 {: #ra-vsi-qs-next-steps}
