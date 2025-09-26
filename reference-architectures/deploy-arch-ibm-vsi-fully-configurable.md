@@ -29,10 +29,7 @@ docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/reference-architectures/vsi.svg
 
 related_links:
-  - title: "Cloud automation for Virtual Server Instance on VPC - QuickStart"
-    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra-qs"
-    description: "The Virtual Server Instance on VPC QuickStart variation is a deployable architecture that provides virtual servers in a VPC in a single region. The QuickStart variation is designed to deploy quickly for demonstration and development."
-  - title: "Cloud automation for Virtual Server Instance on VPC - Fully configurable"
+  - title: "Landing zone for applications with virtual servers - Standard"
     url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra"
     description: "A comprehensive landing zone deployable architecture that provides virtual servers in a secure VPC for enterprise workloads."
 
@@ -46,7 +43,7 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Virtual Server Instance on VPC - Fully configurable variation
+# Landing zone for applications with virtual servers
 {: #vsi-fully-configurable-ra}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
@@ -54,7 +51,7 @@ content-type: reference-architecture
 {: toc-compliance="FedRAMP"}
 {: toc-version="5.8.1"}
 
-The Fully configurable variation of the Virtual Server Instance on VPC deployable architecture provides a flexible and comprehensive solution for deploying virtual servers with extensive customization options. This architecture supports multiple VSI configurations, load balancers, block storage volumes, and advanced networking features across multiple subnets and availability zones.
+The Standard variation of the Landing zone for applications with virtual servers deployable architecture provides a flexible and comprehensive solution for deploying virtual servers with extensive customization options. This architecture supports multiple VSI configurations, load balancers, block storage volumes, and advanced networking features across multiple subnets and availability zones.
 
 This variation is best suited for production environments and enterprise workloads that require advanced configurations, high availability across multiple zones, comprehensive security controls, and extensive customization options for networking, storage, and load balancing.
 

@@ -29,11 +29,8 @@ docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/reference-architectures/vsi-qs.svg
 
 related_links:
-  - title: "Virtual Server Instance on VPC - Fully configurable variation"
-    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-fully-configurable-ra"
-    description: "The Virtual Server Instance on VPC Fully configurable variation is a deployable architecture that provides extensive customization options for virtual servers in a VPC environment."
-  - title: "Landing zone VPC with VSI"
-    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra"
+  - title: "Landing zone for applications with virtual servers - QuickStart"
+    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra-qs"
     description: "A comprehensive landing zone deployable architecture that provides virtual servers in a secure VPC for enterprise workloads."
 
 use-case: Cybersecurity
@@ -45,14 +42,14 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Virtual Server Instance on VPC - QuickStart variation
+# Landing zone for applications with virtual servers - QuickStart variation
 {: #vsi-ra-qs}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
 {: toc-version="5.8.1"}
 
-The QuickStart variation of the Virtual Server Instance on VPC deployable architecture provides a simplified and fast deployment path for getting started with virtual servers on IBM Cloud VPC. This variation is designed for rapid deployment with sensible defaults, making it ideal for demonstration, development, proof-of-concept environments, and users who want to get started quickly with minimal configuration.
+The QuickStart variation of the Landing zone for applications with virtual servers deployable architecture provides a simplified and fast deployment path for getting started with virtual servers on IBM Cloud VPC. This variation is designed for rapid deployment with sensible defaults, making it ideal for demonstration, development, proof-of-concept environments, and users who want to get started quickly with minimal configuration.
 
 ## Architecture diagram
 {: #ra-vsi-qs-architecture-diagram}
