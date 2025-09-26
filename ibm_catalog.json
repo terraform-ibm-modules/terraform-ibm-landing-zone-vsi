@@ -320,7 +320,7 @@
               "value_constraints": [
                 {
                   "type": "regex",
-                  "description": "The value provided for 'existing_boot_volume_kms_key_crn' in not valid.",
+                  "description": "The value provided for 'existing_boot_volume_kms_key_crn' is not valid.",
                   "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
               ]
