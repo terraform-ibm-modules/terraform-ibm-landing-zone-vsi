@@ -12,7 +12,7 @@ authors:
   - name: "Jordan Williams"
 
 # The release that the reference architecture describes
-version: 5.8.0
+version: 5.8.1
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -57,12 +57,12 @@ The QuickStart variation of the Virtual Server Instance on VPC deployable archit
 ## Architecture diagram
 {: #ra-vsi-qs-architecture-diagram}
 
-![Architecture diagram for the QuickStart variation of Virtual Server Instance on VPC](vsi-qs.svg "Architecture diagram of QuickStart variation of Virtual Server Instance on VPC"){: caption="QuickStart variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi-qs.svg"}
+![Architecture diagram for the QuickStart variation of Landing zone for applications with virtual servers](vsi-qs.drawio.svg "Architecture diagram of Landing zone for applications with virtual servers deployable architecture"){: caption="QuickStart variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi-qs.svg"}
 
 ## Design requirements
 {: #ra-vsi-qs-design-requirements}
 
-![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-slz-vpc-fully-configurable.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
+![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-quickstart.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
 
 <!--
 TODO: Add the typical use case for the architecture.

@@ -12,7 +12,7 @@ authors:
   - name: "Jordan Williams"
 
 # The release that the reference architecture describes
-version: 5.8.0
+version: 5.8.1
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -61,12 +61,12 @@ This variation is best suited for production environments and enterprise workloa
 ## Architecture diagram
 {: #ra-vsi-fc-architecture-diagram}
 
-![Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC](vsi.svg "Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC"){: caption="Fully configurable variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi.svg"}
+![Architecture diagram for the Fully configurable variation of Landing zone for applications with virtual servers](vsi.svg "Architecture diagram for the Fully configurable variation of the Landing zone for applications with virtual servers deployable architecture"){: caption="Fully configurable variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi.svg"}
 
 ## Design requirements
 {: #ra-vsi-fc-design-requirements}
 
-![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-slz-vpc-fully-configurable.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
+![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-fully-configurable.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
 
 <!--
 TODO: Add the typical use case for the architecture.
