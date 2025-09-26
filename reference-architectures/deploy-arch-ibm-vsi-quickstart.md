@@ -30,7 +30,7 @@ image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zon
 
 related_links:
   - title: "Landing zone for applications with virtual servers - Quickstart - Basic and simple"
-    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra-qs"
+    url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-lz-vsi-ra-qs"
     description: "A comprehensive landing zone deployable architecture that provides virtual servers in a secure VPC for enterprise workloads."
 
 use-case: Cybersecurity
