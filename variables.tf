@@ -670,48 +670,48 @@ variable "logging_use_private_endpoint" {
 }
 
 ########################################################################################################################
-# Monitoring Agent Variables
+# Sysdig Agent Variables
 ########################################################################################################################
 
-variable "install_monitoring_agent" {
+variable "install_sysdig_agent" {
   type        = bool
   default     = false
-  description = "Set to true to enable installing the monitoring agent into your VSI at time of creation."
+  description = "Set to true to enable installing the sysdig agent into your VSI at time of creation."
 }
 
-variable "monitoring_access_key" {
+variable "sysdig_access_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "Access key used by the monitoring agent to authenticate, required when `install_agents` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
+  description = "Access key used by the sysdig agent to authenticate, required when `install_sysdig_agent` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_access_key != null : true
-    error_message = "Value for `monitoring_access_key` must be provided when `install_agents` is true."
+    condition     = var.install_sysdig_agent ? var.sysdig_access_key != null : true
+    error_message = "Value for `sysdig_access_key` must be provided when `install_sysdig_agent` is true."
   }
 }
 
-variable "monitoring_collector_endpoint" {
+variable "sysdig_collector_endpoint" {
   type        = string
   default     = null
-  description = "Endpoint the monitoring agent sends metrics to, required when `install_agents` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
+  description = "Endpoint the sysdig agent sends metrics or security and compliance data to, required when `install_sysdig_agent` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null : true
-    error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_agents` is true."
+    condition     = var.install_sysdig_agent ? var.sysdig_collector_endpoint != null : true
+    error_message = "Value for `sysdig_collector_endpoint` must be provided when `install_agents` is true."
   }
 }
 
-variable "monitoring_collector_port" {
+variable "sysdig_collector_port" {
   type        = string
   default     = "6443"
-  description = "Port the monitoring agent targets when sending metrics, defaults to `6443`."
+  description = "Port the sysdig agent targets when sending metrics or compliance data, defaults to `6443`."
 }
 
-variable "monitoring_tags" {
+variable "sysdig_tags" {
   type        = list(string)
   default     = []
-  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the monitoring agent."
+  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the sysdig agent."
 }
 
 ########################################################################################################################
