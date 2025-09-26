@@ -43,7 +43,7 @@ content-type: reference-architecture
 {{site.data.keyword.attribute-definition-list}}
 
 # Landing zone for applications with virtual servers - Quickstart - Basic and simple variation
-{: #vsi-ra-qs}
+{: #lz-vsi-ra-qs}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}

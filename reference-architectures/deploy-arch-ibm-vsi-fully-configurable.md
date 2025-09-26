@@ -44,21 +44,21 @@ content-type: reference-architecture
 {{site.data.keyword.attribute-definition-list}}
 
 # Landing zone for applications with virtual servers - Standard - Integrated setup with configurable services variation
-{: #vsi-fully-configurable-ra}
+{: #lz-vsi-fully-configurable-ra}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
 {: toc-compliance="FedRAMP"}
 {: toc-version="5.8.1"}
 
-The Standard variation of the Landing zone for applications with virtual servers deployable architecture provides a flexible and comprehensive solution for deploying virtual servers with extensive customization options. This architecture supports multiple VSI configurations, load balancers, block storage volumes, and advanced networking features across multiple subnets and availability zones.
+The Standard - Integrated setup with configurable services variation of the Landing zone for applications with virtual servers deployable architecture provides a flexible and comprehensive solution for deploying virtual servers with extensive customization options. This architecture supports multiple VSI configurations, load balancers, block storage volumes, and advanced networking features across multiple subnets and availability zones.
 
 This variation is best suited for production environments and enterprise workloads that require advanced configurations, high availability across multiple zones, comprehensive security controls, and extensive customization options for networking, storage, and load balancing.
 
 ## Architecture diagram
 {: #ra-vsi-fc-architecture-diagram}
 
-![Architecture diagram for the Standard variation of Landing zone for applications with virtual servers](vsi.svg "Architecture diagram for the Standard variation of the Landing zone for applications with virtual servers deployable architecture"){: caption="Standard variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi.svg"}
+![Architecture diagram for the Standard variation of Landing zone for applications with virtual servers](vsi.svg "Architecture diagram for the Standard - Integrated setup with configurable services variation of the Landing zone for applications with virtual servers deployable architecture"){: caption="Standard variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi.svg"}
 
 ## Design requirements
 {: #ra-vsi-fc-design-requirements}
