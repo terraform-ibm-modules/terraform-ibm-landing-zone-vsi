@@ -15,3 +15,6 @@ offerings:
           scope_resource_group_var_name: existing_resource_group_name
         pre_validation: "tests/scripts/pre-validation-deploy-vpc.sh"
         post_validation: "tests/scripts/post-validation-destroy-vpc.sh"
+      - name: quickstart
+        mark_ready: true
+        install_type: fullstack

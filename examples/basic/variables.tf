@@ -48,7 +48,7 @@ variable "machine_type" {
 
 variable "create_security_group" {
   description = "Create security group for VSI"
-  type        = string
+  type        = bool
   default     = false
 }
 
