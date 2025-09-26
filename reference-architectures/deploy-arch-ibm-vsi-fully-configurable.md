@@ -43,7 +43,7 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Landing zone for applications with virtual servers - Standard - Integrated setup with configurable services
+# Landing zone for applications with virtual servers - Standard - Integrated setup with configurable services variation
 {: #vsi-fully-configurable-ra}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}

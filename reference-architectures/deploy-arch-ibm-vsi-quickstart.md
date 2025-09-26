@@ -29,7 +29,7 @@ docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/reference-architectures/vsi-qs.svg
 
 related_links:
-  - title: "Landing zone for applications with virtual servers - QuickStart"
+  - title: "Landing zone for applications with virtual servers - Quickstart - Basic and simple"
     url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra-qs"
     description: "A comprehensive landing zone deployable architecture that provides virtual servers in a secure VPC for enterprise workloads."
 
@@ -42,7 +42,7 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Landing zone for applications with virtual servers - QuickStart variation
+# Landing zone for applications with virtual servers - Quickstart - Basic and simple variation
 {: #vsi-ra-qs}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
