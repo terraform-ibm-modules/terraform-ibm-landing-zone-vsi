@@ -22,7 +22,7 @@
         "IaC",
         "infrastructure as code"
       ],
-      "short_description": "Automates the deployment of Virtual Server Instance on IBM Cloud with optional integration of security and logging services.",
+      "short_description": "Automates the deployment of Virtual Server Instance on IBM Cloud with optional integration of security and logging services",
       "long_description": "IBM Cloud Virtual Server Instance on VPC provide fast-provisioned, high-performance instances with network isolation and security. Choose from x86 or s390x profiles to match your compute and memory needs, and manage your resources flexibly. This VSI deployable architecture deploys a Virtual Server Instance (VSI) and its related resources. For more details on Virtual Server Instance, [refer here](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers). \n\nℹ️ This Terraform-based automation is part of a broader suite of IBM-maintained Infrastructure as Code (IaC) assets, each following the naming pattern \"Cloud automation for *servicename*\" and focusing on single IBM Cloud service. These single-service deployable architectures can be used on their own to streamline and automate service deployments through an [IaC approach](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-understanding-projects), or assembled together into a broader [automated IaC stack](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-config-stack) to automate the deployment of an end-to-end solution architecture.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
@@ -64,9 +64,227 @@
       "support_details": "This product is in the community registry. As such support is handled through the originated repo. If you experience issues please open an issue in that repository [here](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "flavors": [
         {
+          "label": "Quickstart - Basic and simple",
+          "name": "quickstart",
+          "index": 1,
+          "install_type": "fullstack",
+          "working_directory": "solutions/quickstart",
+          "configuration": [
+            {
+              "key": "ibmcloud_api_key"
+            },
+            {
+              "key": "prefix",
+              "required": true,
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--'). It should not exceed 16 characters",
+                  "value": "^$|^__NULL__$|^[a-z](?!.*--)(?:[a-z0-9-]{0,14}[a-z0-9])?$"
+                }
+              ]
+            },
+            {
+              "key": "existing_resource_group_name",
+              "display_name": "resource_group",
+              "default_value": "Default",
+              "description": "The name of an existing resource group to provision the resources.",
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
+            },
+            {
+              "key": "existing_vpc_crn",
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_vpc_crn' is not valid.",
+                  "value": "^$|^__NULL__$|^crn:(.*:){3}is:(.*:){2}:vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                }
+              ]
+            },
+            {
+              "key": "vsi_name"
+            },
+            {
+              "key": "image_name",
+              "required": true,
+              "options": [
+                {
+                  "displayname": "Ubuntu 22",
+                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-6"
+                },
+                {
+                  "displayname": "Ubuntu 24",
+                  "value": "ibm-ubuntu-24-04-3-minimal-amd64-2"
+                },
+                {
+                  "displayname": "Redhat 8",
+                  "value": "ibm-redhat-8-10-minimal-amd64-7"
+                },
+                {
+                  "displayname": "Redhat 9",
+                  "value": "ibm-redhat-9-4-minimal-amd64-10"
+                },
+                {
+                  "displayname": "Debian 12",
+                  "value": "ibm-debian-12-11-minimal-amd64-1"
+                },
+                {
+                  "displayname": "Debian 13",
+                  "value": "ibm-debian-13-minimal-amd64-1"
+                },
+                {
+                  "displayname": "Fedora",
+                  "value": "ibm-fedora-coreos-42-stable-2"
+                },
+                {
+                  "displayname": "CentOS 9",
+                  "value": "ibm-centos-stream-9-amd64-12"
+                },
+                {
+                  "displayname": "CentOS 10",
+                  "value": "ibm-centos-stream-10-amd64-4"
+                }
+              ]
+            },
+            {
+              "key": "size",
+              "required": true,
+              "options": [
+                {
+                  "displayname": "Mini",
+                  "value": "mini"
+                },
+                {
+                  "displayname": "Small",
+                  "value": "small"
+                },
+                {
+                  "displayname": "Medium",
+                  "value": "medium"
+                },
+                {
+                  "displayname": "Large",
+                  "value": "large"
+                }
+              ]
+            },
+            {
+              "key": "vpc_region",
+              "required": true,
+              "type": "string",
+              "custom_config": {
+                "config_constraints": {
+                  "generationType": "2"
+                },
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "vpc_region"
+              }
+            },
+            {
+              "key": "existing_ssh_key_name"
+            },
+            {
+              "key": "enable_floating_ip"
+            },
+            {
+              "key": "user_data",
+              "custom_config": {
+                "type": "textarea",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
+            },
+            {
+              "key": "resource_tags",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "access_tags",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ],
+              "hidden": true
+            }
+          ],
+          "iam_permissions": [
+            {
+              "service_name": "is.vpc",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "notes": "Required for creating Virtual Server Instance and Virtual Private Cloud(VPC)."
+            },
+            {
+              "service_name": "Resource group only",
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Viewer"
+              ],
+              "notes": "Viewer access is required in the resource group you want to provision in."
+            }
+          ],
+          "architecture": {
+            "features": [
+              {
+                "title": " ",
+                "description": "Ideal for users new to IBM Cloud or Virtual Server Instance who want to get started without configuring underlying infrastructure."
+              },
+              {
+                "title": " ",
+                "description": "A lightweight, experimental configuration for quickly provisioning Virtual Server Instance on IBM Cloud VPC. Not certified, not upgradeable, and not intended for production use."
+              }
+            ],
+            "diagrams": [
+              {
+                "diagram": {
+                  "caption": "Virtual Server Instance topology - Quickstart (Basic and simple)",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architectures/vsi-qs.svg",
+                  "type": "image/svg+xml"
+                },
+                "description": "This architecture supports deployment of a <b>Virtual Server Instance</b> within an IBM Cloud <b>Virtual Private Cloud (VPC)</b> environment.<br><br>The VPC is hosted within a resource group in a specific region. It includes a single-zone deployment with one subnet for network segmentation and connectivity of compute resources. A security group is also added to allow SSH access to Virtual Server Instance.<br><br>Users can select from predefined Virtual Server Instance sizes — <b>mini (default), small, medium, and large.</b> The chosen size determines the <b>machine type</b> of the Virtual Server Instance, <b>the number of virtual CPU</b>, <b>RAM capacity</b>, <b>Bandwidth</b> and <b>Instance Storage</b>. To get more information on this, refer [here](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/solutions/quickstart/DA_docs.md).<br><br>For external connectivity, the architecture supports optional assignment of a floating IP to the virtual server, allowing public network access as needed."
+              }
+            ]
+          },
+          "terraform_version": "1.10.5"
+        },
+        {
           "label": "Fully configurable",
           "name": "fully-configurable",
-          "index": 1,
+          "index": 2,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
@@ -561,7 +779,7 @@
               {
                 "diagram": {
                   "caption": "Virtual Server Instance",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architecture/vsi.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/reference-architectures/vsi.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture supports deployment of a <b>Virtual Server Instance</b> within an IBM Cloud <b>Virtual Private Cloud (VPC)</b> environment.<br><br>The VPC is hosted within a designated resource group in a specific region. You can either provision a new VPC or use an existing one, depending on your workload requirements. The VPC includes a subnet for network segmentation and connectivity of compute resources.<br><br>At the core of this setup is the <b>Virtual Server Instance on VPC</b>, which can be optionally associated with block volumes for additional data storage. These block volumes can be encrypted using key management services (KMS), where a boot-volume key is managed under a defined key ring.<br><br>To enhance secure access and centralized credential management, <b>Secrets Manager</b> can be integrated. This enables storage and retrieval of sensitive information such as ssh private keys, helping ensure secure and auditable server access.<br><br>For external connectivity, the architecture supports optional assignment of a floating ip to the virtual server, allowing public network access as needed.<br><br>A security group is defined to control inbound and outbound traffic to the virtual server. It includes a load balancer setup, consisting of a <b>Load Balancer Listener</b>, <b>Load Balancer</b>, and <b>Load Balancer Pool</b> to distribute traffic efficiently across backend resources.<br><br>Observability capabilities can be optionally enabled to monitor and manage the health and performance of deployed resources. This includes <b>Cloud Monitoring</b> for metrics and <b>Cloud Logs</b> for log aggregation and analysis.<br><br>This architecture provides a scalable, secure, and flexible foundation for deploying applications on IBM Cloud, integrating optional services such as encryption, observability, and secure key management for enterprise-grade workloads."
