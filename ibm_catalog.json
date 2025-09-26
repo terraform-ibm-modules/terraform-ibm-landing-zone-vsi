@@ -263,7 +263,7 @@
               },
               {
                 "title": " ",
-                "description": "A lightweight, experimental configuration for quickly provisioning Virtual Server Instance on IBM Cloud VPC. Not certified, not upgradeable, and not intended for production use."
+                "description": "A lightweight, experimental configuration for quickly provisioning Virtual Server Instance on IBM Cloud VPC. Not certified and not intended for production use."
               }
             ],
             "diagrams": [
