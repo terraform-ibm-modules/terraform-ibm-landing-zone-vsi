@@ -27,7 +27,7 @@ locals {
     "/run/logging-agent/logs-agent-config.sh -h ${var.logging_target_host != null ? var.logging_target_host : ""} -p ${var.logging_target_port} -t ${var.logging_target_path} -a ${var.logging_auth_mode} ${var.logging_auth_mode == "IAMAPIKey" ? "-k" : "-d"} ${var.logging_auth_mode == "IAMAPIKey" ? (var.logging_api_key != null ? var.logging_api_key : "") : (var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : "")} -i ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} --send-directly-to-icl"
   ]
 
-  api_endpoint = join(".", slice(split(".", var.sysdig_collector_endpoint), 1, length(split(".", var.sysdig_collector_endpoint))))
+  api_endpoint = var.sysdig_collector_endpoint != null ? join(".", slice(split(".", var.sysdig_collector_endpoint), 1, length(split(".", var.sysdig_collector_endpoint)))) : null
 
 
   sysdig_user_data_runcmd = [
