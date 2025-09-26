@@ -7,7 +7,7 @@ offerings:
     offering_id: ef663980-4c71-4fac-af4f-4a510a9bcf68
     variations:
       - name: fully-configurable
-        mark_ready: true
+        mark_ready: false
         install_type: fullstack
         scc:
           instance_id: 1c7d5f78-9262-44c3-b779-b28fe4d88c37
@@ -16,5 +16,5 @@ offerings:
         pre_validation: "tests/scripts/pre-validation-deploy-vpc.sh"
         post_validation: "tests/scripts/post-validation-destroy-vpc.sh"
       - name: vsi-quickstart
-        mark_ready: true
+        mark_ready: false
         install_type: fullstack
