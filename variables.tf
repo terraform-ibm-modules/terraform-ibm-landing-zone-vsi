@@ -613,7 +613,7 @@ variable "logging_target_host" {
 
   validation {
     condition     = var.install_logging_agent ? var.logging_target_host != null : true
-    error_message = "If `install_agents` is true, a value for `logging_target_host` must be provided."
+    error_message = "If `install_logging_agent` is true, a value for `logging_target_host` must be provided."
   }
 }
 
@@ -698,7 +698,7 @@ variable "sysdig_collector_endpoint" {
 
   validation {
     condition     = var.install_sysdig_agent ? var.sysdig_collector_endpoint != null : true
-    error_message = "Value for `sysdig_collector_endpoint` must be provided when `install_agents` is true."
+    error_message = "Value for `sysdig_collector_endpoint` must be provided when `install_sysdig_agent` is true."
   }
 }
 

@@ -29,19 +29,19 @@ locals {
 
   api_endpoint = var.sysdig_collector_endpoint != null ? join(".", slice(split(".", var.sysdig_collector_endpoint), 1, length(split(".", var.sysdig_collector_endpoint)))) : null
 
+  bash_command = <<-EOT
+    bash /run/sysdig-agent/sysdig-agent.sh --access_key ${var.sysdig_access_key != null ? var.sysdig_access_key : ""} --collector ${var.sysdig_collector_endpoint != null ? var.sysdig_collector_endpoint : ""} --collector_port ${var.sysdig_collector_port} --secure true --check_certificate false ${length(var.sysdig_tags) > 0 ? "--tags" : ""} ${length(var.sysdig_tags) > 0 ? join(",", var.sysdig_tags) : ""} --additional_conf 'sysdig_api_endpoint: ${local.api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true'
+  EOT
+
 
   sysdig_user_data_runcmd = [
     "mkdir -p /run/sysdig-agent",
-    "curl -sL -o /run/sysdig-agent/sysdig-agent.sh https://ibm.biz/install-sysdig-agent",
+    "for i in $(seq 1 5); do curl -fL -o /run/sysdig-agent/sysdig-agent.sh https://ibm.biz/install-sysdig-agent && break; echo \"Attempt $i failed, retrying in 10 seconds...\"; sleep 10; done",
     "chmod +x /run/sysdig-agent/sysdig-agent.sh",
-    <<-EOT
-      /run/sysdig-agent/sysdig-agent.sh --access_key ${var.sysdig_access_key != null ? var.sysdig_access_key : ""} \
-        --collector ${var.sysdig_collector_endpoint != null ? var.sysdig_collector_endpoint : ""} \
-        --collector_port ${var.sysdig_collector_port} --secure true --check_certificate false \
-        ${length(var.sysdig_tags) > 0 ? "--tags" : ""} ${length(var.sysdig_tags) > 0 ? join(",", var.sysdig_tags) : ""} \
-        --additional_conf 'sysdig_api_endpoint: ${local.api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true'
-    EOT
+    local.bash_command
   ]
+
+
 
   # conditionally merge all 3 of the run cmd lists (user, logging, sysdig) based on boolean switches
   merged_runcmd = concat(flatten([local.provided_user_data_runcmd, [var.install_logging_agent ? local.logging_user_data_runcmd : []], [var.install_sysdig_agent ? local.sysdig_user_data_runcmd : []]]))
