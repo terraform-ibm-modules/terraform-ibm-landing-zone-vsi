@@ -57,7 +57,7 @@ The QuickStart variation of the Virtual Server Instance on VPC deployable archit
 ## Architecture diagram
 {: #ra-vsi-qs-architecture-diagram}
 
-![Architecture diagram for the QuickStart variation of Landing zone for applications with virtual servers](vsi-qs.drawio.svg "Architecture diagram of Landing zone for applications with virtual servers deployable architecture"){: caption="QuickStart variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi-qs.svg"}
+![Architecture diagram for the QuickStart variation of Landing zone for applications with virtual servers](vsi-qs.svg "Architecture diagram of Landing zone for applications with virtual servers deployable architecture"){: caption="QuickStart variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi-qs.svg"}
 
 ## Design requirements
 {: #ra-vsi-qs-design-requirements}
