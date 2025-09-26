@@ -62,7 +62,7 @@
       "flavors": [
         {
           "label": "Quickstart - Basic and simple",
-          "name": "quickstart",
+          "name": "vsi-quickstart",
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
