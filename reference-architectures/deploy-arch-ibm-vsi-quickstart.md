@@ -22,7 +22,7 @@ production: false
 # Value is the URL to land the user in the IBM Cloud catalog details page
 # for the deployable architecture.
 # See https://test.cloud.ibm.com/docs/get-coding?topic=get-coding-deploy-button
-deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-7df1e4ca-d54c-4fd0-82ce-3d13247308cd-global
+deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global
 
 docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 
@@ -147,5 +147,5 @@ Explore the [Fully configurable variation](https://cloud.ibm.com/docs/deployable
 ## Next steps
 {: #ra-vsi-qs-next-steps}
 
-- Deploy the QuickStart variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-7df1e4ca-d54c-4fd0-82ce-3d13247308cd-global)
+- Deploy the QuickStart variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global)
 - Follow the [deployment guide](/docs/deployable-reference-architectures?topic=deployable-reference-architectures-deploy-arch-overview) for step-by-step instructions
