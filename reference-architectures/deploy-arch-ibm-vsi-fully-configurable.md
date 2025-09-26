@@ -29,7 +29,7 @@ docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/reference-architectures/vsi.svg
 
 related_links:
-  - title: "Landing zone for applications with virtual servers - Standard"
+  - title: "Landing zone for applications with virtual servers - Standard - Integrated setup with configurable services"
     url: "https://cloud.ibm.com/docs/deployable-reference-architectures?topic=deployable-reference-architectures-vsi-ra"
     description: "A comprehensive landing zone deployable architecture that provides virtual servers in a secure VPC for enterprise workloads."
 
@@ -43,7 +43,7 @@ content-type: reference-architecture
 
 {{site.data.keyword.attribute-definition-list}}
 
-# Landing zone for applications with virtual servers
+# Landing zone for applications with virtual servers - Standard - Integrated setup with configurable services
 {: #vsi-fully-configurable-ra}
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
@@ -58,7 +58,7 @@ This variation is best suited for production environments and enterprise workloa
 ## Architecture diagram
 {: #ra-vsi-fc-architecture-diagram}
 
-![Architecture diagram for the Fully configurable variation of Landing zone for applications with virtual servers](vsi.svg "Architecture diagram for the Fully configurable variation of the Landing zone for applications with virtual servers deployable architecture"){: caption="Fully configurable variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi.svg"}
+![Architecture diagram for the Standard variation of Landing zone for applications with virtual servers](vsi.svg "Architecture diagram for the Standard variation of the Landing zone for applications with virtual servers deployable architecture"){: caption="Standard variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi.svg"}
 
 ## Design requirements
 {: #ra-vsi-fc-design-requirements}
@@ -132,7 +132,7 @@ This architecture supports compliance requirements for regulated industries. Lea
 ## Deployment options
 {: #ra-vsi-fc-deployment-options}
 
-The Fully configurable variation supports extensive customization options:
+The Standard variation supports extensive customization options:
 
 ### Instance Configuration
 - Multiple VSI profiles (balanced, compute-optimized, memory-optimized)
@@ -163,5 +163,5 @@ For detailed configuration options, learn about [load balancer configurations](h
 ## Next steps
 {: #ra-vsi-fc-next-steps}
 
-- Deploy the Fully configurable variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global)
+- Deploy the Standard variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global)
 - Follow the [deployment guide](/docs/deployable-reference-architectures?topic=deployable-reference-architectures-deploy-arch-overview) for step-by-step instructions
