@@ -58,7 +58,7 @@ This variation is best suited for production environments and enterprise workloa
 ## Architecture diagram
 {: #ra-vsi-fc-architecture-diagram}
 
-![Architecture diagram for the Standard variation of Landing zone for applications with virtual servers](vsi.svg "Architecture diagram for the Standard - Integrated setup with configurable services variation of the Landing zone for applications with virtual servers deployable architecture"){: caption="Standard variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi.svg"}
+![Architecture diagram for the Standard - Integrated setup with configurable services variation of Landing zone for applications with virtual servers](vsi.svg "Architecture diagram for the Standard - Integrated setup with configurable services variation of the Landing zone for applications with virtual servers deployable architecture"){: caption="Standard - Integrated setup with configurable services variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi.svg"}
 
 ## Design requirements
 {: #ra-vsi-fc-design-requirements}
@@ -132,7 +132,7 @@ This architecture supports compliance requirements for regulated industries. Lea
 ## Deployment options
 {: #ra-vsi-fc-deployment-options}
 
-The Standard variation supports extensive customization options:
+The Standard - Integrated setup with configurable services variation supports extensive customization options:
 
 ### Instance Configuration
 - Multiple VSI profiles (balanced, compute-optimized, memory-optimized)
@@ -163,5 +163,5 @@ For detailed configuration options, learn about [load balancer configurations](h
 ## Next steps
 {: #ra-vsi-fc-next-steps}
 
-- Deploy the Standard variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global)
+- Deploy the Standard - Integrated setup with configurable services variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global)
 - Follow the [deployment guide](/docs/deployable-reference-architectures?topic=deployable-reference-architectures-deploy-arch-overview) for step-by-step instructions

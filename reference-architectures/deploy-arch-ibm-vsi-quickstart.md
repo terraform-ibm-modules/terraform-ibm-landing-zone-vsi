@@ -49,12 +49,12 @@ content-type: reference-architecture
 {: toc-use-case="Cybersecurity"}
 {: toc-version="5.8.1"}
 
-The QuickStart variation of the Landing zone for applications with virtual servers deployable architecture provides a simplified and fast deployment path for getting started with virtual servers on IBM Cloud VPC. This variation is designed for rapid deployment with sensible defaults, making it ideal for demonstration, development, proof-of-concept environments, and users who want to get started quickly with minimal configuration.
+The Quickstart - Basic and simple variation of the Landing zone for applications with virtual servers deployable architecture provides a simplified and fast deployment path for getting started with virtual servers on IBM Cloud VPC. This variation is designed for rapid deployment with sensible defaults, making it ideal for demonstration, development, proof-of-concept environments, and users who want to get started quickly with minimal configuration.
 
 ## Architecture diagram
 {: #ra-vsi-qs-architecture-diagram}
 
-![Architecture diagram for the QuickStart variation of Landing zone for applications with virtual servers](vsi-qs.svg "Architecture diagram of Landing zone for applications with virtual servers deployable architecture"){: caption="QuickStart variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi-qs.svg"}
+![Architecture diagram for the Quickstart - Basic and simple variation of Landing zone for applications with virtual servers](vsi-qs.svg "Architecture diagram of Landing zone for applications with virtual servers deployable architecture"){: caption="Quickstart - Basic and simple variation of Landing zone for applications with virtual servers" caption-side="bottom"}{: external download="vsi-qs.svg"}
 
 ## Design requirements
 {: #ra-vsi-qs-design-requirements}
@@ -123,7 +123,7 @@ This architecture supports compliance requirements for regulated industries. Rea
 ## Deployment considerations
 {: #ra-vsi-qs-deployment-considerations}
 
-### When to use QuickStart variation
+### When to use Quickstart - Basic and simple variation
 - Development and testing environments
 - Proof-of-concept projects
 - Learning and experimentation
@@ -144,5 +144,5 @@ Explore the [Standard variation](https://cloud.ibm.com/docs/deployable-reference
 ## Next steps
 {: #ra-vsi-qs-next-steps}
 
-- Deploy the QuickStart variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global)
+- Deploy the Quickstart - Basic and simple variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-ef663980-4c71-4fac-af4f-4a510a9bcf68-global)
 - Follow the [deployment guide](/docs/deployable-reference-architectures?topic=deployable-reference-architectures-deploy-arch-overview) for step-by-step instructions
