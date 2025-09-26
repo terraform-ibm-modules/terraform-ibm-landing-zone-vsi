@@ -2,7 +2,7 @@
 
 copyright:
   years: 2025
-lastupdated: "2025-09-24"
+lastupdated: "2025-09-26"
 
 keywords: vsi, virtual server instance, vpc, landing zone, deployable architecture, terraform, fully configurable
 
@@ -22,7 +22,7 @@ production: false
 # Value is the URL to land the user in the IBM Cloud catalog details page
 # for the deployable architecture.
 # See https://test.cloud.ibm.com/docs/get-coding?topic=get-coding-deploy-button
-deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-28e2b12c-858f-4ae8-8717-60db8cec2e6e-global
+deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-7df1e4ca-d54c-4fd0-82ce-3d13247308cd-global
 
 docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 
@@ -166,5 +166,5 @@ For detailed configuration options, learn about [load balancer configurations](h
 ## Next steps
 {: #ra-vsi-fc-next-steps}
 
-- Deploy the Fully configurable variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-vpc-28e2b12c-858f-4ae8-8717-60db8cec2e6e-global)
+- Deploy the Fully configurable variation from the [IBM Cloud catalog](https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-slz-vsi-7df1e4ca-d54c-4fd0-82ce-3d13247308cd-global)
 - Follow the [deployment guide](/docs/deployable-reference-architectures?topic=deployable-reference-architectures-deploy-arch-overview) for step-by-step instructions
