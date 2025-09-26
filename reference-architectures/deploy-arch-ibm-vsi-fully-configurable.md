@@ -26,7 +26,7 @@ deployment-url: https://cloud.ibm.com/catalog/architecture/deploy-arch-ibm-vsi-v
 
 docs: https://cloud.ibm.com/docs/secure-infrastructure-vpc
 
-image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/reference-architectures/vsi-fully-configurable.svg
+image_source: https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/reference-architectures/vsi.svg
 
 related_links:
   - title: "Cloud automation for Virtual Server Instance on VPC - QuickStart"
@@ -61,12 +61,12 @@ This variation is best suited for production environments and enterprise workloa
 ## Architecture diagram
 {: #ra-vsi-fc-architecture-diagram}
 
-![Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC](vsi-fully-configurable.svg "Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC"){: caption="Fully configurable variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi-fully-configurable.svg"}
+![Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC](vsi.svg "Architecture diagram for the Fully configurable variation of Virtual Server Instance on VPC"){: caption="Fully configurable variation of Virtual Server Instance on VPC" caption-side="bottom"}{: external download="vsi.svg"}
 
 ## Design requirements
 {: #ra-vsi-fc-design-requirements}
 
-![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-vsi-fully-configurable.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
+![Design requirements for Virtual Server Instance on VPC](heat-map-deploy-arch-slz-vpc-fully-configurable.svg "Design requirements"){: caption="Scope of the design requirements" caption-side="bottom"}
 
 <!--
 TODO: Add the typical use case for the architecture.
