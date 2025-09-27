@@ -646,19 +646,19 @@
               "key": "logging_use_private_endpoint"
             },
             {
-              "key": "install_monitoring_agent"
+              "key": "install_sysdig_agent"
             },
             {
-              "key": "monitoring_access_key"
+              "key": "sysdig_access_key"
             },
             {
-              "key": "monitoring_collector_endpoint"
+              "key": "sysdig_collector_endpoint"
             },
             {
-              "key": "monitoring_collector_port"
+              "key": "sysdig_collector_port"
             },
             {
-              "key": "monitoring_tags"
+              "key": "sysdig_tags"
             }
           ],
           "iam_permissions": [

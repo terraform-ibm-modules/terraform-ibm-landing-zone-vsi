@@ -17,28 +17,43 @@ locals {
   # extract runcmd block from var.user_data if one exists, otherwise empty list
   provided_user_data_runcmd = try(yamldecode(var.user_data)["runcmd"], [])
 
+
+  logging_bash_command = <<-EOT
+    bash /run/logging-agent/logs-agent-config.sh -h ${var.logging_target_host != null ? var.logging_target_host : ""} -p ${var.logging_target_port} -t ${var.logging_target_path} -a ${var.logging_auth_mode} ${var.logging_auth_mode == "IAMAPIKey" ? "-k" : "-d"} ${var.logging_auth_mode == "IAMAPIKey" ? (var.logging_api_key != null ? var.logging_api_key : "") : (var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : "")} -i ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} --send-directly-to-icl
+  EOT
+
   # list of commands that will be run to install the logging agent and config script
+
   logging_user_data_runcmd = [
     "mkdir -p /run/logging-agent",
-    "curl -X GET -o /run/logging-agent/${local.package_extension} ${local.logging_package_url}",
+    "for i in $(seq 1 5); do curl -fL -o /run/logging-agent/${local.package_extension} ${local.logging_package_url} && break; echo \"Attempt $i failed, retrying in 10 seconds...\"; sleep 10; done",
     "${length(regexall("^.*deb$", local.package_extension)) > 0 ? "dpkg -i" : "rpm -ivh"} /run/logging-agent/${local.package_extension}",
-    "curl -X GET -o /run/logging-agent/logs-agent-config.sh https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/post-config.sh",
+    "for i in $(seq 1 5); do curl -fL -o /run/logging-agent/logs-agent-config.sh https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/post-config.sh && break; echo \"Attempt $i failed, retrying in 10 seconds...\"; sleep 10; done",
     "chmod +x /run/logging-agent/logs-agent-config.sh",
-    "/run/logging-agent/logs-agent-config.sh -h ${var.logging_target_host != null ? var.logging_target_host : ""} -p ${var.logging_target_port} -t ${var.logging_target_path} -a ${var.logging_auth_mode} ${var.logging_auth_mode == "IAMAPIKey" ? "-k" : "-d"} ${var.logging_auth_mode == "IAMAPIKey" ? (var.logging_api_key != null ? var.logging_api_key : "") : (var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : "")} -i ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} --send-directly-to-icl"
+    local.logging_bash_command
   ]
 
-  # list of commands that will be run to install the monitoring agent
-  monitoring_user_data_runcmd = [
-    "mkdir -p /run/monitoring-agent",
-    "curl -sL -o /run/monitoring-agent/monitoring-agent.sh https://ibm.biz/install-sysdig-agent",
-    "chmod +x /run/monitoring-agent/monitoring-agent.sh",
-    "/run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} --collector ${var.monitoring_collector_endpoint != null ? var.monitoring_collector_endpoint : ""} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""}"
+
+  api_endpoint = var.sysdig_collector_endpoint != null ? join(".", slice(split(".", var.sysdig_collector_endpoint), 1, length(split(".", var.sysdig_collector_endpoint)))) : ""
+
+  sysdig_bash_command = <<-EOT
+    bash /run/sysdig-agent/sysdig-agent.sh --access_key ${var.sysdig_access_key != null ? var.sysdig_access_key : ""} --collector ${var.sysdig_collector_endpoint != null ? var.sysdig_collector_endpoint : ""} --collector_port ${var.sysdig_collector_port} --secure true --check_certificate false ${length(var.sysdig_tags) > 0 ? "--tags" : ""} ${length(var.sysdig_tags) > 0 ? join(",", var.sysdig_tags) : ""} --additional_conf 'sysdig_api_endpoint: ${local.api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true'
+  EOT
+
+
+  sysdig_user_data_runcmd = [
+    "mkdir -p /run/sysdig-agent",
+    "for i in $(seq 1 5); do curl -fL -o /run/sysdig-agent/sysdig-agent.sh https://ibm.biz/install-sysdig-agent && break; echo \"Attempt $i failed, retrying in 10 seconds...\"; sleep 10; done",
+    "chmod +x /run/sysdig-agent/sysdig-agent.sh",
+    local.sysdig_bash_command
   ]
 
-  # conditionally merge all 3 of the run cmd lists (user, logging, monitoring) based on boolean switches
-  merged_runcmd = concat(flatten([local.provided_user_data_runcmd, [var.install_logging_agent ? local.logging_user_data_runcmd : []], [var.install_monitoring_agent ? local.monitoring_user_data_runcmd : []]]))
+
+
+  # conditionally merge all 3 of the run cmd lists (user, logging, sysdig) based on boolean switches
+  merged_runcmd = concat(flatten([local.provided_user_data_runcmd, [var.install_logging_agent ? local.logging_user_data_runcmd : []], [var.install_sysdig_agent ? local.sysdig_user_data_runcmd : []]]))
 
   # re-encode the user data into yaml format after adding in the combined runcmd commands
   # note the comment to the top to let cloud-init know this is a cloud config file
-  user_data_yaml = var.user_data != null || var.install_logging_agent || var.install_monitoring_agent ? join("\n", ["#cloud-config"], [yamlencode(merge(try(yamldecode(var.user_data), {}), { "runcmd" = local.merged_runcmd }))]) : null
+  user_data_yaml = var.user_data != null || var.install_logging_agent || var.install_sysdig_agent ? join("\n", ["#cloud-config"], [yamlencode(merge(try(yamldecode(var.user_data), {}), { "runcmd" = local.merged_runcmd }))]) : null
 }

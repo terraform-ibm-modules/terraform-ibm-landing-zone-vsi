@@ -441,7 +441,7 @@ func TestDefaultConfiguration(t *testing.T) {
 
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
 		options.Prefix,
-		"deploy-arch-ibm-vsi-vpc",
+		"deploy-arch-ibm-slz-vsi",
 		"fully-configurable",
 		map[string]interface{}{
 			"prefix":                       options.Prefix,
@@ -483,7 +483,7 @@ func TestDependencyPermutations(t *testing.T) {
 		Testing: t,
 		Prefix:  "vsi-perm",
 		AddonConfig: cloudinfo.AddonConfig{
-			OfferingName:   "deploy-arch-ibm-vsi-vpc",
+			OfferingName:   "deploy-arch-ibm-slz-vsi",
 			OfferingFlavor: "fully-configurable",
 			Inputs: map[string]interface{}{
 				"prefix":                                "es-perm",
