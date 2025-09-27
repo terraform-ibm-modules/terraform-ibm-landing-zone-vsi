@@ -34,7 +34,7 @@ locals {
   ]
 
 
-  api_endpoint = var.sysdig_collector_endpoint != null ? join(".", slice(split(".", var.sysdig_collector_endpoint), 1, length(split(".", var.sysdig_collector_endpoint)))) : null
+  api_endpoint = var.sysdig_collector_endpoint != null ? join(".", slice(split(".", var.sysdig_collector_endpoint), 1, length(split(".", var.sysdig_collector_endpoint)))) : ""
 
   sysdig_bash_command = <<-EOT
     bash /run/sysdig-agent/sysdig-agent.sh --access_key ${var.sysdig_access_key != null ? var.sysdig_access_key : ""} --collector ${var.sysdig_collector_endpoint != null ? var.sysdig_collector_endpoint : ""} --collector_port ${var.sysdig_collector_port} --secure true --check_certificate false ${length(var.sysdig_tags) > 0 ? "--tags" : ""} ${length(var.sysdig_tags) > 0 ? join(",", var.sysdig_tags) : ""} --additional_conf 'sysdig_api_endpoint: ${local.api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true'
