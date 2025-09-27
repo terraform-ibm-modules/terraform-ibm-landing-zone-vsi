@@ -592,7 +592,7 @@ variable "logging_use_private_endpoint" {
 variable "install_sysdig_agent" {
   type        = bool
   default     = false
-  description = "Set to true to enable installing the sysdig agent into your VSI at time of creation."
+  description = "Set to true to install the Sysdig agent for monitoring, or for security and compliance of your VSI."
 }
 
 variable "sysdig_access_key" {
@@ -610,7 +610,7 @@ variable "sysdig_access_key" {
 variable "sysdig_collector_endpoint" {
   type        = string
   default     = null
-  description = "Endpoint the sysdig agent sends metrics to, required when `install_sysdig_agent` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
+  description = "Endpoint to which the Sysdig agent sends monitoring or security and compliance data, required when `install_sysdig_agent` is true. Set this value to the endpoint of the monitoring instance if used for monitoring only, or the SCC instance endpoint if used for security and compliance only, or either one if used for both, provided both instances are connected. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
 
   validation {
     condition     = var.install_sysdig_agent ? var.sysdig_collector_endpoint != null : true
