@@ -234,10 +234,10 @@ module "slz_vsi" {
   logging_api_key              = var.ibmcloud_api_key
   logging_use_private_endpoint = false
 
-  # Enable sysdig agent
-  install_sysdig_agent      = true
-  sysdig_access_key         = module.monitoring.access_key
-  sysdig_collector_endpoint = "ingest.${var.region}.monitoring.cloud.ibm.com"
+  # Enable monitoring agent
+  install_monitoring_agent = true
+  access_key               = module.monitoring.access_key
+  collector_endpoint       = "ingest.${var.region}.monitoring.cloud.ibm.com"
 
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [

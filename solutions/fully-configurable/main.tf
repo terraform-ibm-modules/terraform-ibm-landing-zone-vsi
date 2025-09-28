@@ -252,11 +252,11 @@ module "vsi" {
   logging_api_key                  = var.logging_api_key
   logging_trusted_profile_id       = var.logging_trusted_profile_id
   logging_use_private_endpoint     = var.logging_use_private_endpoint
-  install_sysdig_agent             = var.install_sysdig_agent
-  sysdig_access_key                = var.sysdig_access_key
-  sysdig_collector_endpoint        = var.sysdig_collector_endpoint
-  sysdig_collector_port            = var.sysdig_collector_port
-  sysdig_tags                      = var.sysdig_tags
+  install_monitoring_agent         = var.install_monitoring_agent
+  access_key                       = var.access_key
+  collector_endpoint               = var.collector_endpoint
+  collector_port                   = var.collector_port
+  monitoring_tags                  = var.monitoring_tags
 }
 
 ########################################################################################################################
