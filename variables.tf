@@ -694,7 +694,7 @@ variable "access_key" {
 variable "collector_endpoint" {
   type        = string
   default     = null
-  description = "Endpoint to which the agent sends monitoring or security and compliance data, required when `install_monitoring_agent` is true. Set this value to the endpoint of the monitoring instance if used for monitoring only, or the SCC instance endpoint if used for security and compliance only, or either one if used for both, provided both instances are connected. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
+  description = "Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.collector_endpoint != null : true
