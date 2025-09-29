@@ -683,7 +683,7 @@ variable "access_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "Access key used by the agent to authenticate to monitoring or SCC Workload Protection Instance, required when `install_monitoring_agent` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
+  description = "Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.access_key != null : true
