@@ -26,24 +26,24 @@ locals {
 
   logging_user_data_runcmd = [
     "mkdir -p /run/logging-agent",
-    "for i in $(seq 1 5); do curl -fL -o /run/logging-agent/${local.package_extension} ${local.logging_package_url} && break; echo \"Attempt $i failed, retrying in 10 seconds...\"; sleep 10; done",
+    "curl --retry 5 -fL -o /run/logging-agent/${local.package_extension} ${local.logging_package_url}",
     "${length(regexall("^.*deb$", local.package_extension)) > 0 ? "dpkg -i" : "rpm -ivh"} /run/logging-agent/${local.package_extension}",
-    "for i in $(seq 1 5); do curl -fL -o /run/logging-agent/logs-agent-config.sh https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/post-config.sh && break; echo \"Attempt $i failed, retrying in 10 seconds...\"; sleep 10; done",
+    "curl --retry 5 -fL -o /run/logging-agent/logs-agent-config.sh https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/post-config.sh",
     "chmod +x /run/logging-agent/logs-agent-config.sh",
     local.logging_bash_command
   ]
 
 
-  api_endpoint = var.collector_endpoint != null ? join(".", slice(split(".", var.collector_endpoint), 1, length(split(".", var.collector_endpoint)))) : ""
+  api_endpoint = var.monitoring_collector_endpoint != null ? join(".", slice(split(".", var.monitoring_collector_endpoint), 1, length(split(".", var.monitoring_collector_endpoint)))) : ""
 
   monitoring_bash_command = <<-EOT
-    bash /run/monitoring-agent/monitoring-agent.sh --access_key ${var.access_key != null ? var.access_key : ""} --collector ${var.collector_endpoint != null ? var.collector_endpoint : ""} --collector_port ${var.collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""} --additional_conf 'sysdig_api_endpoint: ${local.api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true'
+    bash /run/monitoring-agent/monitoring-agent.sh --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} --collector ${var.monitoring_collector_endpoint != null ? var.monitoring_collector_endpoint : ""} --collector_port ${var.monitoring_collector_port} --secure true --check_certificate false ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""} --additional_conf 'sysdig_api_endpoint: ${local.api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true'
   EOT
 
 
   monitoring_user_data_runcmd = [
     "mkdir -p /run/monitoring-agent",
-    "for i in $(seq 1 5); do curl -fL -o /run/monitoring-agent/monitoring-agent.sh https://ibm.biz/install-sysdig-agent && break; echo \"Attempt $i failed, retrying in 10 seconds...\"; sleep 10; done",
+    "curl --retry 5 -fL -o /run/monitoring-agent/monitoring-agent.sh https://ibm.biz/install-sysdig-agent",
     "chmod +x /run/monitoring-agent/monitoring-agent.sh",
     local.monitoring_bash_command
   ]

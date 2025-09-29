@@ -679,30 +679,30 @@ variable "install_monitoring_agent" {
   description = "Set to true to install the agent for monitoring, or for security and compliance of your VSI."
 }
 
-variable "access_key" {
+variable "monitoring_access_key" {
   type        = string
   default     = null
   sensitive   = true
   description = "Access key used by the agent to authenticate to monitoring or SCC Workload Protection Instance, required when `install_monitoring_agent` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.access_key != null : true
-    error_message = "Value for `access_key` must be provided when `install_monitoring_agent` is true."
+    condition     = var.install_monitoring_agent ? var.monitoring_access_key != null : true
+    error_message = "Value for `monitoring_access_key` must be provided when `install_monitoring_agent` is true."
   }
 }
 
-variable "collector_endpoint" {
+variable "monitoring_collector_endpoint" {
   type        = string
   default     = null
   description = "Endpoint to which the agent sends monitoring or security and compliance data, required when `install_monitoring_agent` is true. Set this value to the endpoint of the monitoring instance if used for monitoring only, or the SCC instance endpoint if used for security and compliance only, or either one if used for both, provided both instances are connected. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.collector_endpoint != null : true
-    error_message = "Value for `collector_endpoint` must be provided when `install_monitoring_agent` is true."
+    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null : true
+    error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_monitoring_agent` is true."
   }
 }
 
-variable "collector_port" {
+variable "monitoring_collector_port" {
   type        = string
   default     = "6443"
   description = "Port the agent targets when sending metrics or compliance data, defaults to `6443`."

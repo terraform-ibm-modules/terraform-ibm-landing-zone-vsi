@@ -649,13 +649,13 @@
               "key": "install_monitoring_agent"
             },
             {
-              "key": "access_key"
+              "key": "monitoring_access_key"
             },
             {
-              "key": "collector_endpoint"
+              "key": "monitoring_collector_endpoint"
             },
             {
-              "key": "collector_port"
+              "key": "monitoring_collector_port"
             },
             {
               "key": "monitoring_tags"

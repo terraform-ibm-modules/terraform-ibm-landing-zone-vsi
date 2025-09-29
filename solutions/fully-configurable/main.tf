@@ -253,9 +253,9 @@ module "vsi" {
   logging_trusted_profile_id       = var.logging_trusted_profile_id
   logging_use_private_endpoint     = var.logging_use_private_endpoint
   install_monitoring_agent         = var.install_monitoring_agent
-  access_key                       = var.access_key
-  collector_endpoint               = var.collector_endpoint
-  collector_port                   = var.collector_port
+  monitoring_access_key            = var.monitoring_access_key
+  monitoring_collector_endpoint    = var.monitoring_collector_endpoint
+  monitoring_collector_port        = var.monitoring_collector_port
   monitoring_tags                  = var.monitoring_tags
 }
 
