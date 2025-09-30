@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/IBM/go-sdk-core/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -432,10 +433,11 @@ func TestDefaultConfiguration(t *testing.T) {
 	t.Parallel()
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:       t,
-		Prefix:        "vsideft",
-		ResourceGroup: resourceGroup,
-		QuietMode:     true, // Suppress logs except on failure
+		Testing:               t,
+		Prefix:                "vsideft",
+		ResourceGroup:         resourceGroup,
+		OverrideInputMappings: core.BoolPtr(true),
+		QuietMode:             true, // Suppress logs except on failure
 	})
 
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
@@ -451,6 +453,34 @@ func TestDefaultConfiguration(t *testing.T) {
 		},
 	)
 
+	//	use existing secrets manager instance to prevent hitting 20 trial instance limit in account
+	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
+		{
+			OfferingName:   "deploy-arch-ibm-secrets-manager",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
+				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
+				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
+				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+			},
+		},
+		// // Disable target / route creation to prevent hitting quota in account
+		{
+			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_metrics_routing_to_cloud_monitoring": false,
+			},
+		},
+		{
+			OfferingName:   "deploy-arch-ibm-activity-tracker",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_activity_tracker_event_routing_to_cloud_logs": false,
+			},
+		},
+	}
 	err := options.RunAddonTest()
 	require.NoError(t, err)
 }
