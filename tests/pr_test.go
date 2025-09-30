@@ -433,11 +433,10 @@ func TestDefaultConfiguration(t *testing.T) {
 	t.Parallel()
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:               t,
-		Prefix:                "vsideft",
-		ResourceGroup:         resourceGroup,
-		OverrideInputMappings: core.BoolPtr(true),
-		QuietMode:             true, // Suppress logs except on failure
+		Testing:       t,
+		Prefix:        "vsideft",
+		ResourceGroup: resourceGroup,
+		QuietMode:     true, // Suppress logs except on failure
 	})
 
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
@@ -453,34 +452,23 @@ func TestDefaultConfiguration(t *testing.T) {
 		},
 	)
 
-	//	use existing secrets manager instance to prevent hitting 20 trial instance limit in account
+	/*
+		Event notifications is manually disabled in this test because event notifications DA creates kms keys and during undeploy the order of key protect and event notifications
+		is not considered by projects as EN is not a direct dependency of VSI DA. So undeploy fails, because
+		key protect instance can't be deleted because of active keys created by EN. Hence for now, we don't want to deploy
+		EN.
+
+		Issue has been created for projects team. https://github.ibm.com/epx/projects/issues/4750
+		Once that is fixed, we can remove the logic to disable SM
+	*/
 	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
 		{
-			OfferingName:   "deploy-arch-ibm-secrets-manager",
+			OfferingName:   "deploy-arch-ibm-event-notifications",
 			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
-				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
-				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
-				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
-			},
-		},
-		// // Disable target / route creation to prevent hitting quota in account
-		{
-			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"enable_metrics_routing_to_cloud_monitoring": false,
-			},
-		},
-		{
-			OfferingName:   "deploy-arch-ibm-activity-tracker",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"enable_activity_tracker_event_routing_to_cloud_logs": false,
-			},
+			Enabled:        core.BoolPtr(false), // explicitly disabled
 		},
 	}
+
 	err := options.RunAddonTest()
 	require.NoError(t, err)
 }
