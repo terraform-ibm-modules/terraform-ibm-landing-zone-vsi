@@ -136,7 +136,8 @@ locals {
 }
 
 module "vsi" {
-  source                = "../../"
+  source                = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  version = "5.10.0"
   resource_group_id     = module.resource_group.resource_group_id
   image_id              = data.ibm_is_image.image.id
   tags                  = var.resource_tags
