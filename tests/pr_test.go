@@ -30,6 +30,7 @@ const multiModuleOneVpcTerraformDir = "examples/multi-profile-one-vpc"
 
 const snapshotExampleTerraformDir = "examples/snapshot"
 const fullyConfigFlavorDir = "solutions/fully-configurable"
+const quickStartConfigFlavorDir = "solutions/quickstart"
 
 const resourceGroup = "geretain-test-resources"
 const region = "us-south"
@@ -440,7 +441,7 @@ func TestDefaultConfiguration(t *testing.T) {
 
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
 		options.Prefix,
-		"deploy-arch-ibm-vsi-vpc",
+		"deploy-arch-ibm-slz-vsi",
 		"fully-configurable",
 		map[string]interface{}{
 			"prefix":                       options.Prefix,
@@ -482,7 +483,7 @@ func TestDependencyPermutations(t *testing.T) {
 		Testing: t,
 		Prefix:  "vsi-perm",
 		AddonConfig: cloudinfo.AddonConfig{
-			OfferingName:   "deploy-arch-ibm-vsi-vpc",
+			OfferingName:   "deploy-arch-ibm-slz-vsi",
 			OfferingFlavor: "fully-configurable",
 			Inputs: map[string]interface{}{
 				"prefix":                                "es-perm",
@@ -497,4 +498,78 @@ func TestDependencyPermutations(t *testing.T) {
 
 	err := options.RunAddonPermutationTest()
 	assert.NoError(t, err, "Dependency permutation test should not fail")
+}
+
+func TestQuickstartDefaultConfigSchematics(t *testing.T) {
+	t.Parallel()
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "vsi-qs",
+		TarIncludePatterns: []string{
+			"*.tf",
+			quickStartConfigFlavorDir + "/*.tf",
+		},
+		TemplateFolder:         quickStartConfigFlavorDir,
+		Tags:                   []string{"vsi-qs"},
+		DeleteWorkspaceOnFail:  true,
+		WaitJobCompleteMinutes: 60,
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+	}
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
+}
+
+func TestQuickstartExistingConfigSchematics(t *testing.T) {
+	t.Parallel()
+
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+
+	if existErr != nil {
+		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
+	} else {
+		// ------------------------------------------------------------------------------------
+		// Deploy DA
+		// ------------------------------------------------------------------------------------
+		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+			Testing: t,
+			Prefix:  prefix,
+			TarIncludePatterns: []string{
+				"*.tf",
+				quickStartConfigFlavorDir + "/*.tf",
+			},
+			TemplateFolder:         quickStartConfigFlavorDir,
+			Tags:                   []string{"vsi-qs-da"},
+			DeleteWorkspaceOnFail:  false,
+			WaitJobCompleteMinutes: 60,
+		})
+
+		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+			{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+			{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+			{Name: "prefix", Value: options.Prefix, DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+		}
+		err := options.RunSchematicTest()
+		assert.Nil(t, err, "This should not have errored")
+	}
+
+	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
+	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
+	// Destroy the temporary existing resources if required
+	if t.Failed() && strings.ToLower(envVal) == "true" {
+		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
+	} else {
+		logger.Log(t, "START: Destroy (prereq resources)")
+		terraform.Destroy(t, existingTerraformOptions)
+		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		logger.Log(t, "END: Destroy (prereq resources)")
+	}
 }

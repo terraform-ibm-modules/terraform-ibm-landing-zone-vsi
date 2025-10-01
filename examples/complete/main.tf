@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.1.26"
+  version                   = "5.2.0"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.6.27"
+  version           = "1.6.29"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan              = "graduated-tier"
-  version           = "1.7.1"
+  version           = "1.7.2"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -237,7 +237,7 @@ module "slz_vsi" {
   # Enable monitoring agent
   install_monitoring_agent      = true
   monitoring_access_key         = module.monitoring.access_key
-  monitoring_collector_endpoint = "ingress.${var.region}.monitoring.cloud.ibm.com"
+  monitoring_collector_endpoint = "ingest.${var.region}.monitoring.cloud.ibm.com"
 
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [

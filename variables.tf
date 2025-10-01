@@ -644,7 +644,7 @@ variable "logging_target_host" {
 
   validation {
     condition     = var.install_logging_agent ? var.logging_target_host != null : true
-    error_message = "If `install_agents` is true, a value for `logging_target_host` must be provided."
+    error_message = "If `install_logging_agent` is true, a value for `logging_target_host` must be provided."
   }
 }
 
@@ -707,42 +707,42 @@ variable "logging_use_private_endpoint" {
 variable "install_monitoring_agent" {
   type        = bool
   default     = false
-  description = "Set to true to enable installing the monitoring agent into your VSI at time of creation."
+  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`."
 }
 
 variable "monitoring_access_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "Access key used by the monitoring agent to authenticate, required when `install_agents` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
+  description = "Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.monitoring_access_key != null : true
-    error_message = "Value for `monitoring_access_key` must be provided when `install_agents` is true."
+    error_message = "Value for `monitoring_access_key` must be provided when `install_monitoring_agent` is true."
   }
 }
 
 variable "monitoring_collector_endpoint" {
   type        = string
   default     = null
-  description = "Endpoint the monitoring agent sends metrics to, required when `install_agents` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
+  description = "Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null : true
-    error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_agents` is true."
+    error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_monitoring_agent` is true."
   }
 }
 
 variable "monitoring_collector_port" {
   type        = string
   default     = "6443"
-  description = "Port the monitoring agent targets when sending metrics, defaults to `6443`."
+  description = "Port the agent targets when sending metrics or compliance data, defaults to `6443`."
 }
 
 variable "monitoring_tags" {
   type        = list(string)
   default     = []
-  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the monitoring agent."
+  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the agent."
 }
 
 ########################################################################################################################
