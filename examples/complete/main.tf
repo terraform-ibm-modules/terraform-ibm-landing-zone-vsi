@@ -237,7 +237,7 @@ module "slz_vsi" {
   # Enable monitoring agent
   install_monitoring_agent      = true
   monitoring_access_key         = module.monitoring.access_key
-  monitoring_collector_endpoint = "ingress.${var.region}.monitoring.cloud.ibm.com"
+  monitoring_collector_endpoint = "ingest.${var.region}.monitoring.cloud.ibm.com"
 
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [
