@@ -371,10 +371,11 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 				"modules/*/*.tf",
 				fullyConfigFlavorDir + "/*.tf",
 			},
-			TemplateFolder:         fullyConfigFlavorDir,
-			Tags:                   []string{"vsi-da-test"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 60,
+			TemplateFolder:             fullyConfigFlavorDir,
+			Tags:                       []string{"vsi-da-test"},
+			DeleteWorkspaceOnFail:      false,
+			WaitJobCompleteMinutes:     60,
+			CheckApplyResultForUpgrade: true,
 		})
 
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
@@ -429,14 +430,15 @@ func TestRunMultiProfileExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestDefaultConfiguration(t *testing.T) {
+func TestAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
 
 	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:       t,
-		Prefix:        "vsideft",
-		ResourceGroup: resourceGroup,
-		QuietMode:     true, // Suppress logs except on failure
+		Testing:               t,
+		Prefix:                "vsideft",
+		ResourceGroup:         resourceGroup,
+		OverrideInputMappings: core.BoolPtr(true),
+		QuietMode:             false, // Suppress logs except on failure
 	})
 
 	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
@@ -444,60 +446,43 @@ func TestDefaultConfiguration(t *testing.T) {
 		"deploy-arch-ibm-slz-vsi",
 		"fully-configurable",
 		map[string]interface{}{
-			"prefix":                       options.Prefix,
-			"existing_resource_group_name": resourceGroup,
-			"region":                       "eu-de",
-			"secrets_manager_service_plan": "trial",
-			"image_id":                     "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
+			"prefix":   options.Prefix,
+			"region":   "eu-de",
+			"image_id": "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
 		},
 	)
 
-	/*
-		Event notifications is manually disabled in this test because event notifications DA creates kms keys and during undeploy the order of key protect and event notifications
-		is not considered by projects as EN is not a direct dependency of VSI DA. So undeploy fails, because
-		key protect instance can't be deleted because of active keys created by EN. Hence for now, we don't want to deploy
-		EN.
-
-		Issue has been created for projects team. https://github.ibm.com/epx/projects/issues/4750
-		Once that is fixed, we can remove the logic to disable SM
-	*/
+	//	use existing secrets manager instance to help prevent hitting trial instance limit in account
 	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
 		{
-			OfferingName:   "deploy-arch-ibm-event-notifications",
+			OfferingName:   "deploy-arch-ibm-secrets-manager",
 			OfferingFlavor: "fully-configurable",
-			Enabled:        core.BoolPtr(false), // explicitly disabled
+			Inputs: map[string]interface{}{
+				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
+				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
+				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
+				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+			},
+		},
+		// // Disable target / route creation to help prevent hitting quota in account
+		{
+			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_metrics_routing_to_cloud_monitoring": false,
+			},
+		},
+		{
+			OfferingName:   "deploy-arch-ibm-activity-tracker",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_activity_tracker_event_routing_to_cloud_logs": false,
+			},
 		},
 	}
 
 	err := options.RunAddonTest()
 	require.NoError(t, err)
-}
-
-// TestDependencyPermutations runs dependency permutations for VSI and all its dependencies
-func TestDependencyPermutations(t *testing.T) {
-
-	t.Skip("Skipping dependency permutations")
-	t.Parallel()
-
-	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing: t,
-		Prefix:  "vsi-perm",
-		AddonConfig: cloudinfo.AddonConfig{
-			OfferingName:   "deploy-arch-ibm-slz-vsi",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"prefix":                                "es-perm",
-				"region":                                "eu-de",
-				"existing_resource_group_name":          resourceGroup,
-				"image_id":                              "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
-				"secrets_manager_service_plan":          "trial",
-				"existing_secrets_manager_instance_crn": permanentResources["secretsManagerCRN"],
-			},
-		},
-	})
-
-	err := options.RunAddonPermutationTest()
-	assert.NoError(t, err, "Dependency permutation test should not fail")
 }
 
 func TestQuickstartDefaultConfigSchematics(t *testing.T) {
