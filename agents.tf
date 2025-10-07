@@ -1,17 +1,18 @@
 data "ibm_is_image" "image_name" {
+  count      = var.image_id != null ? 1 : 0
   identifier = var.image_id
 }
 
 locals {
   # build the package string for cloud logs agent
   logging_agent_string = "https://logs-router-agent-install-packages.s3.us.cloud-object-storage.appdomain.cloud/"
-  os_image_version     = data.ibm_is_image.image_name.os
-  package_extension = [
+  os_image_version     = one(data.ibm_is_image.image_name[*].os)
+  package_extension = local.os_image_version != null ? [
     length(regexall("^debian-11.*$", local.os_image_version)) > 0 ? "logs-router-agent-deb11-1.6.0.deb" :
     length(regexall("^debian-12.*$", local.os_image_version)) > 0 ? "logs-router-agent-1.6.0.deb" :
     length(regexall("^ubuntu.*$", local.os_image_version)) > 0 ? "logs-router-agent-1.6.0.deb" :
     length(regexall("^red.*-8.*$", local.os_image_version)) > 0 ? "logs-router-agent-rhel8-1.6.0.rpm" :
-  "logs-router-agent-1.6.0.rpm"][0]
+  "logs-router-agent-1.6.0.rpm"][0] : "logs-router-agent-1.6.0.rpm"
   logging_package_url = join("", [local.logging_agent_string, local.package_extension])
 
   # extract runcmd block from var.user_data if one exists, otherwise empty list
