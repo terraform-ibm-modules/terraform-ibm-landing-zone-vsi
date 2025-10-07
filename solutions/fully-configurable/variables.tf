@@ -10,14 +10,13 @@ variable "ibmcloud_api_key" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision resources in."
-  default     = "Default"
-  nullable    = false
+  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
+  default     = null
 }
 
 variable "prefix" {
   type        = string
-  description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and can not contain consecutive hyphens ('--'). Example: prod-0205-vsi.[Learn more](https://terraform-ibm-modules.github.io/documentation/#/da-implementation-guidelines?id=prefix)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
   nullable    = true
   validation {
     condition = var.prefix == null || var.prefix == "" ? true : alltrue([
@@ -117,7 +116,7 @@ variable "existing_ssh_key_ids" {
 }
 
 variable "auto_generate_ssh_key" {
-  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secret mananger. The public key is stored in your VPC and you can download it from the SSH key details page. Alternately, if you want to bring your own ssh keys you either select the existing ssh keys created in the cloud using this variable `existing_ssh_key_ids` or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
+  description = "An SSH key pair (a public and private key) is automatically generated for you. The private key is outputted as an sensitive value which can be stored in the secrets manager. The public key is stored in your VPC and you can download it from the SSH key details page. Alternately, if you want to bring your own ssh keys you either select the existing ssh keys created in the cloud using this variable `existing_ssh_key_ids` or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
   type        = bool
   default     = true
   nullable    = false
@@ -141,7 +140,7 @@ variable "boot_volume_size" {
 }
 
 variable "user_data" {
-  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recongnized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
+  description = "The user data that automatically performs common configuration tasks or runs scripts. When using the user_data variable in your configuration, it's essential to provide the content in the correct format for it to be properly recognized by the terraform. Use <<-EOT and EOT to enclose your user_data content to ensure it's passed as multi-line string. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-user-data)"
   type        = string
   default     = null
 }
@@ -237,7 +236,7 @@ variable "kms_endpoint_type" {
   default     = "private"
   nullable    = false
   validation {
-    condition     = can(regex("public|private", var.kms_endpoint_type))
+    condition     = can(regex("^(public|private)$", var.kms_endpoint_type))
     error_message = "The kms_endpoint_type value must be 'public' or 'private'."
   }
 }
@@ -530,7 +529,7 @@ variable "logging_target_host" {
 
   validation {
     condition     = var.install_logging_agent ? var.logging_target_host != null : true
-    error_message = "If `install_agents` is true, a value for `logging_target_host` must be provided."
+    error_message = "If `install_logging_agent` is true, a value for `logging_target_host` must be provided."
   }
 }
 
@@ -593,40 +592,40 @@ variable "logging_use_private_endpoint" {
 variable "install_monitoring_agent" {
   type        = bool
   default     = false
-  description = "Set to true to enable installing the monitoring agent into your VSI at time of creation."
+  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`."
 }
 
 variable "monitoring_access_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "Access key used by the monitoring agent to authenticate, required when `install_agents` is true. For more information on access keys, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key."
+  description = "Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.monitoring_access_key != null : true
-    error_message = "Value for `monitoring_access_key` must be provided when `install_agents` is true."
+    error_message = "Value for `monitoring_access_key` must be provided when `install_monitoring_agent` is true."
   }
 }
 
 variable "monitoring_collector_endpoint" {
   type        = string
   default     = null
-  description = "Endpoint the monitoring agent sends metrics to, required when `install_agents` is true. For more information on collector endpoints, see https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion."
+  description = "Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null : true
-    error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_agents` is true."
+    error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_monitoring_agent` is true."
   }
 }
 
 variable "monitoring_collector_port" {
   type        = string
   default     = "6443"
-  description = "Port the monitoring agent targets when sending metrics, defaults to `6443`."
+  description = "Port the agent targets when sending metrics or compliance data, defaults to `6443`."
 }
 
 variable "monitoring_tags" {
   type        = list(string)
   default     = []
-  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the monitoring agent."
+  description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the agent."
 }

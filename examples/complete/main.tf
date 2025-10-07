@@ -12,7 +12,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.2.1"
+  version = "1.3.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.1.14"
+  version                   = "5.2.0"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.6.0"
+  version           = "1.6.29"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -66,7 +66,8 @@ module "logging" {
 
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
-  version           = "1.6.0"
+  plan              = "graduated-tier"
+  version           = "1.7.2"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -101,7 +102,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.25.12"
+  version           = "8.3.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -236,7 +237,7 @@ module "slz_vsi" {
   # Enable monitoring agent
   install_monitoring_agent      = true
   monitoring_access_key         = module.monitoring.access_key
-  monitoring_collector_endpoint = "ingress.${var.region}.monitoring.cloud.ibm.com"
+  monitoring_collector_endpoint = "ingest.${var.region}.monitoring.cloud.ibm.com"
 
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [
@@ -254,7 +255,7 @@ module "slz_vsi" {
   }]
   load_balancers = [
     {
-      name                    = "${var.prefix}-lb"
+      name                    = "example-alb"
       type                    = "public"
       listener_port           = 9080
       listener_protocol       = "http"
@@ -269,7 +270,7 @@ module "slz_vsi" {
       pool_member_port        = 8080
     },
     {
-      name              = "${var.prefix}-nlb"
+      name              = "example-nlb"
       type              = "public"
       profile           = "network-fixed"
       listener_port     = 3128
@@ -292,7 +293,7 @@ module "slz_vsi" {
 module "dedicated_host" {
   count   = var.enable_dedicated_host ? 1 : 0
   source  = "terraform-ibm-modules/dedicated-host/ibm"
-  version = "2.0.0"
+  version = "2.0.1"
   dedicated_hosts = [
     {
       host_group_name     = "${var.prefix}-dhgroup"

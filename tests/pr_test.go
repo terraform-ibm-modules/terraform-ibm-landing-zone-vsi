@@ -7,13 +7,16 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/IBM/go-sdk-core/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testaddons"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
@@ -27,6 +30,7 @@ const multiModuleOneVpcTerraformDir = "examples/multi-profile-one-vpc"
 
 const snapshotExampleTerraformDir = "examples/snapshot"
 const fullyConfigFlavorDir = "solutions/fully-configurable"
+const quickStartConfigFlavorDir = "solutions/quickstart"
 
 const resourceGroup = "geretain-test-resources"
 const region = "us-south"
@@ -145,7 +149,7 @@ func TestRunExistingSnapshotGroupExample(t *testing.T) {
 		},
 	})
 
-	// Add a post-apply verfication
+	// Add a post-apply verification
 	options.PostApplyHook = verifyVolumeSnapshots
 
 	output, err := options.RunTestConsistency()
@@ -166,7 +170,7 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 
 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
-	// get ouput of last apply
+	// get output of last apply
 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
 
 	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
@@ -367,10 +371,11 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 				"modules/*/*.tf",
 				fullyConfigFlavorDir + "/*.tf",
 			},
-			TemplateFolder:         fullyConfigFlavorDir,
-			Tags:                   []string{"vsi-da-test"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 60,
+			TemplateFolder:             fullyConfigFlavorDir,
+			Tags:                       []string{"vsi-da-test"},
+			DeleteWorkspaceOnFail:      false,
+			WaitJobCompleteMinutes:     60,
+			CheckApplyResultForUpgrade: true,
 		})
 
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
@@ -423,4 +428,133 @@ func TestRunMultiProfileExample(t *testing.T) {
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestAddonDefaultConfiguration(t *testing.T) {
+	t.Parallel()
+
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing:               t,
+		Prefix:                "vsideft",
+		ResourceGroup:         resourceGroup,
+		OverrideInputMappings: core.BoolPtr(true),
+		QuietMode:             false, // Suppress logs except on failure
+	})
+
+	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
+		options.Prefix,
+		"deploy-arch-ibm-slz-vsi",
+		"fully-configurable",
+		map[string]interface{}{
+			"prefix":   options.Prefix,
+			"region":   "eu-de",
+			"image_id": "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
+		},
+	)
+
+	//	use existing secrets manager instance to help prevent hitting trial instance limit in account
+	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
+		{
+			OfferingName:   "deploy-arch-ibm-secrets-manager",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
+				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
+				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
+				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+			},
+		},
+		// // Disable target / route creation to help prevent hitting quota in account
+		{
+			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_metrics_routing_to_cloud_monitoring": false,
+			},
+		},
+		{
+			OfferingName:   "deploy-arch-ibm-activity-tracker",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_activity_tracker_event_routing_to_cloud_logs": false,
+			},
+		},
+	}
+
+	err := options.RunAddonTest()
+	require.NoError(t, err)
+}
+
+func TestQuickstartDefaultConfigSchematics(t *testing.T) {
+	t.Parallel()
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "vsi-qs",
+		TarIncludePatterns: []string{
+			"*.tf",
+			quickStartConfigFlavorDir + "/*.tf",
+		},
+		TemplateFolder:         quickStartConfigFlavorDir,
+		Tags:                   []string{"vsi-qs"},
+		DeleteWorkspaceOnFail:  true,
+		WaitJobCompleteMinutes: 60,
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+	}
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
+}
+
+func TestQuickstartExistingConfigSchematics(t *testing.T) {
+	t.Parallel()
+
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+
+	if existErr != nil {
+		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
+	} else {
+		// ------------------------------------------------------------------------------------
+		// Deploy DA
+		// ------------------------------------------------------------------------------------
+		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+			Testing: t,
+			Prefix:  prefix,
+			TarIncludePatterns: []string{
+				"*.tf",
+				quickStartConfigFlavorDir + "/*.tf",
+			},
+			TemplateFolder:         quickStartConfigFlavorDir,
+			Tags:                   []string{"vsi-qs-da"},
+			DeleteWorkspaceOnFail:  false,
+			WaitJobCompleteMinutes: 60,
+		})
+
+		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+			{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+			{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+			{Name: "prefix", Value: options.Prefix, DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+		}
+		err := options.RunSchematicTest()
+		assert.Nil(t, err, "This should not have errored")
+	}
+
+	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
+	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
+	// Destroy the temporary existing resources if required
+	if t.Failed() && strings.ToLower(envVal) == "true" {
+		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
+	} else {
+		logger.Log(t, "START: Destroy (prereq resources)")
+		terraform.Destroy(t, existingTerraformOptions)
+		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		logger.Log(t, "END: Destroy (prereq resources)")
+	}
 }
