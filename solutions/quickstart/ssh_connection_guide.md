@@ -20,13 +20,13 @@ WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-s
 ### Step 3: Run the following command to extract the VSI name, floating IP address and private IP address:
 
 ```bash
-ibmcloud schematics output --id $WORKSPACE_ID -o JSON | jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0] | "VSI Name: \(.name)\nFloating IP: \(.floating_ip)\nPrivate IP: \(.ipv4_address)"' && echo ""
+ibmcloud schematics output --id $WORKSPACE_ID -o JSON | jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0] | "VSI Name: \(.name)\nFloating IP: \(.floating_ip)\nPrivate IP: \(.ipv4_address)"'
 ```
 
 ### Step 4: Run the following command to extract the SSH private key and saves it as `vsi-private-key.pem` with secure `400` permissions and display the private key file path. If you are using an existing SSH key, you can skip this step and go to step 5
 
 ```bash
-ibmcloud schematics output --id $WORKSPACE_ID -o JSON > /tmp/ws_output.json && KEY_FILE="vsi-private-key.pem" && jq -r '.[0].output_values[] | select(.ssh_private_key) | .ssh_private_key.value' /tmp/ws_output.json > "$KEY_FILE" && chmod 400 "$KEY_FILE" && echo "Private Key saved to: $(pwd)/$KEY_FILE" && echo "" && rm /tmp/ws_output.json
+ibmcloud schematics output --id $WORKSPACE_ID -o JSON > /tmp/ws_output.json && KEY_FILE="vsi-private-key.pem" && jq -r '.[0].output_values[] | select(.ssh_private_key) | .ssh_private_key.value' /tmp/ws_output.json > "$KEY_FILE" && chmod 400 "$KEY_FILE" && echo "Private Key saved to: $(pwd)/$KEY_FILE" && rm /tmp/ws_output.json
 ```
 
 ### Step 5: Determine Your Username
