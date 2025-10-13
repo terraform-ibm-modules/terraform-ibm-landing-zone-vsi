@@ -8,11 +8,7 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 - You have the SSH private key file.
 - Your VSI is assigned a floating IP address. A floating IP is a system-provisioned public IP address that is accessible from the internet.
 
-## Get Your SSH Private Key and Floating UP
-
-### Step 1:  Get Workspace ID from Projects:
-
-![Projects](/reference-architectures/project.png)
+### Step 1:  Get Workspace ID from Projects UI.
 
 ### Step 2: Set environment variables
 
@@ -21,57 +17,19 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-service.8f617fb9"
   ```
 
-```bash
-# Set your Schematics URL (replace with your region's URL)
-SCHEMATICS_URL="YOUR_REGION_SCHEMATICS_URL_HERE"  # example: "https://us-south.schematics.cloud.ibm.com"
-  ```
-
-  ```bash
-# Set your IBMCLOUD_API_KEY
-IBMCLOUD_API_KEY="your-api-key-here" # pragma: allowlist secret
-  ```
+### Step 3: Run the following command to extract the VSI name, floating IP address and private IP address:
 
 ```bash
-# Set access token
-# Copy only the functional code, excluding any '# pragma:' comments
-
-ACCESS_TOKEN=$(curl -X POST \
-  --location 'https://iam.cloud.ibm.com/identity/token' \
-  --header 'Accept: application/json' \
-  --header 'Content-Type: application/x-www-form-urlencoded' \
-  --data-urlencode 'grant_type=urn:ibm:params:oauth:grant-type:apikey' \ # pragma: allowlist secret
-  --data-urlencode "apikey=$IBMCLOUD_API_KEY" | jq -r '.access_token')
-  ```
-
-### Step 3: Run the following command to download and save your SSH private key with proper permissions, and to extract the Floating IP address:
-
-```bash
-
-# Fetch outputs and extract SSH key and floating IP
-curl -X GET "${SCHEMATICS_URL}/v1/workspaces/${WORKSPACE_ID}/output_values?hide=false" \
-    -L -s \
-    -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -H "Accept: application/json" | \
-    jq -r '.[0].output_values[] | select(.ssh_private_key) | .ssh_private_key.value' > private_key.pem && \
-    chmod 400 private_key.pem && \
-    echo && \
-    echo "Floating IP $(curl -X GET "${SCHEMATICS_URL}/v1/workspaces/${WORKSPACE_ID}/output_values?hide=false" \
-    -L -s \
-    -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -H "Accept: application/json" | \
-    jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0].floating_ip')" && \
-    echo && \
-    echo "Private key to connect to SSH: $(pwd)/private_key.pem" && \
-    echo
+ibmcloud schematics output --id $WORKSPACE_ID -o JSON | jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0] | "VSI Name: \(.name)\nFloating IP: \(.floating_ip)\nPrivate IP: \(.ipv4_address)"' && echo ""
 ```
 
-This command will:
-- Extracts the SSH private key and saves it as `private_key.pem` with secure `400` permissions
-- Displays the floating IP address and private key file path
+### Step 4: Run the following command to extract the SSH private key and saves it as `vsi-private-key.pem` with secure `400` permissions and display the private key file path. If you are using an existing SSH key, you can skip this step and go to step 5
 
-### Step 4: Determine Your Username
+```bash
+ibmcloud schematics output --id $WORKSPACE_ID -o JSON > /tmp/ws_output.json && KEY_FILE="vsi-private-key.pem" && jq -r '.[0].output_values[] | select(.ssh_private_key) | .ssh_private_key.value' /tmp/ws_output.json > "$KEY_FILE" && chmod 400 "$KEY_FILE" && echo "Private Key saved to: $(pwd)/$KEY_FILE" && echo "" && rm /tmp/ws_output.json
+```
+
+### Step 5: Determine Your Username
 
 The default username depends on your operating system:
 
