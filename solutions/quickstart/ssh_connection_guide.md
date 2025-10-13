@@ -19,17 +19,15 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-service.8f617fb9"
   ```
 
-#### Step 3: Run the following command to extract the VSI name, floating IP address and private IP address
-
+#### Step 3: Run the following command to extract the VSI name and Floating IP address
 ```bash
-ibmcloud schematics output --id $WORKSPACE_ID -o JSON | jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0] | "VSI Name: \(.name)\nFloating IP: \(.floating_ip)\nPrivate IP: \(.ipv4_address)"'
+ibmcloud schematics output --id $WORKSPACE_ID -o JSON | jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0] | "VSI Name: \(.name)\nFloating IP: \(.floating_ip)"'
 ```
 
 **Expected Output:**
 ```bash
 VSI Name: qs1-qs-vsi-e3f5-001
 Floating IP: 150.240.160.54
-Private IP: 10.10.10.4
 ```
 
 #### Step 4: Run the following command to extract the SSH private key and saves it as a file `vsi-private-key.pem` with secure `400` permissions and display the private key file path. If you are using an existing SSH key, you can skip this step and go to step 5
