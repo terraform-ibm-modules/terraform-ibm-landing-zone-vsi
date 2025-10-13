@@ -77,7 +77,7 @@ output "next_step_primary_label" {
 }
 
 output "next_step_primary_url" {
-  value       = length(module.vsi.ids) > 0 ? "https://cloud.ibm.com/infrastructure/compute/vs/${var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].region : var.vpc_region}~${module.vsi.ids[0]}/overview" : null
+  value       = length(module.vsi.ids) > 0 ? "https://cloud.ibm.com/infrastructure/compute/vs/${var.existing_vpc_crn != null ? module.existing_vpc_crn_parser.region : var.vpc_region}~${module.vsi.ids[0]}/overview" : null
   description = "Primary URL"
 }
 
