@@ -8,7 +8,7 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 - You have the SSH private key file.
 - Your VSI is assigned a floating IP address. A floating IP is a system-provisioned public IP address that is accessible from the internet.
 - `jq` command-line JSON processor is installed.
-- `ibmcloud` CLI tool installed.
+- `ibmcloud` CLI tool is installed.
 
 #### Step 1:  Get your Workspace ID from Projects UI
 
