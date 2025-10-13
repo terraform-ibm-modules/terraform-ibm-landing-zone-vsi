@@ -8,7 +8,7 @@ module "resource_group" {
 }
 
 locals {
-  ssh_key_id = var.existing_ssh_key_name != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_public_key[0].id
+  ssh_key_id = var.existing_ssh_key_name != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
   prefix     = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
 }
 
@@ -22,7 +22,7 @@ resource "tls_private_key" "tls_key" {
   rsa_bits  = 4096
 }
 
-resource "ibm_is_ssh_key" "ssh_public_key" {
+resource "ibm_is_ssh_key" "ssh_key" {
   count      = var.existing_ssh_key_name != null ? 0 : 1
   name       = "${local.prefix}-ssh-key"
   public_key = resource.tls_private_key.tls_key[0].public_key_openssh
