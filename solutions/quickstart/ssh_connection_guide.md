@@ -20,6 +20,7 @@ WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-s
   ```
 
 #### Step 3: Run the following command to extract the VSI name and Floating IP address
+
 ```bash
 ibmcloud schematics output --id $WORKSPACE_ID -o JSON | jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0] | "VSI Name: \(.name)\nFloating IP: \(.floating_ip)"'
 ```
