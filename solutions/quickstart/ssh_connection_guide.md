@@ -8,28 +8,28 @@ This guide will help you connect to your IBM Cloud Virtual Server Instance (VSI)
 - You have the SSH private key file.
 - Your VSI is assigned a floating IP address. A floating IP is a system-provisioned public IP address that is accessible from the internet.
 
-### Step 1:  Get Workspace ID from Projects UI.
+#### Step 1:  Get Workspace ID from Projects UI.
 
-### Step 2: Set environment variables
+#### Step 2: Set environment variables
 
 ```bash
 # Set your workspace ID (replace with your workspace ID)
 WORKSPACE_ID="YOUR_WORKSPACE_ID_HERE"  # example: "us-south.workspace.projects-service.8f617fb9"
   ```
 
-### Step 3: Run the following command to extract the VSI name, floating IP address and private IP address:
+#### Step 3: Run the following command to extract the VSI name, floating IP address and private IP address:
 
 ```bash
 ibmcloud schematics output --id $WORKSPACE_ID -o JSON | jq -r '.[0].output_values[] | select(.fip_list) | .fip_list.value[0] | "VSI Name: \(.name)\nFloating IP: \(.floating_ip)\nPrivate IP: \(.ipv4_address)"'
 ```
 
-### Step 4: Run the following command to extract the SSH private key and saves it as `vsi-private-key.pem` with secure `400` permissions and display the private key file path. If you are using an existing SSH key, you can skip this step and go to step 5
+#### Step 4: Run the following command to extract the SSH private key and saves it as `vsi-private-key.pem` with secure `400` permissions and display the private key file path. If you are using an existing SSH key, you can skip this step and go to step 5
 
 ```bash
 ibmcloud schematics output --id $WORKSPACE_ID -o JSON > /tmp/ws_output.json && KEY_FILE="vsi-private-key.pem" && jq -r '.[0].output_values[] | select(.ssh_private_key) | .ssh_private_key.value' /tmp/ws_output.json > "$KEY_FILE" && chmod 400 "$KEY_FILE" && echo "Private Key saved to: $(pwd)/$KEY_FILE" && rm /tmp/ws_output.json
 ```
 
-### Step 5: Determine Your Username
+#### Step 5: Determine Your Username
 
 The default username depends on your operating system:
 
@@ -42,34 +42,34 @@ The default username depends on your operating system:
 | CentOS | `vpcuser` |
 
 
-### Step 5: Connect via SSH
+#### Step 6: Connect via SSH
 
 Use the following command template to connect to your VSI:
 
 ```bash
-ssh -i private_key.pem <username>@<floating_ip>
+ssh -i vsi-private-key.pem <username>@<floating_ip>
 ```
 
-### Example Connection Commands
+#### Example Connection Commands
 
 For different operating systems, replace the placeholders with your actual values:
 
 #### Ubuntu:
 ```bash
-ssh -i private_key.pem ubuntu@150.240.69.61
+ssh -i vsi-private-key.pem ubuntu@150.240.69.61
 ```
 
 #### Redhat, Debian, and CentOS:
 ```bash
-ssh -i private_key.pem vpcuser@150.240.69.61
+ssh -i vsi-private-key.pem vpcuser@150.240.69.61
 ```
 
 #### Fedora:
 ```bash
-ssh -i private_key.pem core@150.240.69.61
+ssh -i vsi-private-key.pem core@150.240.69.61
 ```
 
-### Step 6: First Connection
+#### Step 7: First Connection
 
 On your first connection, you'll see a message about host authenticity:
 
