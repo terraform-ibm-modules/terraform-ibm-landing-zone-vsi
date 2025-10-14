@@ -73,13 +73,16 @@ module "slz_vsi" {
   resource_group_id     = module.resource_group.resource_group_id
   image_id              = var.image_id
   create_security_group = var.create_security_group
-  security_group = [{
-    name       = "allow-all-inbound-sg"
-    direction  = "inbound"
-    remote     = "0.0.0.0/0" # source of the traffic. 0.0.0.0/0 traffic from all across the internet.
-    local      = "0.0.0.0/0" # A CIDR block of 0.0.0.0/0 allows traffic to all local IP addresses (or from all local IP addresses, for outbound rules).
-    ip_version = "ipv4"
-  }]
+  security_group = {
+    name = "${var.prefix}-sg"
+    rules = [{
+      name       = "allow-all-inbound-sg"
+      direction  = "inbound"
+      source     = "0.0.0.0/0" # source of the traffic. 0.0.0.0/0 traffic from all across the internet.
+      local      = "0.0.0.0/0" # A CIDR block of 0.0.0.0/0 allows traffic to all local IP addresses (or from all local IP addresses, for outbound rules).
+      ip_version = "ipv4"
+    }]
+  }
   tags                       = var.resource_tags
   access_tags                = var.access_tags
   subnets                    = module.slz_vpc.subnet_zone_list
