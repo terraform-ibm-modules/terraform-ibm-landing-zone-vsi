@@ -81,3 +81,12 @@ output "next_step_primary_url" {
   description = "Primary URL"
 }
 
+output "next_step_secondary_label" {
+  value       = "SSH Connection Guide"
+  description = "Secondary label"
+}
+
+output "next_step_secondary_url" {
+  value       = "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/solutions/quickstart/ssh_connection_guide.md"
+  description = "Secondary URL"
+}
