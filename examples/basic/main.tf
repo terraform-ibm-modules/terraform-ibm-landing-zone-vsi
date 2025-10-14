@@ -69,11 +69,17 @@ resource "ibm_is_placement_group" "placement_group" {
 #############################################################################
 
 module "slz_vsi" {
-  source                     = "../../"
-  resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
-  create_security_group      = var.create_security_group
-  security_group             = var.security_group
+  source                = "../../"
+  resource_group_id     = module.resource_group.resource_group_id
+  image_id              = var.image_id
+  create_security_group = var.create_security_group
+  security_group = [{
+    name       = "allow-all-inbound-sg"
+    direction  = "inbound"
+    remote     = "0.0.0.0/0" # source of the traffic. 0.0.0.0/0 traffic from all across the internet.
+    local      = "0.0.0.0/0" # A CIDR block of 0.0.0.0/0 allows traffic to all local IP addresses (or from all local IP addresses, for outbound rules).
+    ip_version = "ipv4"
+  }]
   tags                       = var.resource_tags
   access_tags                = var.access_tags
   subnets                    = module.slz_vpc.subnet_zone_list
