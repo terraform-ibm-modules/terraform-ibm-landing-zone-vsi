@@ -52,39 +52,6 @@ variable "create_security_group" {
   default     = false
 }
 
-variable "security_group" {
-  description = "Security group created for VSI"
-  type = object({
-    name = string
-    rules = list(
-      object({
-        name      = string
-        direction = string
-        source    = string
-        tcp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        udp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        icmp = optional(
-          object({
-            type = number
-            code = number
-          })
-        )
-      })
-    )
-  })
-  default = null
-}
-
 variable "user_data" {
   description = "User data to initialize VSI deployment"
   type        = string
