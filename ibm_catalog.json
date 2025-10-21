@@ -74,6 +74,10 @@
             {
               "key": "prefix",
               "required": true,
+              "default_value": "dev",
+              "random_string": {
+                "length": 4
+              },
               "value_constraints": [
                 {
                   "type": "regex",
@@ -85,8 +89,6 @@
             {
               "key": "existing_resource_group_name",
               "display_name": "resource_group",
-              "default_value": "Default",
-              "description": "The name of an existing resource group to provision the resources.",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -245,7 +247,7 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "Required for creating Virtual Server Instance and Virtual Private Cloud(VPC)."
+              "notes": "Required for creating Virtual Server Instance and Virtual Private Cloud (VPC)."
             },
             {
               "service_name": "Resource group only",
@@ -302,6 +304,10 @@
             {
               "key": "prefix",
               "required": true,
+              "default_value": "dev",
+              "random_string": {
+                "length": 4
+              },
               "value_constraints": [
                 {
                   "type": "regex",
@@ -336,9 +342,7 @@
                 "config_constraints": {
                   "identifier": "rg_name"
                 }
-              },
-              "default_value": "Default",
-              "description": "The name of an existing resource group to provision the resources."
+              }
             },
             {
               "key": "existing_vpc_crn",
@@ -716,17 +720,17 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
-              ],
-              "service_name": "iam-identity",
-              "notes": "[Optional] Required to create foundational IBM Cloud account resources, like IAM settings, resource groups."
-            },
-            {
-              "role_crns": [
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
               ],
               "service_name": "kms",
               "notes": "[Optional] Required if Key Protect is used for encryption."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
+              "service_name": "All Identity and Access enabled services",
+              "notes": "[Optional] Required to to create trusted profile for App Configuration aggregator which is used for compliance scanning."
             },
             {
               "role_crns": [
@@ -758,7 +762,7 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Writer",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "notes": "[Optional] Required if you are consuming Observability deployable architecture which sets up Activity Tracker Event Routing."
+              "notes": "[Optional] Required if you are configuring Activity Tracker Event Routing."
             },
             {
               "service_name": "secrets-manager",
@@ -796,7 +800,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": " Defines the VPC instance and subnets where Virtual Server Instance will be created. ",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.5.0",
+              "version": "v8.7.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -807,6 +811,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -821,34 +830,10 @@
               ]
             },
             {
-              "name": "deploy-arch-ibm-account-infra-base",
-              "description": "Organize your IBM Cloud account with preconfigured resource groups. If not selected, the default resource group is used. Optionally, expand to apply recommended security controls via \"with Account Settings\" variation.",
-              "catalog_id": "7a4d68b4-cf8b-40cd-a3d1-f49aff526eb3",
-              "flavors": [
-                "resource-group-only",
-                "resource-groups-with-account-settings"
-              ],
-              "id": "63641cec-6093-4b4f-b7b0-98d2f4185cd6-global",
-              "input_mapping": [
-                {
-                  "dependency_output": "workload_resource_group_name",
-                  "version_input": "existing_resource_group_name"
-                },
-                {
-                  "dependency_input": "prefix",
-                  "version_input": "prefix",
-                  "reference_version": true
-                }
-              ],
-              "optional": true,
-              "on_by_default": false,
-              "version": "v3.0.23"
-            },
-            {
               "name": "deploy-arch-ibm-kms",
               "description": "Enable Cloud Automation for Key Protect when you want services to use your own managed encryption keys. If disabled, it will fall back on IBM Cloud's default service-managed encryption. ",
               "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
-              "version": "v5.1.27",
+              "version": "v5.4.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -867,6 +852,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -891,6 +881,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "region",
                   "version_input": "region",
                   "reference_version": true
@@ -903,7 +898,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.7.2"
+              "version": "v1.9.0"
             },
             {
               "name": "deploy-arch-ibm-cloud-logs",
@@ -917,6 +912,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
@@ -949,6 +949,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "region",
                   "version_input": "region",
                   "reference_version": true
@@ -956,7 +961,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.2.34"
+              "version": "v1.4.3"
             },
             {
               "name": "deploy-arch-ibm-scc-workload-protection",
@@ -973,6 +978,11 @@
                   "reference_version": true
                 },
                 {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
+                  "reference_version": true
+                },
+                {
                   "dependency_input": "region",
                   "version_input": "region",
                   "reference_version": true
@@ -980,13 +990,13 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.12.3"
+              "version": "v1.14.0"
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Configure a Secrets Manager instance to manage the ssh private key for the virtual server instance.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.10.0",
+              "version": "v2.11.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -997,6 +1007,11 @@
                 {
                   "dependency_input": "prefix",
                   "version_input": "prefix",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "existing_resource_group_name",
+                  "version_input": "existing_resource_group_name",
                   "reference_version": true
                 },
                 {
