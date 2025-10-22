@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.3.0"
+  version                      = "1.4.0"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -40,7 +40,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 module "vpc" {
   count             = var.existing_vpc_crn != null ? 0 : 1
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.5.0"
+  version           = "8.6.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = local.vpc_region
   prefix            = local.prefix
