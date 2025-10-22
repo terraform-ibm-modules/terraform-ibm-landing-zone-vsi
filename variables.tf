@@ -70,6 +70,37 @@ variable "subnets" {
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images in a region"
   type        = string
+  default     = null
+
+  validation {
+    condition     = (var.image_id != null && var.catalog_offering != null) == false
+    error_message = "image_id and catalog_offering are mutually exclusive, you can only use one of these options to specify an image, you must set one of these to `null`."
+  }
+
+  validation {
+    condition     = (var.image_id == null && var.catalog_offering == null) == false
+    error_message = "You must specify one (and only one) of either `image_id` or `catalog_offering` for your virtual server OS image."
+  }
+}
+
+variable "catalog_offering" {
+  description = "The catalog offering or offering version to use when provisioning this virtual server instance. If an offering is specified, the latest version of that offering will be used."
+  type = object({
+    offering_crn = optional(string)
+    version_crn  = optional(string)
+    plan_crn     = optional(string)
+  })
+  default = null
+
+  validation {
+    condition     = var.catalog_offering != null ? (var.catalog_offering.offering_crn == null && var.catalog_offering.version_crn == null) == false : true
+    error_message = "Must supply either an `offering_crn` or `version_crn` for a catalog_offering."
+  }
+
+  validation {
+    condition     = var.catalog_offering != null ? (var.catalog_offering.offering_crn != null && var.catalog_offering.version_crn != null) == false : true
+    error_message = "`catalog_offering.offering_crn` and `catalog_offering.version_crn` of a catalog_offering are mutually exclusive. You must supply only one of these two values."
+  }
 }
 
 variable "ssh_key_ids" {
@@ -112,6 +143,33 @@ variable "boot_volume_size" {
   validation {
     condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 250 : true
     error_message = "Boot Volume size must be a number between 100 and 250"
+  }
+}
+
+variable "boot_volume_profile" {
+  description = "The Block Volume Storage Profile to use for the boot volume of the virtual instance, defaults to `general-purpose`."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.boot_volume_profile != null ? contains(["general-purpose", "sdp"], var.boot_volume_profile) : true
+    error_message = "Boot Volume Profile must be `general-purpose` or `sdp`"
+  }
+}
+
+variable "boot_volume_iops" {
+  description = "NOTE: custom IOPS value only available for `sdp` volume profile! The custom IOPS value, in GB/s, for the `sdp` boot storage profile."
+  type        = number
+  default     = null
+
+  validation {
+    condition     = var.boot_volume_iops != null ? var.boot_volume_profile == "sdp" : true
+    error_message = "Boot Volume IOPS can only be specified for `boot_volume_profile = sdp`."
+  }
+
+  validation {
+    condition     = var.boot_volume_iops != null ? var.boot_volume_iops >= 100 && var.boot_volume_iops <= 64000 : true
+    error_message = "Boot Volume IOPS for sdp profile must be between 100 and 64,000"
   }
 }
 

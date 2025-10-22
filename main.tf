@@ -280,6 +280,16 @@ resource "ibm_is_instance" "vsi" {
     ]
   }
 
+  # catalog offering for image, ignored if snapshot
+  dynamic "catalog_offering" {
+    for_each = (local.vsi_boot_volume_snapshot_id == null && var.catalog_offering != null) ? [1] : []
+    content {
+      offering_crn = var.catalog_offering.offering_crn
+      version_crn  = var.catalog_offering.version_crn
+      plan_crn     = var.catalog_offering.plan_crn
+    }
+  }
+
   # Primary Virtual Network Interface
   dynamic "primary_network_attachment" {
     for_each = var.use_legacy_network_interface ? [] : [1]
@@ -352,6 +362,8 @@ resource "ibm_is_instance" "vsi" {
     encryption = var.boot_volume_encryption_key
     name       = var.use_static_boot_volume_name ? "${each.value.vsi_name}-boot" : null
     size       = var.boot_volume_size
+    profile    = var.boot_volume_profile
+    iops       = var.boot_volume_iops
     # determine snapshot in following order: input variable -> from consistency group -> null (none)
     snapshot = local.vsi_boot_volume_snapshot_id
   }
