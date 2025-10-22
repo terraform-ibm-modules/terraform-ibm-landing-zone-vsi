@@ -932,7 +932,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.6.28"
+              "version": "v1.9.0"
             },
             {
               "name": "deploy-arch-ibm-activity-tracker",
