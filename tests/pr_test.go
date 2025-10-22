@@ -24,6 +24,8 @@ import (
 const basicExampleTerraformDir = "examples/basic"
 const completeExampleTerraformDir = "examples/complete"
 const fsCloudExampleTerraformDir = "examples/fscloud"
+const gen2bootExampleTerraformDir = "examples/gen2-storage"
+const catalogImageExampleTerraformDir = "examples/catalog-image"
 
 // calls vsi module twice on same subnets to check for duplicate names
 const multiModuleOneVpcTerraformDir = "examples/multi-profile-one-vpc"
