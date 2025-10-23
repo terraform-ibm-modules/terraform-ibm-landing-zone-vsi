@@ -362,6 +362,8 @@ resource "ibm_is_instance" "vsi" {
     encryption = var.boot_volume_encryption_key
     name       = var.use_static_boot_volume_name ? "${each.value.vsi_name}-boot" : null
     size       = var.boot_volume_size
+    profile    = var.boot_volume_profile
+    iops       = var.boot_volume_iops
     # determine snapshot in following order: input variable -> from consistency group -> null (none)
     snapshot = local.vsi_boot_volume_snapshot_id
   }
