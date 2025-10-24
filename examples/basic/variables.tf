@@ -46,12 +46,6 @@ variable "machine_type" {
   default     = "cx2-2x4"
 }
 
-variable "create_security_group" {
-  description = "Create security group for VSI"
-  type        = bool
-  default     = false
-}
-
 variable "user_data" {
   description = "User data to initialize VSI deployment"
   type        = string

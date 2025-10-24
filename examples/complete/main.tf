@@ -317,12 +317,22 @@ module "dedicated_host" {
 #############################################################################
 
 module "slz_vsi_dh" {
-  count                           = var.enable_dedicated_host ? 1 : 0
-  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
-  source                          = "../../"
-  resource_group_id               = module.resource_group.resource_group_id
-  image_id                        = var.image_id
-  create_security_group           = false
+  count                 = var.enable_dedicated_host ? 1 : 0
+  dedicated_host_id     = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
+  source                = "../../"
+  resource_group_id     = module.resource_group.resource_group_id
+  image_id              = var.image_id
+  create_security_group = true
+  security_group = {
+    name = "${var.prefix}-sg"
+    rules = [{
+      name       = "allow-all-inbound-sg"
+      direction  = "inbound"
+      source     = "0.0.0.0/0" # source of the traffic. 0.0.0.0/0 traffic from all across the internet.
+      local      = "0.0.0.0/0" # A CIDR block of 0.0.0.0/0 allows traffic to all local IP addresses (or from all local IP addresses, for outbound rules).
+      ip_version = "ipv4"
+    }]
+  }
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
   subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
