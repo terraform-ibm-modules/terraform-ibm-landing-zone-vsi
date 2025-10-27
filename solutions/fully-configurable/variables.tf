@@ -293,9 +293,11 @@ variable "security_group" {
     name = string
     rules = list(
       object({
-        name      = string
-        direction = string
-        source    = string
+        name       = string
+        direction  = string
+        source     = string
+        local      = optional(string)
+        ip_version = optional(string)
         tcp = optional(
           object({
             port_max = number
