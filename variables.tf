@@ -146,6 +146,33 @@ variable "boot_volume_size" {
   }
 }
 
+variable "boot_volume_profile" {
+  description = "The Block Volume Storage Profile to use for the boot volume of the virtual instance, defaults to `general-purpose`."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.boot_volume_profile != null ? contains(["general-purpose", "sdp"], var.boot_volume_profile) : true
+    error_message = "Boot Volume Profile must be `general-purpose` or `sdp`"
+  }
+}
+
+variable "boot_volume_iops" {
+  description = "NOTE: custom IOPS value only available for `sdp` volume profile! The custom IOPS value, in GB/s, for the `sdp` boot storage profile."
+  type        = number
+  default     = null
+
+  validation {
+    condition     = var.boot_volume_iops != null ? var.boot_volume_profile == "sdp" : true
+    error_message = "Boot Volume IOPS can only be specified for `boot_volume_profile = sdp`."
+  }
+
+  validation {
+    condition     = var.boot_volume_iops != null ? var.boot_volume_iops >= 100 && var.boot_volume_iops <= 64000 : true
+    error_message = "Boot Volume IOPS for sdp profile must be between 100 and 64,000"
+  }
+}
+
 variable "manage_reserved_ips" {
   description = "Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP."
   type        = bool
@@ -194,9 +221,11 @@ variable "security_group" {
     name = string
     rules = list(
       object({
-        name      = string
-        direction = string
-        source    = string
+        name       = string
+        direction  = string
+        source     = string
+        local      = optional(string)
+        ip_version = optional(string)
         tcp = optional(
           object({
             port_max = number

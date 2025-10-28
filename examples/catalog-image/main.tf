@@ -50,38 +50,29 @@ module "slz_vpc" {
   region            = var.region
   prefix            = var.prefix
   tags              = var.resource_tags
-  name              = var.vpc_name
-}
-
-#############################################################################
-# Placement group
-#############################################################################
-
-resource "ibm_is_placement_group" "placement_group" {
-  name           = "${var.prefix}-host-spread"
-  resource_group = module.resource_group.resource_group_id
-  strategy       = "host_spread"
-  tags           = var.resource_tags
+  name              = "vpc"
 }
 
 #############################################################################
 # Provision VSI
+# using catalog offering for Juniper Advanced Firewall, which has a BYOB license (empty plan crn)
 #############################################################################
 
 module "slz_vsi" {
-  source                     = "../../"
-  resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
-  create_security_group      = false
-  tags                       = var.resource_tags
-  access_tags                = var.access_tags
-  subnets                    = module.slz_vpc.subnet_zone_list
-  vpc_id                     = module.slz_vpc.vpc_id
-  prefix                     = var.prefix
-  placement_group_id         = ibm_is_placement_group.placement_group.id
-  machine_type               = var.machine_type
-  user_data                  = var.user_data
-  boot_volume_encryption_key = var.boot_volume_encryption_key
-  vsi_per_subnet             = var.vsi_per_subnet
-  ssh_key_ids                = [local.ssh_key_id]
+  source            = "../../"
+  resource_group_id = module.resource_group.resource_group_id
+  catalog_offering = {
+    version_crn = "crn:v1:bluemix:public:globalcatalog-collection:global::1082e7d2-5e2f-0a11-a3bc-f88a8e1931fc:version:74b4b3ba-2a05-460d-afba-98e4d012f53a-global/a420a6fc-99ce-4ebe-a6ac-10fc58d8d7db-global"
+    plan_crn    = ""
+  }
+  create_security_group = false
+  tags                  = var.resource_tags
+  access_tags           = var.access_tags
+  subnets               = module.slz_vpc.subnet_zone_list
+  vpc_id                = module.slz_vpc.vpc_id
+  prefix                = var.prefix
+  machine_type          = "cx2-2x4"
+  user_data             = null
+  vsi_per_subnet        = 1
+  ssh_key_ids           = [local.ssh_key_id]
 }

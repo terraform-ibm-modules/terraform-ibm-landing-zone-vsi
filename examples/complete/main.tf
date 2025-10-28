@@ -12,7 +12,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.3.0"
+  version = "1.4.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.2.0"
+  version                   = "5.4.5"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.6.29"
+  version           = "1.9.6"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan              = "graduated-tier"
-  version           = "1.7.2"
+  version           = "1.10.2"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -102,7 +102,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.3.0"
+  version           = "8.7.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -317,12 +317,22 @@ module "dedicated_host" {
 #############################################################################
 
 module "slz_vsi_dh" {
-  count                           = var.enable_dedicated_host ? 1 : 0
-  dedicated_host_id               = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
-  source                          = "../../"
-  resource_group_id               = module.resource_group.resource_group_id
-  image_id                        = var.image_id
-  create_security_group           = false
+  count                 = var.enable_dedicated_host ? 1 : 0
+  dedicated_host_id     = var.enable_dedicated_host ? module.dedicated_host.dedicated_host_ids[0] : null
+  source                = "../../"
+  resource_group_id     = module.resource_group.resource_group_id
+  image_id              = var.image_id
+  create_security_group = true
+  security_group = {
+    name = "${var.prefix}-sg"
+    rules = [{
+      name       = "allow-all-inbound-sg"
+      direction  = "inbound"
+      source     = "0.0.0.0/0" # source of the traffic. 0.0.0.0/0 traffic from all across the internet.
+      local      = "0.0.0.0/0" # A CIDR block of 0.0.0.0/0 allows traffic to all local IP addresses (or from all local IP addresses, for outbound rules).
+      ip_version = "ipv4"
+    }]
+  }
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
   subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]

@@ -11,7 +11,7 @@ variable "resource_group" {
 }
 
 variable "region" {
-  description = "The region to which to deploy all resources in this example"
+  description = "The region to which to deploy the VPC"
   type        = string
   default     = "us-south"
 }
@@ -19,13 +19,13 @@ variable "region" {
 variable "prefix" {
   description = "The prefix that you would like to append to your resources"
   type        = string
-  default     = "slz-vsi-com"
+  default     = "slz-vsi"
 }
 
 variable "resource_tags" {
   description = "List of Tags for the resource created"
   type        = list(string)
-  default     = []
+  default     = null
 }
 
 variable "access_tags" {
@@ -34,26 +34,8 @@ variable "access_tags" {
   default     = []
 }
 
-variable "image_id" {
-  description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
-  type        = string
-  default     = "r006-0dec3ee2-34f2-493c-ab98-7f5d9b284b9f"
-}
-
 variable "ssh_key" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
   default     = null
-}
-
-variable "secondary_use_vsi_security_group" {
-  description = "Use the security group created by this module in the secondary interface"
-  type        = bool
-  default     = false
-}
-
-variable "enable_dedicated_host" {
-  type        = bool
-  default     = false
-  description = "Set the flag to true to provision a dedicated host and deploy VSIs on it. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details."
 }

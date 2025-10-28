@@ -37,52 +37,13 @@ variable "access_tags" {
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
   type        = string
-  default     = "r006-88c92555-c1d6-4846-a2d5-35e12b1bc127"
+  default     = "r006-0dec3ee2-34f2-493c-ab98-7f5d9b284b9f"
 }
 
 variable "machine_type" {
   description = "VSI machine type"
   type        = string
   default     = "cx2-2x4"
-}
-
-variable "create_security_group" {
-  description = "Create security group for VSI"
-  type        = bool
-  default     = false
-}
-
-variable "security_group" {
-  description = "Security group created for VSI"
-  type = object({
-    name = string
-    rules = list(
-      object({
-        name      = string
-        direction = string
-        source    = string
-        tcp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        udp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        icmp = optional(
-          object({
-            type = number
-            code = number
-          })
-        )
-      })
-    )
-  })
-  default = null
 }
 
 variable "user_data" {

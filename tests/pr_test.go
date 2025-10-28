@@ -24,6 +24,8 @@ import (
 const basicExampleTerraformDir = "examples/basic"
 const completeExampleTerraformDir = "examples/complete"
 const fsCloudExampleTerraformDir = "examples/fscloud"
+const gen2bootExampleTerraformDir = "examples/gen2-storage"
+const catalogImageExampleTerraformDir = "examples/catalog-image"
 
 // calls vsi module twice on same subnets to check for duplicate names
 const multiModuleOneVpcTerraformDir = "examples/multi-profile-one-vpc"
@@ -446,7 +448,6 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 		"deploy-arch-ibm-slz-vsi",
 		"fully-configurable",
 		map[string]interface{}{
-			"prefix":   options.Prefix,
 			"region":   "eu-de",
 			"image_id": "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
 		},
@@ -464,7 +465,7 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
 			},
 		},
-		// // Disable target / route creation to help prevent hitting quota in account
+		// Disable target / route creation to help prevent hitting quota in account
 		{
 			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
 			OfferingFlavor: "fully-configurable",

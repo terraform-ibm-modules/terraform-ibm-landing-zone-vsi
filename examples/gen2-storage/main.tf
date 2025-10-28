@@ -50,38 +50,33 @@ module "slz_vpc" {
   region            = var.region
   prefix            = var.prefix
   tags              = var.resource_tags
-  name              = var.vpc_name
-}
-
-#############################################################################
-# Placement group
-#############################################################################
-
-resource "ibm_is_placement_group" "placement_group" {
-  name           = "${var.prefix}-host-spread"
-  resource_group = module.resource_group.resource_group_id
-  strategy       = "host_spread"
-  tags           = var.resource_tags
+  name              = "vpc"
 }
 
 #############################################################################
 # Provision VSI
+# using Gen2 boot volume storage type (sdp) with custom IOPS setting
 #############################################################################
 
+data "ibm_is_image" "centos_10" {
+  name = "ibm-centos-stream-10-amd64-4"
+}
+
 module "slz_vsi" {
-  source                     = "../../"
-  resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
-  create_security_group      = false
-  tags                       = var.resource_tags
-  access_tags                = var.access_tags
-  subnets                    = module.slz_vpc.subnet_zone_list
-  vpc_id                     = module.slz_vpc.vpc_id
-  prefix                     = var.prefix
-  placement_group_id         = ibm_is_placement_group.placement_group.id
-  machine_type               = var.machine_type
-  user_data                  = var.user_data
-  boot_volume_encryption_key = var.boot_volume_encryption_key
-  vsi_per_subnet             = var.vsi_per_subnet
-  ssh_key_ids                = [local.ssh_key_id]
+  source                = "../../"
+  resource_group_id     = module.resource_group.resource_group_id
+  image_id              = data.ibm_is_image.centos_10.id
+  create_security_group = false
+  tags                  = var.resource_tags
+  access_tags           = var.access_tags
+  subnets               = module.slz_vpc.subnet_zone_list
+  vpc_id                = module.slz_vpc.vpc_id
+  prefix                = var.prefix
+  machine_type          = "cx2-2x4"
+  user_data             = null
+  vsi_per_subnet        = 1
+  ssh_key_ids           = [local.ssh_key_id]
+  boot_volume_profile   = "sdp"
+  boot_volume_size      = 200
+  boot_volume_iops      = 5000
 }

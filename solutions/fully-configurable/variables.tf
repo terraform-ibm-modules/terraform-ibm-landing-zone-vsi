@@ -10,8 +10,8 @@ variable "ibmcloud_api_key" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision the resources. If not provided the default resource group will be used."
-  default     = null
+  description = "The name of an existing resource group to provision the resources. [Learn more](https://cloud.ibm.com/docs/account?topic=account-rgs&interface=ui#create_rgs) about how to create a resource group."
+  default     = "Default"
 }
 
 variable "prefix" {
@@ -293,9 +293,11 @@ variable "security_group" {
     name = string
     rules = list(
       object({
-        name      = string
-        direction = string
-        source    = string
+        name       = string
+        direction  = string
+        source     = string
+        local      = optional(string)
+        ip_version = optional(string)
         tcp = optional(
           object({
             port_max = number
