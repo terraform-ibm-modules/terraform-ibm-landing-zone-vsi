@@ -9,7 +9,7 @@ module "resource_group" {
 
 locals {
   ssh_key_id = var.existing_ssh_key_name != null ? data.ibm_is_ssh_key.existing_ssh_key[0].id : resource.ibm_is_ssh_key.ssh_key[0].id
-  prefix     = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}" : "" : ""
+  prefix     = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
 }
 
 ##############################################################################
