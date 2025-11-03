@@ -55,7 +55,7 @@ module "vpc" {
         no_addr_prefix = false
       }
   ] }
-  name = "${local.prefix}qs-vpc"
+  name = "qs-vpc"
   network_acls = [
     {
       name                         = "vpc-acl"
