@@ -54,6 +54,6 @@ output "next_step_secondary_label" {
 
 # TODO: update the cloud docs URL for the SSH guide, cloud docs PR- https://github.ibm.com/cloud-docs-solutions/secure-infrastructure-vpc/pull/214/ 
 output "next_step_secondary_url" {
-  value       = "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/solutions/quickstart/ssh_connection_guide.md"
+  value       = "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-connect-vsi-using-ssh"
   description = "Secondary URL"
 }
