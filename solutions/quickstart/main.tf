@@ -43,7 +43,7 @@ module "vpc" {
   version           = "8.7.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = local.vpc_region
-  prefix            = local.prefix
+  prefix            = local.prefix != "" ? trimspace(var.prefix) : null
   tags              = var.resource_tags
   subnets = {
     zone-1 = [
