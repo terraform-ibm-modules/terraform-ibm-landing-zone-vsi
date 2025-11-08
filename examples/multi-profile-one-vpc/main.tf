@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.4.5"
+  version                   = "5.4.9"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -44,7 +44,7 @@ module "key_protect_all_inclusive" {
 
 module "existing_boot_volume_kms_key_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.3.0"
   crn     = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
 }
 
@@ -120,7 +120,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.7.0"
+  version           = "8.8.4"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
