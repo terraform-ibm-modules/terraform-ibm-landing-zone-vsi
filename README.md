@@ -16,13 +16,13 @@ This module creates Virtual Server Instances (VSI) across multiple subnets with 
 * [Submodules](./modules)
     * [fscloud](./modules/fscloud)
 * [Examples](./examples)
-    * [Basic example using a Snapshot Consistency Group for volumes](./examples/snapshot)
-    * [Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes](./examples/complete)
-    * [End to end basic example using catalog image](./examples/catalog-image)
-    * [End to end basic example using gen2 boot volume](./examples/gen2-storage)
-    * [End to end basic example](./examples/basic)
-    * [Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.](./examples/multi-profile-one-vpc)
-    * [Financial Services Cloud profile example](./examples/fscloud)
+    * <div style="display: inline-block;"><a href="./examples/basic">End to end basic example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=lzv-basic-example&repository=github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/basic" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/catalog-image">End to end basic example using catalog image</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=lzv-catalog-image-example&repository=github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/catalog-image" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/complete">Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=lzv-complete-example&repository=github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/complete" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/fscloud">Financial Services Cloud profile example</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=lzv-fscloud-example&repository=github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/fscloud" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/gen2-storage">End to end basic example using gen2 boot volume</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=lzv-gen2-storage-example&repository=github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/gen2-storage" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/multi-profile-one-vpc">Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=lzv-multi-profile-one-vpc-example&repository=github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/multi-profile-one-vpc" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
+    * <div style="display: inline-block;"><a href="./examples/snapshot">Basic example using a Snapshot Consistency Group for volumes</a></div> <div style="display: inline-block; vertical-align: middle;"><a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=lzv-snapshot-example&repository=github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/snapshot" target="_blank"><img src="https://cloud.ibm.com/media/docs/images/icons/Deploy_to_cloud.svg" alt="Deploy to IBM Cloud button"></a></div>
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
@@ -164,7 +164,7 @@ You need the following permissions to run this module.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.2.0 |
+| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.3.0 |
 
 ### Resources
 
