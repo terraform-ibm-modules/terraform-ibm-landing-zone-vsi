@@ -43,7 +43,7 @@ output "next_step_primary_label" {
 }
 
 output "next_step_primary_url" {
-  value       = length(module.vsi.ids) > 0 ? "https://cloud.ibm.com/infrastructure/compute/vs/${var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].region : var.vpc_region}~${module.vsi.ids[0]}/overview" : null
+  value       = "https://cloud.ibm.com/infrastructure/compute/vs/${local.vpc_region}~${module.vsi.ids[0]}/overview"
   description = "Primary URL"
 }
 
@@ -53,6 +53,6 @@ output "next_step_secondary_label" {
 }
 
 output "next_step_secondary_url" {
-  value       = "https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/blob/main/solutions/quickstart/ssh_connection_guide.md"
+  value       = "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-connect-vsi-using-ssh"
   description = "Secondary URL"
 }
