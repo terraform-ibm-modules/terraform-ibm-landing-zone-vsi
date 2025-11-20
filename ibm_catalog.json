@@ -25,7 +25,7 @@
         "infrastructure as code"
       ],
       "short_description": "Deploys secure Virtual Server Instances on IBM Cloud VPC with flexible configurations, QuickStart options for simplified setup, and integrated security and logging features",
-      "long_description": "Landing zone for applications with virtual servers delivers fast-provisioned, high-performance compute with network isolation and built-in security. [VSIs](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers) can be deployed into new or existing Virtual Private Clouds (VPCs) with flexible configurations and integration to networking, storage, and security services. They support both x86 and s390x [profiles](https://cloud.ibm.com/docs/vpc?group=profiles) to match compute and memory needs. Designed for secure, compliant, and customizable application workloads, VSIs enable consistent, scalable deployments across multiple zones and subnets within an IBM Cloud VPC.",
+      "long_description": "Landing zone for applications with virtual servers delivers fast-provisioned, high-performance compute with network isolation and built-in security. [VSIs](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers) can be deployed into new or existing Virtual Private Clouds (VPCs) with flexible configurations and integration to networking, storage, and security services. They support both x86 and s390x [profiles](https://cloud.ibm.com/docs/vpc?group=profiles) to match compute and memory needs. Designed for secure, compliant, and customizable application workloads, VSIs enable consistent, scalable deployments across multiple zones and subnets within an IBM Cloud VPC. \n\nLeverage [Terraform IBM Modules](https://github.com/terraform-ibm-modules) to shape and scale your solutions. You can integrate Terraform IBM Modules (TIM) to extend functionality and design a solution tailored to your environment and operations needs. These modules offer reusable, customizable elements that follow IBM Cloud's recommended practices. You can access the [source code and documentation](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi) and use it to extend your current architecture or create new solutions.",
       "offering_docs_url": "https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-overview#overview-vsi",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/main/images/vsi-icon.svg",
       "provider_name": "IBM",
@@ -57,6 +57,10 @@
         {
           "title": "Sets up activity tracking for the Virtual Server Instance",
           "description": "Optionally, you can deploy Cloud automation for Activity Tracker Event Routing to route and securely store auditing events that are related to your Virtual Server Instance. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-at_events)"
+        },
+        {
+          "title": "Composable and Extensible Architecture",
+          "description": "This architecture illustrates how Terraform IBM Modules(TIM) can be integrated to deliver a complete solution on IBM Cloud. Each module is a reusable, and validated component for security, compliance, and operational IBM best practices. You can deploy this architecture as-is or configure it as code by leveraging the underlying modules to fit your specific requirements. Explore the [source code and documentation](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi) to adapt, extend, or create entirely new solutions using these building blocks."
         }
       ],
       "flavors": [
