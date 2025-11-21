@@ -324,6 +324,7 @@
             },
             {
               "key": "image_id",
+              "type": "string",
               "required": true,
               "options": [
                 {
