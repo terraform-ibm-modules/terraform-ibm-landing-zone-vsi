@@ -550,7 +550,7 @@ variable "logging_target_path" {
 variable "logging_auth_mode" {
   type        = string
   default     = "IAMAPIKey"
-  description = "Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
+  description = "Authentication mode the logging agent will use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
 
   validation {
     condition     = length(regex("IAMAPIKey|VSITrustedProfile", var.logging_auth_mode)) > 0
