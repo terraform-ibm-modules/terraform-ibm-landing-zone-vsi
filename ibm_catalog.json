@@ -324,34 +324,7 @@
             },
             {
               "key": "image_id",
-              "type": "string",
-              "required": true,
-              "options": [
-                {
-                  "displayname": "Ubuntu 22",
-                  "value": "r006-c5c46cb9-3ec9-4c86-99df-bdb9231a5e23"
-                },
-                {
-                  "displayname": "Ubuntu 24",
-                  "value": "r006-3ab751c0-603d-48d4-a687-d83cead2fe80"
-                },
-                {
-                  "displayname": "Redhat 8",
-                  "value": "r006-4818a012-4cad-44f7-8376-fda1c485a3a2"
-                },
-                {
-                  "displayname": "Debian 12",
-                  "value": "r006-5e646c4a-28ac-47c5-8c46-fb1274ac9624"
-                },
-                {
-                  "displayname": "Fedora",
-                  "value": "r006-b35bcace-30fb-4e8b-802f-436d26004c82"
-                },
-                {
-                  "displayname": "CentOS 9",
-                  "value": "r006-fd91e3cb-2800-42d6-9fdb-461030ef018d"
-                }
-              ]
+              "required": true
             },
             {
               "key": "machine_type",
