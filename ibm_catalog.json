@@ -470,11 +470,10 @@
             {
               "key": "existing_ssh_key_ids",
               "custom_config": {
-                "type": "vpc_ssh_key",
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "selection": "multi_select"
+                  "type": "string"
                 }
               }
             },
@@ -515,7 +514,8 @@
               }
             },
             {
-              "key": "ibmcloud_kms_api_key"
+              "key": "ibmcloud_kms_api_key",
+              "hidden": true
             },
             {
               "key": "kms_encryption_enabled_boot_volume"
@@ -531,7 +531,8 @@
               ]
             },
             {
-              "key": "skip_block_storage_kms_iam_auth_policy"
+              "key": "skip_block_storage_kms_iam_auth_policy",
+              "hidden": true
             },
             {
               "key": "kms_endpoint_type",
@@ -548,7 +549,8 @@
               "hidden": true
             },
             {
-              "key": "boot_volume_key_ring_name"
+              "key": "boot_volume_key_ring_name",
+              "hidden": true
             },
             {
               "key": "existing_boot_volume_kms_key_crn",
@@ -561,10 +563,12 @@
               ]
             },
             {
-              "key": "force_delete_kms_key"
+              "key": "force_delete_kms_key",
+              "hidden": true
             },
             {
-              "key": "use_boot_volume_key_as_default"
+              "key": "use_boot_volume_key_as_default",
+              "hidden": true
             },
             {
               "key": "security_group",
@@ -590,7 +594,8 @@
               }
             },
             {
-              "key": "boot_volume_key_name"
+              "key": "boot_volume_key_name",
+              "hidden": true
             },
             {
               "key": "boot_volume_snapshot_id"
@@ -680,7 +685,8 @@
               "key": "boot_volume_size"
             },
             {
-              "key": "use_static_boot_volume_name"
+              "key": "use_static_boot_volume_name",
+              "hidden": true
             },
             {
               "key": "user_data",

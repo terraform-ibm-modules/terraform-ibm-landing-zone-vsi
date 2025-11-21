@@ -94,7 +94,7 @@ variable "image_id" {
 }
 
 variable "ssh_public_keys" {
-  description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or select existing ssh keys created in the cloud using this variable `existing_ssh_key_ids`."
+  description = "A list of public SSH keys to use when creating a virtual server instance. These keys must be RSA with a size of 2048 or 4096 bits (recommended). For details, see the IBM Cloud [documentation](https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys). If you want to use existing SSH keys, select their IDs using the variable `existing_ssh_key_ids` instead. You can also choose to auto-generate a new SSH key by setting `auto_generate_ssh_key` to true."
   type        = list(string)
   default     = []
 
