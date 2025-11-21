@@ -327,18 +327,6 @@
               "default_value": "us-south"
             },
             {
-              "key": "existing_resource_group_name",
-              "display_name": "resource_group",
-              "custom_config": {
-                "type": "resource_group",
-                "grouping": "deployment",
-                "original_grouping": "deployment",
-                "config_constraints": {
-                  "identifier": "rg_name"
-                }
-              }
-            },
-            {
               "key": "existing_vpc_crn",
               "required": true,
               "value_constraints": [
@@ -384,6 +372,26 @@
               "virtual": true
             },
             {
+              "key": "image_id",
+              "required": true
+            },
+            {
+              "key": "machine_type",
+              "required": true
+            },
+            {
+              "key": "existing_resource_group_name",
+              "display_name": "resource_group",
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
+            },
+            {
               "key": "existing_subnet_id",
               "custom_config": {
                 "type": "platform_resource",
@@ -403,14 +411,6 @@
                   ]
                 }
               }
-            },
-            {
-              "key": "image_id",
-              "required": true
-            },
-            {
-              "key": "machine_type",
-              "required": true
             },
             {
               "key": "vsi_name"
@@ -439,7 +439,14 @@
               "key": "auto_generate_ssh_key"
             },
             {
-              "key": "ssh_public_keys"
+              "key": "ssh_public_keys",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "existing_ssh_key_ids",
@@ -494,7 +501,17 @@
               "key": "allow_ip_spoofing"
             },
             {
-              "key": "block_storage_volumes"
+              "key": "block_storage_volumes",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
             },
             {
               "key": "ibmcloud_kms_api_key"
@@ -549,10 +566,27 @@
               "key": "use_boot_volume_key_as_default"
             },
             {
-              "key": "security_group"
+              "key": "security_group",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
             },
             {
-              "key": "security_group_ids"
+              "key": "security_group_ids",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "boot_volume_key_name"
@@ -567,7 +601,17 @@
               "key": "enable_floating_ip"
             },
             {
-              "key": "load_balancers"
+              "key": "load_balancers",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
             },
             {
               "key": "manage_reserved_ips"
@@ -582,10 +626,27 @@
               "key": "secondary_allow_ip_spoofing"
             },
             {
-              "key": "secondary_floating_ips"
+              "key": "secondary_floating_ips",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
-              "key": "secondary_security_groups"
+              "key": "secondary_security_groups",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
             },
             {
               "key": "existing_secondary_subnet_id",
@@ -625,7 +686,12 @@
               "custom_config": {
                 "type": "code_editor",
                 "grouping": "deployment",
-                "original_grouping": "deployment"
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
               }
             },
             {
@@ -693,7 +759,14 @@
               "key": "monitoring_collector_port"
             },
             {
-              "key": "monitoring_tags"
+              "key": "monitoring_tags",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             }
           ],
           "iam_permissions": [
