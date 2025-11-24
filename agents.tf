@@ -1,5 +1,6 @@
 # Lookup the image name from the ID
 data "ibm_is_image" "image_name" {
+  count      = var.image_id != null ? 1 : 0
   identifier = var.image_id
 }
 
@@ -8,7 +9,7 @@ data "ibm_is_image" "image_name" {
 ##############################################################################
 
 locals {
-  os_image = data.ibm_is_image.image_name.os
+  os_image = var.image_id != null ? data.ibm_is_image.image_name[0].os : ""
   # returns empty string if OS not supported
   package_name = (
     startswith(local.os_image, "ubuntu-20") ? "logs-router-agent-ubuntu20-${var.logging_agent_version}.deb" :
