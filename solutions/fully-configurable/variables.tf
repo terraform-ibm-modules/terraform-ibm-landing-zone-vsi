@@ -516,28 +516,50 @@ variable "ssh_key_secret_name" {
 
 ##############################################################################
 # Logging Agent Variables
-########################################################################################################################
+##############################################################################
 
 variable "install_logging_agent" {
   type        = bool
   default     = false
-  description = "Set to true to enable installing the logging agent into your VSI at time of creation."
+  description = "Set to true to enable installing the logging agent into your VSI at time of creation. If true, values must be passed for `logging_target_host` and either `logging_api_key` or `logging_trusted_profile_id`. Installation logs can be found on the VSI in /run/monitoring-agent/monitoring-agent-install.log."
+
+  validation {
+    condition     = var.install_logging_agent ? var.image_id != null : true
+    error_message = "When 'install_logging_agent' is true, a value for 'image_id' must be provided. Logging agent installations are not supported if provisioning using the 'catalog_offering' option."
+  }
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_agent_version != null && var.logging_agent_version != "" : true
+    error_message = "When 'install_logging_agent' is true, a value for 'logging_agent_version' must be provided."
+  }
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_target_port != null && var.logging_target_port != "" : true
+    error_message = "If 'install_logging_agent' is true, a value for 'logging_target_port' must be provided."
+  }
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_target_host != null && var.logging_target_host != "" : true
+    error_message = "If 'install_logging_agent' is true, a value for 'logging_target_host' must be provided."
+  }
+
+}
+
+variable "logging_agent_version" {
+  type        = string
+  default     = "1.7.0" # datasource: icr.io/ibm-observe/logs-agent-helm
+  description = "Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true."
 }
 
 variable "logging_target_host" {
   type        = string
   default     = null
   description = "Ingestion endpoint that corresponds to the IBM Cloud Logs instance the logging agent connects to."
-
-  validation {
-    condition     = var.install_logging_agent ? var.logging_target_host != null : true
-    error_message = "If `install_logging_agent` is true, a value for `logging_target_host` must be provided."
-  }
 }
 
 variable "logging_target_port" {
-  type        = string
-  default     = "443"
+  type        = number
+  default     = 443
   description = "Port the logging agent targets when sending logs, defaults to `443` for sending logs to an IBM Cloud Logs instance."
 }
 
@@ -545,6 +567,11 @@ variable "logging_target_path" {
   type        = string
   default     = "/logs/v1/singles"
   description = "Path the logging agent targets when sending logs, defaults to `/logs/v1/singles` for sending logs to an IBM Cloud Logs instance."
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_target_path != null && var.logging_target_path != "" : true
+    error_message = "If 'install_logging_agent' is true, a value for 'logging_target_path' must be provided."
+  }
 }
 
 variable "logging_auth_mode" {
@@ -584,7 +611,25 @@ variable "logging_trusted_profile_id" {
 variable "logging_use_private_endpoint" {
   type        = bool
   default     = true
-  description = "Set to true to use the private endpoint when sending logs to the IBM Cloud Logs instance."
+  description = "Specifies whether a public or private endpoint is used by the logging agent for IAM authentication."
+}
+
+variable "logging_secure_access_enabled" {
+  type        = bool
+  default     = false
+  description = "Set this to true if you have secure access enabled in your VSI. Only applies if 'install_logging_agent' is true."
+}
+
+variable "logging_application_name" {
+  type        = bool
+  default     = null
+  description = "The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `$HOSTNAME`."
+}
+
+variable "logging_subsystem_name" {
+  type        = bool
+  default     = null
+  description = "The subsystem name is the service or application that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `not-found`."
 }
 
 ########################################################################################################################
@@ -594,7 +639,18 @@ variable "logging_use_private_endpoint" {
 variable "install_monitoring_agent" {
   type        = bool
   default     = false
-  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`."
+  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`. Installation logs can be found on the VSI in /run/logging-agent/logs-agent-install.log"
+
+  validation {
+    condition     = var.install_monitoring_agent ? var.image_id != null : true
+    error_message = "When 'install_monitoring_agent' is true, a value for 'image_id' must be provided. Monitoring agent installations are not supported if provisioning using the 'catalog_offering' option."
+  }
+}
+
+variable "monitoring_agent_version" {
+  type        = string
+  default     = "14.2.4" # datasource: icr.io/ext/sysdig/agent-slim
+  description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 
 variable "monitoring_access_key" {
@@ -604,7 +660,7 @@ variable "monitoring_access_key" {
   description = "Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_access_key != null : true
+    condition     = var.install_monitoring_agent ? var.monitoring_access_key != null && var.monitoring_access_key != "" : true
     error_message = "Value for `monitoring_access_key` must be provided when `install_monitoring_agent` is true."
   }
 }
@@ -615,15 +671,20 @@ variable "monitoring_collector_endpoint" {
   description = "Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion)."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null : true
+    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null && var.monitoring_collector_endpoint != "" : true
     error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_monitoring_agent` is true."
   }
 }
 
 variable "monitoring_collector_port" {
-  type        = string
-  default     = "6443"
+  type        = number
+  default     = 6443
   description = "Port the agent targets when sending metrics or compliance data, defaults to `6443`."
+
+  validation {
+    condition     = var.install_monitoring_agent ? var.monitoring_collector_port != null && var.monitoring_collector_port != "" : true
+    error_message = "Value for `monitoring_collector_port` must be provided when `install_monitoring_agent` is true."
+  }
 }
 
 variable "monitoring_tags" {
