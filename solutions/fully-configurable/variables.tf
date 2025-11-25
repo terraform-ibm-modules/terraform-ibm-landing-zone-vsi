@@ -521,7 +521,7 @@ variable "ssh_key_secret_name" {
 variable "install_logging_agent" {
   type        = bool
   default     = false
-  description = "Set to true to enable installing the logging agent into your VSI at time of creation. If true, values must be passed for `logging_target_host` and either `logging_api_key` or `logging_trusted_profile_id`. Install logs can be found on the VSI in /run/monitoring-agent/monitoring-agent-install.log."
+  description = "Set to true to enable installing the logging agent into your VSI at time of creation. If true, values must be passed for `logging_target_host` and either `logging_api_key` or `logging_trusted_profile_id`. Installation logs can be found on the VSI in /run/monitoring-agent/monitoring-agent-install.log."
 
   validation {
     condition     = var.install_logging_agent ? var.image_id != null : true
@@ -639,7 +639,7 @@ variable "logging_subsystem_name" {
 variable "install_monitoring_agent" {
   type        = bool
   default     = false
-  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`. Install logs can be found on the VSI in /run/logging-agent/logs-agent-install.log"
+  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`. Installation logs can be found on the VSI in /run/logging-agent/logs-agent-install.log"
 
   validation {
     condition     = var.install_monitoring_agent ? var.image_id != null : true
