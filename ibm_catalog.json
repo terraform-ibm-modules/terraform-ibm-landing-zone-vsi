@@ -156,20 +156,25 @@
             {
               "key": "size",
               "required": true,
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "Balanced, bx2d-2x8 with 2 vCPU, 8 GB memory, and 75 GB storage.",
                   "displayname": "Mini",
                   "value": "mini"
                 },
                 {
+                  "description": "Compute, cx2d-2x4 with 2 vCPU, 4 GB memory, and 75 GB storage.",
                   "displayname": "Small",
                   "value": "small"
                 },
                 {
+                  "description": "Memory, mx2d-2x16 with 2 vCPU, 16 GB memory, and 75 GB storage.",
                   "displayname": "Medium",
                   "value": "medium"
                 },
                 {
+                  "description": "Very High Memory, vx3d-2x32 with 2 vCPU, 32 GB memory, and 65 GB storage.",
                   "displayname": "Large",
                   "value": "large"
                 }
@@ -466,21 +471,22 @@
             },
             {
               "key": "secrets_manager_service_plan",
-              "required": true,
+              "type_metadata": "string",
               "virtual": true,
-              "type": "string",
+              "required": true,
+              "default_value": "standard",
               "options": [
                 {
+                  "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
                   "displayname": "Standard",
                   "value": "standard"
                 },
                 {
-                  "displayname": "Trial",
+                  "description": "Choose this option only if your account does not already have a Trial plan instance. Only one Trial plan instance is allowed per account. After it expires, upgrade to the Standard plan to keep using Secrets Manager.",
+                  "displayname": "Trial (30 days)",
                   "value": "trial"
                 }
-              ],
-              "default_value": "standard",
-              "description": "The pricing plan to use when provisioning a new Secrets Manager instance. Possible values: `standard`, `trial`. You can create only one Trial instance of Secrets Manager per account. Before you can create a new Trial instance, you must delete the existing Trial instance and its reclamation. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard)."
+              ]
             },
             {
               "key": "ssh_key_secret_group_name"
