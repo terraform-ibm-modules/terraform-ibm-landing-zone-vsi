@@ -157,7 +157,6 @@
               "key": "size",
               "required": true,
               "type_metadata": "string",
-              "description": "Virtual Server Instance size determines CPU, memory, bandwidth and storage capacity. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles).",
               "options": [
                 {
                   "description": "Balanced, bx2d-2x8 with 2 vCPU, 8 GB memory, and 75 GB storage.",
