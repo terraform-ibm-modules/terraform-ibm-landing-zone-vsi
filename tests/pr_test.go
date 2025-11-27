@@ -649,6 +649,7 @@ func TestTrustedProfileLogging(t *testing.T) {
 
 		err := options.RunSchematicTest()
 		assert.Nil(t, err, "This should not have errored")
+		options.SkipTestTearDown = true
 		// If test passes, trusted profile was successfully created and VSI deployed
 	}
 
