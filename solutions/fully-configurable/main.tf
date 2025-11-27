@@ -250,7 +250,7 @@ module "vsi" {
   logging_target_path              = var.logging_target_path
   logging_auth_mode                = var.logging_auth_mode
   logging_api_key                  = var.logging_api_key
-  logging_trusted_profile_id       = var.logging_trusted_profile_id
+  logging_trusted_profile_id       = var.logging_auth_mode == "VSITrustedProfile" ? (var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : (local.create_logging_trusted_profile ? ibm_iam_trusted_profile.logging_profile[0].id : null)) : null
   logging_use_private_endpoint     = var.logging_use_private_endpoint
   logging_subsystem_name           = var.logging_subsystem_name
   logging_application_name         = var.logging_application_name

@@ -171,9 +171,6 @@ You need the following permissions to run this module.
 | Name | Type |
 |------|------|
 | [ibm_iam_authorization_policy.block_storage_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_authorization_policy) | resource |
-| [ibm_iam_trusted_profile.logging_profile](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile) | resource |
-| [ibm_iam_trusted_profile_claim_rule.vsi_claim_rule](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_claim_rule) | resource |
-| [ibm_iam_trusted_profile_policy.logging_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_policy) | resource |
 | [ibm_is_floating_ip.secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
 | [ibm_is_floating_ip.vni_secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
 | [ibm_is_floating_ip.vsi_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
@@ -272,8 +269,6 @@ You need the following permissions to run this module.
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
 | <a name="output_load_balancers_metadata"></a> [load\_balancers\_metadata](#output\_load\_balancers\_metadata) | Load Balancers metadata. |
-| <a name="output_logging_trusted_profile_id"></a> [logging\_trusted\_profile\_id](#output\_logging\_trusted\_profile\_id) | The ID of the trusted profile used for logging agent authentication. Returns null if not using trusted profile authentication or if using an existing profile. |
-| <a name="output_logging_trusted_profile_name"></a> [logging\_trusted\_profile\_name](#output\_logging\_trusted\_profile\_name) | The name of the trusted profile used for logging agent authentication. Returns null if not using trusted profile authentication or if using an existing profile. |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

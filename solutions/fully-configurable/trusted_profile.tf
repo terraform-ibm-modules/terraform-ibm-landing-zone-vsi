@@ -6,9 +6,6 @@ locals {
   # Determine if we need to create a trusted profile
   create_logging_trusted_profile = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" && var.logging_trusted_profile_id == null
 
-  # Get the trusted profile ID (either user-provided or created)
-  logging_trusted_profile_id_to_use = var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : (local.create_logging_trusted_profile ? ibm_iam_trusted_profile.logging_profile[0].id : null)
-
   # Extract Cloud Logs instance ID from ingress endpoint
   cloud_logs_instance_id = var.logging_target_host != null ? element(split(".", var.logging_target_host), 0) : null
 }
@@ -16,7 +13,7 @@ locals {
 # Create Trusted Profile for VSI logging agent
 resource "ibm_iam_trusted_profile" "logging_profile" {
   count       = local.create_logging_trusted_profile ? 1 : 0
-  name        = "${var.prefix}-vsi-logging-trusted-profile"
+  name        = "${local.prefix}vsi-logging-trusted-profile"
   description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs"
 }
 
@@ -25,7 +22,7 @@ resource "ibm_iam_trusted_profile_claim_rule" "vsi_claim_rule" {
   count      = local.create_logging_trusted_profile ? 1 : 0
   profile_id = ibm_iam_trusted_profile.logging_profile[0].profile_id
   type       = "Profile-CR"
-  name       = "${var.prefix}-vsi-claim-rule"
+  name       = "${local.prefix}vsi-claim-rule"
   realm_name = "https://iam.cloud.ibm.com/identity/compute"
   cr_type    = "VSI"
   expiration = 3600
@@ -34,7 +31,7 @@ resource "ibm_iam_trusted_profile_claim_rule" "vsi_claim_rule" {
   conditions {
     claim    = "vpc_id"
     operator = "EQUALS"
-    value    = var.vpc_id
+    value    = local.existing_vpc_id
   }
 }
 

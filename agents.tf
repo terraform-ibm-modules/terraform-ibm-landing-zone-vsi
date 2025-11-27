@@ -28,7 +28,7 @@ locals {
   logging_agent_download_url = var.install_logging_agent ? "https://logs-router-agent-install-packages.s3.us.cloud-object-storage.appdomain.cloud/${local.package_name}" : ""
   logging_agent_download_dir = "/run/logging-agent"
   logging_agent_install_log  = "${local.logging_agent_download_dir}/logs-agent-install.log"
-  logging_agent_auth_value   = var.logging_auth_mode == "IAMAPIKey" ? "-k ${var.logging_api_key != null ? var.logging_api_key : ""}" : "-d ${local.logging_trusted_profile_id_to_use != null ? local.logging_trusted_profile_id_to_use : ""}"
+  logging_agent_auth_value   = var.logging_auth_mode == "IAMAPIKey" ? "-k ${var.logging_api_key != null ? var.logging_api_key : ""}" : "-d ${var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : ""}"
   # construct the post config command - see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-agent-linux
   logging_agent_config_command = <<-EOT
     /opt/fluent-bit/bin/post-config.sh \
