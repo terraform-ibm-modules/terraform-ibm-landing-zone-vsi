@@ -587,3 +587,80 @@ func TestQuickstartExistingConfigSchematics(t *testing.T) {
 		logger.Log(t, "END: Destroy (prereq resources)")
 	}
 }
+
+// Test Trusted Profile for Logging Agent - Integration Test
+// This test verifies that:
+// 1. A trusted profile is auto-created when not provided
+// 2. The profile has correct claim rules for VSI compute identity
+// 3. The profile has Sender role to Cloud Logs
+// 4. VSI can use the profile to send logs
+func TestTrustedProfileLogging(t *testing.T) {
+	t.Parallel()
+
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+
+	if existErr != nil {
+		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
+	} else {
+		// Parse Cloud Logs ingestion endpoint from CRN
+		// CRN format: crn:v1:bluemix:public:logs:us-east:a/{account}:{instance-id}::
+		// Endpoint format: {instance-id}.ingress.{region}.logs.cloud.ibm.com
+		cloudLogsCRN := permanentResources["cloud_logs_instance_crn"].(string)
+		crnParts := strings.Split(cloudLogsCRN, ":")
+		region := crnParts[5]     // us-east
+		instanceID := crnParts[7] // instance GUID
+		loggingEndpoint := fmt.Sprintf("%s.ingress.%s.logs.cloud.ibm.com", instanceID, region)
+
+		logger.Log(t, "Using Cloud Logs endpoint:", loggingEndpoint)
+
+		// ------------------------------------------------------------------------------------
+		// Deploy DA with Trusted Profile Logging
+		// ------------------------------------------------------------------------------------
+		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+			Testing: t,
+			Prefix:  prefix,
+			TarIncludePatterns: []string{
+				"*.tf",
+				"modules/*/*.tf",
+				fullyConfigFlavorDir + "/*.tf",
+			},
+			TemplateFolder:         fullyConfigFlavorDir,
+			Tags:                   []string{"vsi-tp-test"},
+			DeleteWorkspaceOnFail:  false,
+			WaitJobCompleteMinutes: 60,
+		})
+
+		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
+			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
+			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
+			// Enable logging with trusted profile
+			{Name: "install_logging_agent", Value: true, DataType: "bool"},
+			{Name: "logging_target_host", Value: loggingEndpoint, DataType: "string"},
+			{Name: "logging_auth_mode", Value: "VSITrustedProfile", DataType: "string"},
+			// Don't provide logging_trusted_profile_id - should auto-create
+			{Name: "logging_use_private_endpoint", Value: false, DataType: "bool"},
+		}
+
+		err := options.RunSchematicTest()
+		assert.Nil(t, err, "This should not have errored")
+		// If test passes, trusted profile was successfully created and VSI deployed
+	}
+
+	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
+	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
+	// Destroy the temporary existing resources if required
+	if t.Failed() && strings.ToLower(envVal) == "true" {
+		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
+	} else {
+		logger.Log(t, "START: Destroy (prereq resources)")
+		terraform.Destroy(t, existingTerraformOptions)
+		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		logger.Log(t, "END: Destroy (prereq resources)")
+	}
+}

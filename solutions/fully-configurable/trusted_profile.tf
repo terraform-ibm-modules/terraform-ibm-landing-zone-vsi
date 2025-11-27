@@ -18,6 +18,8 @@ resource "ibm_iam_trusted_profile" "logging_profile" {
 }
 
 # Create claim rule to allow VSI instances to assume the trusted profile
+# Note: This creates a broad claim rule that allows any VSI compute resource in the account.
+# For fine-grained access control, users should pass an existing trusted profile ID with specific links configured.
 resource "ibm_iam_trusted_profile_claim_rule" "vsi_claim_rule" {
   count      = local.create_logging_trusted_profile ? 1 : 0
   profile_id = ibm_iam_trusted_profile.logging_profile[0].profile_id
@@ -26,11 +28,11 @@ resource "ibm_iam_trusted_profile_claim_rule" "vsi_claim_rule" {
   realm_name = "https://iam.cloud.ibm.com/identity/compute"
   cr_type    = "VSI"
 
-  # Condition to match VSI instances in the specified VPC
+  # Broad condition - allow all VSI compute resources
   conditions {
-    claim    = "vpc_id"
-    operator = "EQUALS"
-    value    = local.existing_vpc_id
+    claim    = "sub"
+    operator = "CONTAINS"
+    value    = "compute"
   }
 }
 
