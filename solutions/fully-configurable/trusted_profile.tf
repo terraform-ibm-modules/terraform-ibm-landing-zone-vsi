@@ -17,22 +17,17 @@ resource "ibm_iam_trusted_profile" "logging_profile" {
   description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs"
 }
 
-# Create claim rule to allow VSI instances to assume the trusted profile
-# Note: This creates a broad claim rule that allows any VSI compute resource in the account.
-# For fine-grained access control, users should pass an existing trusted profile ID with specific links configured.
-resource "ibm_iam_trusted_profile_claim_rule" "vsi_claim_rule" {
-  count      = local.create_logging_trusted_profile ? 1 : 0
-  profile_id = ibm_iam_trusted_profile.logging_profile[0].profile_id
-  type       = "Profile-CR"
-  name       = "${local.prefix}vsi-claim-rule"
-  realm_name = "https://iam.cloud.ibm.com/identity/compute"
+# Link VSI instances to the trusted profile
+# Note: This creates links for each VSI instance, allowing them to assume the trusted profile.
+# Links are created AFTER the VSI instances are provisioned.
+resource "ibm_iam_trusted_profile_link" "vsi_link" {
+  for_each   = local.create_logging_trusted_profile ? { for vsi in module.vsi.list : vsi.name => vsi } : {}
+  profile_id = ibm_iam_trusted_profile.logging_profile[0].id
   cr_type    = "VSI"
+  name       = "${each.value.name}-link"
 
-  # Broad condition - allow all VSI compute resources
-  conditions {
-    claim    = "sub"
-    operator = "CONTAINS"
-    value    = "compute"
+  link {
+    crn = each.value.crn
   }
 }
 
