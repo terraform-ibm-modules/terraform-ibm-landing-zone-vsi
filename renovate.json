@@ -1,4 +1,19 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": ["local>terraform-ibm-modules/common-dev-assets:commonRenovateConfig"]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>terraform-ibm-modules/common-dev-assets:commonRenovateConfig"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update logs agent version to the latest in variables.tf. Assumption here is that every helm release of the agent will also have a Linux binary release.",
+      "fileMatch": [
+        "variables.tf$"
+      ],
+      "datasourceTemplate": "docker",
+      "matchStrings": [
+        "default\\s*=\\s*\"(?<currentValue>.*)\"\\s*# datasource: (?<depName>[^\\s]+)"
+      ]
+    }
+  ]
 }
