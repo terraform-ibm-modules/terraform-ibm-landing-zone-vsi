@@ -25,7 +25,6 @@ resource "ibm_iam_trusted_profile_claim_rule" "vsi_claim_rule" {
   name       = "${local.prefix}vsi-claim-rule"
   realm_name = "https://iam.cloud.ibm.com/identity/compute"
   cr_type    = "VSI"
-  expiration = 3600
 
   # Condition to match VSI instances in the specified VPC
   conditions {
