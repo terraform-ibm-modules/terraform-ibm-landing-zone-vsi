@@ -739,6 +739,13 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
+              "service_name": "iam-identity",
+              "notes": "[Optional] Required to create trusted profile for VSI logging agent when using trusted profile authentication mode."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
               "service_name": "All Identity and Access enabled services",
               "notes": "[Optional] Required to to create trusted profile for App Configuration aggregator which is used for compliance scanning."
             },
@@ -938,6 +945,14 @@
                   "dependency_input": "logs_routing_tenant_regions",
                   "version_input": "logs_routing_tenant_regions",
                   "reference_version": true
+                },
+                {
+                  "version_input": "install_logging_agent",
+                  "value": true
+                },
+                {
+                  "dependency_output": "ingestion_endpoint",
+                  "version_input": "logging_target_host"
                 }
               ],
               "optional": true,

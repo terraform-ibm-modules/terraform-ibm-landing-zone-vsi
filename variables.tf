@@ -723,7 +723,7 @@ variable "logging_target_path" {
 
 variable "logging_auth_mode" {
   type        = string
-  default     = "IAMAPIKey"
+  default     = "VSITrustedProfile"
   description = "Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
 
   validation {
@@ -747,12 +747,7 @@ variable "logging_api_key" {
 variable "logging_trusted_profile_id" {
   type        = string
   default     = null
-  description = "Trusted Profile used by the logging agent to access the IBM Cloud Logs instance, must be provided if `logging_auth_mode` is set to `VSITrustedProfile`."
-
-  validation {
-    condition     = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" ? var.logging_trusted_profile_id != null : true
-    error_message = "Value for `logging_trusted_profile_id` must be provided when `logging_auth_mode` is set to `VSITrustedProfile`."
-  }
+  description = "Trusted Profile ID used by the logging agent to access the IBM Cloud Logs instance. If not provided and `logging_auth_mode` is set to `VSITrustedProfile`, a trusted profile will be automatically created."
 }
 
 variable "logging_use_private_endpoint" {

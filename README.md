@@ -171,6 +171,9 @@ You need the following permissions to run this module.
 | Name | Type |
 |------|------|
 | [ibm_iam_authorization_policy.block_storage_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_authorization_policy) | resource |
+| [ibm_iam_trusted_profile.logging_profile](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile) | resource |
+| [ibm_iam_trusted_profile_claim_rule.vsi_claim_rule](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_claim_rule) | resource |
+| [ibm_iam_trusted_profile_policy.logging_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_trusted_profile_policy) | resource |
 | [ibm_is_floating_ip.secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
 | [ibm_is_floating_ip.vni_secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
 | [ibm_is_floating_ip.vsi_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
@@ -220,13 +223,13 @@ You need the following permissions to run this module.
 | <a name="input_logging_agent_version"></a> [logging\_agent\_version](#input\_logging\_agent\_version) | Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true. | `string` | `"1.7.0"` | no |
 | <a name="input_logging_api_key"></a> [logging\_api\_key](#input\_logging\_api\_key) | API key used by the logging agent to authenticate with IBM Cloud, must be provided if `logging_auth_mode` is set to `IAMAPIKey`. For more information on creating an API key for the logging agent, see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-iam-ingestion-serviceid-api-key. | `string` | `null` | no |
 | <a name="input_logging_application_name"></a> [logging\_application\_name](#input\_logging\_application\_name) | The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `$HOSTNAME`. | `bool` | `null` | no |
-| <a name="input_logging_auth_mode"></a> [logging\_auth\_mode](#input\_logging\_auth\_mode) | Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`. | `string` | `"IAMAPIKey"` | no |
+| <a name="input_logging_auth_mode"></a> [logging\_auth\_mode](#input\_logging\_auth\_mode) | Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`. | `string` | `"VSITrustedProfile"` | no |
 | <a name="input_logging_secure_access_enabled"></a> [logging\_secure\_access\_enabled](#input\_logging\_secure\_access\_enabled) | Set this to true if you have secure access enabled in your VSI. Only applies if 'install\_logging\_agent' is true. | `bool` | `false` | no |
 | <a name="input_logging_subsystem_name"></a> [logging\_subsystem\_name](#input\_logging\_subsystem\_name) | The subsystem name is the service or application that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `not-found`. | `bool` | `null` | no |
 | <a name="input_logging_target_host"></a> [logging\_target\_host](#input\_logging\_target\_host) | Ingestion endpoint that corresponds to the IBM Cloud Logs instance the logging agent connects to. | `string` | `null` | no |
 | <a name="input_logging_target_path"></a> [logging\_target\_path](#input\_logging\_target\_path) | Path the logging agent targets when sending logs, defaults to `/logs/v1/singles` for sending logs to an IBM Cloud Logs instance. | `string` | `"/logs/v1/singles"` | no |
 | <a name="input_logging_target_port"></a> [logging\_target\_port](#input\_logging\_target\_port) | Port the logging agent targets when sending logs, defaults to `443` for sending logs to an IBM Cloud Logs instance. | `number` | `443` | no |
-| <a name="input_logging_trusted_profile_id"></a> [logging\_trusted\_profile\_id](#input\_logging\_trusted\_profile\_id) | Trusted Profile used by the logging agent to access the IBM Cloud Logs instance, must be provided if `logging_auth_mode` is set to `VSITrustedProfile`. | `string` | `null` | no |
+| <a name="input_logging_trusted_profile_id"></a> [logging\_trusted\_profile\_id](#input\_logging\_trusted\_profile\_id) | Trusted Profile ID used by the logging agent to access the IBM Cloud Logs instance. If not provided and `logging_auth_mode` is set to `VSITrustedProfile`, a trusted profile will be automatically created. | `string` | `null` | no |
 | <a name="input_logging_use_private_endpoint"></a> [logging\_use\_private\_endpoint](#input\_logging\_use\_private\_endpoint) | Specifies whether a public or private endpoint is used by the logging agent for IAM authentication. | `bool` | `true` | no |
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles | `string` | n/a | yes |
 | <a name="input_manage_reserved_ips"></a> [manage\_reserved\_ips](#input\_manage\_reserved\_ips) | Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP. | `bool` | `false` | no |
@@ -269,6 +272,8 @@ You need the following permissions to run this module.
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
 | <a name="output_load_balancers_metadata"></a> [load\_balancers\_metadata](#output\_load\_balancers\_metadata) | Load Balancers metadata. |
+| <a name="output_logging_trusted_profile_id"></a> [logging\_trusted\_profile\_id](#output\_logging\_trusted\_profile\_id) | The ID of the trusted profile used for logging agent authentication. Returns null if not using trusted profile authentication or if using an existing profile. |
+| <a name="output_logging_trusted_profile_name"></a> [logging\_trusted\_profile\_name](#output\_logging\_trusted\_profile\_name) | The name of the trusted profile used for logging agent authentication. Returns null if not using trusted profile authentication or if using an existing profile. |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
