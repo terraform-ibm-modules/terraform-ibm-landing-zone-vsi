@@ -343,24 +343,21 @@
             },
             {
               "key": "secrets_manager_service_plan",
-              "description": "The pricing plan to use when provisioning a Secrets Manager instance. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard).",
-              "type_metadata": "string",
-              "virtual": true,
               "required": true,
+              "virtual": true,
               "type": "string",
-              "default_value": "standard",
               "options": [
                 {
-                  "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
                   "displayname": "Standard",
                   "value": "standard"
                 },
                 {
-                  "description": "Choose this option only if your account does not already have a Trial plan instance. Only one Trial plan instance is allowed per account. After it expires, upgrade to the Standard plan to keep using Secrets Manager.",
-                  "displayname": "Trial (30 days)",
+                  "displayname": "Trial",
                   "value": "trial"
                 }
-              ]
+              ],
+              "default_value": "standard",
+              "description": "The pricing plan to use when provisioning a new Secrets Manager instance. Possible values: `standard`, `trial`. You can create only one Trial instance of Secrets Manager per account. Before you can create a new Trial instance, you must delete the existing Trial instance and its reclamation. [Learn more](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-create-instance&interface=ui#upgrade-instance-standard)."
             },
             {
               "key": "enable_platform_metrics",
