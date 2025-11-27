@@ -35,7 +35,7 @@ resource "ibm_iam_trusted_profile_link" "vsi_link" {
 # Using "Sender" role as per IBM Cloud Logs best practice - allows sending logs but not querying/tailing
 resource "ibm_iam_trusted_profile_policy" "logging_policy" {
   count      = local.create_logging_trusted_profile ? 1 : 0
-  profile_id = ibm_iam_trusted_profile.logging_profile[0].profile_id
+  profile_id = ibm_iam_trusted_profile.logging_profile[0].id
   roles      = ["Sender"]
 
   resource_attributes {
