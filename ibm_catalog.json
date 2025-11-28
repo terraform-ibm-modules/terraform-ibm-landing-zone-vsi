@@ -658,6 +658,21 @@
               "key": "logging_target_port"
             },
             {
+              "key": "logging_agent_version"
+            },
+            {
+              "key": "logging_application_name",
+              "hidden": true
+            },
+            {
+              "key": "logging_secure_access_enabled",
+              "hidden": true
+            },
+            {
+              "key": "logging_subsystem_name",
+              "hidden": true
+            },
+            {
               "key": "logging_target_path"
             },
             {
@@ -687,6 +702,9 @@
             },
             {
               "key": "monitoring_access_key"
+            },
+            {
+              "key": "monitoring_agent_version"
             },
             {
               "key": "monitoring_collector_endpoint"
