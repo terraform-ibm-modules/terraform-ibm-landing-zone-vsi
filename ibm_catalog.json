@@ -156,26 +156,25 @@
             {
               "key": "size",
               "required": true,
-              "description": "The Virtual [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/quickstart/DA_docs.md).",
               "type_metadata": "string",
               "options": [
                 {
-                  "description": "Balanced, bx2d-2x8 with 2 vCPU, 8 GB memory, and 75 GB storage.",
+                  "description": "Balanced, bx2d-2x8 with 2 vCPU, 8 GB memory, and 75 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#balanced)",
                   "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "description": "Compute, cx2d-2x4 with 2 vCPU, 4 GB memory, and 75 GB storage.",
+                  "description": "Compute, cx2d-2x4 with 2 vCPU, 4 GB memory, and 75 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#compute)",
                   "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "description": "Memory, mx2d-2x16 with 2 vCPU, 16 GB memory, and 75 GB storage.",
+                  "description": "Memory, mx2d-2x16 with 2 vCPU, 16 GB memory, and 75 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#memory)",
                   "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "description": "Very High Memory, vx3d-2x32 with 2 vCPU, 32 GB memory, and 65 GB storage.",
+                  "description": "Very High Memory, vx3d-2x32 with 2 vCPU, 32 GB memory, and 65 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#vhmemory)",
                   "displayname": "Large",
                   "value": "large"
                 }
