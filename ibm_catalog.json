@@ -63,7 +63,7 @@
         {
           "label": "Quickstart - Basic and simple",
           "name": "vsi-quickstart",
-          "short_description": "Ideal for users new to IBM Cloud or OpenShift who want to get started without configuring underlying infrastructure.",
+          "short_description": "Ideal for users new to IBM Cloud who want to get started without configuring underlying infrastructure.",
           "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/quickstart",
