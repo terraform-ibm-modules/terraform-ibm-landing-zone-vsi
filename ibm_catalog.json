@@ -159,22 +159,22 @@
               "type_metadata": "string",
               "options": [
                 {
-                  "description": "Balanced, bx2d-2x8 with 2 vCPU, 8 GB memory, and 75 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#balanced)",
+                  "description": "Balanced, bx2d-2x8 with 2 vCPU, 8 GB memory, and 75 GB storage.",
                   "displayname": "Mini",
                   "value": "mini"
                 },
                 {
-                  "description": "Compute, cx2d-2x4 with 2 vCPU, 4 GB memory, and 75 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#compute)",
+                  "description": "Compute, cx2d-2x4 with 2 vCPU, 4 GB memory, and 75 GB storage.",
                   "displayname": "Small",
                   "value": "small"
                 },
                 {
-                  "description": "Memory, mx2d-2x16 with 2 vCPU, 16 GB memory, and 75 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#memory)",
+                  "description": "Memory, mx2d-2x16 with 2 vCPU, 16 GB memory, and 75 GB storage.",
                   "displayname": "Medium",
                   "value": "medium"
                 },
                 {
-                  "description": "Very High Memory, vx3d-2x32 with 2 vCPU, 32 GB memory, and 65 GB storage. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-profiles&interface=ui#vhmemory)",
+                  "description": "Very High Memory, vx3d-2x32 with 2 vCPU, 32 GB memory, and 65 GB storage.",
                   "displayname": "Large",
                   "value": "large"
                 }
