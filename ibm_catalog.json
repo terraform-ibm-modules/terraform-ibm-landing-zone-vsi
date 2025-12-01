@@ -471,10 +471,10 @@
             {
               "key": "existing_ssh_key_ids",
               "custom_config": {
+                "type": "vpc_ssh_key",
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "type": "vpc_ssh_key",
                   "selection": "multi_select"
                 }
               }
