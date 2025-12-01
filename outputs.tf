@@ -65,8 +65,9 @@ output "fip_list" {
 output "load_balancers_metadata" {
   description = "Load Balancers metadata."
   value = {
-    for lb in ibm_is_lb.lb :
-    lb.name => {
+    for k, lb in ibm_is_lb.lb :
+    k => {
+      name          = lb.name
       crn           = lb.crn
       hostname      = lb.hostname
       public_ips    = lb.public_ips
