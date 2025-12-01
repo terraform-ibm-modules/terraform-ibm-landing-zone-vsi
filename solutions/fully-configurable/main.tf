@@ -169,7 +169,7 @@ locals {
 
   # ssh_keys = concat(var.existing_ssh_key_ids, length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [], var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : [])
   ssh_keys = concat(
-    var.existing_ssh_key_ids != null && length(var.existing_ssh_key_ids) > 0 ? var.existing_ssh_key_ids : [],
+    length(var.existing_ssh_key_ids) > 0 ? var.existing_ssh_key_ids : [],
     length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [],
     var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : []
   )
