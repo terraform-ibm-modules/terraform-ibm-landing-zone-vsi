@@ -470,7 +470,8 @@
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "type": "string"
+                  "type": "vpc_ssh_key",
+                  "selection": "multi_select"
                 }
               }
             },
