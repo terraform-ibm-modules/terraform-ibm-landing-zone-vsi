@@ -281,10 +281,10 @@ module "trusted_profile" {
   source  = "terraform-ibm-modules/trusted-profile/ibm"
   version = "3.2.0"
 
-  trusted_profile_name        = "${local.prefix}vsi-logging-trusted-profile"
+  trusted_profile_name        = "${local.prefix}-vsi-logging-trusted-profile"
   trusted_profile_description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs"
 
-  # Create links to VSI instances - one link entry per VSI to match original behavior
+  # Create links to VSI instances
   trusted_profile_links = [
     for vsi in module.vsi.list : {
       unique_identifier = "${vsi.name}-link"
