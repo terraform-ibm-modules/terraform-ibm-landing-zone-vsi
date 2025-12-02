@@ -104,7 +104,7 @@ variable "ssh_public_keys" {
   }
 
   validation {
-    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
+    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || (var.existing_ssh_key_ids != null && length(var.existing_ssh_key_ids) > 0) ? true : false
     error_message = "Please provide a value for either `ssh_public_keys` or `existing_ssh_key_ids`, or `auto_generate_ssh_key` must be set to true."
   }
 }
@@ -112,7 +112,8 @@ variable "ssh_public_keys" {
 variable "existing_ssh_key_ids" {
   description = "The IDs of existing SSH keys to use while creating Virtual server instance. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
   type        = list(string)
-  default     = []
+  default     = null
+  nullable    = true
 }
 
 variable "auto_generate_ssh_key" {
