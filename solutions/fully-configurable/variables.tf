@@ -91,6 +91,11 @@ variable "image_id" {
   description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
   type        = string
   nullable    = false
+
+  validation {
+    condition     = var.image_id != null && var.image_id != ""
+    error_message = "The 'image_id' variable must be provided and cannot be an empty string. Run 'ibmcloud is images' to find available images."
+  }
 }
 
 variable "ssh_public_keys" {
