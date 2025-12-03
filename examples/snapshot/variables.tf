@@ -37,7 +37,7 @@ variable "access_tags" {
 variable "image_id" {
   description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
   type        = string
-  default     = "r014-e0b52ec9-5900-4204-9481-55831ad7a079" # NOTE: this ID is for us-east region, Redhat 8.10 minimal
+  default     = "r014-ae001a99-973a-4f3f-9faf-929846f9ce10" # NOTE: this ID is for us-east region, Redhat 8.10 minimal
 }
 
 variable "machine_type" {

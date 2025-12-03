@@ -649,7 +649,7 @@ variable "install_monitoring_agent" {
 
 variable "monitoring_agent_version" {
   type        = string
-  default     = "14.2.4" # datasource: icr.io/ext/sysdig/agent-slim
+  default     = "14.2.5" # datasource: icr.io/ext/sysdig/agent-slim
   description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 
