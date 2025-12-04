@@ -91,10 +91,15 @@ variable "image_id" {
   description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
   type        = string
   nullable    = false
+
+  validation {
+    condition     = var.image_id != null && var.image_id != ""
+    error_message = "The 'image_id' variable must be provided and cannot be an empty string. Run 'ibmcloud is images' to find available images."
+  }
 }
 
 variable "ssh_public_keys" {
-  description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or select existing ssh keys created in the cloud using this variable `existing_ssh_key_ids`."
+  description = "A list of public SSH key string values which will be added to the IBM Cloud deployment region and used by the newly provisioned VSI for access. These keys must be RSA with a size of 2048 or 4096 bits (recommended), and must not already exist in the IBM Cloud deployment region. If you want to use existing SSH keys, select them using the `existing_ssh_key_ids` input instead. You can also choose to auto-generate a new SSH key pair by setting `auto_generate_ssh_key` to true. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys)."
   type        = list(string)
   default     = []
 
@@ -104,7 +109,7 @@ variable "ssh_public_keys" {
   }
 
   validation {
-    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
+    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || (var.existing_ssh_key_ids != null && length(var.existing_ssh_key_ids) > 0) ? true : false
     error_message = "Please provide a value for either `ssh_public_keys` or `existing_ssh_key_ids`, or `auto_generate_ssh_key` must be set to true."
   }
 }
@@ -112,7 +117,8 @@ variable "ssh_public_keys" {
 variable "existing_ssh_key_ids" {
   description = "The IDs of existing SSH keys to use while creating Virtual server instance. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
   type        = list(string)
-  default     = []
+  default     = null
+  nullable    = true
 }
 
 variable "auto_generate_ssh_key" {
@@ -577,7 +583,7 @@ variable "logging_target_path" {
 variable "logging_auth_mode" {
   type        = string
   default     = "IAMAPIKey"
-  description = "Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
+  description = "Authentication mode the logging agent will use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
 
   validation {
     condition     = length(regex("IAMAPIKey|VSITrustedProfile", var.logging_auth_mode)) > 0

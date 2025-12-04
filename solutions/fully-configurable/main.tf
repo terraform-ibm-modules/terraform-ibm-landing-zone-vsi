@@ -167,7 +167,11 @@ locals {
     zone = data.ibm_is_subnet.secondary_subnet[0].zone
   }] : []
 
-  ssh_keys = concat(var.existing_ssh_key_ids, length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [], var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : [])
+  ssh_keys = concat(
+    var.existing_ssh_key_ids != null ? var.existing_ssh_key_ids : [],
+    length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [],
+    var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : []
+  )
 
   custom_vsi_volume_names = { (var.existing_subnet_id != null ? data.ibm_is_subnet.subnet[0].name : data.ibm_is_vpc.vpc.subnets[0].name) = {
   "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
