@@ -10,5 +10,7 @@ An end-to-end basic example that provisions the virtual instance with an image f
 - VSI uses a catalog offering image
 
 <!-- BEGIN SCHEMATICS DEPLOY HOOK -->
-<a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-catalog-image-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/catalog-image"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 18px; vertical-align: text-bottom;"></a>
+<a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-catalog-image-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/catalog-image"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom;"></a>
+
+**💡 Tip:** To open Schematics deploy button in a new tab, use Ctrl/Cmd+Click or right-click
 <!-- END SCHEMATICS DEPLOY HOOK -->
