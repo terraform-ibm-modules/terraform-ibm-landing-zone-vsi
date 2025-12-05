@@ -291,7 +291,7 @@ module "trusted_profile" {
   # Create links to VSI instances
   trusted_profile_links = [
     for vsi in module.vsi.list : {
-      unique_identifier = "${local.prefix}-link"
+      unique_identifier = "trusted-profile-link"
       cr_type           = "VSI"
       name              = "${vsi.name}-link"
       links = [
@@ -306,7 +306,7 @@ module "trusted_profile" {
   # Create policy to grant Sender access to Cloud Logs
   trusted_profile_policies = [
     {
-      unique_identifier = "${local.prefix}-policy-0"
+      unique_identifier = "vsi-logging-policy"
       roles             = ["Sender"]
       resource_attributes = concat(
         [
