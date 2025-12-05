@@ -15,3 +15,7 @@ It will provision the following:
 
 
 > Note: The Dedicated Host module is disabled by default . If you need to deploy a dedicated host, you must explicitly enable it by setting `enable_dedicated_host = true`
+
+<!-- BEGIN SCHEMATICS DEPLOY HOOK -->
+<a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 18px; vertical-align: text-bottom;"></a>
+<!-- END SCHEMATICS DEPLOY HOOK -->
