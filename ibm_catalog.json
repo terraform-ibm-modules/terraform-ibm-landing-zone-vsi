@@ -991,6 +991,18 @@
                   "dependency_input": "enable_platform_metrics",
                   "version_input": "enable_platform_metrics",
                   "reference_version": true
+                },
+                {
+                  "version_input": "install_monitoring_agent",
+                  "value": true
+                },
+                {
+                  "dependency_output": "cloud_monitoring_access_key",
+                  "version_input": "monitoring_access_key"
+                },
+                {
+                  "dependency_output": "ingestion_endpoint_private",
+                  "version_input": "monitoring_collector_endpoint"
                 }
               ],
               "optional": true,
