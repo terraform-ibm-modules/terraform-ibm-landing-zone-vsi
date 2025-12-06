@@ -57,6 +57,22 @@ output "consistency_group_storage_snapshot_ids" {
 ##############################################################################
 
 ##############################################################################
+# Trusted Profile Outputs
+##############################################################################
+
+output "logging_trusted_profile_id" {
+  description = "The ID of the trusted profile used for logging agent authentication. Returns null if not using trusted profile authentication."
+  value       = local.create_logging_trusted_profile ? module.trusted_profile[0].profile_id : var.logging_trusted_profile_id
+}
+
+output "logging_trusted_profile_name" {
+  description = "The name of the trusted profile used for logging agent authentication. Returns null if not using trusted profile authentication or if using an existing profile."
+  value       = local.create_logging_trusted_profile ? module.trusted_profile[0].trusted_profile.name : null
+}
+
+##############################################################################
+
+##############################################################################
 # SSH Key
 ##############################################################################
 

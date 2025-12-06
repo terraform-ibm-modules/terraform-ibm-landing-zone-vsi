@@ -22,6 +22,7 @@ output "list" {
     {
       name                               = virtual_server.name
       id                                 = virtual_server.id
+      crn                                = virtual_server.crn
       zone                               = virtual_server.zone
       ipv4_address                       = virtual_server.primary_network_interface[0].primary_ip[0].address
       primary_network_interface_detail   = virtual_server.primary_network_interface[0]
