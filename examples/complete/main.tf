@@ -12,7 +12,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.0"
+  version = "1.4.2"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.5.0"
+  version                   = "5.5.3"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -102,7 +102,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.9.2"
+  version           = "8.10.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -293,7 +293,7 @@ module "slz_vsi" {
 module "dedicated_host" {
   count   = var.enable_dedicated_host ? 1 : 0
   source  = "terraform-ibm-modules/dedicated-host/ibm"
-  version = "2.0.1"
+  version = "2.0.3"
   dedicated_hosts = [
     {
       host_group_name     = "${var.prefix}-dhgroup"

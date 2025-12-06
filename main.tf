@@ -187,7 +187,7 @@ resource "ibm_is_virtual_network_interface" "secondary_vni" {
 module "existing_boot_volume_kms_key_crn_parser" {
   count   = local.create_auth_policy ? 0 : 1
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.0"
+  version = "1.3.2"
   crn     = var.boot_volume_encryption_key
 }
 
