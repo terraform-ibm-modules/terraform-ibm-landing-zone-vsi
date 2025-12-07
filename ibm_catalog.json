@@ -1043,7 +1043,7 @@
                   "value": true
                 },
                 {
-                  "dependency_output": "ingestion_endpoint",
+                  "dependency_output": "cloud_logs_ingress_private_endpoint",
                   "version_input": "logging_target_host"
                 }
               ],
