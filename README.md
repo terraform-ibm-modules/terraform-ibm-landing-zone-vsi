@@ -164,7 +164,7 @@ You need the following permissions to run this module.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.3.0 |
+| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.3.2 |
 
 ### Resources
 
@@ -231,7 +231,7 @@ You need the following permissions to run this module.
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles | `string` | n/a | yes |
 | <a name="input_manage_reserved_ips"></a> [manage\_reserved\_ips](#input\_manage\_reserved\_ips) | Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP. | `bool` | `false` | no |
 | <a name="input_monitoring_access_key"></a> [monitoring\_access\_key](#input\_monitoring\_access\_key) | Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key). | `string` | `null` | no |
-| <a name="input_monitoring_agent_version"></a> [monitoring\_agent\_version](#input\_monitoring\_agent\_version) | Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest. | `string` | `"14.2.5"` | no |
+| <a name="input_monitoring_agent_version"></a> [monitoring\_agent\_version](#input\_monitoring\_agent\_version) | Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest. | `string` | `"14.3.0"` | no |
 | <a name="input_monitoring_collector_endpoint"></a> [monitoring\_collector\_endpoint](#input\_monitoring\_collector\_endpoint) | Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion). | `string` | `null` | no |
 | <a name="input_monitoring_collector_port"></a> [monitoring\_collector\_port](#input\_monitoring\_collector\_port) | Port the agent targets when sending metrics or compliance data, defaults to `6443`. | `number` | `6443` | no |
 | <a name="input_monitoring_tags"></a> [monitoring\_tags](#input\_monitoring\_tags) | A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the agent. | `list(string)` | `[]` | no |
