@@ -449,7 +449,7 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 		"fully-configurable",
 		map[string]interface{}{
 			"region":   "eu-de",
-			"image_id": "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
+			"image_id": "r010-21888dec-001d-4f4f-9825-9dec9c1a588d", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
 		},
 	)
 
