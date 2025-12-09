@@ -254,7 +254,7 @@ module "vsi" {
   logging_target_path              = var.logging_target_path
   logging_auth_mode                = var.logging_auth_mode
   logging_api_key                  = var.logging_api_key
-  logging_trusted_profile_id       = var.logging_trusted_profile_id
+  logging_trusted_profile_id       = var.logging_auth_mode == "VSITrustedProfile" ? (var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : (local.create_logging_trusted_profile ? module.trusted_profile[0].profile_id : null)) : null
   logging_use_private_endpoint     = var.logging_use_private_endpoint
   logging_subsystem_name           = var.logging_subsystem_name
   logging_application_name         = var.logging_application_name
@@ -266,6 +266,66 @@ module "vsi" {
   monitoring_collector_port        = var.monitoring_collector_port
   monitoring_tags                  = var.monitoring_tags
   monitoring_agent_version         = var.monitoring_agent_version
+}
+
+########################################################################################################################
+# Trusted Profile for Logging Agent
+########################################################################################################################
+
+locals {
+  # Determine if we need to create a trusted profile
+  create_logging_trusted_profile = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" && var.logging_trusted_profile_id == null
+
+  # Extract Cloud Logs instance ID from ingress endpoint
+  cloud_logs_instance_id = var.logging_target_host != null ? element(split(".", var.logging_target_host), 0) : null
+}
+
+module "trusted_profile" {
+  count   = local.create_logging_trusted_profile ? 1 : 0
+  source  = "terraform-ibm-modules/trusted-profile/ibm"
+  version = "3.2.0"
+
+  trusted_profile_name        = "${local.prefix}-vsi-logging-trusted-profile"
+  trusted_profile_description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs instance - ${local.cloud_logs_instance_id}"
+
+  # Create links to VSI instances
+  trusted_profile_links = [
+    for vsi in module.vsi.list : {
+      unique_identifier = "trusted-profile-link"
+      cr_type           = "VSI"
+      name              = "${vsi.name}-link"
+      links = [
+        {
+          crn  = vsi.crn
+          name = vsi.name
+        }
+      ]
+    }
+  ]
+
+  # Create policy to grant Sender access to Cloud Logs
+  trusted_profile_policies = [
+    {
+      unique_identifier = "vsi-logging-policy"
+      roles             = ["Sender"]
+      resource_attributes = concat(
+        [
+          {
+            name     = "serviceName"
+            operator = "stringEquals"
+            value    = "logs"
+          }
+        ],
+        local.cloud_logs_instance_id != null ? [
+          {
+            name     = "serviceInstance"
+            operator = "stringEquals"
+            value    = local.cloud_logs_instance_id
+          }
+        ] : []
+      )
+    }
+  ]
 }
 
 ########################################################################################################################
