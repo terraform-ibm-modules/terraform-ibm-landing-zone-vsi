@@ -171,20 +171,25 @@
             {
               "key": "size",
               "required": true,
+              "type_metadata": "string",
               "options": [
                 {
+                  "description": "Balanced, bx2d-2x8 with 2 vCPU, 8 GB memory, and 75 GB storage.",
                   "displayname": "Mini",
                   "value": "mini"
                 },
                 {
+                  "description": "Compute, cx2d-2x4 with 2 vCPU, 4 GB memory, and 75 GB storage.",
                   "displayname": "Small",
                   "value": "small"
                 },
                 {
+                  "description": "Memory, mx2d-2x16 with 2 vCPU, 16 GB memory, and 75 GB storage.",
                   "displayname": "Medium",
                   "value": "medium"
                 },
                 {
+                  "description": "Very High Memory, vx3d-2x32 with 2 vCPU, 32 GB memory, and 65 GB storage.",
                   "displayname": "Large",
                   "value": "large"
                 }
@@ -524,6 +529,25 @@
               "hidden": true
             },
             {
+              "key": "secrets_manager_service_plan",
+              "type_metadata": "string",
+              "virtual": true,
+              "required": true,
+              "default_value": "standard",
+              "options": [
+                {
+                  "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
+                  "displayname": "Standard",
+                  "value": "standard"
+                },
+                {
+                  "description": "Choose this option only if your account does not already have a Trial plan instance. Only one Trial plan instance is allowed per account. After it expires, upgrade to the Standard plan to keep using Secrets Manager.",
+                  "displayname": "Trial (30 days)",
+                  "value": "trial"
+                }
+              ]
+            },
+            {
               "key": "ssh_key_secret_group_name"
             },
             {
@@ -853,6 +877,13 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
+              "service_name": "iam-identity",
+              "notes": "[Optional] Required to create trusted profile for VSI logging agent when using trusted profile authentication mode."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
               "service_name": "All Identity and Access enabled services",
               "notes": "[Optional] Required to to create trusted profile for App Configuration aggregator which is used for compliance scanning."
             },
@@ -1014,6 +1045,18 @@
                   "dependency_input": "enable_platform_metrics",
                   "version_input": "enable_platform_metrics",
                   "reference_version": true
+                },
+                {
+                  "version_input": "install_monitoring_agent",
+                  "value": true
+                },
+                {
+                  "dependency_output": "cloud_monitoring_access_key",
+                  "version_input": "monitoring_access_key"
+                },
+                {
+                  "dependency_output": "ingestion_endpoint_private",
+                  "version_input": "monitoring_collector_endpoint"
                 }
               ],
               "optional": true,
@@ -1048,6 +1091,14 @@
                   "dependency_input": "logs_routing_tenant_regions",
                   "version_input": "logs_routing_tenant_regions",
                   "reference_version": true
+                },
+                {
+                  "version_input": "install_logging_agent",
+                  "value": true
+                },
+                {
+                  "dependency_output": "cloud_logs_ingress_private_endpoint",
+                  "version_input": "logging_target_host"
                 }
               ],
               "optional": true,

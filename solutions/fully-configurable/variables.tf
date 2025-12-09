@@ -582,8 +582,8 @@ variable "logging_target_path" {
 
 variable "logging_auth_mode" {
   type        = string
-  default     = "IAMAPIKey"
-  description = "Authentication mode the logging agent will use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
+  default     = "VSITrustedProfile"
+  description = "Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
 
   validation {
     condition     = length(regex("IAMAPIKey|VSITrustedProfile", var.logging_auth_mode)) > 0
@@ -606,12 +606,7 @@ variable "logging_api_key" {
 variable "logging_trusted_profile_id" {
   type        = string
   default     = null
-  description = "Trusted Profile used by the logging agent to access the IBM Cloud Logs instance, must be provided if `logging_auth_mode` is set to `VSITrustedProfile`."
-
-  validation {
-    condition     = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" ? var.logging_trusted_profile_id != null : true
-    error_message = "Value for `logging_trusted_profile_id` must be provided when `logging_auth_mode` is set to `VSITrustedProfile`."
-  }
+  description = "Trusted Profile ID used by the logging agent to access the IBM Cloud Logs instance. If not provided and `logging_auth_mode` is set to `VSITrustedProfile`, a trusted profile will be automatically created."
 }
 
 variable "logging_use_private_endpoint" {
@@ -655,7 +650,7 @@ variable "install_monitoring_agent" {
 
 variable "monitoring_agent_version" {
   type        = string
-  default     = "14.2.5" # datasource: icr.io/ext/sysdig/agent-slim
+  default     = "14.3.0" # datasource: icr.io/ext/sysdig/agent-slim
   description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 
