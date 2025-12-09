@@ -509,7 +509,7 @@
             },
             {
               "key": "existing_secrets_manager_instance_crn",
-              "display_name": "existing_secrets_manager",
+              "display_name": "existing_secrets_manager_instance",
               "value_constraints": [
                 {
                   "type": "regex",
