@@ -49,7 +49,7 @@ content-type: reference-architecture
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
 {: toc-compliance="FedRAMP"}
-{: toc-version="5.8.1"}
+{: toc-version="5.20.0"}
 
 The Standard - Integrated setup with configurable services variation of the Landing zone for applications with virtual servers deployable architecture provides a flexible and comprehensive solution for deploying virtual servers with extensive customization options. This architecture supports multiple VSI configurations, load balancers, block storage volumes, and advanced networking features across multiple subnets and availability zones.
 
