@@ -33,6 +33,6 @@ variable "resource_tags" {
 
 variable "image_name" {
   type        = string
-  default     = "ibm-ubuntu-24-04-3-minimal-amd64-3"
+  default     = "ibm-ubuntu-24-04-3-minimal-amd64-4"
   description = "Image name to retrieve the image ID for that region."
 }
