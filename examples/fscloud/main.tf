@@ -53,13 +53,27 @@ module "slz_vpc" {
 }
 
 #############################################################################
+# VSI Image lookup
+#############################################################################
+
+module "vsi_image_selector" {
+  providers = {
+    ibm = ibm.site_a
+  }
+  source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
+  version          = "1.3.0"
+  architecture     = var.vsi_image_architecture
+  operating_system = var.vsi_image_os
+}
+
+#############################################################################
 # Provision VSI
 #############################################################################
 
 module "slz_vsi" {
   source                     = "../../modules/fscloud"
   resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
+  image_id                   = module.vsi_image_selector.latest_image_id
   create_security_group      = var.create_security_group
   security_group             = var.security_group
   tags                       = var.resource_tags
