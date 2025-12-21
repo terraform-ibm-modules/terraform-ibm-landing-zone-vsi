@@ -694,7 +694,7 @@ variable "install_logging_agent" {
 
 variable "logging_agent_version" {
   type        = string
-  default     = "1.7.0" # datasource: icr.io/ibm-observe/logs-agent-helm
+  default     = "1.7.1" # datasource: icr.io/ibm-observe/logs-agent-helm
   description = "Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true."
 }
 
@@ -801,7 +801,7 @@ variable "install_monitoring_agent" {
 
 variable "monitoring_agent_version" {
   type        = string
-  default     = "14.3.0" # datasource: icr.io/ext/sysdig/agent-slim
+  default     = "14.3.1" # datasource: icr.io/ext/sysdig/agent-slim
   description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 
