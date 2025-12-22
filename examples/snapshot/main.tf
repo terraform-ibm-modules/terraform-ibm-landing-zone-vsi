@@ -58,9 +58,6 @@ module "slz_vpc" {
 #############################################################################
 
 module "vsi_image_selector" {
-  providers = {
-    ibm = ibm.site_a
-  }
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
   version          = "1.3.0"
   architecture     = var.vsi_image_architecture
