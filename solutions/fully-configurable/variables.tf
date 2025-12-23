@@ -66,6 +66,14 @@ variable "existing_vpc_crn" {
   description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the VSI will be provisioned in the first subnet of the VPC."
   type        = string
   nullable    = false
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}is:(.*:)([aos]\\/[\\w_\\-]+)::vpc:[0-9a-z]{4}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_vpc_crn)),
+      var.existing_vpc_crn == null,
+    ])
+    error_message = "The value provided for 'existing_vpc_crn' is not valid."
+  }
 }
 
 variable "existing_subnet_id" {
@@ -91,10 +99,15 @@ variable "image_id" {
   description = "Image ID used for Virtual server instance. Run 'ibmcloud is images' to find available images in a region."
   type        = string
   nullable    = false
+
+  validation {
+    condition     = var.image_id != null && var.image_id != ""
+    error_message = "The 'image_id' variable must be provided and cannot be an empty string. Run 'ibmcloud is images' to find available images."
+  }
 }
 
 variable "ssh_public_keys" {
-  description = "List of public SSH keys for Virtual server instance creation which does not already exist in the deployment region. Must be an RSA key with a key size of either 2048 bits or 4096 bits (recommended) - See https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys. To use an existing keys, select values for the variable `existing_ssh_key_ids` instead. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or select existing ssh keys created in the cloud using this variable `existing_ssh_key_ids`."
+  description = "A list of public SSH key string values which will be added to the IBM Cloud deployment region and used by the newly provisioned VSI for access. These keys must be RSA with a size of 2048 or 4096 bits (recommended), and must not already exist in the IBM Cloud deployment region. If you want to use existing SSH keys, select them using the `existing_ssh_key_ids` input instead. You can also choose to auto-generate a new SSH key pair by setting `auto_generate_ssh_key` to true. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-ssh-keys)."
   type        = list(string)
   default     = []
 
@@ -104,7 +117,7 @@ variable "ssh_public_keys" {
   }
 
   validation {
-    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || length(var.existing_ssh_key_ids) > 0 ? true : false
+    condition     = var.auto_generate_ssh_key || length(var.ssh_public_keys) > 0 || (var.existing_ssh_key_ids != null && length(var.existing_ssh_key_ids) > 0) ? true : false
     error_message = "Please provide a value for either `ssh_public_keys` or `existing_ssh_key_ids`, or `auto_generate_ssh_key` must be set to true."
   }
 }
@@ -112,7 +125,8 @@ variable "ssh_public_keys" {
 variable "existing_ssh_key_ids" {
   description = "The IDs of existing SSH keys to use while creating Virtual server instance. You can also choose to auto generate an ssh key for you by setting `auto_generate_ssh_key` to true or provide a list of ssh public keys in `ssh_public_keys` for private ssh keys own."
   type        = list(string)
-  default     = []
+  default     = null
+  nullable    = true
 }
 
 variable "auto_generate_ssh_key" {
@@ -184,7 +198,7 @@ variable "existing_boot_volume_kms_key_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_boot_volume_kms_key_crn)),
       var.existing_boot_volume_kms_key_crn == null,
     ])
     error_message = "The provided KMS key CRN in the input 'existing_boot_volume_kms_key_crn' in not valid."
@@ -198,7 +212,7 @@ variable "existing_kms_instance_crn" {
 
   validation {
     condition = anytrue([
-      can(regex("^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn)),
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn)),
       var.existing_kms_instance_crn == null,
     ])
     error_message = "The provided KMS instance CRN in the input 'existing_kms_instance_crn' in not valid."
@@ -488,6 +502,14 @@ variable "existing_secrets_manager_instance_crn" {
   type        = string
   default     = null
   description = "The CRN of existing secrets manager to use to store the SSH private key which was auto generated when `auto_generate_ssh_key` was set to true."
+
+  validation {
+    condition = anytrue([
+      can(regex("^crn:v\\d:(.*:){2}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_secrets_manager_instance_crn)),
+      var.existing_secrets_manager_instance_crn == null,
+    ])
+    error_message = "The value provided for 'existing_secrets_manager_instance_crn' is not valid."
+  }
 }
 
 variable "existing_secrets_manager_endpoint_type" {
@@ -516,28 +538,50 @@ variable "ssh_key_secret_name" {
 
 ##############################################################################
 # Logging Agent Variables
-########################################################################################################################
+##############################################################################
 
 variable "install_logging_agent" {
   type        = bool
   default     = false
-  description = "Set to true to enable installing the logging agent into your VSI at time of creation."
+  description = "Set to true to enable installing the logging agent into your VSI at time of creation. If true, values must be passed for `logging_target_host` and either `logging_api_key` or `logging_trusted_profile_id`. Installation logs can be found on the VSI in /run/monitoring-agent/monitoring-agent-install.log."
+
+  validation {
+    condition     = var.install_logging_agent ? var.image_id != null : true
+    error_message = "When 'install_logging_agent' is true, a value for 'image_id' must be provided. Logging agent installations are not supported if provisioning using the 'catalog_offering' option."
+  }
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_agent_version != null && var.logging_agent_version != "" : true
+    error_message = "When 'install_logging_agent' is true, a value for 'logging_agent_version' must be provided."
+  }
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_target_port != null && var.logging_target_port != "" : true
+    error_message = "If 'install_logging_agent' is true, a value for 'logging_target_port' must be provided."
+  }
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_target_host != null && var.logging_target_host != "" : true
+    error_message = "If 'install_logging_agent' is true, a value for 'logging_target_host' must be provided."
+  }
+
+}
+
+variable "logging_agent_version" {
+  type        = string
+  default     = "1.7.1" # datasource: icr.io/ibm-observe/logs-agent-helm
+  description = "Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true."
 }
 
 variable "logging_target_host" {
   type        = string
   default     = null
   description = "Ingestion endpoint that corresponds to the IBM Cloud Logs instance the logging agent connects to."
-
-  validation {
-    condition     = var.install_logging_agent ? var.logging_target_host != null : true
-    error_message = "If `install_logging_agent` is true, a value for `logging_target_host` must be provided."
-  }
 }
 
 variable "logging_target_port" {
-  type        = string
-  default     = "443"
+  type        = number
+  default     = 443
   description = "Port the logging agent targets when sending logs, defaults to `443` for sending logs to an IBM Cloud Logs instance."
 }
 
@@ -545,11 +589,16 @@ variable "logging_target_path" {
   type        = string
   default     = "/logs/v1/singles"
   description = "Path the logging agent targets when sending logs, defaults to `/logs/v1/singles` for sending logs to an IBM Cloud Logs instance."
+
+  validation {
+    condition     = var.install_logging_agent ? var.logging_target_path != null && var.logging_target_path != "" : true
+    error_message = "If 'install_logging_agent' is true, a value for 'logging_target_path' must be provided."
+  }
 }
 
 variable "logging_auth_mode" {
   type        = string
-  default     = "IAMAPIKey"
+  default     = "VSITrustedProfile"
   description = "Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`."
 
   validation {
@@ -573,18 +622,31 @@ variable "logging_api_key" {
 variable "logging_trusted_profile_id" {
   type        = string
   default     = null
-  description = "Trusted Profile used by the logging agent to access the IBM Cloud Logs instance, must be provided if `logging_auth_mode` is set to `VSITrustedProfile`."
-
-  validation {
-    condition     = var.install_logging_agent && var.logging_auth_mode == "VSITrustedProfile" ? var.logging_trusted_profile_id != null : true
-    error_message = "Value for `logging_trusted_profile_id` must be provided when `logging_auth_mode` is set to `VSITrustedProfile`."
-  }
+  description = "Trusted Profile ID used by the logging agent to access the IBM Cloud Logs instance. If not provided and `logging_auth_mode` is set to `VSITrustedProfile`, a trusted profile will be automatically created."
 }
 
 variable "logging_use_private_endpoint" {
   type        = bool
   default     = true
-  description = "Set to true to use the private endpoint when sending logs to the IBM Cloud Logs instance."
+  description = "Specifies whether a public or private endpoint is used by the logging agent for IAM authentication."
+}
+
+variable "logging_secure_access_enabled" {
+  type        = bool
+  default     = false
+  description = "Set this to true if you have secure access enabled in your VSI. Only applies if 'install_logging_agent' is true."
+}
+
+variable "logging_application_name" {
+  type        = bool
+  default     = null
+  description = "The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `$HOSTNAME`."
+}
+
+variable "logging_subsystem_name" {
+  type        = bool
+  default     = null
+  description = "The subsystem name is the service or application that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `not-found`."
 }
 
 ########################################################################################################################
@@ -594,7 +656,18 @@ variable "logging_use_private_endpoint" {
 variable "install_monitoring_agent" {
   type        = bool
   default     = false
-  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`."
+  description = "Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`. Installation logs can be found on the VSI in /run/logging-agent/logs-agent-install.log"
+
+  validation {
+    condition     = var.install_monitoring_agent ? var.image_id != null : true
+    error_message = "When 'install_monitoring_agent' is true, a value for 'image_id' must be provided. Monitoring agent installations are not supported if provisioning using the 'catalog_offering' option."
+  }
+}
+
+variable "monitoring_agent_version" {
+  type        = string
+  default     = "14.3.1" # datasource: icr.io/ext/sysdig/agent-slim
+  description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 
 variable "monitoring_access_key" {
@@ -604,7 +677,7 @@ variable "monitoring_access_key" {
   description = "Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_access_key != null : true
+    condition     = var.install_monitoring_agent ? var.monitoring_access_key != null && var.monitoring_access_key != "" : true
     error_message = "Value for `monitoring_access_key` must be provided when `install_monitoring_agent` is true."
   }
 }
@@ -615,15 +688,20 @@ variable "monitoring_collector_endpoint" {
   description = "Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion)."
 
   validation {
-    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null : true
+    condition     = var.install_monitoring_agent ? var.monitoring_collector_endpoint != null && var.monitoring_collector_endpoint != "" : true
     error_message = "Value for `monitoring_collector_endpoint` must be provided when `install_monitoring_agent` is true."
   }
 }
 
 variable "monitoring_collector_port" {
-  type        = string
-  default     = "6443"
+  type        = number
+  default     = 6443
   description = "Port the agent targets when sending metrics or compliance data, defaults to `6443`."
+
+  validation {
+    condition     = var.install_monitoring_agent ? var.monitoring_collector_port != null && var.monitoring_collector_port != "" : true
+    error_message = "Value for `monitoring_collector_port` must be provided when `install_monitoring_agent` is true."
+  }
 }
 
 variable "monitoring_tags" {

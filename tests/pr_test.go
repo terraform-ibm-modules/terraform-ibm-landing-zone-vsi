@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/IBM/go-sdk-core/core"
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/random"
@@ -449,7 +449,7 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 		"fully-configurable",
 		map[string]interface{}{
 			"region":   "eu-de",
-			"image_id": "r010-17a6c2b3-c93b-4018-87ca-f078ef21e02b", // image_id for ibm-ubuntu-24-04-3-minimal-amd64-1 in eu-de
+			"image_id": "r010-21888dec-001d-4f4f-9825-9dec9c1a588d", // image_id for ibm-ubuntu-22-04-5-minimal-amd64-8 in eu-de
 		},
 	)
 
@@ -510,6 +510,34 @@ func TestQuickstartDefaultConfigSchematics(t *testing.T) {
 	}
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
+}
+
+func TestQuickstartDefaultConfigUpgradeSchematics(t *testing.T) {
+	t.Parallel()
+
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  "vsi-qs-upg",
+		TarIncludePatterns: []string{
+			"*.tf",
+			quickStartConfigFlavorDir + "/*.tf",
+		},
+		TemplateFolder:         quickStartConfigFlavorDir,
+		Tags:                   []string{"vsi-qs"},
+		DeleteWorkspaceOnFail:  true,
+		WaitJobCompleteMinutes: 60,
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+	}
+	err := options.RunSchematicUpgradeTest()
+	if !options.UpgradeTestSkipped {
+		assert.Nil(t, err, "This should not have errored")
+	}
 }
 
 func TestQuickstartExistingConfigSchematics(t *testing.T) {

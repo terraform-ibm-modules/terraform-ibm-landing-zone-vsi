@@ -22,6 +22,7 @@ output "list" {
     {
       name                               = virtual_server.name
       id                                 = virtual_server.id
+      crn                                = virtual_server.crn
       zone                               = virtual_server.zone
       ipv4_address                       = virtual_server.primary_network_interface[0].primary_ip[0].address
       primary_network_interface_detail   = virtual_server.primary_network_interface[0]
@@ -65,8 +66,9 @@ output "fip_list" {
 output "load_balancers_metadata" {
   description = "Load Balancers metadata."
   value = {
-    for lb in ibm_is_lb.lb :
-    lb.name => {
+    for k, lb in ibm_is_lb.lb :
+    k => {
+      name          = lb.name
       crn           = lb.crn
       hostname      = lb.hostname
       public_ips    = lb.public_ips
