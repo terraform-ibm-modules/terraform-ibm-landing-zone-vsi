@@ -34,10 +34,16 @@ variable "access_tags" {
   default     = []
 }
 
-variable "image_id" {
-  description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
+variable "vsi_image_architecture" {
+  description = "VSI image architecture"
   type        = string
-  default     = "r006-bfcbc2fa-4be7-4bfb-b408-56a6dbe3799d"
+  default     = "amd64"
+}
+
+variable "vsi_image_os" {
+  description = "VSI image OS"
+  type        = string
+  default     = "ubuntu"
 }
 
 variable "ssh_key" {
