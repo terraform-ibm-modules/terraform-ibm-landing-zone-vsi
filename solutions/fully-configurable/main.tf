@@ -96,7 +96,7 @@ module "kms" {
   }
   count                       = var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.13"
+  version                     = "5.5.16"
   create_key_protect_instance = false
   region                      = local.kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -283,7 +283,7 @@ locals {
 module "trusted_profile" {
   count   = local.create_logging_trusted_profile ? 1 : 0
   source  = "terraform-ibm-modules/trusted-profile/ibm"
-  version = "3.2.15"
+  version = "3.2.17"
 
   trusted_profile_name        = "${local.prefix}-vsi-logging-trusted-profile"
   trusted_profile_description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs instance - ${local.cloud_logs_instance_id}"
@@ -346,7 +346,7 @@ locals {
 module "secrets_manager_arbitrary_secret" {
   count                       = var.existing_secrets_manager_instance_crn != null && var.auto_generate_ssh_key ? 1 : 0
   source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "2.12.11"
+  version                     = "2.12.13"
   existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.existing_secrets_manager_instance_region
   endpoint_type               = var.existing_secrets_manager_endpoint_type
