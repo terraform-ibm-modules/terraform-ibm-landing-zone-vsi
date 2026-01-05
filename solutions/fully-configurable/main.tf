@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.4.2"
+  version                      = "1.4.7"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -14,14 +14,14 @@ module "resource_group" {
 module "existing_kms_crn_parser" {
   count   = var.existing_kms_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.2"
+  version = "1.3.7"
   crn     = var.existing_kms_instance_crn
 }
 
 module "existing_boot_volume_kms_key_crn_parser" {
   count   = var.existing_boot_volume_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.2"
+  version = "1.3.7"
   crn     = var.existing_boot_volume_kms_key_crn
 }
 
@@ -96,7 +96,7 @@ module "kms" {
   }
   count                       = var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.3"
+  version                     = "5.5.10"
   create_key_protect_instance = false
   region                      = local.kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -125,7 +125,7 @@ module "kms" {
 
 module "existing_vpc_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.2"
+  version = "1.3.7"
   crn     = var.existing_vpc_crn
 }
 
@@ -283,7 +283,7 @@ locals {
 module "trusted_profile" {
   count   = local.create_logging_trusted_profile ? 1 : 0
   source  = "terraform-ibm-modules/trusted-profile/ibm"
-  version = "3.2.0"
+  version = "3.2.13"
 
   trusted_profile_name        = "${local.prefix}-vsi-logging-trusted-profile"
   trusted_profile_description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs instance - ${local.cloud_logs_instance_id}"
@@ -335,7 +335,7 @@ module "trusted_profile" {
 module "existing_secret_manager_crn_parser" {
   count   = var.existing_secrets_manager_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.2"
+  version = "1.3.7"
   crn     = var.existing_secrets_manager_instance_crn
 }
 locals {
@@ -346,7 +346,7 @@ locals {
 module "secrets_manager_arbitrary_secret" {
   count                       = var.existing_secrets_manager_instance_crn != null && var.auto_generate_ssh_key ? 1 : 0
   source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "2.12.1"
+  version                     = "2.12.10"
   existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.existing_secrets_manager_instance_region
   endpoint_type               = var.existing_secrets_manager_endpoint_type
