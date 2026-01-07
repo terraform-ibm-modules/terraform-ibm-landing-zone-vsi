@@ -71,8 +71,8 @@ resource "ibm_is_placement_group" "placement_group" {
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
   version          = "1.3.0"
-  architecture     = var.vsi_image_architecture
-  operating_system = var.vsi_image_os
+  architecture     = "amd64"
+  operating_system = "ubuntu"
 }
 
 #############################################################################

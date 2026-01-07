@@ -40,18 +40,6 @@ variable "machine_type" {
   default     = "cx2-2x4"
 }
 
-variable "vsi_image_architecture" {
-  description = "VSI image architecture"
-  type        = string
-  default     = "amd64"
-}
-
-variable "vsi_image_os" {
-  description = "VSI image OS"
-  type        = string
-  default     = "ubuntu"
-}
-
 variable "user_data" {
   description = "User data to initialize VSI deployment"
   type        = string

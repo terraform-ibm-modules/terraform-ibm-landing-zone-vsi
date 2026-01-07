@@ -34,18 +34,6 @@ variable "access_tags" {
   default     = []
 }
 
-variable "vsi_image_architecture" {
-  description = "VSI image architecture"
-  type        = string
-  default     = "amd64"
-}
-
-variable "vsi_image_os" {
-  description = "VSI image OS"
-  type        = string
-  default     = "ubuntu"
-}
-
 variable "ssh_key" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
