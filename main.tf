@@ -148,6 +148,7 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
     }
   }
   lifecycle {
+    # Ensure reserved IP is attached to the primary VNI when enabled
     postcondition {
       condition = var.manage_reserved_ips ? length(coalesce(try(self.primary_ip[0].reserved_ip, ""), "")) > 0 : true
       error_message = "Primary VNI '${self.name}' did not receive a reserved IP while manage_reserved_ips is enabled (manage_reserved_ips=${var.manage_reserved_ips})."
@@ -279,10 +280,12 @@ resource "ibm_is_instance" "vsi" {
   tags            = var.tags
   access_tags     = var.access_tags
   lifecycle {
+    # Ensure VSI reaches a healthy runtime state after creation
     postcondition {
       condition     = contains(["running", "active"], self.status)
       error_message = "VSI instance '${self.name}' was not created successfully. Status is '${try(self.status, "unknown")}', expected 'running' or 'active' state after creation."
     }
+    # Ensure VSI exposes a primary network interface after creation
     postcondition {
       condition = var.use_legacy_network_interface? length(try(self.primary_network_interface, [])) > 0: length(try(self.primary_network_attachment, [])) > 0
       error_message = "VSI instance '${self.name}' did not expose a primary network interface after creation (use_legacy_network_interface=${var.use_legacy_network_interface})."
@@ -426,7 +429,9 @@ resource "ibm_is_floating_ip" "vni_secondary_fip" {
 ##############################################################################
 # Validations
 ##############################################################################
-check "vsi_instance_status_safe" {
+
+# Validate all VSI runtime state
+check "vsi_instance_status_state" {
   assert {
     condition = alltrue([
       for name, inst in ibm_is_instance.vsi :
@@ -442,7 +447,8 @@ check "vsi_instance_status_safe" {
   }
 }
 
-check "floating_ip_mode_valid" {
+# Validate primary network interface creation
+check "floating_ips_require_primary_interface" {
   assert {
     condition = !var.enable_floating_ip || (
       var.use_legacy_network_interface
@@ -470,11 +476,12 @@ check "floating_ip_mode_valid" {
   }
 }
 
-check "reserved_ip_mode_valid" {
+# Validate reserved IP attachment
+check "reserved_ips_attachment_requirements" {
   assert {
     condition = !var.manage_reserved_ips || (
       var.use_legacy_network_interface ||
-      length(ibm_is_virtual_network_interface.primary_vni) > 0
+      length(values(ibm_is_virtual_network_interface.primary_vni)) > 0
     )
 
     error_message = "manage_reserved_ips is enabled, but no primary virtual network interface (VNI) was created to attach reserved IPs (use_legacy_network_interface=${var.use_legacy_network_interface})."
