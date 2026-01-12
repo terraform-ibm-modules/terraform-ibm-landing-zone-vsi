@@ -147,6 +147,12 @@ resource "ibm_is_virtual_network_interface" "primary_vni" {
       reserved_ip = ibm_is_subnet_reserved_ip.secondary_vsi_ip["${each.value.name}-${ips.key}"].reserved_ip
     }
   }
+  lifecycle {
+    postcondition {
+      condition = var.manage_reserved_ips ? length(coalesce(try(self.primary_ip[0].reserved_ip, ""), "")) > 0 : true
+      error_message = "Primary VNI '${self.name}' did not receive a reserved IP while manage_reserved_ips is enabled (manage_reserved_ips=${var.manage_reserved_ips})."
+    }
+  }
 }
 
 resource "ibm_is_virtual_network_interface" "secondary_vni" {
@@ -179,7 +185,6 @@ resource "ibm_is_virtual_network_interface" "secondary_vni" {
     }
   }
 }
-
 ##############################################################################
 # Create Virtual Servers
 ##############################################################################
@@ -274,12 +279,19 @@ resource "ibm_is_instance" "vsi" {
   tags            = var.tags
   access_tags     = var.access_tags
   lifecycle {
+    postcondition {
+      condition     = contains(["running", "active"], self.status)
+      error_message = "VSI instance '${self.name}' was not created successfully. Status is '${try(self.status, "unknown")}', expected 'running' or 'active' state after creation."
+    }
+    postcondition {
+      condition = var.use_legacy_network_interface? length(try(self.primary_network_interface, [])) > 0: length(try(self.primary_network_attachment, [])) > 0
+      error_message = "VSI instance '${self.name}' did not expose a primary network interface after creation (use_legacy_network_interface=${var.use_legacy_network_interface})."
+    }
     ignore_changes = [
       image,
       user_data
     ]
   }
-
   # catalog offering for image, ignored if snapshot
   dynamic "catalog_offering" {
     for_each = (local.vsi_boot_volume_snapshot_id == null && var.catalog_offering != null) ? [1] : []
@@ -408,4 +420,65 @@ resource "ibm_is_floating_ip" "vni_secondary_fip" {
   access_tags    = var.access_tags
   resource_group = var.resource_group_id
 }
+
+##############################################################################
+
+##############################################################################
+# Validations
+##############################################################################
+check "vsi_instance_status_safe" {
+  assert {
+    condition = alltrue([
+      for name, inst in ibm_is_instance.vsi :
+      can(inst.status) && contains(["running", "active"], inst.status)
+    ])
+
+    error_message = "One or more VSI instances are not in the expected state. Expected 'running' or 'active'. Current states: ${
+      join(", ", [
+        for name, inst in ibm_is_instance.vsi :
+        "${name}=${try(inst.status, "unknown")}"
+      ])
+    }. This may indicate an issue during instance creation."
+  }
+}
+
+check "floating_ip_mode_valid" {
+  assert {
+    condition = !var.enable_floating_ip || (
+      var.use_legacy_network_interface
+      ? alltrue([
+          for name, inst in ibm_is_instance.vsi :
+          length(try(inst.primary_network_interface, [])) > 0
+        ])
+      : alltrue([
+          for name, inst in ibm_is_instance.vsi :
+          length(try(inst.primary_network_attachment, [])) > 0
+        ])
+    )
+
+    error_message = "Floating IPs are enabled, but the following VSI instances do not have an attachable primary network interface: ${
+      join(", ", compact([
+        for name, inst in ibm_is_instance.vsi :
+        (
+          var.use_legacy_network_interface
+          ? length(try(inst.primary_network_interface, [])) == 0
+          : length(try(inst.primary_network_attachment, [])) == 0
+        ) ? name : null
+      ]))
+    }. (use_legacy_network_interface=${var.use_legacy_network_interface})"
+
+  }
+}
+
+check "reserved_ip_mode_valid" {
+  assert {
+    condition = !var.manage_reserved_ips || (
+      var.use_legacy_network_interface ||
+      length(ibm_is_virtual_network_interface.primary_vni) > 0
+    )
+
+    error_message = "manage_reserved_ips is enabled, but no primary virtual network interface (VNI) was created to attach reserved IPs (use_legacy_network_interface=${var.use_legacy_network_interface})."
+  }
+}
+
 ##############################################################################
