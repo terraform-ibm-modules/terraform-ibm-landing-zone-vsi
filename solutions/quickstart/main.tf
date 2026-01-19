@@ -40,7 +40,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 module "vpc" {
   count             = var.existing_vpc_crn != null ? 0 : 1
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.10.4"
+  version           = "8.10.8"
   resource_group_id = module.resource_group.resource_group_id
   region            = local.vpc_region
   prefix            = local.prefix
