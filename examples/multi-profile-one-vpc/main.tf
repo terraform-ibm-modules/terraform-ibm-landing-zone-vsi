@@ -202,6 +202,17 @@ locals {
 }
 
 #############################################################################
+# VSI Image lookup
+#############################################################################
+
+module "vsi_image_selector" {
+  source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
+  version          = "1.3.0"
+  architecture     = "amd64"
+  operating_system = "ubuntu"
+}
+
+#############################################################################
 # First VSI on cx2
 #############################################################################
 
@@ -209,7 +220,7 @@ module "slz_vsi_cx" {
   depends_on                      = [module.slz_vpc]
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
-  image_id                        = var.image_id
+  image_id                        = module.vsi_image_selector.latest_image_id
   create_security_group           = false
   tags                            = var.resource_tags
   access_tags                     = var.access_tags
@@ -288,7 +299,7 @@ module "slz_vsi_bx" {
   depends_on                      = [module.slz_vpc]
   source                          = "../../"
   resource_group_id               = module.resource_group.resource_group_id
-  image_id                        = var.image_id
+  image_id                        = module.vsi_image_selector.latest_image_id
   create_security_group           = false
   tags                            = var.resource_tags
   access_tags                     = var.access_tags

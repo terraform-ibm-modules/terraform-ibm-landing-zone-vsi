@@ -14,7 +14,7 @@ locals {
   package_name = (
     startswith(local.os_image, "ubuntu-20") ? "logs-router-agent-ubuntu20-${var.logging_agent_version}.deb" :
     startswith(local.os_image, "debian-11") ? "logs-router-agent-deb11-${var.logging_agent_version}.deb" :
-    startswith(local.os_image, "debian-12") || startswith(local.os_image, "ubuntu-22") ? "logs-router-agent-${var.logging_agent_version}.deb" :
+    startswith(local.os_image, "debian-12") || startswith(local.os_image, "ubuntu-22") || startswith(local.os_image, "ubuntu-24") ? "logs-router-agent-${var.logging_agent_version}.deb" :
     startswith(local.os_image, "red-8") ? "logs-router-agent-rhel8-${var.logging_agent_version}.rpm" :
     startswith(local.os_image, "red-9") ? "logs-router-agent-${var.logging_agent_version}.rpm" :
     ""
