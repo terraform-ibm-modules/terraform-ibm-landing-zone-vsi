@@ -955,7 +955,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": " Defines the VPC instance and subnets where Virtual Server Instance will be created. ",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.11.0",
+              "version": "v8.12.1",
               "flavors": [
                 "fully-configurable"
               ],
