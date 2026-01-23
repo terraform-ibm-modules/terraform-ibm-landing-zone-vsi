@@ -44,12 +44,23 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.10.4"
+  version           = "8.10.8"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
   tags              = var.resource_tags
   name              = var.vpc_name
+}
+
+#############################################################################
+# VSI Image lookup
+#############################################################################
+
+module "vsi_image_selector" {
+  source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
+  version          = "1.3.0"
+  architecture     = "amd64"
+  operating_system = "ubuntu"
 }
 
 #############################################################################
@@ -59,7 +70,7 @@ module "slz_vpc" {
 module "slz_vsi" {
   source                     = "../../modules/fscloud"
   resource_group_id          = module.resource_group.resource_group_id
-  image_id                   = var.image_id
+  image_id                   = module.vsi_image_selector.latest_image_id
   create_security_group      = var.create_security_group
   security_group             = var.security_group
   tags                       = var.resource_tags

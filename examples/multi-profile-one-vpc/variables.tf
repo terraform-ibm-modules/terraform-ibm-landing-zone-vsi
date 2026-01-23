@@ -34,12 +34,6 @@ variable "access_tags" {
   default     = []
 }
 
-variable "image_id" {
-  description = "Image ID used for VSI. Run 'ibmcloud is images' to find available images. Be aware that region is important for the image since the id's are different in each region."
-  type        = string
-  default     = "r006-bfcbc2fa-4be7-4bfb-b408-56a6dbe3799d"
-}
-
 variable "ssh_key" {
   type        = string
   description = "An existing ssh key name to use for this example, if unset a new ssh key will be created"
