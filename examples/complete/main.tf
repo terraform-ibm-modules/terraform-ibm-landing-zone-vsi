@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.5.21"
+  version                   = "5.5.24"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.10.24"
+  version           = "1.10.27"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan              = "graduated-tier"
-  version           = "1.12.18"
+  version           = "1.12.21"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -102,7 +102,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.10.8"
+  version           = "8.12.3"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -204,7 +204,7 @@ locals {
 
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
-  version          = "1.3.0"
+  version          = "1.4.1"
   architecture     = "amd64"
   operating_system = "ubuntu"
 }
