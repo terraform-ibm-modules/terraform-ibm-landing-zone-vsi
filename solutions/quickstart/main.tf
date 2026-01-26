@@ -55,7 +55,7 @@ module "vpc" {
         no_addr_prefix = false
       }
   ] }
-  name = "qs-vpc"
+  name = "vpc"
   network_acls = [
     {
       name                         = "vpc-acl"
