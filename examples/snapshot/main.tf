@@ -45,7 +45,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.10.8"
+  version           = "8.12.5"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -59,7 +59,7 @@ module "slz_vpc" {
 
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
-  version          = "1.3.0"
+  version          = "1.4.1"
   architecture     = "amd64"
   operating_system = "ubuntu"
 }
