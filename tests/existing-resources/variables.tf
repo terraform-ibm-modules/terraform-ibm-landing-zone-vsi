@@ -31,8 +31,8 @@ variable "resource_tags" {
   default     = []
 }
 
-variable "image_name" {
-  type        = string
-  default     = "ibm-ubuntu-24-04-3-minimal-amd64-4"
-  description = "Image name to retrieve the image ID for that region."
+variable "create_vpc" {
+  type        = bool
+  description = "Whether to create a VPC or not."
+  default     = true
 }
