@@ -1,4 +1,5 @@
 module "resource_group" {
+  count                        = var.create_vpc ? 1 : 0
   source                       = "terraform-ibm-modules/resource-group/ibm"
   version                      = "1.4.7"
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
@@ -10,9 +11,10 @@ module "resource_group" {
 #############################################################################
 
 module "vpc" {
+  count             = var.create_vpc ? 1 : 0
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
   version           = "8.12.5"
-  resource_group_id = module.resource_group.resource_group_id
+  resource_group_id = module.resource_group[0].resource_group_id
   region            = var.region
   name              = "vpc"
   prefix            = var.prefix
@@ -29,6 +31,9 @@ module "vpc" {
   }
 }
 
-data "ibm_is_image" "image" {
-  name = var.image_name
+module "vsi_image_selector" {
+  source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
+  version          = "1.4.1"
+  architecture     = "amd64"
+  operating_system = "ubuntu"
 }

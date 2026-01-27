@@ -198,7 +198,7 @@ func sshPublicKey(t *testing.T) string {
 	return pubKey
 }
 
-func provisionPreReq(t *testing.T) (string, *terraform.Options, error) {
+func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options, error) {
 	// ------------------------------------------------------------------------------------
 	// Provision existing resources first
 	// ------------------------------------------------------------------------------------
@@ -221,6 +221,7 @@ func provisionPreReq(t *testing.T) (string, *terraform.Options, error) {
 			"prefix":        prefix,
 			"region":        region,
 			"resource_tags": tags,
+			"create_vpc":    create_vpc,
 		},
 		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
 		// This is the same as setting the -upgrade=true flag with terraform.
@@ -240,7 +241,7 @@ func provisionPreReq(t *testing.T) (string, *terraform.Options, error) {
 func TestFullyConfigurable(t *testing.T) {
 	t.Parallel()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -297,7 +298,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 
 	sshPublicKey := sshPublicKey(t)
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -356,7 +357,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 func TestUpgradeFullyConfigurable(t *testing.T) {
 	t.Parallel()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -435,55 +436,63 @@ func TestRunMultiProfileExample(t *testing.T) {
 func TestAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
 
-	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-		Testing:               t,
-		Prefix:                "vsideft",
-		ResourceGroup:         resourceGroup,
-		OverrideInputMappings: core.BoolPtr(true),
-		QuietMode:             false, // Suppress logs except on failure
-	})
+	// run this terraform code to return the latest ubuntu image ID
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t, false)
 
-	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
-		options.Prefix,
-		"deploy-arch-ibm-slz-vsi",
-		"fully-configurable",
-		map[string]interface{}{
-			"region":   "eu-de",
-			"image_id": "r010-21888dec-001d-4f4f-9825-9dec9c1a588d", // image_id for ibm-ubuntu-22-04-5-minimal-amd64-8 in eu-de
-		},
-	)
+	if existErr != nil {
+		assert.True(t, existErr == nil, "Init and Apply of prereq script failed.")
+	} else {
 
-	//	use existing secrets manager instance to help prevent hitting trial instance limit in account
-	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
-		{
-			OfferingName:   "deploy-arch-ibm-secrets-manager",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
-				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
-				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
-				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+		options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+			Testing:               t,
+			Prefix:                prefix,
+			ResourceGroup:         resourceGroup,
+			OverrideInputMappings: core.BoolPtr(true),
+			QuietMode:             false, // Suppress logs except on failure
+		})
+
+		options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
+			options.Prefix,
+			"deploy-arch-ibm-slz-vsi",
+			"fully-configurable",
+			map[string]interface{}{
+				"region":   terraform.Output(t, existingTerraformOptions, "region"),
+				"image_id": terraform.Output(t, existingTerraformOptions, "image_id"),
 			},
-		},
-		// Disable target / route creation to help prevent hitting quota in account
-		{
-			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"enable_metrics_routing_to_cloud_monitoring": false,
+		)
+
+		//	use existing secrets manager instance to help prevent hitting trial instance limit in account
+		options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
+			{
+				OfferingName:   "deploy-arch-ibm-secrets-manager",
+				OfferingFlavor: "fully-configurable",
+				Inputs: map[string]interface{}{
+					"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
+					"service_plan":                         "__NULL__", // no plan value needed when using existing SM
+					"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
+					"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+				},
 			},
-		},
-		{
-			OfferingName:   "deploy-arch-ibm-activity-tracker",
-			OfferingFlavor: "fully-configurable",
-			Inputs: map[string]interface{}{
-				"enable_activity_tracker_event_routing_to_cloud_logs": false,
+			// Disable target / route creation to help prevent hitting quota in account
+			{
+				OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+				OfferingFlavor: "fully-configurable",
+				Inputs: map[string]interface{}{
+					"enable_metrics_routing_to_cloud_monitoring": false,
+				},
 			},
-		},
+			{
+				OfferingName:   "deploy-arch-ibm-activity-tracker",
+				OfferingFlavor: "fully-configurable",
+				Inputs: map[string]interface{}{
+					"enable_activity_tracker_event_routing_to_cloud_logs": false,
+				},
+			},
+		}
+
+		err := options.RunAddonTest()
+		require.NoError(t, err)
 	}
-
-	err := options.RunAddonTest()
-	require.NoError(t, err)
 }
 
 func TestQuickstartDefaultConfigSchematics(t *testing.T) {
@@ -543,7 +552,7 @@ func TestQuickstartDefaultConfigUpgradeSchematics(t *testing.T) {
 func TestQuickstartExistingConfigSchematics(t *testing.T) {
 	t.Parallel()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t)
+	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
