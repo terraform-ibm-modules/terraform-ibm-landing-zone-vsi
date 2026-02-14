@@ -24,6 +24,9 @@ This module creates Virtual Server Instances (VSI) across multiple subnets with 
     * <a href="./examples/gen2-storage">End to end basic example using gen2 boot volume</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-gen2-storage-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/gen2-storage"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
     * <a href="./examples/multi-profile-one-vpc">Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-multi-profile-one-vpc-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/multi-profile-one-vpc"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
     * <a href="./examples/snapshot">Basic example using a Snapshot Consistency Group for volumes</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-snapshot-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/snapshot"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+* [Deployable Architectures](./solutions)
+    * <a href="./solutions/fully-configurable">Cloud automation for  Virtual Server Instance (Fully configurable)</a>
+    * <a href="./solutions/quickstart">Cloud automation for Virtual Server Instance (Quickstart)</a>
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
@@ -165,7 +168,7 @@ You need the following permissions to run this module.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.4.1 |
+| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.4.2 |
 
 ### Resources
 
