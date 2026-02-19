@@ -166,7 +166,7 @@ variable "block_storage_volumes" {
       capacity       = optional(number)
       iops           = optional(number)
       encryption_key = optional(string)
-      snapshot_id    = optional(string) # set if you would like to base volume on a snapshot
+      snapshot_crn   = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.
       tags           = optional(list(string), [])
     })
   )
@@ -255,8 +255,8 @@ variable "custom_vsi_volume_names" {
 # Snapshot Restore Variables
 ##############################################################################
 
-variable "boot_volume_snapshot_id" {
-  description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)"
+variable "boot_volume_snapshot_crn" {
+  description = "The snapshot crn of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used). If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place."
   type        = string
   default     = null
 }
