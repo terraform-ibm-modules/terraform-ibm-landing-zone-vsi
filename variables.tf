@@ -78,8 +78,8 @@ variable "image_id" {
   }
 
   validation {
-    condition     = (var.image_id == null && var.catalog_offering == null) == false
-    error_message = "You must specify one (and only one) of either `image_id` or `catalog_offering` for your virtual server OS image."
+    condition     = var.boot_volume_snapshot_crn != null ? true : (var.image_id == null && var.catalog_offering == null) == false
+    error_message = "You must specify one (and only one) of either `image_id`, `catalog_offering`, or `boot_volume_snapshot_crn` for your virtual server OS image."
   }
 }
 
@@ -325,7 +325,7 @@ variable "block_storage_volumes" {
       iops              = optional(number)
       encryption_key    = optional(string)
       resource_group_id = optional(string)
-      snapshot_id       = optional(string) # set if you would like to base volume on a snapshot
+      snapshot_crn      = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.
       tags              = optional(list(string), [])
     })
   )
@@ -613,14 +613,14 @@ variable "secondary_allow_ip_spoofing" {
 # Snapshot Restore Variables
 ##############################################################################
 
-variable "boot_volume_snapshot_id" {
-  description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)"
+variable "boot_volume_snapshot_crn" {
+  description = "The snapshot CRN of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used). If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place."
   type        = string
   default     = null
 }
 
 variable "snapshot_consistency_group_id" {
-  description = "The snapshot consistency group Id. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot Ids by setting the appropriate input variables as well."
+  description = "The snapshot consistency group id. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot CRNs by setting the appropriate input variables as well."
   type        = string
   default     = null
 }

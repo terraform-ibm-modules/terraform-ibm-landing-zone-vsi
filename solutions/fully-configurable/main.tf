@@ -236,7 +236,7 @@ module "vsi" {
   load_balancers                   = var.load_balancers
   access_tags                      = var.vsi_access_tags
   snapshot_consistency_group_id    = var.snapshot_consistency_group_id
-  boot_volume_snapshot_id          = var.boot_volume_snapshot_id
+  boot_volume_snapshot_crn         = var.boot_volume_snapshot_crn
   enable_dedicated_host            = var.dedicated_host_id != null ? true : false
   dedicated_host_id                = var.dedicated_host_id
   use_legacy_network_interface     = false

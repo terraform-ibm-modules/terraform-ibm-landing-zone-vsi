@@ -942,7 +942,7 @@
               "hidden": true
             },
             {
-              "key": "boot_volume_snapshot_id"
+              "key": "boot_volume_snapshot_crn"
             },
             {
               "key": "dedicated_host_id"

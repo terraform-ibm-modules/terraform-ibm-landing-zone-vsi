@@ -101,7 +101,7 @@ locals {
   }
 
   # determine snapshot in following order: input variable -> from consistency group -> null (none)
-  vsi_boot_volume_snapshot_id = try(coalesce(var.boot_volume_snapshot_id, local.consistency_group_boot_snapshot_id), null)
+  vsi_boot_volume_snapshot_crn = try(coalesce(var.boot_volume_snapshot_crn, local.consistency_group_boot_snapshot_crn), null)
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
@@ -262,7 +262,7 @@ resource "ibm_is_subnet_reserved_ip" "secondary_vni_ip" {
 resource "ibm_is_instance" "vsi" {
   for_each        = local.vsi_map
   name            = each.value.vsi_name
-  image           = (local.vsi_boot_volume_snapshot_id == null) ? var.image_id : null # image and snapshot are mutually exclusive
+  image           = (local.vsi_boot_volume_snapshot_crn == null) ? var.image_id : null # image and snapshot are mutually exclusive
   profile         = var.machine_type
   resource_group  = var.resource_group_id
   vpc             = var.vpc_id
@@ -282,7 +282,7 @@ resource "ibm_is_instance" "vsi" {
 
   # catalog offering for image, ignored if snapshot
   dynamic "catalog_offering" {
-    for_each = (local.vsi_boot_volume_snapshot_id == null && var.catalog_offering != null) ? [1] : []
+    for_each = (local.vsi_boot_volume_snapshot_crn == null && var.catalog_offering != null) ? [1] : []
     content {
       offering_crn = var.catalog_offering.offering_crn
       version_crn  = var.catalog_offering.version_crn
@@ -365,7 +365,7 @@ resource "ibm_is_instance" "vsi" {
     profile    = var.boot_volume_profile
     iops       = var.boot_volume_iops
     # determine snapshot in following order: input variable -> from consistency group -> null (none)
-    snapshot = local.vsi_boot_volume_snapshot_id
+    snapshot_crn = local.vsi_boot_volume_snapshot_crn
   }
 
   # Only add volumes if volumes are being created by the module
