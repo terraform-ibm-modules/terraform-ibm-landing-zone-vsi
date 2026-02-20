@@ -50,7 +50,7 @@ output "consistency_group_boot_snapshot_crn" {
 }
 
 output "consistency_group_storage_snapshot_crns" {
-  description = "Map of attached storage volumes requested, and the Snapshot Ids that will be used, determined from an optionally supplied consistency group, and mapped. "
+  description = "Map of attached storage volumes requested, and the Snapshot CRNs that will be used, determined from an optionally supplied consistency group, and mapped."
   value       = module.vsi.consistency_group_storage_snapshot_crns
 }
 

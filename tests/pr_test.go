@@ -175,7 +175,7 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
 
 	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
-		// first, verify the outputs for snapshot IDs were correctly used from group
+		// first, verify the outputs for snapshot CRNs were correctly used from group
 		assert.Equal(options.Testing, snapBootId, outputs["slz_vsi"].(map[string]interface{})["consistency_group_boot_snapshot_crn"])
 		// check to make sure that TWO attachment snapshots were configured from group
 		if assert.Equal(options.Testing, 2, len(outputs["slz_vsi"].(map[string]interface{})["consistency_group_storage_snapshot_crns"].(map[string]interface{}))) {

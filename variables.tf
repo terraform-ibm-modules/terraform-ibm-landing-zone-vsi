@@ -614,13 +614,13 @@ variable "secondary_allow_ip_spoofing" {
 ##############################################################################
 
 variable "boot_volume_snapshot_crn" {
-  description = "The snapshot crn of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used). If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place."
+  description = "The snapshot CRN of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used). If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place."
   type        = string
   default     = null
 }
 
 variable "snapshot_consistency_group_id" {
-  description = "The snapshot consistency group crn. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot crns by setting the appropriate input variables as well."
+  description = "The snapshot consistency group id. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot CRNs by setting the appropriate input variables as well."
   type        = string
   default     = null
 }

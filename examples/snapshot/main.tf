@@ -96,7 +96,7 @@ module "slz_vsi" {
       profile = "general-purpose"
       # snapshot_crn = <you can also specify a specific snapshot CRN if required>
   }]
-  # if specifying a group ID, snapshot IDs will be automatically determined from group using system labels
+  # if specifying a group ID, snapshot CRNs will be automatically determined from group using system labels
   snapshot_consistency_group_id = var.snapshot_consistency_group_id
   # boot_volume_snapshot_crn = <you can also specify a specific snapshot CRN if required>
 }
