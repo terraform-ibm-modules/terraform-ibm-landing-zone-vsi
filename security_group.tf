@@ -98,8 +98,6 @@ resource "ibm_is_security_group_rule" "security_group_rules" {
   local      = each.value.local
   ip_version = each.value.ip_version
 
-
-  # Deprecated nested protocol blocks (tcp/udp/icmp) replaced by top-level fields
   protocol = (
     local.sg_rule_has_tcp[each.key] ? "tcp" :
     local.sg_rule_has_udp[each.key] ? "udp" :
