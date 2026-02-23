@@ -26,7 +26,7 @@ module "fscloud_vsi" {
   load_balancers                 = var.load_balancers
   access_tags                    = var.access_tags
   snapshot_consistency_group_id  = var.snapshot_consistency_group_id
-  boot_volume_snapshot_id        = var.boot_volume_snapshot_id
+  boot_volume_snapshot_crn       = var.boot_volume_snapshot_crn
   enable_dedicated_host          = var.enable_dedicated_host
   dedicated_host_id              = var.dedicated_host_id
   custom_vsi_volume_names        = var.custom_vsi_volume_names
