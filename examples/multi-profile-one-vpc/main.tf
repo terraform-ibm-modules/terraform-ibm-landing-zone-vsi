@@ -12,7 +12,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.7"
+  version = "1.4.8"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.5.27"
+  version                   = "5.5.31"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -44,7 +44,7 @@ module "key_protect_all_inclusive" {
 
 module "existing_boot_volume_kms_key_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.4.1"
+  version = "1.4.2"
   crn     = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
 }
 
@@ -120,7 +120,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.13.2"
+  version           = "8.15.3"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -207,7 +207,7 @@ locals {
 
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
-  version          = "1.4.1"
+  version          = "1.4.2"
   architecture     = "amd64"
   operating_system = "ubuntu"
 }

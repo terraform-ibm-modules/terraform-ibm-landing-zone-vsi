@@ -12,7 +12,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.7"
+  version = "1.4.8"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.5.27"
+  version                   = "5.5.31"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.10.35"
+  version           = "1.12.2"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan              = "graduated-tier"
-  version           = "1.13.3"
+  version           = "1.13.6"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -102,7 +102,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.13.2"
+  version           = "8.15.3"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -204,7 +204,7 @@ locals {
 
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
-  version          = "1.4.1"
+  version          = "1.4.2"
   architecture     = "amd64"
   operating_system = "ubuntu"
 }
@@ -304,7 +304,7 @@ module "slz_vsi" {
 module "dedicated_host" {
   count   = var.enable_dedicated_host ? 1 : 0
   source  = "terraform-ibm-modules/dedicated-host/ibm"
-  version = "2.0.18"
+  version = "2.0.19"
   dedicated_hosts = [
     {
       host_group_name     = "${var.prefix}-dhgroup"
