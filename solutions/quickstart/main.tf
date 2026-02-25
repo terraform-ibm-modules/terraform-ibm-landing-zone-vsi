@@ -90,6 +90,19 @@ module "vpc" {
           source      = "0.0.0.0/0"
         },
         {
+          name      = "allow-ephemeral-inbound"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            port_min        = 1024
+            port_max        = 65535
+            source_port_min = 1
+            source_port_max = 65535
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
           name      = "allow-https-outbound"
           action    = "allow"
           direction = "outbound"
