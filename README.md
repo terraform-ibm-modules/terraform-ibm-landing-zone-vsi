@@ -25,7 +25,7 @@ This module creates Virtual Server Instances (VSI) across multiple subnets with 
     * [Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.](./examples/multi-profile-one-vpc) [![Deploy with IBM Cloud Schematics](https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe)](https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-multi-profile-one-vpc-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/multi-profile-one-vpc)
     * [Financial Services Cloud profile example](./examples/fscloud) [![Deploy with IBM Cloud Schematics](https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe)](https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/fscloud)
 
-    ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab
+    ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
 * [Deployable Architectures](./solutions)
     * <a href="./solutions/fully-configurable">Cloud automation for  Virtual Server Instance (Fully configurable)</a>
     * <a href="./solutions/quickstart">Cloud automation for Virtual Server Instance (Quickstart)</a>
