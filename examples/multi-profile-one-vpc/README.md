@@ -1,9 +1,10 @@
 # Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.
 
 <!-- BEGIN SCHEMATICS DEPLOY HOOK -->
-<a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-multi-profile-one-vpc-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/multi-profile-one-vpc"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom;"></a>
-<!-- END SCHEMATICS DEPLOY HOOK -->
+[![Deploy with IBM Cloud Schematics](https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe)](https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-multi-profile-one-vpc-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/multi-profile-one-vpc)
 
+ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab
+<!-- END SCHEMATICS DEPLOY HOOK -->
 
 It will provision the following:
 
@@ -18,6 +19,3 @@ It will provision the following:
     - A secondary VSI with secondary subnets and secondary security group.
     - A new Application Load Balancer and Network Load Balancer to balance traffic between all virtual servers that are created by this example.
 
-<!-- BEGIN SCHEMATICS DEPLOY TIP HOOK -->
-:information_source: Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab
-<!-- END SCHEMATICS DEPLOY TIP HOOK -->
