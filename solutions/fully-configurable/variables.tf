@@ -352,7 +352,7 @@ variable "block_storage_volumes" {
       iops              = optional(number)
       encryption_key    = optional(string)
       resource_group_id = optional(string)
-      snapshot_id       = optional(string) # set if you would like to base volume on a snapshot
+      snapshot_crn      = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.
       tags              = optional(list(string), [])
     })
   )
@@ -470,14 +470,14 @@ variable "secondary_allow_ip_spoofing" {
 # Snapshot Restore Variables
 ##############################################################################
 
-variable "boot_volume_snapshot_id" {
-  description = "The snapshot id of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used)."
+variable "boot_volume_snapshot_crn" {
+  description = "The snapshot CRN of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used). If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place."
   type        = string
   default     = null
 }
 
 variable "snapshot_consistency_group_id" {
-  description = "The snapshot consistency group Id. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot Ids by setting the appropriate input variables as well."
+  description = "The snapshot consistency group Id. If supplied, the group will be queried for snapshots that are matched with both boot volume and attached (attached are matched based on name suffix). You can override specific snapshot CRNs by setting the appropriate input variables as well."
   type        = string
   default     = null
 }
@@ -569,7 +569,7 @@ variable "install_logging_agent" {
 
 variable "logging_agent_version" {
   type        = string
-  default     = "1.7.1" # datasource: icr.io/ibm-observe/logs-agent-helm
+  default     = "1.8.0" # datasource: icr.io/ibm-observe/logs-agent-helm
   description = "Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true."
 }
 
@@ -666,7 +666,7 @@ variable "install_monitoring_agent" {
 
 variable "monitoring_agent_version" {
   type        = string
-  default     = "14.3.2" # datasource: icr.io/ext/sysdig/agent-slim
+  default     = "14.4.0" # datasource: icr.io/ext/sysdig/agent-slim
   description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 

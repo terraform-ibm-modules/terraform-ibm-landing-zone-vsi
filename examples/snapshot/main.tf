@@ -12,7 +12,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.7"
+  version = "1.4.8"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -45,7 +45,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.12.5"
+  version           = "8.15.5"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -59,7 +59,7 @@ module "slz_vpc" {
 
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
-  version          = "1.4.1"
+  version          = "1.4.2"
   architecture     = "amd64"
   operating_system = "ubuntu"
 }
@@ -89,14 +89,14 @@ module "slz_vsi" {
     {
       name    = "vsi-block-1"
       profile = "general-purpose"
-      # snapshot_id = <you can also specify a specific snapshot ID if required>
+      # snapshot_crn = <you can also specify a specific snapshot CRN if required>
     },
     {
       name    = "vsi-block-2"
       profile = "general-purpose"
-      # snapshot_id = <you can also specify a specific snapshot ID if required>
+      # snapshot_crn = <you can also specify a specific snapshot CRN if required>
   }]
-  # if specifying a group ID, snapshot IDs will be automatically determined from group using system labels
+  # if specifying a group ID, snapshot CRNs will be automatically determined from group using system labels
   snapshot_consistency_group_id = var.snapshot_consistency_group_id
-  # boot_volume_snapshot_id = <you can also specify a specific snapshot ID if required>
+  # boot_volume_snapshot_crn = <you can also specify a specific snapshot CRN if required>
 }

@@ -132,40 +132,324 @@
               "required": true,
               "options": [
                 {
-                  "displayname": "Ubuntu 22",
-                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-6"
+                  "displayname": "ibm-centos-7-0-minimal-amd64-1",
+                  "value": "ibm-centos-7-0-minimal-amd64-1"
                 },
                 {
-                  "displayname": "Ubuntu 24",
-                  "value": "ibm-ubuntu-24-04-3-minimal-amd64-2"
+                  "displayname": "ibm-centos-7-6-minimal-amd64-1",
+                  "value": "ibm-centos-7-6-minimal-amd64-1"
                 },
                 {
-                  "displayname": "Redhat 8",
-                  "value": "ibm-redhat-8-10-minimal-amd64-7"
+                  "displayname": "ibm-centos-7-6-minimal-amd64-2",
+                  "value": "ibm-centos-7-6-minimal-amd64-2"
                 },
                 {
-                  "displayname": "Redhat 9",
-                  "value": "ibm-redhat-9-4-minimal-amd64-10"
+                  "displayname": "ibm-centos-7-9-minimal-amd64-10",
+                  "value": "ibm-centos-7-9-minimal-amd64-10"
                 },
                 {
-                  "displayname": "Debian 12",
-                  "value": "ibm-debian-12-11-minimal-amd64-1"
+                  "displayname": "ibm-centos-7-9-minimal-amd64-11",
+                  "value": "ibm-centos-7-9-minimal-amd64-11"
                 },
                 {
-                  "displayname": "Debian 13",
-                  "value": "ibm-debian-13-minimal-amd64-1"
+                  "displayname": "ibm-centos-7-9-minimal-amd64-3",
+                  "value": "ibm-centos-7-9-minimal-amd64-3"
                 },
                 {
-                  "displayname": "Fedora",
-                  "value": "ibm-fedora-coreos-42-stable-2"
+                  "displayname": "ibm-centos-7-9-minimal-amd64-4",
+                  "value": "ibm-centos-7-9-minimal-amd64-4"
                 },
                 {
-                  "displayname": "CentOS 9",
-                  "value": "ibm-centos-stream-9-amd64-12"
+                  "displayname": "ibm-centos-7-9-minimal-amd64-5",
+                  "value": "ibm-centos-7-9-minimal-amd64-5"
                 },
                 {
-                  "displayname": "CentOS 10",
-                  "value": "ibm-centos-stream-10-amd64-4"
+                  "displayname": "ibm-centos-7-9-minimal-amd64-6",
+                  "value": "ibm-centos-7-9-minimal-amd64-6"
+                },
+                {
+                  "displayname": "ibm-centos-7-9-minimal-amd64-7",
+                  "value": "ibm-centos-7-9-minimal-amd64-7"
+                },
+                {
+                  "displayname": "ibm-centos-7-9-minimal-amd64-8",
+                  "value": "ibm-centos-7-9-minimal-amd64-8"
+                },
+                {
+                  "displayname": "ibm-centos-7-9-minimal-amd64-9",
+                  "value": "ibm-centos-7-9-minimal-amd64-9"
+                },
+                {
+                  "displayname": "ibm-centos-8-2-minimal-amd64-2",
+                  "value": "ibm-centos-8-2-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-centos-stream-10-amd64-5",
+                  "value": "ibm-centos-stream-10-amd64-5"
+                },
+                {
+                  "displayname": "ibm-centos-stream-8-amd64-1",
+                  "value": "ibm-centos-stream-8-amd64-1"
+                },
+                {
+                  "displayname": "ibm-centos-stream-8-amd64-3",
+                  "value": "ibm-centos-stream-8-amd64-3"
+                },
+                {
+                  "displayname": "ibm-centos-stream-8-amd64-4",
+                  "value": "ibm-centos-stream-8-amd64-4"
+                },
+                {
+                  "displayname": "ibm-centos-stream-9-amd64-13",
+                  "value": "ibm-centos-stream-9-amd64-13"
+                },
+                {
+                  "displayname": "ibm-debian-10-0-minimal-amd64-1",
+                  "value": "ibm-debian-10-0-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-10-11-minimal-amd64-1",
+                  "value": "ibm-debian-10-11-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-10-11-minimal-amd64-2",
+                  "value": "ibm-debian-10-11-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-debian-10-11-minimal-amd64-3",
+                  "value": "ibm-debian-10-11-minimal-amd64-3"
+                },
+                {
+                  "displayname": "ibm-debian-10-12-minimal-amd64-1",
+                  "value": "ibm-debian-10-12-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-10-13-minimal-amd64-1",
+                  "value": "ibm-debian-10-13-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-10-13-minimal-amd64-2",
+                  "value": "ibm-debian-10-13-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-debian-10-13-minimal-amd64-3",
+                  "value": "ibm-debian-10-13-minimal-amd64-3"
+                },
+                {
+                  "displayname": "ibm-debian-10-13-minimal-amd64-4",
+                  "value": "ibm-debian-10-13-minimal-amd64-4"
+                },
+                {
+                  "displayname": "ibm-debian-10-13-minimal-amd64-5",
+                  "value": "ibm-debian-10-13-minimal-amd64-5"
+                },
+                {
+                  "displayname": "ibm-debian-10-8-minimal-amd64-1",
+                  "value": "ibm-debian-10-8-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-11-11-minimal-amd64-5",
+                  "value": "ibm-debian-11-11-minimal-amd64-5"
+                },
+                {
+                  "displayname": "ibm-debian-12-12-minimal-amd64-1",
+                  "value": "ibm-debian-12-12-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-13-2-minimal-amd64-1",
+                  "value": "ibm-debian-13-2-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-9-0-64-minimal-for-vsi",
+                  "value": "ibm-debian-9-0-64-minimal-for-vsi"
+                },
+                {
+                  "displayname": "ibm-debian-9-12-minimal-amd64-1",
+                  "value": "ibm-debian-9-12-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-9-12-minimal-amd64-2",
+                  "value": "ibm-debian-9-12-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-debian-9-13-minimal-amd64-2",
+                  "value": "ibm-debian-9-13-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-debian-9-13-minimal-amd64-4",
+                  "value": "ibm-debian-9-13-minimal-amd64-4"
+                },
+                {
+                  "displayname": "ibm-debian-9-9-minimal-amd64-1",
+                  "value": "ibm-debian-9-9-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-debian-9-9-minimal-amd64-2",
+                  "value": "ibm-debian-9-9-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-fedora-coreos-43-stable-2",
+                  "value": "ibm-fedora-coreos-43-stable-2"
+                },
+                {
+                  "displayname": "ibm-redhat-7-6-minimal-amd64-1",
+                  "value": "ibm-redhat-7-6-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-10",
+                  "value": "ibm-redhat-7-9-minimal-amd64-10"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-11",
+                  "value": "ibm-redhat-7-9-minimal-amd64-11"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-12",
+                  "value": "ibm-redhat-7-9-minimal-amd64-12"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-3",
+                  "value": "ibm-redhat-7-9-minimal-amd64-3"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-4",
+                  "value": "ibm-redhat-7-9-minimal-amd64-4"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-5",
+                  "value": "ibm-redhat-7-9-minimal-amd64-5"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-6",
+                  "value": "ibm-redhat-7-9-minimal-amd64-6"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-7",
+                  "value": "ibm-redhat-7-9-minimal-amd64-7"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-8",
+                  "value": "ibm-redhat-7-9-minimal-amd64-8"
+                },
+                {
+                  "displayname": "ibm-redhat-7-9-minimal-amd64-9",
+                  "value": "ibm-redhat-7-9-minimal-amd64-9"
+                },
+                {
+                  "displayname": "ibm-redhat-7-upgrade-8-amd64-1",
+                  "value": "ibm-redhat-7-upgrade-8-amd64-1"
+                },
+                {
+                  "displayname": "ibm-redhat-8-10-minimal-amd64-11",
+                  "value": "ibm-redhat-8-10-minimal-amd64-11"
+                },
+                {
+                  "displayname": "ibm-redhat-8-2-minimal-amd64-2",
+                  "value": "ibm-redhat-8-2-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-redhat-8-2-minimal-amd64-3",
+                  "value": "ibm-redhat-8-2-minimal-amd64-3"
+                },
+                {
+                  "displayname": "ibm-redhat-8-6-minimal-amd64-1",
+                  "value": "ibm-redhat-8-6-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-redhat-8-6-minimal-amd64-2",
+                  "value": "ibm-redhat-8-6-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-redhat-8-6-minimal-amd64-3",
+                  "value": "ibm-redhat-8-6-minimal-amd64-3"
+                },
+                {
+                  "displayname": "ibm-redhat-8-6-minimal-amd64-4",
+                  "value": "ibm-redhat-8-6-minimal-amd64-4"
+                },
+                {
+                  "displayname": "ibm-redhat-8-6-minimal-amd64-5",
+                  "value": "ibm-redhat-8-6-minimal-amd64-5"
+                },
+                {
+                  "displayname": "ibm-redhat-8-6-minimal-amd64-6",
+                  "value": "ibm-redhat-8-6-minimal-amd64-6"
+                },
+                {
+                  "displayname": "ibm-redhat-9-0-minimal-amd64-1",
+                  "value": "ibm-redhat-9-0-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-redhat-9-0-minimal-amd64-2",
+                  "value": "ibm-redhat-9-0-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-redhat-9-0-minimal-amd64-3",
+                  "value": "ibm-redhat-9-0-minimal-amd64-3"
+                },
+                {
+                  "displayname": "ibm-redhat-9-0-minimal-amd64-4",
+                  "value": "ibm-redhat-9-0-minimal-amd64-4"
+                },
+                {
+                  "displayname": "ibm-redhat-9-4-minimal-amd64-13",
+                  "value": "ibm-redhat-9-4-minimal-amd64-13"
+                },
+                {
+                  "displayname": "ibm-redhat-9-6-minimal-amd64-6",
+                  "value": "ibm-redhat-9-6-minimal-amd64-6"
+                },
+                {
+                  "displayname": "ibm-ubuntu-16-04-5-minimal-amd64-1",
+                  "value": "ibm-ubuntu-16-04-5-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-1-minimal-amd64-1",
+                  "value": "ibm-ubuntu-18-04-1-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-1-minimal-amd64-2",
+                  "value": "ibm-ubuntu-18-04-1-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-5-minimal-amd64-1",
+                  "value": "ibm-ubuntu-18-04-5-minimal-amd64-1"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-6-minimal-amd64-2",
+                  "value": "ibm-ubuntu-18-04-6-minimal-amd64-2"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-6-minimal-amd64-3",
+                  "value": "ibm-ubuntu-18-04-6-minimal-amd64-3"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-6-minimal-amd64-4",
+                  "value": "ibm-ubuntu-18-04-6-minimal-amd64-4"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-6-minimal-amd64-5",
+                  "value": "ibm-ubuntu-18-04-6-minimal-amd64-5"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-6-minimal-amd64-6",
+                  "value": "ibm-ubuntu-18-04-6-minimal-amd64-6"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-6-minimal-amd64-7",
+                  "value": "ibm-ubuntu-18-04-6-minimal-amd64-7"
+                },
+                {
+                  "displayname": "ibm-ubuntu-18-04-6-minimal-amd64-8",
+                  "value": "ibm-ubuntu-18-04-6-minimal-amd64-8"
+                },
+                {
+                  "displayname": "ibm-ubuntu-22-04-5-minimal-amd64-10",
+                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-10"
+                },
+                {
+                  "displayname": "ibm-ubuntu-24-04-3-minimal-amd64-5",
+                  "value": "ibm-ubuntu-24-04-3-minimal-amd64-5"
                 }
               ]
             },
@@ -658,7 +942,7 @@
               "hidden": true
             },
             {
-              "key": "boot_volume_snapshot_id"
+              "key": "boot_volume_snapshot_crn"
             },
             {
               "key": "dedicated_host_id"
@@ -955,7 +1239,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": " Defines the VPC instance and subnets where Virtual Server Instance will be created. ",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.12.1",
+              "version": "v8.15.0",
               "flavors": [
                 "fully-configurable"
               ],
@@ -988,7 +1272,7 @@
               "name": "deploy-arch-ibm-kms",
               "description": "Enable Cloud Automation for Key Protect when you want services to use your own managed encryption keys. If disabled, it will fall back on IBM Cloud's default service-managed encryption. ",
               "id": "2cad4789-fa90-4886-9c9e-857081c273ee-global",
-              "version": "v5.5.3",
+              "version": "v5.5.27",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1065,7 +1349,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.11.0"
+              "version": "v1.13.3"
             },
             {
               "name": "deploy-arch-ibm-cloud-logs",
@@ -1107,7 +1391,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.10.1"
+              "version": "v1.11.3"
             },
             {
               "name": "deploy-arch-ibm-activity-tracker",
@@ -1136,7 +1420,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.5.6"
+              "version": "v1.6.13"
             },
             {
               "name": "deploy-arch-ibm-scc-workload-protection",
@@ -1165,13 +1449,13 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.16.7"
+              "version": "v1.17.4"
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Configure a Secrets Manager instance to manage the ssh private key for the virtual server instance.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.12.7",
+              "version": "v2.13.3",
               "flavors": [
                 "fully-configurable"
               ],

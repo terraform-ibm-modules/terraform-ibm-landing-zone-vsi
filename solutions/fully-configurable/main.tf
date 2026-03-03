@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.4.7"
+  version                      = "1.4.8"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -14,14 +14,14 @@ module "resource_group" {
 module "existing_kms_crn_parser" {
   count   = var.existing_kms_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.4.1"
+  version = "1.4.2"
   crn     = var.existing_kms_instance_crn
 }
 
 module "existing_boot_volume_kms_key_crn_parser" {
   count   = var.existing_boot_volume_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.4.1"
+  version = "1.4.2"
   crn     = var.existing_boot_volume_kms_key_crn
 }
 
@@ -96,7 +96,7 @@ module "kms" {
   }
   count                       = var.kms_encryption_enabled_boot_volume && var.existing_boot_volume_kms_key_crn == null ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.25"
+  version                     = "5.5.33"
   create_key_protect_instance = false
   region                      = local.kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -125,7 +125,7 @@ module "kms" {
 
 module "existing_vpc_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.4.1"
+  version = "1.4.2"
   crn     = var.existing_vpc_crn
 }
 
@@ -236,7 +236,7 @@ module "vsi" {
   load_balancers                   = var.load_balancers
   access_tags                      = var.vsi_access_tags
   snapshot_consistency_group_id    = var.snapshot_consistency_group_id
-  boot_volume_snapshot_id          = var.boot_volume_snapshot_id
+  boot_volume_snapshot_crn         = var.boot_volume_snapshot_crn
   enable_dedicated_host            = var.dedicated_host_id != null ? true : false
   dedicated_host_id                = var.dedicated_host_id
   use_legacy_network_interface     = false
@@ -283,7 +283,7 @@ locals {
 module "trusted_profile" {
   count   = local.create_logging_trusted_profile ? 1 : 0
   source  = "terraform-ibm-modules/trusted-profile/ibm"
-  version = "3.2.17"
+  version = "3.2.19"
 
   trusted_profile_name        = "${local.prefix}-vsi-logging-trusted-profile"
   trusted_profile_description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs instance - ${local.cloud_logs_instance_id}"
@@ -335,7 +335,7 @@ module "trusted_profile" {
 module "existing_secret_manager_crn_parser" {
   count   = var.existing_secrets_manager_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.4.1"
+  version = "1.4.2"
   crn     = var.existing_secrets_manager_instance_crn
 }
 locals {
@@ -346,7 +346,7 @@ locals {
 module "secrets_manager_arbitrary_secret" {
   count                       = var.existing_secrets_manager_instance_crn != null && var.auto_generate_ssh_key ? 1 : 0
   source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "2.12.25"
+  version                     = "2.13.8"
   existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.existing_secrets_manager_instance_region
   endpoint_type               = var.existing_secrets_manager_endpoint_type
