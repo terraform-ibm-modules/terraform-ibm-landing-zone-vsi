@@ -12,7 +12,7 @@ authors:
   - name: "Jordan Williams"
 
 # The release that the reference architecture describes
-version: 5.20.15
+version: 6.1.2
 
 # Whether the reference architecture is published to Cloud Docs production.
 # When set to false, the file is available only in staging. Default is false.
@@ -46,7 +46,7 @@ content-type: reference-architecture
 {: toc-content-type="reference-architecture"}
 {: toc-industry="Banking,FinancialSector"}
 {: toc-use-case="Cybersecurity"}
-{: toc-version="5.20.15"}
+{: toc-version="6.1.2"}
 
 The Quickstart - Basic and simple variation of the Landing zone for applications with virtual servers deployable architecture provides a simplified and fast deployment path for getting started with virtual servers on IBM Cloud VPC. This variation is designed for rapid deployment with sensible defaults, making it ideal for demonstration, development, proof-of-concept environments, and users who want to get started quickly with minimal configuration.
 
