@@ -215,11 +215,6 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 	region, _ := testhelper.GetBestVpcRegion(val, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
 
 	logger.Log(t, "Tempdir: ", tempTerraformDir)
-	envVars := map[string]string{}
-
-	if t.Name() == "TestFullyConfigurable" {
-		envVars["TF_LOG"] = "TRACE"
-	}
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir,
 		Vars: map[string]interface{}{
@@ -228,7 +223,6 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 			"resource_tags": tags,
 			"create_vpc":    create_vpc,
 		},
-		EnvVars: envVars,
 		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
 		// This is the same as setting the -upgrade=true flag with terraform.
 		Upgrade: true,
@@ -246,7 +240,9 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 // Test the fully-configurable DA with defaults
 func TestFullyConfigurable(t *testing.T) {
 	t.Parallel()
+
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
