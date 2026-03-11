@@ -244,6 +244,7 @@ func TestFullyConfigurable(t *testing.T) {
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
+		t.Logf("Terraform apply failed: %+v", existErr)
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
 		// ------------------------------------------------------------------------------------
@@ -301,6 +302,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
+		t.Logf("Terraform apply failed: %+v", existErr)
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
 		// ------------------------------------------------------------------------------------
@@ -360,6 +362,7 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
+		t.Logf("Terraform apply failed: %+v", existErr)
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
 		// ------------------------------------------------------------------------------------
