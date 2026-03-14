@@ -283,7 +283,7 @@ locals {
 module "trusted_profile" {
   count   = local.create_logging_trusted_profile ? 1 : 0
   source  = "terraform-ibm-modules/trusted-profile/ibm"
-  version = "3.2.19"
+  version = "3.2.20"
 
   trusted_profile_name        = "${local.prefix}-vsi-logging-trusted-profile"
   trusted_profile_description = "Trusted profile for VSI instances to send logs to IBM Cloud Logs instance - ${local.cloud_logs_instance_id}"
