@@ -68,27 +68,67 @@ module "vpc" {
           action    = "allow"
           direction = "inbound"
           tcp = {
-            port_min        = 22
-            port_max        = 22
-            source_port_min = 1024
-            source_port_max = 65535
+            port_min = 22
+            port_max = 22
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
         },
         {
-          name      = "allow-ephemeral-outbound"
+          name      = "allow-all-22-inbound-response"
           action    = "allow"
           direction = "outbound"
           tcp = {
-            source_port_min = 1
-            source_port_max = 65535
-            port_min        = 1024
-            port_max        = 65535
+            source_port_min = 22
+            source_port_max = 22
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
-        }
+        },
+        {
+          name      = "allow-https-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            port_min = 443
+            port_max = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-https-outbound-response"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            source_port_min = 443
+            source_port_max = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-http-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            port_min = 80
+            port_max = 80
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-http-outbound-response"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            source_port_min = 80
+            source_port_max = 80
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
       ]
     }
   ]
@@ -160,6 +200,33 @@ module "vsi" {
         tcp = {
           port_min = 22
           port_max = 22
+        }
+      },
+      {
+        name      = "allow-http-outbound"
+        direction = "outbound"
+        source    = "0.0.0.0/0"
+        tcp = {
+          port_min = 80
+          port_max = 80
+        }
+      },
+      {
+        name      = "allow-https-outbound"
+        direction = "outbound"
+        source    = "0.0.0.0/0"
+        tcp = {
+          port_min = 443
+          port_max = 443
+        }
+      },
+      {
+        name      = "allow-dns-udp-outbound"
+        direction = "outbound"
+        source    = "0.0.0.0/0"
+        udp = {
+          port_min = 53
+          port_max = 53
         }
       }
     ]
