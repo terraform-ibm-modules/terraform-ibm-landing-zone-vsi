@@ -9,6 +9,8 @@ import (
 
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := setupOptions(t, basicExampleTerraformDir, "slz-vsi-basic")
 
@@ -24,6 +26,8 @@ func TestRunBasicExample(t *testing.T) {
 
 func TestRunCatalogImageExample(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := setupOptions(t, catalogImageExampleTerraformDir, "slz-vsi-cat")
 
@@ -34,6 +38,8 @@ func TestRunCatalogImageExample(t *testing.T) {
 
 func TestRunGen2BootExample(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := setupOptions(t, gen2bootExampleTerraformDir, "slz-vsi-gen2")
 
