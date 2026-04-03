@@ -42,8 +42,8 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 
 var permanentResources map[string]interface{}
 
-// Channel to limit parallel test execution to 8 at a time
-var parallelTest = make(chan struct{}, 8)
+// Channel to limit parallel test execution to 7 at a time
+var parallelTest = make(chan struct{}, 7)
 
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
