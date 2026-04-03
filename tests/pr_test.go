@@ -42,8 +42,8 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 
 var permanentResources map[string]interface{}
 
-// Channel to limit parallel test execution to 7 at a time
-var parallelTest = make(chan struct{}, 7)
+// Channel to limit parallel test execution to 8 at a time
+var testSemaphore = make(chan struct{}, 8)
 
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
@@ -59,12 +59,12 @@ func TestMain(m *testing.M) {
 
 // acquireTestSlot acquires a slot to limit parallel execution to 7 tests at a time
 func acquireTestSlot() {
-	parallelTest <- struct{}{}
+	testSemaphore <- struct{}{}
 }
 
 // releaseTestSlot releases a slot back to allow other tests to run
 func releaseTestSlot() {
-	<-parallelTest
+	<-testSemaphore
 }
 
 func setupOptions(t *testing.T, dir string, prefix string) *testhelper.TestOptions {
