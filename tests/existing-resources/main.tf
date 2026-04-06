@@ -1,7 +1,7 @@
 module "resource_group" {
   count                        = var.create_vpc ? 1 : 0
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.4.8"
+  version                      = "1.5.0"
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
 }
@@ -13,7 +13,7 @@ module "resource_group" {
 module "vpc" {
   count             = var.create_vpc ? 1 : 0
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.15.10"
+  version           = "8.15.11"
   resource_group_id = module.resource_group[0].resource_group_id
   region            = var.region
   name              = "vpc"
