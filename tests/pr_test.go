@@ -42,6 +42,9 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 
 var permanentResources map[string]interface{}
 
+// Channel to limit parallel test execution to 6 at a time
+var testSemaphore = make(chan struct{}, 6)
+
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
 	// Read the YAML file contents
@@ -52,6 +55,16 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(m.Run())
+}
+
+// acquireTestSlot acquires a slot to limit parallel execution to 7 tests at a time
+func acquireTestSlot() {
+	testSemaphore <- struct{}{}
+}
+
+// releaseTestSlot releases a slot back to allow other tests to run
+func releaseTestSlot() {
+	<-testSemaphore
 }
 
 func setupOptions(t *testing.T, dir string, prefix string) *testhelper.TestOptions {
@@ -79,6 +92,8 @@ func setupOptions(t *testing.T, dir string, prefix string) *testhelper.TestOptio
 
 func TestRunCompleteExample(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := setupOptions(t, completeExampleTerraformDir, "slz-vsi-com")
 
@@ -125,6 +140,8 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 
 func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := setupFSCloudOptions(t, "slz-vsi-fscloud")
 
@@ -135,6 +152,8 @@ func TestRunFSCloudExample(t *testing.T) {
 
 func TestRunExistingSnapshotGroupExample(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	snapGroupId := permanentResources["snapshot_group_au_syd_group_id"]
 
@@ -240,6 +259,8 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 // Test the fully-configurable DA with defaults
 func TestFullyConfigurable(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
@@ -295,6 +316,8 @@ func TestFullyConfigurable(t *testing.T) {
 // Test the fully-configurable DA using existing KMS key
 func TestExistingKeyFullyConfigurable(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	sshPublicKey := sshPublicKey(t)
 
@@ -356,6 +379,8 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 // Run upgrade test on fully-configurable variation
 func TestUpgradeFullyConfigurable(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
@@ -416,6 +441,8 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 // and if deployed to same subnets would have duplicate names.
 func TestRunMultiProfileExample(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
@@ -435,6 +462,8 @@ func TestRunMultiProfileExample(t *testing.T) {
 
 func TestAddonDefaultConfiguration(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	// run this terraform code to return the latest ubuntu image ID
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, false)
@@ -497,6 +526,8 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 
 func TestQuickstartDefaultConfigSchematics(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
@@ -523,6 +554,8 @@ func TestQuickstartDefaultConfigSchematics(t *testing.T) {
 
 func TestQuickstartDefaultConfigUpgradeSchematics(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
@@ -551,6 +584,8 @@ func TestQuickstartDefaultConfigUpgradeSchematics(t *testing.T) {
 
 func TestQuickstartExistingConfigSchematics(t *testing.T) {
 	t.Parallel()
+	acquireTestSlot()
+	defer releaseTestSlot()
 
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
