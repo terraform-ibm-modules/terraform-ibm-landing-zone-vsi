@@ -44,7 +44,7 @@ module "key_protect_all_inclusive" {
 
 module "existing_boot_volume_kms_key_crn_parser" {
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.4.2"
+  version = "1.4.3"
   crn     = module.key_protect_all_inclusive.keys["slz-vsi.${var.prefix}-vsi"].crn
 }
 
@@ -120,7 +120,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.15.11"
+  version           = "8.16.1"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -207,7 +207,7 @@ locals {
 
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
-  version          = "1.4.2"
+  version          = "1.4.3"
   architecture     = "amd64"
   operating_system = "ubuntu"
 }
