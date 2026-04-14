@@ -569,7 +569,7 @@ variable "install_logging_agent" {
 
 variable "logging_agent_version" {
   type        = string
-  default     = "1.8.0" # datasource: icr.io/ibm-observe/logs-agent-helm
+  default     = "1.8.1" # datasource: icr.io/ibm-observe/logs-agent-helm
   description = "Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true."
 }
 
