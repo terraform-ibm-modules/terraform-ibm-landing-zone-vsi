@@ -12,7 +12,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.5.0"
+  version = "1.6.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -45,7 +45,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.15.11"
+  version           = "8.17.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -70,7 +70,7 @@ resource "ibm_is_placement_group" "placement_group" {
 
 module "vsi_image_selector" {
   source           = "terraform-ibm-modules/common-utilities/ibm//modules/vsi-image-selector"
-  version          = "1.4.2"
+  version          = "1.5.0"
   architecture     = "amd64"
   operating_system = "ubuntu"
 }

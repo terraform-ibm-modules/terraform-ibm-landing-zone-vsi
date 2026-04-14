@@ -87,7 +87,7 @@ variable "vsi_name" {
 variable "image_name" {
   description = "Image ID used for Virtual server instance. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-about-images)"
   type        = string
-  default     = "ibm-ubuntu-24-04-4-minimal-amd64-1"
+  default     = "ibm-ubuntu-24-04-4-minimal-amd64-2"
 }
 
 variable "size" {
