@@ -340,8 +340,8 @@
                   "value": "ibm-redhat-7-upgrade-8-amd64-1"
                 },
                 {
-                  "displayname": "ibm-redhat-8-10-minimal-amd64-11",
-                  "value": "ibm-redhat-8-10-minimal-amd64-11"
+                  "displayname": "ibm-redhat-8-10-minimal-amd64-12",
+                  "value": "ibm-redhat-8-10-minimal-amd64-12"
                 },
                 {
                   "displayname": "ibm-redhat-8-2-minimal-amd64-2",
@@ -396,8 +396,8 @@
                   "value": "ibm-redhat-9-4-minimal-amd64-13"
                 },
                 {
-                  "displayname": "ibm-redhat-9-6-minimal-amd64-6",
-                  "value": "ibm-redhat-9-6-minimal-amd64-6"
+                  "displayname": "ibm-redhat-9-6-minimal-amd64-7",
+                  "value": "ibm-redhat-9-6-minimal-amd64-7"
                 },
                 {
                   "displayname": "ibm-ubuntu-16-04-5-minimal-amd64-1",
