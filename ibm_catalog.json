@@ -288,8 +288,8 @@
                   "value": "ibm-debian-9-9-minimal-amd64-2"
                 },
                 {
-                  "displayname": "ibm-fedora-coreos-43-stable-1",
-                  "value": "ibm-fedora-coreos-43-stable-1"
+                  "displayname": "ibm-fedora-coreos-43-stable-2",
+                  "value": "ibm-fedora-coreos-43-stable-2"
                 },
                 {
                   "displayname": "ibm-redhat-7-6-minimal-amd64-1",
@@ -444,12 +444,12 @@
                   "value": "ibm-ubuntu-18-04-6-minimal-amd64-8"
                 },
                 {
-                  "displayname": "ibm-ubuntu-22-04-5-minimal-amd64-10",
-                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-10"
+                  "displayname": "ibm-ubuntu-22-04-5-minimal-amd64-13",
+                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-13"
                 },
                 {
-                  "displayname": "ibm-ubuntu-24-04-3-minimal-amd64-5",
-                  "value": "ibm-ubuntu-24-04-3-minimal-amd64-5"
+                  "displayname": "ibm-ubuntu-24-04-4-minimal-amd64-2",
+                  "value": "ibm-ubuntu-24-04-4-minimal-amd64-2"
                 }
               ]
             },

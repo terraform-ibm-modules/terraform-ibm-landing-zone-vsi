@@ -16,7 +16,7 @@ variable "existing_resource_group_name" {
 
 variable "prefix" {
   type        = string
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md). **Important:** Updating the prefix after the initial deployment may require recreating certain resources. Learn more about this limitation [here](https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-known-issues#ki-vpc-prefix-change-recreate)."
   nullable    = true
   validation {
     condition = var.prefix == null || var.prefix == "" ? true : alltrue([
@@ -87,7 +87,7 @@ variable "vsi_name" {
 variable "image_name" {
   description = "Image ID used for Virtual server instance. [Learn more](https://cloud.ibm.com/docs/vpc?topic=vpc-about-images)"
   type        = string
-  default     = "ibm-ubuntu-24-04-3-minimal-amd64-5"
+  default     = "ibm-ubuntu-24-04-4-minimal-amd64-2"
 }
 
 variable "size" {

@@ -13,22 +13,54 @@ This module creates Virtual Server Instances (VSI) across multiple subnets with 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
 ## Overview
-* [terraform-ibm-landing-zone-vsi](#terraform-ibm-landing-zone-vsi)
-* [Submodules](./modules)
-    * [fscloud](./modules/fscloud)
-* [Examples](./examples)
-:information_source: Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab
-    * <a href="./examples/basic">End to end basic example</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/basic"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./examples/catalog-image">End to end basic example using catalog image</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-catalog-image-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/catalog-image"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./examples/complete">Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./examples/fscloud">Financial Services Cloud profile example</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./examples/gen2-storage">End to end basic example using gen2 boot volume</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-gen2-storage-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/gen2-storage"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./examples/multi-profile-one-vpc">Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-multi-profile-one-vpc-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/multi-profile-one-vpc"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./examples/snapshot">Basic example using a Snapshot Consistency Group for volumes</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-snapshot-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/snapshot"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-* [Deployable Architectures](./solutions)
-    * <a href="./solutions/fully-configurable">Cloud automation for  Virtual Server Instance (Fully configurable)</a>
-    * <a href="./solutions/quickstart">Cloud automation for Virtual Server Instance (Quickstart)</a>
-* [Contributing](#contributing)
+<ul>
+  <li><a href="#terraform-ibm-landing-zone-vsi">terraform-ibm-landing-zone-vsi</a></li>
+  <li><a href="./modules">Submodules</a>
+    <ul>
+      <li><a href="./modules/fscloud">fscloud</a></li>
+    </ul>
+  </li>
+  <li><a href="./examples">Examples</a>
+    <ul>
+      <li>
+        <a href="./examples/basic">End to end basic example</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/basic"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
+        <a href="./examples/catalog-image">End to end basic example using catalog image</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-catalog-image-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/catalog-image"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
+        <a href="./examples/complete">Complete Example using a placement group, attaching a load balancer, creating secondary interface, and adding additional data volumes</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
+        <a href="./examples/fscloud">Financial Services Cloud profile example</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
+        <a href="./examples/gen2-storage">End to end basic example using gen2 boot volume</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-gen2-storage-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/gen2-storage"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
+        <a href="./examples/multi-profile-one-vpc">Example demonstrating the deployment of different sets of VSIs (with different machine types) to the same VPC and subnets, empoying two calls to the module.</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-multi-profile-one-vpc-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/multi-profile-one-vpc"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
+        <a href="./examples/snapshot">Basic example using a Snapshot Consistency Group for volumes</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=landing-zone-vsi-snapshot-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/examples/snapshot"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+    </ul>
+    ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
+  </li>
+  <li><a href="./solutions">Deployable Architectures</a>
+    <ul>
+      <li><a href="./solutions/fully-configurable">Cloud automation for  Virtual Server Instance (Fully configurable)</a></li>
+      <li><a href="./solutions/quickstart">Cloud automation for Virtual Server Instance (Quickstart)</a></li>
+    </ul>
+  </li>
+  <li><a href="#contributing">Contributing</a></li>
+</ul>
 <!-- END OVERVIEW HOOK -->
 
 ## terraform-ibm-landing-zone-vsi
@@ -162,14 +194,14 @@ You need the following permissions to run this module.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.87.3, < 2.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.78.4, < 3.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
 
 ### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.4.2 |
+| <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.5.0 |
 
 ### Resources
 
@@ -221,8 +253,8 @@ You need the following permissions to run this module.
 | <a name="input_install_logging_agent"></a> [install\_logging\_agent](#input\_install\_logging\_agent) | Set to true to enable installing the logging agent into your VSI at time of creation. If true, values must be passed for `logging_target_host` and either `logging_api_key` or `logging_trusted_profile_id`. Installation logs can be found on the VSI in /run/monitoring-agent/monitoring-agent-install.log. | `bool` | `false` | no |
 | <a name="input_install_monitoring_agent"></a> [install\_monitoring\_agent](#input\_install\_monitoring\_agent) | Set to true to install the IBM Cloud Monitoring agent on the provisioned VSI to gather both metrics and security and compliance data. If set to true, values must be passed for `monitoring_access_key`, `monitoring_collector_endpoint` and `monitoring_collector_port`. Installation logs can be found on the VSI in /run/logging-agent/logs-agent-install.log | `bool` | `false` | no |
 | <a name="input_kms_encryption_enabled"></a> [kms\_encryption\_enabled](#input\_kms\_encryption\_enabled) | Set this to true to control the encryption keys used to encrypt the data that for the block storage volumes for VPC. If set to false, the data is encrypted by using randomly generated keys. For more info on encrypting block storage volumes, see https://cloud.ibm.com/docs/vpc?topic=vpc-creating-instances-byok | `bool` | `false` | no |
-| <a name="input_load_balancers"></a> [load\_balancers](#input\_load\_balancers) | Load balancers to add to VSI | <pre>list(<br/>    object({<br/>      name                       = string<br/>      type                       = string<br/>      listener_port              = optional(number)<br/>      listener_port_max          = optional(number)<br/>      listener_port_min          = optional(number)<br/>      listener_protocol          = string<br/>      connection_limit           = optional(number)<br/>      idle_connection_timeout    = optional(number)<br/>      algorithm                  = string<br/>      protocol                   = string<br/>      health_delay               = number<br/>      health_retries             = number<br/>      health_timeout             = number<br/>      health_type                = string<br/>      pool_member_port           = string<br/>      profile                    = optional(string)<br/>      accept_proxy_protocol      = optional(bool)<br/>      subnet_id_to_provision_nlb = optional(string) # Required for Network Load Balancer. If no value is provided, the first one from the VPC subnet list will be selected.<br/>      dns = optional(<br/>        object({<br/>          instance_crn = string<br/>          zone_id      = string<br/>        })<br/>      )<br/>      security_group = optional(<br/>        object({<br/>          name = string<br/>          rules = list(<br/>            object({<br/>              name      = string<br/>              direction = string<br/>              source    = string<br/>              tcp = optional(<br/>                object({<br/>                  port_max = number<br/>                  port_min = number<br/>                })<br/>              )<br/>              udp = optional(<br/>                object({<br/>                  port_max = number<br/>                  port_min = number<br/>                })<br/>              )<br/>              icmp = optional(<br/>                object({<br/>                  type = number<br/>                  code = number<br/>                })<br/>              )<br/>            })<br/>          )<br/>        })<br/>      )<br/>    })<br/>  )</pre> | `[]` | no |
-| <a name="input_logging_agent_version"></a> [logging\_agent\_version](#input\_logging\_agent\_version) | Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true. | `string` | `"1.8.0"` | no |
+| <a name="input_load_balancers"></a> [load\_balancers](#input\_load\_balancers) | Load balancers to add to VSI | <pre>list(<br/>    object({<br/>      name                       = string<br/>      type                       = string<br/>      listener_port              = optional(number)<br/>      listener_port_max          = optional(number)<br/>      listener_port_min          = optional(number)<br/>      listener_protocol          = string<br/>      connection_limit           = optional(number)<br/>      idle_connection_timeout    = optional(number)<br/>      algorithm                  = string<br/>      protocol                   = string<br/>      health_delay               = number<br/>      health_retries             = number<br/>      health_timeout             = number<br/>      health_type                = string<br/>      pool_member_port           = string<br/>      profile                    = optional(string)<br/>      accept_proxy_protocol      = optional(bool)<br/>      subnet_id_to_provision_nlb = optional(string) # Required for Network Load Balancer. If no value is provided, the first one from the VPC subnet list will be selected.<br/>      dns = optional(<br/>        object({<br/>          instance_crn = string<br/>          zone_id      = string<br/>        })<br/>      )<br/>      security_group = optional(<br/>        object({<br/>          name = string<br/>          rules = list(<br/>            object({<br/>              name       = string<br/>              direction  = string<br/>              source     = string<br/>              local      = optional(string)<br/>              ip_version = optional(string)<br/>              tcp = optional(<br/>                object({<br/>                  port_max = number<br/>                  port_min = number<br/>                })<br/>              )<br/>              udp = optional(<br/>                object({<br/>                  port_max = number<br/>                  port_min = number<br/>                })<br/>              )<br/>              icmp = optional(<br/>                object({<br/>                  type = number<br/>                  code = number<br/>                })<br/>              )<br/>            })<br/>          )<br/>        })<br/>      )<br/>    })<br/>  )</pre> | `[]` | no |
+| <a name="input_logging_agent_version"></a> [logging\_agent\_version](#input\_logging\_agent\_version) | Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true. | `string` | `"1.8.1"` | no |
 | <a name="input_logging_api_key"></a> [logging\_api\_key](#input\_logging\_api\_key) | API key used by the logging agent to authenticate with IBM Cloud, must be provided if `logging_auth_mode` is set to `IAMAPIKey`. For more information on creating an API key for the logging agent, see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-iam-ingestion-serviceid-api-key. | `string` | `null` | no |
 | <a name="input_logging_application_name"></a> [logging\_application\_name](#input\_logging\_application\_name) | The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `$HOSTNAME`. | `bool` | `null` | no |
 | <a name="input_logging_auth_mode"></a> [logging\_auth\_mode](#input\_logging\_auth\_mode) | Authentication mode the logging agent to use to authenticate with IBM Cloud, must be either `IAMAPIKey` or `VSITrustedProfile`. | `string` | `"IAMAPIKey"` | no |
@@ -236,7 +268,7 @@ You need the following permissions to run this module.
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles | `string` | n/a | yes |
 | <a name="input_manage_reserved_ips"></a> [manage\_reserved\_ips](#input\_manage\_reserved\_ips) | Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP. | `bool` | `false` | no |
 | <a name="input_monitoring_access_key"></a> [monitoring\_access\_key](#input\_monitoring\_access\_key) | Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key). | `string` | `null` | no |
-| <a name="input_monitoring_agent_version"></a> [monitoring\_agent\_version](#input\_monitoring\_agent\_version) | Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest. | `string` | `"14.4.0"` | no |
+| <a name="input_monitoring_agent_version"></a> [monitoring\_agent\_version](#input\_monitoring\_agent\_version) | Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest. | `string` | `"14.5.0"` | no |
 | <a name="input_monitoring_collector_endpoint"></a> [monitoring\_collector\_endpoint](#input\_monitoring\_collector\_endpoint) | Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion). | `string` | `null` | no |
 | <a name="input_monitoring_collector_port"></a> [monitoring\_collector\_port](#input\_monitoring\_collector\_port) | Port the agent targets when sending metrics or compliance data, defaults to `6443`. | `number` | `6443` | no |
 | <a name="input_monitoring_tags"></a> [monitoring\_tags](#input\_monitoring\_tags) | A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the agent. | `list(string)` | `[]` | no |

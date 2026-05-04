@@ -16,7 +16,7 @@ variable "existing_resource_group_name" {
 
 variable "prefix" {
   type        = string
-  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To skip using a prefix, set this value to null or an empty string. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md). **Important:** When deploying VPC using VPC deployable architecture, updating the prefix after the initial deployment may require recreating certain resources. Learn more about this limitation [here](https://cloud.ibm.com/docs/secure-infrastructure-vpc?topic=secure-infrastructure-vpc-known-issues#ki-vpc-prefix-change-recreate)."
   nullable    = true
   validation {
     condition = var.prefix == null || var.prefix == "" ? true : alltrue([
@@ -569,7 +569,7 @@ variable "install_logging_agent" {
 
 variable "logging_agent_version" {
   type        = string
-  default     = "1.8.0" # datasource: icr.io/ibm-observe/logs-agent-helm
+  default     = "1.8.1" # datasource: icr.io/ibm-observe/logs-agent-helm
   description = "Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true."
 }
 
@@ -666,7 +666,7 @@ variable "install_monitoring_agent" {
 
 variable "monitoring_agent_version" {
   type        = string
-  default     = "14.4.0" # datasource: icr.io/ext/sysdig/agent-slim
+  default     = "14.5.0" # datasource: icr.io/ext/sysdig/agent-slim
   description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 

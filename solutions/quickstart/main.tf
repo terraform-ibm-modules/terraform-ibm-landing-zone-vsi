@@ -3,7 +3,7 @@
 #######################################################################################################################
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.4.8"
+  version                      = "1.6.0"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -40,7 +40,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 module "vpc" {
   count             = var.existing_vpc_crn != null ? 0 : 1
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "8.15.5"
+  version           = "8.17.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = local.vpc_region
   prefix            = local.prefix != "" ? trimspace(var.prefix) : null
@@ -68,27 +68,67 @@ module "vpc" {
           action    = "allow"
           direction = "inbound"
           tcp = {
-            port_min        = 22
-            port_max        = 22
-            source_port_min = 1024
-            source_port_max = 65535
+            port_min = 22
+            port_max = 22
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
         },
         {
-          name      = "allow-ephemeral-outbound"
+          name      = "allow-all-22-inbound-response"
           action    = "allow"
           direction = "outbound"
           tcp = {
-            source_port_min = 1
-            source_port_max = 65535
-            port_min        = 1024
-            port_max        = 65535
+            source_port_min = 22
+            source_port_max = 22
           }
           destination = "0.0.0.0/0"
           source      = "0.0.0.0/0"
-        }
+        },
+        {
+          name      = "allow-https-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            port_min = 443
+            port_max = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-https-outbound-response"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            source_port_min = 443
+            source_port_max = 443
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-http-outbound"
+          action    = "allow"
+          direction = "outbound"
+          tcp = {
+            port_min = 80
+            port_max = 80
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
+        {
+          name      = "allow-http-outbound-response"
+          action    = "allow"
+          direction = "inbound"
+          tcp = {
+            source_port_min = 80
+            source_port_max = 80
+          }
+          destination = "0.0.0.0/0"
+          source      = "0.0.0.0/0"
+        },
       ]
     }
   ]
@@ -105,7 +145,7 @@ data "ibm_is_image" "image" {
 module "existing_vpc_crn_parser" {
   count   = var.existing_vpc_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.4.2"
+  version = "1.5.0"
   crn     = var.existing_vpc_crn
 }
 
@@ -160,6 +200,33 @@ module "vsi" {
         tcp = {
           port_min = 22
           port_max = 22
+        }
+      },
+      {
+        name      = "allow-http-outbound"
+        direction = "outbound"
+        source    = "0.0.0.0/0"
+        tcp = {
+          port_min = 80
+          port_max = 80
+        }
+      },
+      {
+        name      = "allow-https-outbound"
+        direction = "outbound"
+        source    = "0.0.0.0/0"
+        tcp = {
+          port_min = 443
+          port_max = 443
+        }
+      },
+      {
+        name      = "allow-dns-udp-outbound"
+        direction = "outbound"
+        source    = "0.0.0.0/0"
+        udp = {
+          port_min = 53
+          port_max = 53
         }
       }
     ]
