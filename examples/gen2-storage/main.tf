@@ -79,4 +79,5 @@ module "slz_vsi" {
   boot_volume_profile   = "sdp"
   boot_volume_size      = 200
   boot_volume_iops      = 5000
+  boot_volume_bandwidth = 1000
 }
