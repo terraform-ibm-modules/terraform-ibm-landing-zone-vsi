@@ -174,7 +174,7 @@ variable "boot_volume_iops" {
 }
 
 variable "boot_volume_bandwidth" {
-  description = "Bandwidth (throughput in MB/s) for boot volume. Only applicable for sdp profile."
+  description = "Bandwidth (throughput in Mb/s) for boot volume. Only applicable for sdp profile."
   type        = number
   default     = null
   validation {
@@ -183,7 +183,7 @@ variable "boot_volume_bandwidth" {
   }
   validation {
     condition     = var.boot_volume_bandwidth != null ? var.boot_volume_bandwidth >= 1000 && var.boot_volume_bandwidth <= 8192 : true
-    error_message = "Boot Volume bandwidth for sdp profile must be between 1000 MB/s and 8192 MB/s"
+    error_message = "Boot Volume bandwidth for sdp profile must be between 1000 Mb/s and 8192 Mb/s"
   }
 }
 
