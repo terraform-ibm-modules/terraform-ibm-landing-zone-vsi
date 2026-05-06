@@ -178,6 +178,10 @@ variable "boot_volume_bandwidth" {
   type        = number
   default     = null
   validation {
+    condition     = var.boot_volume_bandwidth != null ? var.boot_volume_profile == "sdp" : true
+    error_message = "Boot Volume bandwidth can only be specified for `boot_volume_profile = sdp`."
+  }
+  validation {
     condition     = var.boot_volume_bandwidth != null ? var.boot_volume_bandwidth >= 1000 && var.boot_volume_bandwidth <= 8192 : true
     error_message = "Boot Volume bandwidth for sdp profile must be between 1000 MB/s and 8192 MB/s"
   }
