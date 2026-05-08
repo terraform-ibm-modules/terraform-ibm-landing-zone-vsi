@@ -244,6 +244,9 @@ variable "security_group" {
             code = number
           })
         )
+        # Use this field for protocols other than tcp, udp, or icmp (e.g. "esp", "ah", "gre").
+        # Cannot be combined with the tcp, udp, or icmp blocks.
+        protocol = optional(string)
       })
     )
   })
@@ -267,6 +270,18 @@ variable "security_group" {
         ])
       )
     ) == 0
+  }
+
+  validation {
+    error_message = "Each security group rule must specify at most one protocol. Use tcp, udp, or icmp blocks for those protocols, or the protocol field for others (e.g. \"esp\", \"ah\", \"gre\"). These cannot be combined — set only one per rule."
+    condition = var.security_group == null ? true : length(distinct(
+      flatten([
+        for rule in var.security_group.rules :
+        false if length([
+          for p in [rule.tcp, rule.udp, rule.icmp] : p if p != null
+        ]) + (rule.protocol != null ? 1 : 0) > 1
+      ])
+    )) == 0
   }
   default = null
 }
@@ -393,6 +408,9 @@ variable "load_balancers" {
                   code = number
                 })
               )
+              # Use this field for protocols other than tcp, udp, or icmp (e.g. "esp", "ah", "gre").
+              # Cannot be combined with the tcp, udp, or icmp blocks.
+              protocol = optional(string)
             })
           )
         })

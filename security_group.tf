@@ -102,6 +102,7 @@ resource "ibm_is_security_group_rule" "security_group_rules" {
     local.sg_rule_has_tcp[each.key] ? "tcp" :
     local.sg_rule_has_udp[each.key] ? "udp" :
     local.sg_rule_has_icmp[each.key] ? "icmp" :
+    each.value.protocol != null ? each.value.protocol :
     "icmp_tcp_udp"
   )
 
