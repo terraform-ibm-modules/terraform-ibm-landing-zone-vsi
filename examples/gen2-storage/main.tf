@@ -55,7 +55,7 @@ module "slz_vpc" {
 
 #############################################################################
 # Provision VSI
-# using Gen2 boot volume storage type (sdp) with custom IOPS setting
+# using Gen2 boot volume storage type (sdp) with custom IOPS and bandwidth setting
 #############################################################################
 
 data "ibm_is_image" "centos_10" {
