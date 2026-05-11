@@ -143,13 +143,13 @@ variable "machine_type" {
 }
 
 variable "boot_volume_size" {
-  description = "The capacity of the boot volume in gigabytes. Defaults to the minimum capacity of the image. Please note: The initial max limit during creation is 250 GB. After deployment, you can increase this up to a maximum of 32000 GB. Expanding beyond 250 GB prevents creating custom images from this volume later."
+  description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB."
   default     = null
   type        = number
 
   validation {
-    condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 32000 : true
-    error_message = "Boot Volume size must be a number between 100 and 32000."
+    condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 250 : true
+    error_message = "Boot Volume size must be a number between 100 and 250."
   }
 }
 
