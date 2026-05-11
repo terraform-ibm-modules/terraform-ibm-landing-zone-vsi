@@ -21,6 +21,7 @@ locals {
           capacity       = (volume.snapshot_crn == null) ? volume.capacity : null
           vsi_name       = "${var.subnets[subnet].name}-${count}"
           iops           = (volume.snapshot_crn == null) ? volume.iops : null
+          bandwidth       = (volume.snapshot_crn == null) ? volume.bandwidth : null
           encryption_key = (volume.snapshot_crn == null) ? (var.use_boot_volume_key_as_default ? var.boot_volume_encryption_key : (var.kms_encryption_enabled ? volume.encryption_key : null)) : null
           resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
           # check for snapshot in this order: supplied directly in variable -> part of consistency group -> null (no snapshot)
@@ -50,6 +51,7 @@ resource "ibm_is_volume" "volume" {
   profile             = each.value.profile
   zone                = each.value.zone
   iops                = each.value.iops
+  bandwidth           = each.value.bandwidth
   capacity            = each.value.capacity
   encryption_key      = each.value.encryption_key
   resource_group      = each.value.resource_group
