@@ -21,7 +21,7 @@ locals {
           capacity       = (volume.snapshot_crn == null) ? volume.capacity : null
           vsi_name       = "${var.subnets[subnet].name}-${count}"
           iops           = (volume.snapshot_crn == null) ? volume.iops : null
-          bandwidth       = (volume.snapshot_crn == null) ? volume.bandwidth : null
+          bandwidth      = (volume.snapshot_crn == null) ? volume.bandwidth : null
           encryption_key = (volume.snapshot_crn == null) ? (var.use_boot_volume_key_as_default ? var.boot_volume_encryption_key : (var.kms_encryption_enabled ? volume.encryption_key : null)) : null
           resource_group = volume.resource_group_id != null ? volume.resource_group_id : var.resource_group_id
           # check for snapshot in this order: supplied directly in variable -> part of consistency group -> null (no snapshot)

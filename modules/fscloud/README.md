@@ -8,13 +8,13 @@ The default values in this profile were scanned by [IBM Code Risk Analyzer (CRA)
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 
 ### Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_fscloud_vsi"></a> [fscloud\_vsi](#module\_fscloud\_vsi) | ../../ | n/a |
 
 ### Resources
@@ -24,10 +24,10 @@ No resources.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_tags"></a> [access\_tags](#input\_access\_tags) | A list of access tags to apply to the VSI resources created by the module. For more information, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial. | `list(string)` | `[]` | no |
 | <a name="input_allow_ip_spoofing"></a> [allow\_ip\_spoofing](#input\_allow\_ip\_spoofing) | Allow IP spoofing on the primary network interface | `bool` | `false` | no |
-| <a name="input_block_storage_volumes"></a> [block\_storage\_volumes](#input\_block\_storage\_volumes) | List describing the block storage volumes that will be attached to each vsi | <pre>list(<br/>    object({<br/>      name           = string<br/>      profile        = string<br/>      capacity       = optional(number)<br/>      iops           = optional(number)<br/>      bandwidth           = optional(number)<br/>      encryption_key = optional(string)<br/>      snapshot_crn   = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.<br/>      tags           = optional(list(string), [])<br/>    })<br/>  )</pre> | `[]` | no |
+| <a name="input_block_storage_volumes"></a> [block\_storage\_volumes](#input\_block\_storage\_volumes) | List describing the block storage volumes that will be attached to each vsi | <pre>list(<br/>    object({<br/>      name           = string<br/>      profile        = string<br/>      capacity       = optional(number)<br/>      iops           = optional(number)<br/>      bandwidth      = optional(number)<br/>      encryption_key = optional(string)<br/>      snapshot_crn   = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.<br/>      tags           = optional(list(string), [])<br/>    })<br/>  )</pre> | `[]` | no |
 | <a name="input_boot_volume_encryption_key"></a> [boot\_volume\_encryption\_key](#input\_boot\_volume\_encryption\_key) | CRN of boot volume encryption key | `string` | n/a | yes |
 | <a name="input_boot_volume_size"></a> [boot\_volume\_size](#input\_boot\_volume\_size) | The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB | `number` | `null` | no |
 | <a name="input_boot_volume_snapshot_crn"></a> [boot\_volume\_snapshot\_crn](#input\_boot\_volume\_snapshot\_crn) | The snapshot CRN of the volume to be used for creating boot volume attachment (if specified, the `image_id` parameter will not be used). If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place. | `string` | `null` | no |
@@ -58,6 +58,6 @@ No resources.
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_slz_vsi"></a> [slz\_vsi](#output\_slz\_vsi) | VSI module values |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
