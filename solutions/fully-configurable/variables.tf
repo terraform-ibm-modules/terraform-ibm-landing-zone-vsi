@@ -142,6 +142,12 @@ variable "machine_type" {
   default     = "bx3d-2x10"
 }
 
+variable "boot_volume_profile" {
+  description = "The Block Volume Storage Profile to use for the boot volume of the virtual instance, defaults to `general-purpose`."
+  type        = string
+  default     = null
+}
+
 variable "boot_volume_size" {
   description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB."
   default     = null
