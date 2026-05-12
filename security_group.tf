@@ -64,32 +64,6 @@ locals {
   }
 }
 
-locals {
-  # True when tcp block has at least one non-null port value
-  sg_rule_has_tcp = {
-    for k, v in local.security_group_rules : k => (
-      v.tcp != null &&
-      length([for x in ["port_min", "port_max"] : true if lookup(v["tcp"], x, null) != null]) > 0
-    )
-  }
-
-  # True when udp block has at least one non-null port value
-  sg_rule_has_udp = {
-    for k, v in local.security_group_rules : k => (
-      v.udp != null &&
-      length([for x in ["port_min", "port_max"] : true if lookup(v["udp"], x, null) != null]) > 0
-    )
-  }
-
-  # True when icmp block has at least one non-null type/code value
-  sg_rule_has_icmp = {
-    for k, v in local.security_group_rules : k => (
-      v.icmp != null &&
-      length([for x in ["type", "code"] : true if lookup(v["icmp"], x, null) != null]) > 0
-    )
-  }
-}
-
 resource "ibm_is_security_group_rule" "security_group_rules" {
   for_each   = local.security_group_rules
   group      = ibm_is_security_group.security_group[each.value.sg_name].id
@@ -97,30 +71,11 @@ resource "ibm_is_security_group_rule" "security_group_rules" {
   remote     = each.value.source
   local      = each.value.local
   ip_version = each.value.ip_version
-
-  protocol = (
-    local.sg_rule_has_tcp[each.key] ? "tcp" :
-    local.sg_rule_has_udp[each.key] ? "udp" :
-    local.sg_rule_has_icmp[each.key] ? "icmp" :
-    each.value.protocol != null ? each.value.protocol :
-    "icmp_tcp_udp"
-  )
-
-  port_min = (
-    local.sg_rule_has_tcp[each.key] ? lookup(each.value["tcp"], "port_min", null) :
-    local.sg_rule_has_udp[each.key] ? lookup(each.value["udp"], "port_min", null) :
-    null
-  )
-
-  port_max = (
-    local.sg_rule_has_tcp[each.key] ? lookup(each.value["tcp"], "port_max", null) :
-    local.sg_rule_has_udp[each.key] ? lookup(each.value["udp"], "port_max", null) :
-    null
-  )
-
-  type = local.sg_rule_has_icmp[each.key] ? lookup(each.value["icmp"], "type", null) : null
-  code = local.sg_rule_has_icmp[each.key] ? lookup(each.value["icmp"], "code", null) : null
-
+  protocol   = each.value.protocol
+  port_min   = each.value.port_min
+  port_max   = each.value.port_max
+  type       = each.value.type
+  code       = each.value.code
 }
 
 ##############################################################################
