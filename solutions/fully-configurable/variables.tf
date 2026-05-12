@@ -382,11 +382,11 @@ variable "load_balancers" {
               name      = string
               direction = string
               source    = string
-              protocol   = optional(string)
-              port_min   = optional(number)
-              port_max   = optional(number)
-              type       = optional(number)
-              code       = optional(number)
+              protocol  = optional(string)
+              port_min  = optional(number)
+              port_max  = optional(number)
+              type      = optional(number)
+              code      = optional(number)
             })
           )
         })
