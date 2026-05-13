@@ -79,6 +79,12 @@ variable "boot_volume_encryption_key" {
   type        = string
 }
 
+variable "boot_volume_profile" {
+  description = "The Block Volume Storage Profile to use for the boot volume of the virtual instance, defaults to `general-purpose`."
+  type        = string
+  default     = null
+}
+
 variable "boot_volume_size" {
   description = "The capacity of the boot volume in gigabytes. Defaults to the minimum capacity of the image. Please note: The initial max limit during creation is 250 GB. For sdp, after the deployment, you can increase this up to a maximum of 32000 GB. Expanding beyond 250 GB prevents creating custom images from this volume later."
   default     = null
