@@ -55,7 +55,7 @@ module "slz_vpc" {
 
 #############################################################################
 # Provision VSI
-# using Gen2 boot volume storage type (sdp) with custom IOPS setting
+# using Gen2 boot volume storage type (sdp) with custom IOPS and bandwidth setting
 #############################################################################
 
 data "ibm_is_image" "centos_10" {
@@ -79,4 +79,5 @@ module "slz_vsi" {
   boot_volume_profile   = "sdp"
   boot_volume_size      = 200
   boot_volume_iops      = 5000
+  boot_volume_bandwidth = 1000
 }

@@ -351,6 +351,7 @@ variable "block_storage_volumes" {
       profile           = string
       capacity          = optional(number)
       iops              = optional(number)
+      bandwidth         = optional(number)
       encryption_key    = optional(string)
       resource_group_id = optional(string)
       snapshot_crn      = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.
