@@ -257,20 +257,11 @@ variable "security_group" {
   }
 
   validation {
-    error_message = "Security group rule protocol must be one of: `tcp`, `udp`, `icmp`, `icmp_tcp_udp`."
+    error_message = "When protocol is `icmp`, `port_min` and `port_max` must be null. When protocol is `tcp` or `udp`, `type` and `code` must be null."
     condition = var.security_group == null ? true : alltrue([
       for rule in var.security_group.rules :
-      rule.protocol == null || contains(["tcp", "udp", "icmp", "icmp_tcp_udp"], rule.protocol)
-    ])
-  }
-
-  validation {
-    error_message = "When protocol is `tcp` or `udp`, only port_min/port_max can be set. When protocol is `icmp`, only type/code can be set. When protocol is `icmp_tcp_udp` or null, no port or icmp fields should be set."
-    condition = var.security_group == null ? true : alltrue([
-      for rule in var.security_group.rules :
-      (rule.protocol == "tcp" || rule.protocol == "udp") ? (rule.type == null && rule.code == null) :
       rule.protocol == "icmp" ? (rule.port_min == null && rule.port_max == null) :
-      (rule.protocol == "icmp_tcp_udp" || rule.protocol == null) ? (rule.port_min == null && rule.port_max == null && rule.type == null && rule.code == null) :
+      (rule.protocol == "tcp" || rule.protocol == "udp") ? (rule.type == null && rule.code == null) :
       true
     ])
   }
