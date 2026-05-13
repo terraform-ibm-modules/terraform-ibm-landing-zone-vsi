@@ -58,6 +58,7 @@ The `block_storage_volumes` input variable allows you to provide of a List descr
   - `profile` (required): The profile to use for this volume.
   - `capacity` (optional): The capacity of the volume in gigabytes. This defaults to 100.
   - `iops` (optional): The total input/ output operations per second (IOPS) for your storage. This value is required for custom storage profiles only.
+  - `bandwidth` (optional): The total throughput in Mb/s for your storage. This value is supported only for `sdp` profile.
   - `encryption_key`(optional): The key to use for encrypting this volume.
   - `resource_group_id`(optional): The resource group ID for this volume.
   - `snapshot_id`(required): The ID of snapshot from which to clone the volume.
