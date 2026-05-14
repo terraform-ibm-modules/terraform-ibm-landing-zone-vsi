@@ -173,6 +173,20 @@ variable "boot_volume_iops" {
   }
 }
 
+variable "boot_volume_bandwidth" {
+  description = "Bandwidth (throughput in Mb/s) for boot volume. Only applicable for sdp profile."
+  type        = number
+  default     = null
+  validation {
+    condition     = var.boot_volume_bandwidth != null ? var.boot_volume_profile == "sdp" : true
+    error_message = "Boot Volume bandwidth can only be specified for `boot_volume_profile = sdp`."
+  }
+  validation {
+    condition     = var.boot_volume_bandwidth != null ? var.boot_volume_bandwidth >= 1000 && var.boot_volume_bandwidth <= 8192 : true
+    error_message = "Boot Volume bandwidth for sdp profile must be between 1000 Mb/s and 8192 Mb/s"
+  }
+}
+
 variable "manage_reserved_ips" {
   description = "Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP."
   type        = bool
@@ -320,6 +334,7 @@ variable "block_storage_volumes" {
       profile           = string
       capacity          = optional(number)
       iops              = optional(number)
+      bandwidth         = optional(number)
       encryption_key    = optional(string)
       resource_group_id = optional(string)
       snapshot_crn      = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.

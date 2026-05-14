@@ -111,7 +111,7 @@ For more information about storage options, explore [block storage options](http
 | Requirement | Component | Reasons for choice | Alternative choice |
 |-------------|-----------|--------------------|--------------------|
 | Provide customizable boot storage | Custom Boot Volumes | Configure boot volume size, encryption, and performance characteristics | Default boot volumes with standard configuration |
-| Support additional data storage | Block Storage Volumes | Attach multiple volumes with configurable size, IOPS, and encryption | Single boot volume without additional storage |
+| Support additional data storage | Block Storage Volumes | Attach multiple volumes with configurable size, IOPS, bandwidth, and encryption | Single boot volume without additional storage |
 | Enable volume snapshot capabilities | Volume Snapshots | Create point-in-time snapshots for backup and recovery purposes | No backup capabilities |
 | Support consistent snapshot management | Snapshot Consistency Groups | Manage snapshots across multiple volumes for data consistency | Individual volume snapshots without coordination |
 {: caption="Storage architecture decisions" caption-side="bottom"}
@@ -141,7 +141,7 @@ The Standard - Integrated setup with configurable services variation supports ex
 
 ### Storage Configuration
 - Multiple block storage volumes per instance
-- Configurable volume sizes, IOPS, and encryption
+- Configurable volume sizes, IOPS, bandwidth and encryption
 - Snapshot consistency groups for backup coordination
 - Boot volume snapshot support for disaster recovery
 

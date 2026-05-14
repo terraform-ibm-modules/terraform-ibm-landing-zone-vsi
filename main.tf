@@ -364,6 +364,7 @@ resource "ibm_is_instance" "vsi" {
     size       = var.boot_volume_size
     profile    = var.boot_volume_profile
     iops       = var.boot_volume_iops
+    bandwidth  = var.boot_volume_bandwidth
     # determine snapshot in following order: input variable -> from consistency group -> null (none)
     snapshot_crn = local.vsi_boot_volume_snapshot_crn
   }
