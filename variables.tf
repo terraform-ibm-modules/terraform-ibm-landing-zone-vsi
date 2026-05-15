@@ -493,6 +493,19 @@ variable "load_balancers" {
       ])
     ) == 0
   }
+
+  validation {
+    error_message = "When security group rule protocol is `icmp`, `port_min` and `port_max` must be null. When protocol is `tcp` or `udp`, `type` and `code` must be null."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.security_group == null ? true : alltrue([
+        for rule in load_balancer.security_group.rules :
+        rule.protocol == "icmp" ? (rule.port_min == null && rule.port_max == null) :
+        (rule.protocol == "tcp" || rule.protocol == "udp") ? (rule.type == null && rule.code == null) :
+        true
+      ])
+    ])
+  }
 }
 
 variable "custom_vsi_volume_names" {
