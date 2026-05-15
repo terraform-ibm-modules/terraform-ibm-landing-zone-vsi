@@ -240,24 +240,11 @@ variable "security_group" {
         source     = string
         local      = optional(string)
         ip_version = optional(string)
-        tcp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        udp = optional(
-          object({
-            port_max = number
-            port_min = number
-          })
-        )
-        icmp = optional(
-          object({
-            type = number
-            code = number
-          })
-        )
+        protocol   = optional(string)
+        port_min   = optional(number)
+        port_max   = optional(number)
+        type       = optional(number)
+        code       = optional(number)
       })
     )
   })
@@ -281,6 +268,16 @@ variable "security_group" {
         ])
       )
     ) == 0
+  }
+
+  validation {
+    error_message = "When protocol is `icmp`, `port_min` and `port_max` must be null. When protocol is `tcp` or `udp`, `type` and `code` must be null."
+    condition = var.security_group == null ? true : alltrue([
+      for rule in var.security_group.rules :
+      rule.protocol == "icmp" ? (rule.port_min == null && rule.port_max == null) :
+      (rule.protocol == "tcp" || rule.protocol == "udp") ? (rule.type == null && rule.code == null) :
+      true
+    ])
   }
   default = null
 }
@@ -390,24 +387,11 @@ variable "load_balancers" {
               source     = string
               local      = optional(string)
               ip_version = optional(string)
-              tcp = optional(
-                object({
-                  port_max = number
-                  port_min = number
-                })
-              )
-              udp = optional(
-                object({
-                  port_max = number
-                  port_min = number
-                })
-              )
-              icmp = optional(
-                object({
-                  type = number
-                  code = number
-                })
-              )
+              protocol   = optional(string)
+              port_min   = optional(number)
+              port_max   = optional(number)
+              type       = optional(number)
+              code       = optional(number)
             })
           )
         })
@@ -508,6 +492,19 @@ variable "load_balancers" {
         : []
       ])
     ) == 0
+  }
+
+  validation {
+    error_message = "When security group rule protocol is `icmp`, `port_min` and `port_max` must be null. When protocol is `tcp` or `udp`, `type` and `code` must be null."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.security_group == null ? true : alltrue([
+        for rule in load_balancer.security_group.rules :
+        rule.protocol == "icmp" ? (rule.port_min == null && rule.port_max == null) :
+        (rule.protocol == "tcp" || rule.protocol == "udp") ? (rule.type == null && rule.code == null) :
+        true
+      ])
+    ])
   }
 }
 
