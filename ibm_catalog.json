@@ -1029,6 +1029,9 @@
               "key": "boot_volume_size"
             },
             {
+              "key": "boot_volume_profile"
+            },
+            {
               "key": "use_static_boot_volume_name",
               "hidden": true
             },

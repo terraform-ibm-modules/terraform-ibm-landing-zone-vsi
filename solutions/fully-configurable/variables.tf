@@ -142,15 +142,16 @@ variable "machine_type" {
   default     = "bx3d-2x10"
 }
 
+variable "boot_volume_profile" {
+  description = "The Block Volume Storage Profile to use for the boot volume of the virtual instance, defaults to `general-purpose`."
+  type        = string
+  default     = null
+}
+
 variable "boot_volume_size" {
-  description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB."
+  description = "The capacity of the boot volume in gigabytes. Defaults to the minimum capacity of the image. Please note: The initial max limit during creation is 250 GB. For sdp, after the deployment, you can increase this up to a maximum of 32000 GB. Expanding beyond 250 GB prevents creating custom images from this volume later."
   default     = null
   type        = number
-
-  validation {
-    condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 250 : true
-    error_message = "Boot Volume size must be a number between 100 and 250."
-  }
 }
 
 variable "user_data" {
