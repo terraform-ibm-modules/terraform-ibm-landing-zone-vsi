@@ -136,13 +136,13 @@ variable "boot_volume_encryption_key" {
 }
 
 variable "boot_volume_size" {
-  description = "The capacity of the volume in gigabytes. This defaults to minimum capacity of the image and maximum to 250 GB"
+  description = "The capacity of the boot volume in gigabytes. Defaults to the minimum capacity of the image. Please note: The initial max limit during creation is 250 GB. For sdp, after the deployment, you can increase this up to a maximum of 32000 GB. Expanding beyond 250 GB prevents creating custom images from this volume later."
   default     = null
   type        = number
 
   validation {
-    condition     = var.boot_volume_size != null ? var.boot_volume_size >= 100 && var.boot_volume_size <= 250 : true
-    error_message = "Boot Volume size must be a number between 100 and 250"
+    condition     = var.boot_volume_size == null ? true : (var.boot_volume_size >= 100 && var.boot_volume_size <= (var.boot_volume_profile == "sdp" ? 32000 : 250))
+    error_message = "Boot Volume size must be between 100 GB and 32000 GB. Note: The initial deployment limit is 250 GB. Expansion up to 32000 GB on subsequent deployments is allowed for the 'sdp' profile only. For 'general-purpose', the limit is 250 GB."
   }
 }
 
