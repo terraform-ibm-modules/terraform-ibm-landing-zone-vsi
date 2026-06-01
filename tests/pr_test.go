@@ -1,6 +1,7 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -191,7 +192,7 @@ func verifyVolumeSnapshots(options *testhelper.TestOptions) error {
 	options.Testing.Log("====== START VERIFY OF SNAPSHOTS ========")
 
 	// get output of last apply
-	outputs, outputErr := terraform.OutputAllE(options.Testing, options.TerraformOptions)
+	outputs, outputErr := terraform.OutputAllContextE(options.Testing, context.Background(), options.TerraformOptions)
 
 	if assert.NoErrorf(options.Testing, outputErr, "error getting last terraform apply outputs: %s", outputErr) {
 		// first, verify the outputs for snapshot CRNs were correctly used from group
@@ -221,9 +222,9 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 	// ------------------------------------------------------------------------------------
 	// Provision existing resources first
 	// ------------------------------------------------------------------------------------
-	prefix := fmt.Sprintf("vpc-%s", strings.ToLower(random.UniqueId()))
+	prefix := fmt.Sprintf("vpc-%s", strings.ToLower(random.UniqueID()))
 	realTerraformDir := "./existing-resources"
-	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
+	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueID())))
 	tags := common.GetTagsFromTravis()
 
 	// Verify ibmcloud_api_key variable is set
@@ -247,8 +248,8 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 		Upgrade: true,
 	})
 
-	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
-	_, existErr := terraform.InitAndApplyE(t, existingTerraformOptions)
+	terraform.WorkspaceSelectOrNewContext(t, context.Background(), existingTerraformOptions, prefix)
+	_, existErr := terraform.InitAndApplyContextE(t, context.Background(), existingTerraformOptions)
 	if existErr != nil {
 		// assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 		return "", nil, existErr
@@ -287,13 +288,13 @@ func TestFullyConfigurable(t *testing.T) {
 
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+			{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
 			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
 			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
-			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
-			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
+			{Name: "prefix", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "prefix"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
+			{Name: "existing_subnet_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "subnet_id"), DataType: "string"},
+			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
 			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		}
 		err := options.RunSchematicTest()
@@ -307,8 +308,8 @@ func TestFullyConfigurable(t *testing.T) {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
 		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
+		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (prereq resources)")
 	}
 }
@@ -346,13 +347,13 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+			{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
 			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
 			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
-			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
-			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
+			{Name: "prefix", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "prefix"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
+			{Name: "existing_subnet_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "subnet_id"), DataType: "string"},
+			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
 			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 			{Name: "skip_block_storage_kms_iam_auth_policy", Value: true, DataType: "bool"}, // The test account already has got a s2s policy setup that would clash
 			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
@@ -370,8 +371,8 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
 		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
+		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (prereq resources)")
 	}
 }
@@ -408,13 +409,13 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_resource_group_name", Value: terraform.Output(t, existingTerraformOptions, "resource_group_name"), DataType: "string"},
+			{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
 			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
 			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: terraform.Output(t, existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
-			{Name: "existing_subnet_id", Value: terraform.Output(t, existingTerraformOptions, "subnet_id"), DataType: "string"},
-			{Name: "image_id", Value: terraform.Output(t, existingTerraformOptions, "image_id"), DataType: "string"},
+			{Name: "prefix", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "prefix"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
+			{Name: "existing_subnet_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "subnet_id"), DataType: "string"},
+			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
 			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
 			{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
@@ -430,8 +431,8 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
 		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
+		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (prereq resources)")
 	}
 }
@@ -461,7 +462,6 @@ func TestRunMultiProfileExample(t *testing.T) {
 }
 
 func TestAddonDefaultConfiguration(t *testing.T) {
-	t.Skip() // To be removed, Skipping due to IAM error seen in pipeline.
 	t.Parallel()
 	acquireTestSlot()
 	defer releaseTestSlot()
@@ -486,8 +486,8 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 			"deploy-arch-ibm-slz-vsi",
 			"fully-configurable",
 			map[string]interface{}{
-				"region":   terraform.Output(t, existingTerraformOptions, "region"),
-				"image_id": terraform.Output(t, existingTerraformOptions, "image_id"),
+				"region":   terraform.OutputContext(t, context.Background(), existingTerraformOptions, "region"),
+				"image_id": terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"),
 			},
 		)
 
@@ -614,7 +614,7 @@ func TestQuickstartExistingConfigSchematics(t *testing.T) {
 			{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
 			{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 			{Name: "prefix", Value: options.Prefix, DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.Output(t, existingTerraformOptions, "vpc_crn"), DataType: "string"},
+			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 		}
 		err := options.RunSchematicTest()
 		assert.Nil(t, err, "This should not have errored")
@@ -627,8 +627,8 @@ func TestQuickstartExistingConfigSchematics(t *testing.T) {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
 		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
+		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (prereq resources)")
 	}
 }
