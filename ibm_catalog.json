@@ -184,8 +184,8 @@
                   "value": "ibm-centos-8-2-minimal-amd64-2"
                 },
                 {
-                  "displayname": "ibm-centos-stream-10-amd64-8",
-                  "value": "ibm-centos-stream-10-amd64-8"
+                  "displayname": "ibm-centos-stream-10-amd64-9",
+                  "value": "ibm-centos-stream-10-amd64-9"
                 },
                 {
                   "displayname": "ibm-centos-stream-8-amd64-1",
@@ -200,8 +200,8 @@
                   "value": "ibm-centos-stream-8-amd64-4"
                 },
                 {
-                  "displayname": "ibm-centos-stream-9-amd64-16",
-                  "value": "ibm-centos-stream-9-amd64-16"
+                  "displayname": "ibm-centos-stream-9-amd64-17",
+                  "value": "ibm-centos-stream-9-amd64-17"
                 },
                 {
                   "displayname": "ibm-debian-10-0-minimal-amd64-1",
@@ -288,8 +288,8 @@
                   "value": "ibm-debian-9-9-minimal-amd64-2"
                 },
                 {
-                  "displayname": "ibm-fedora-coreos-43-stable-2",
-                  "value": "ibm-fedora-coreos-43-stable-2"
+                  "displayname": "ibm-fedora-coreos-44-stable-1",
+                  "value": "ibm-fedora-coreos-44-stable-1"
                 },
                 {
                   "displayname": "ibm-redhat-7-6-minimal-amd64-1",
