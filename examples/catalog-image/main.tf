@@ -66,7 +66,7 @@ module "slz_vsi" {
     plan_crn    = ""
   }
   create_security_group = false
-  tags                  = var.resource_tags
+  resource_tags         = var.resource_tags
   access_tags           = var.access_tags
   subnets               = module.slz_vpc.subnet_zone_list
   vpc_id                = module.slz_vpc.vpc_id

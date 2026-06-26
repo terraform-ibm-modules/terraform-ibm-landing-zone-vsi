@@ -17,15 +17,19 @@ variable "prefix" {
   }
 }
 
-variable "tags" {
-  description = "List of tags to apply to resources created by this module."
+variable "resource_tags" {
+  description = "Add user resource tags to the Virtual Server Instances (VSI) instance to organize, track, and manage costs. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#tag-types)."
   type        = list(string)
   default     = []
+  validation {
+    condition     = alltrue([for tag in var.resource_tags : can(regex("^[A-Za-z0-9 _\\-.:]{1,128}$", tag))])
+    error_message = "Each resource tag must be 128 characters or less and may contain only A-Z, a-z, 0-9, spaces, underscore (_), hyphen (-), period (.), and colon (:)."
+  }
 }
 
 variable "access_tags" {
   type        = list(string)
-  description = "A list of access tags to apply to the VSI resources created by the module. For more information, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial."
+  description = "Add access management tags to the Virtual Server Instances (VSI) instance to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console)."
   default     = []
 
   validation {
@@ -853,7 +857,7 @@ variable "monitoring_collector_port" {
   }
 }
 
-variable "monitoring_tags" {
+variable "resource_tags" {
   type        = list(string)
   default     = []
   description = "A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the agent."

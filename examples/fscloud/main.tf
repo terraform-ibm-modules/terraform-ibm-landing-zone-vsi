@@ -73,7 +73,7 @@ module "slz_vsi" {
   image_id                   = module.vsi_image_selector.latest_image_id
   create_security_group      = var.create_security_group
   security_group             = var.security_group
-  tags                       = var.resource_tags
+  resource_tags              = var.resource_tags
   subnets                    = module.slz_vpc.subnet_zone_list
   vpc_id                     = module.slz_vpc.vpc_id
   prefix                     = var.prefix

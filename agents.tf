@@ -76,7 +76,7 @@ locals {
       --collector_port ${var.monitoring_collector_port} \
       --secure true \
       --check_certificate false \
-      ${length(var.monitoring_tags) > 0 ? "--tags" : ""} ${length(var.monitoring_tags) > 0 ? join(",", var.monitoring_tags) : ""} \
+      ${length(var.resource_tags) > 0 ? "--tags" : ""} ${length(var.resource_tags) > 0 ? join(",", var.resource_tags) : ""} \
       --additional_conf 'sysdig_api_endpoint: ${local.monitoring_api_endpoint}\nhost_scanner:\n  enabled: true\n  scan_on_start: true\nkspm_analyzer:\n  enabled: true' \
       ${var.monitoring_agent_version != null ? "--version ${var.monitoring_agent_version}" : ""}
   EOT

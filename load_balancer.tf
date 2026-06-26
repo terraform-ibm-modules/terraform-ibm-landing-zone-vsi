@@ -19,7 +19,7 @@ resource "ibm_is_lb" "lb" {
   profile         = each.value.profile
   security_groups = each.value.security_group == null ? null : [ibm_is_security_group.security_group[each.value.security_group.name].id]
   resource_group  = var.resource_group_id
-  tags            = var.tags
+  tags            = var.resource_tags
   access_tags     = var.access_tags
 
   timeouts {

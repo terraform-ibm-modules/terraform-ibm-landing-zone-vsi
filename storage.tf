@@ -55,7 +55,7 @@ resource "ibm_is_volume" "volume" {
   capacity            = each.value.capacity
   encryption_key      = each.value.encryption_key
   resource_group      = each.value.resource_group
-  tags                = var.tags != null ? distinct(concat(var.tags, each.value.tags)) : null
+  tags                = var.resource_tags != null ? distinct(concat(var.resource_tags, each.value.tags)) : null
   access_tags         = var.access_tags
   source_snapshot_crn = each.value.snapshot_crn
 }
