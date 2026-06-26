@@ -109,6 +109,7 @@ module "slz_vpc" {
   tags              = var.resource_tags
   name              = "vpc"
   network_acls = [
+    # For enabling rdp access for windows instances add rdp-inbound and rdp-inbound-response rules for prot 3389
     {
       name                         = "vpc-acl"
       add_ibm_cloud_internal_rules = true
@@ -421,6 +422,7 @@ module "slz_vsi" {
   security_group = {
     name = "vsi-security-group"
     rules = [
+      # For enabling rdp access for windows instances add a rule to allow rdp-inbound for prot 3389
       {
         name      = "allow-ssh-inbound"
         direction = "inbound"

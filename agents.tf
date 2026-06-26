@@ -198,7 +198,7 @@ locals {
   monitoring_windows_install_dir     = "C:\\Program Files\\windows_exporter"
   monitoring_windows_install_log     = "${local.monitoring_windows_download_dir}\\monitoring-agent-install.log"
   monitoring_windows_collectors      = "cpu,logical_disk,os,system,net"
-  monitoring_collector_full_endpoint = "https://${var.monitoring_collector_endpoint}/prometheus/remote/write"
+  monitoring_collector_full_endpoint = var.monitoring_collector_endpoint != null ? "https://${var.monitoring_collector_endpoint}/prometheus/remote/write" : ""
 
   monitoring_windows_script = <<-EOT
     $monitoring_windows_bundle_url = "${local.monitoring_windows_bundle_url}"
