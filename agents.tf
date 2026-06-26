@@ -9,46 +9,32 @@ data "ibm_is_image" "image_name" {
 ##############################################################################
 
 locals {
-  os_image   = var.image_id != null ? data.ibm_is_image.image_name[0].os : ""
-  is_windows = startswith(local.os_image, "windows")
-
+  os_image = var.image_id != null ? data.ibm_is_image.image_name[0].os : ""
   # returns empty string if OS not supported
   package_name = (
     startswith(local.os_image, "ubuntu-20") ? "logs-router-agent-ubuntu20-${var.logging_agent_version}.deb" :
+    startswith(local.os_image, "ubuntu-22") ? "logs-router-agent-ubuntu22-${var.logging_agent_version}.deb" :
+    startswith(local.os_image, "ubuntu-24") ? "logs-router-agent-ubuntu24-${var.logging_agent_version}.deb" :
     startswith(local.os_image, "debian-11") ? "logs-router-agent-deb11-${var.logging_agent_version}.deb" :
-    startswith(local.os_image, "debian-12") || startswith(local.os_image, "ubuntu-22") || startswith(local.os_image, "ubuntu-24") ? "logs-router-agent-${var.logging_agent_version}.deb" :
+    startswith(local.os_image, "debian-12") ? "logs-router-agent-${var.logging_agent_version}.deb" :
     startswith(local.os_image, "red-8") ? "logs-router-agent-rhel8-${var.logging_agent_version}.rpm" :
     startswith(local.os_image, "red-9") ? "logs-router-agent-${var.logging_agent_version}.rpm" :
-    startswith(local.os_image, "windows") ? "logs-router-agent-${var.logging_agent_version}.msi" :
+    startswith(local.os_image, "windows") ? "logs-agent-windows-${var.logging_agent_version}.zip" :
     ""
   )
-
-  # determine install tool to use (rpm, dpkg, or msiexec for Windows)
+  is_windows = startswith(local.os_image, "windows")
+  # determine install tool to use (rpm or dpkg)
   logging_agent_install_command = (var.install_logging_agent ?
     startswith(local.os_image, "ubuntu") || startswith(local.os_image, "debian") ? "dpkg -i" :
     startswith(local.os_image, "red") ? "rpm -ivh" :
-    startswith(local.os_image, "windows") ? "msiexec /i" :
     "" : ""
   )
-
-  logging_agent_download_url = var.install_logging_agent ? "https://logs-router-agent-install-packages.s3.us.cloud-object-storage.appdomain.cloud/${local.package_name}" : ""
-
-  # Linux paths
-  logging_agent_download_dir_linux = "/run/logging-agent"
-  logging_agent_install_log_linux  = "${local.logging_agent_download_dir_linux}/logs-agent-install.log"
-
-  # Windows paths
-  logging_agent_download_dir_windows = "C:\\Temp\\logging-agent"
-  logging_agent_install_log_windows  = "${local.logging_agent_download_dir_windows}\\logs-agent-install.log"
-
-  # Select appropriate paths based on OS
-  logging_agent_download_dir = local.is_windows ? local.logging_agent_download_dir_windows : local.logging_agent_download_dir_linux
-  logging_agent_install_log  = local.is_windows ? local.logging_agent_install_log_windows : local.logging_agent_install_log_linux
-
-  logging_agent_auth_value = var.logging_auth_mode == "IAMAPIKey" ? "-k ${var.logging_api_key != null ? var.logging_api_key : ""}" : "-d ${var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : ""}"
-
-  # Linux post config command - see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-agent-linux
-  logging_agent_config_command_linux = <<-EOT
+  logging_agent_download_url = var.install_logging_agent && local.package_name != "" ? "https://logs-router-agent-install-packages.s3.us.cloud-object-storage.appdomain.cloud/${local.package_name}" : ""
+  logging_agent_download_dir = "/run/logging-agent"
+  logging_agent_install_log  = "${local.logging_agent_download_dir}/logs-agent-install.log"
+  logging_agent_auth_value   = var.logging_auth_mode == "IAMAPIKey" ? "-k ${var.logging_api_key != null ? var.logging_api_key : ""}" : "-d ${var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : ""}"
+  # construct the post config command - see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-agent-linux
+  logging_agent_config_command = <<-EOT
     /opt/fluent-bit/bin/post-config.sh \
       -h ${var.logging_target_host != null ? var.logging_target_host : ""} \
       -p ${var.logging_target_port} \
@@ -61,68 +47,112 @@ locals {
       ${var.logging_subsystem_name != null ? "--subsystem-name \"${var.logging_subsystem_name}\"" : ""}
   EOT
 
-  # Windows post config command - see https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-agent-windows
-  logging_agent_config_command_windows = <<-EOT
-    & 'C:\Program Files\logs-router-agent\post-config.ps1' `
-      -h ${var.logging_target_host != null ? var.logging_target_host : ""} `
-      -p ${var.logging_target_port} `
-      -t ${var.logging_target_path} `
-      -a ${var.logging_auth_mode} `
-      ${local.logging_agent_auth_value} `
-      -i ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} `
-      -s ${var.logging_secure_access_enabled} `
-      ${var.logging_application_name != null ? "--application-name \"${var.logging_application_name}\"" : ""} `
-      ${var.logging_subsystem_name != null ? "--subsystem-name \"${var.logging_subsystem_name}\"" : ""}
-  EOT
-
-  # Linux commands for logging agent installation
-  logging_agent_user_data_runcmd_linux = [
-    "mkdir -p ${local.logging_agent_download_dir_linux} 2>&1 | tee -a ${local.logging_agent_install_log_linux}",
-    "curl --retry 5 -fL -o ${local.logging_agent_download_dir_linux}/${local.package_name} ${local.logging_agent_download_url} 2>&1 | tee -a ${local.logging_agent_install_log_linux}",
-    "${local.logging_agent_install_command} ${local.logging_agent_download_dir_linux}/${local.package_name} 2>&1 | tee -a ${local.logging_agent_install_log_linux}",
-    "${local.logging_agent_config_command_linux} 2>&1 | tee -a ${local.logging_agent_install_log_linux}",
-    "echo \"Complete. See /var/log/messages for agent logs.'\" 2>&1 | tee -a ${local.logging_agent_install_log_linux}",
+  # list of commands that will be run to download, install and configure the logging agent for Linux
+  logging_agent_user_data_runcmd = [
+    "bash -lc 'set -o pipefail; mkdir -p ${local.logging_agent_download_dir} 2>&1 | tee -a ${local.logging_agent_install_log}'",
+    "bash -lc 'set -o pipefail; curl --retry 5 -fL -o ${local.logging_agent_download_dir}/${local.package_name} ${local.logging_agent_download_url} 2>&1 | tee -a ${local.logging_agent_install_log}'",
+    "bash -lc 'test -f ${local.logging_agent_download_dir}/${local.package_name}'",
+    "bash -lc 'set -o pipefail; ${local.logging_agent_install_command} ${local.logging_agent_download_dir}/${local.package_name} 2>&1 | tee -a ${local.logging_agent_install_log}'",
+    "bash -lc 'set -o pipefail; ${local.logging_agent_config_command} 2>&1 | tee -a ${local.logging_agent_install_log}'",
+    "bash -lc 'set -o pipefail; echo \"Complete. See /var/log/messages for agent logs.\" 2>&1 | tee -a ${local.logging_agent_install_log}'",
   ]
 
-  # Windows PowerShell commands for logging agent installation
-  logging_agent_user_data_powershell_windows = <<-EOT
-    # Create download directory
-    New-Item -ItemType Directory -Force -Path "${local.logging_agent_download_dir_windows}" | Out-File -Append "${local.logging_agent_install_log_windows}"
+  logging_windows_download_dir = "C:\\Temp\\logging-agent"
+  logging_windows_zip_path     = "${local.logging_windows_download_dir}\\${local.package_name}"
+  logging_windows_install_dir  = "C:\\Program Files\\logs-agent"
+  logging_windows_config_url   = "https://logs-router-agent-config.s3.us.cloud-object-storage.appdomain.cloud/configure-logs-agent.ps1"
+  logging_windows_config_path  = "${local.logging_windows_install_dir}\\configure-logs-agent.ps1"
+  logging_windows_install_log  = "${local.logging_windows_download_dir}\\logs-agent-install.log"
 
-    # Download logging agent
-    $ProgressPreference = 'SilentlyContinue'
+  # list of commands that will be run to download, install and configure the logging agent for Windows
+  logging_windows_script = <<-EOT
+    $logging_agent_download_url = "${local.logging_agent_download_url}"
+    $downloadDir = "${local.logging_windows_download_dir}"
+    $zipPath = "${local.logging_windows_zip_path}"
+    $installDir = "${local.logging_windows_install_dir}"
+    $configUrl = "${local.logging_windows_config_url}"
+    $configPath = "${local.logging_windows_config_path}"
+    $logPath = "${local.logging_windows_install_log}"
+
+    New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
+
     $maxRetries = 5
     $retryCount = 0
     $downloaded = $false
 
     while (-not $downloaded -and $retryCount -lt $maxRetries) {
         try {
-            Invoke-WebRequest -Uri "${local.logging_agent_download_url}" -OutFile "${local.logging_agent_download_dir_windows}\${local.package_name}" -UseBasicParsing
+            Invoke-WebRequest `
+                -Uri $logging_agent_download_url `
+                -OutFile $zipPath `
+                -UseBasicParsing
             $downloaded = $true
-            "Successfully downloaded logging agent" | Out-File -Append "${local.logging_agent_install_log_windows}"
         } catch {
             $retryCount++
-            "Download attempt $retryCount failed: $_" | Out-File -Append "${local.logging_agent_install_log_windows}"
             Start-Sleep -Seconds 5
         }
     }
 
     if (-not $downloaded) {
-        "Failed to download logging agent after $maxRetries attempts" | Out-File -Append "${local.logging_agent_install_log_windows}"
-        exit 1
+        throw "Failed to download logging agent after $maxRetries attempts."
     }
 
-    # Install logging agent
-    Start-Process msiexec.exe -ArgumentList "/i `"${local.logging_agent_download_dir_windows}\${local.package_name}`" /qn /norestart /l*v `"${local.logging_agent_install_log_windows}`"" -Wait -NoNewWindow
+    Expand-Archive -Path $zipPath -DestinationPath "C:\Program Files" -Force
 
-    # Configure logging agent
-    ${local.logging_agent_config_command_windows} *>> "${local.logging_agent_install_log_windows}"
+    Invoke-WebRequest -Uri $configUrl -OutFile $configPath -UseBasicParsing
 
-    "Complete. See C:\ProgramData\logs-router-agent\logs for agent logs." | Out-File -Append "${local.logging_agent_install_log_windows}"
+    if (-not (Test-Path $configPath)) {
+        throw "configure-logs-agent.ps1 not found at $configPath"
+    }
+
+    if ("${var.logging_auth_mode}" -eq "IAMAPIKey") {
+        & $configPath `
+            -TargetHost "${var.logging_target_host != null ? var.logging_target_host : ""}" `
+            -TargetPort ${var.logging_target_port} `
+            -AuthMode IAMAPIKey `
+            -IAMEnv ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} `
+            -IAMApiKey "${var.logging_api_key != null ? var.logging_api_key : ""}" `
+            ${var.logging_secure_access_enabled ? "-VSISecureAccess" : ""}
+    } elseif ("${var.logging_auth_mode}" -eq "VSITrustedProfile") {
+        & $configPath `
+            -TargetHost "${var.logging_target_host != null ? var.logging_target_host : ""}" `
+            -TargetPort ${var.logging_target_port} `
+            -AuthMode VSITrustedProfile `
+            -IAMEnv ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} `
+            -TrustedProfile "${var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : ""}" `
+            ${var.logging_secure_access_enabled ? "-VSISecureAccess" : ""}
+    } else {
+        throw "Unsupported logging_auth_mode: ${var.logging_auth_mode}"
+    }
+
+    if (-not (Test-Path "C:\Program Files\logs-agent\bin\fluent-bit.exe")) {
+        throw "fluent-bit.exe not found."
+    }
+
+    if (-not (Test-Path "C:\Program Files\logs-agent\etc\fluent-bit.conf")) {
+        throw "fluent-bit.conf not found."
+    }
+
+    sc.exe create fluent-bit binpath= "C:\Program Files\logs-agent\bin\fluent-bit.exe -c \"C:\Program Files\logs-agent\etc\fluent-bit.conf\""
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to create fluent-bit service. sc.exe exit code: $LASTEXITCODE"
+    }
+
+    if ("${var.logging_auth_mode}" -eq "IAMAPIKey") {
+        New-ItemProperty `
+            -Path "HKLM:\System\CurrentControlSet\Services\fluent-bit" `
+            -Name "Environment" `
+            -Value @("IAM_API_KEY=${var.logging_api_key != null ? var.logging_api_key : ""}") `
+            -PropertyType MultiString `
+            -Force | Out-Null
+    }
+
+    sc.exe start fluent-bit
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to start fluent-bit service. sc.exe exit code: $LASTEXITCODE"
+    }
   EOT
 
-  # Select appropriate commands based on OS
-  logging_agent_user_data_runcmd = local.is_windows ? [] : local.logging_agent_user_data_runcmd_linux
 }
 
 ##############################################################################
@@ -130,33 +160,19 @@ locals {
 ##############################################################################
 
 locals {
-  # Linux paths
-  monitoring_agent_download_dir_linux     = "/run/monitoring-agent"
-  monitoring_agent_installer_script_linux = "monitoring-agent.sh"
-  monitoring_agent_install_log_linux      = "${local.monitoring_agent_download_dir_linux}/monitoring-agent-install.log"
-
-  # Windows paths
-  monitoring_agent_download_dir_windows     = "C:\\Temp\\monitoring-agent"
-  monitoring_agent_installer_script_windows = "monitoring-agent.ps1"
-  monitoring_agent_install_log_windows      = "${local.monitoring_agent_download_dir_windows}\\monitoring-agent-install.log"
-
-  # Select appropriate paths based on OS
-  monitoring_agent_download_dir     = local.is_windows ? local.monitoring_agent_download_dir_windows : local.monitoring_agent_download_dir_linux
-  monitoring_agent_installer_script = local.is_windows ? local.monitoring_agent_installer_script_windows : local.monitoring_agent_installer_script_linux
-  monitoring_agent_install_log      = local.is_windows ? local.monitoring_agent_install_log_windows : local.monitoring_agent_install_log_linux
-
-  monitoring_api_endpoint = var.monitoring_collector_endpoint != null ? join(".", slice(split(".", var.monitoring_collector_endpoint), 1, length(split(".", var.monitoring_collector_endpoint)))) : ""
-
-  # determine command to use to install the kernel header files (Linux only)
+  monitoring_agent_download_dir     = "/run/monitoring-agent"
+  monitoring_agent_installer_script = "monitoring-agent.sh"
+  monitoring_agent_install_log      = "${local.monitoring_agent_download_dir}/monitoring-agent-install.log"
+  monitoring_api_endpoint           = var.monitoring_collector_endpoint != null ? join(".", slice(split(".", var.monitoring_collector_endpoint), 1, length(split(".", var.monitoring_collector_endpoint)))) : ""
+  # determine command to use to install the kernel header files
   monitoring_kernel_header_install_cmd = (
     startswith(local.os_image, "centos") || startswith(local.os_image, "fedora") || startswith(local.os_image, "red") ? "sudo yum -y install kernel-devel-$(uname -r)" :
     startswith(local.os_image, "debian") || startswith(local.os_image, "ubuntu") ? "sudo apt-get -y install linux-headers-$(uname -r)" :
+    startswith(local.os_image, "windows") ? "echo 'Windows handles agent installation internally'" :
     ""
   )
-
-  # Linux monitoring agent command
-  monitoring_agent_command_linux = <<-EOT
-    ${local.monitoring_agent_download_dir_linux}/${local.monitoring_agent_installer_script_linux} \
+  monitoring_agent_command = <<-EOT
+    bash ${local.monitoring_agent_download_dir}/${local.monitoring_agent_installer_script} \
       --access_key ${var.monitoring_access_key != null ? var.monitoring_access_key : ""} \
       --collector ${var.monitoring_collector_endpoint != null ? var.monitoring_collector_endpoint : ""} \
       --collector_port ${var.monitoring_collector_port} \
@@ -167,82 +183,65 @@ locals {
       ${var.monitoring_agent_version != null ? "--version ${var.monitoring_agent_version}" : ""}
   EOT
 
-  # Linux monitoring agent installation commands
-  monitoring_user_data_runcmd_linux = [
-    "${local.monitoring_kernel_header_install_cmd} 2>&1 | tee -a ${local.monitoring_agent_install_log_linux}",
-    "mkdir -p ${local.monitoring_agent_download_dir_linux} 2>&1 | tee -a ${local.monitoring_agent_install_log_linux}",
-    "curl --retry 5 -fL -o ${local.monitoring_agent_download_dir_linux}/${local.monitoring_agent_installer_script_linux} https://ibm.biz/install-sysdig-agent 2>&1 | tee -a ${local.monitoring_agent_install_log_linux}",
-    "chmod +x ${local.monitoring_agent_download_dir_linux}/${local.monitoring_agent_installer_script_linux} 2>&1 | tee -a ${local.monitoring_agent_install_log_linux}",
-    "${local.monitoring_agent_command_linux} 2>&1 | tee -a ${local.monitoring_agent_install_log_linux}",
-    "echo \"Complete. See /opt/draios/logs/draios.log for agent logs.'\" 2>&1 | tee -a ${local.monitoring_agent_install_log_linux}",
+  monitoring_user_data_runcmd = [
+    "bash -lc 'set -o pipefail; ${local.monitoring_kernel_header_install_cmd} 2>&1 | tee -a ${local.monitoring_agent_install_log}'",
+    "bash -lc 'set -o pipefail; mkdir -p ${local.monitoring_agent_download_dir} 2>&1 | tee -a ${local.monitoring_agent_install_log}'",
+    "bash -lc 'set -o pipefail; curl --retry 5 -fL -o ${local.monitoring_agent_download_dir}/${local.monitoring_agent_installer_script} https://ibm.biz/install-sysdig-agent 2>&1 | tee -a ${local.monitoring_agent_install_log}'",
+    "bash -lc 'test -f ${local.monitoring_agent_download_dir}/${local.monitoring_agent_installer_script}'",
+    "bash -lc 'set -o pipefail; chmod +x ${local.monitoring_agent_download_dir}/${local.monitoring_agent_installer_script} 2>&1 | tee -a ${local.monitoring_agent_install_log}'",
+    "bash -lc 'set -o pipefail; ${local.monitoring_agent_command} 2>&1 | tee -a ${local.monitoring_agent_install_log}'",
+    "bash -lc 'set -o pipefail; echo \"Complete. See /opt/draios/logs/draios.log for agent logs.\" 2>&1 | tee -a ${local.monitoring_agent_install_log}'",
   ]
+  monitoring_windows_bundle_url      = "https://github.com/sysdiglabs/Sysdig-Windows-Prometheus-Bundle/releases/download/v${var.monitoring_windows_bundle_version}/windows_exporter-${var.monitoring_windows_bundle_version}-x64.msi"
+  monitoring_windows_download_dir    = "C:\\Temp\\monitoring-agent"
+  monitoring_windows_msi_path        = "${local.monitoring_windows_download_dir}\\windows_exporter-${var.monitoring_windows_bundle_version}-x64.msi"
+  monitoring_windows_install_dir     = "C:\\Program Files\\windows_exporter"
+  monitoring_windows_install_log     = "${local.monitoring_windows_download_dir}\\monitoring-agent-install.log"
+  monitoring_windows_collectors      = "cpu,logical_disk,os,system,net"
+  monitoring_collector_full_endpoint = "https://${var.monitoring_collector_endpoint}/prometheus/remote/write"
 
-  # Windows PowerShell commands for monitoring agent installation
-  monitoring_user_data_powershell_windows = <<-EOT
-    # Create download directory
-    New-Item -ItemType Directory -Force -Path "${local.monitoring_agent_download_dir_windows}" | Out-File -Append "${local.monitoring_agent_install_log_windows}"
+  monitoring_windows_script = <<-EOT
+    $monitoring_windows_bundle_url = "${local.monitoring_windows_bundle_url}"
+    $monitoring_collector_endpoint = "${local.monitoring_collector_full_endpoint}"
+    $monitoring_access_key         = "${var.monitoring_access_key != null ? var.monitoring_access_key : ""}"
+    $downloadDir = "${local.monitoring_windows_download_dir}"
+    $msiPath     = "${local.monitoring_windows_msi_path}"
+    $installDir  = "${local.monitoring_windows_install_dir}"
 
-    # Download monitoring agent installer
-    $ProgressPreference = 'SilentlyContinue'
-    $maxRetries = 5
-    $retryCount = 0
-    $downloaded = $false
+    New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
 
+    $maxRetries = 5; $retryCount = 0; $downloaded = $false
     while (-not $downloaded -and $retryCount -lt $maxRetries) {
         try {
-            Invoke-WebRequest -Uri "https://download.sysdig.com/stable/sysdig-agent/windows/sysdig-agent-installer.ps1" -OutFile "${local.monitoring_agent_download_dir_windows}\${local.monitoring_agent_installer_script_windows}" -UseBasicParsing
+            Invoke-WebRequest -Uri $monitoring_windows_bundle_url -OutFile $msiPath -UseBasicParsing
             $downloaded = $true
-            "Successfully downloaded monitoring agent installer" | Out-File -Append "${local.monitoring_agent_install_log_windows}"
         } catch {
-            $retryCount++
-            "Download attempt $retryCount failed: $_" | Out-File -Append "${local.monitoring_agent_install_log_windows}"
-            Start-Sleep -Seconds 5
+            $retryCount++; Start-Sleep -Seconds 5
         }
     }
+    if (-not $downloaded) { throw "Failed to download monitoring agent after $maxRetries attempts." }
 
-    if (-not $downloaded) {
-        "Failed to download monitoring agent installer after $maxRetries attempts" | Out-File -Append "${local.monitoring_agent_install_log_windows}"
-        exit 1
-    }
+    # Pre-create config.yml so the MSI's Remove-Item step doesn't fail
+    New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+    New-Item -ItemType File -Force -Path "$installDir\\config.yml" | Out-Null
 
-    # Prepare installation parameters
-    $installParams = @{
-        access_key = "${var.monitoring_access_key != null ? var.monitoring_access_key : ""}"
-        collector = "${var.monitoring_collector_endpoint != null ? var.monitoring_collector_endpoint : ""}"
-        collector_port = ${var.monitoring_collector_port}
-        secure = $true
-        check_certificate = $false
-    }
+    $collectors = "${local.monitoring_windows_collectors}"
+    $logPath = "${local.monitoring_windows_install_log}"
 
-    ${length(var.monitoring_tags) > 0 ? "$installParams['tags'] = \"${join(",", var.monitoring_tags)}\"" : ""}
-    ${var.monitoring_agent_version != null ? "$installParams['agent_version'] = \"${var.monitoring_agent_version}\"" : ""}
+    $arguments = @(
+        "/i", "`"$msiPath`"",
+        "ENABLED_COLLECTORS=$collectors",
+        "SYSDIG_URL=$monitoring_collector_endpoint",
+        "SYSDIG_TOKEN=$monitoring_access_key",
+        "/qn", "/norestart", "/l*v", "`"$logPath`""
+    )
 
-    # Additional configuration
-    $additionalConf = @"
-sysdig_api_endpoint: ${local.monitoring_api_endpoint}
-host_scanner:
-  enabled: true
-  scan_on_start: true
-kspm_analyzer:
-  enabled: true
-"@
+    $process = Start-Process -FilePath "msiexec.exe" -ArgumentList $arguments -Wait -PassThru -NoNewWindow
+    if ($process.ExitCode -ne 0) { Write-Error "Installation failed with exit code $($process.ExitCode). Check $logPath" }
 
-    $installParams['additional_conf'] = $additionalConf
-
-    # Install monitoring agent
-    try {
-        & "${local.monitoring_agent_download_dir_windows}\${local.monitoring_agent_installer_script_windows}" @installParams *>> "${local.monitoring_agent_install_log_windows}"
-        "Monitoring agent installation completed" | Out-File -Append "${local.monitoring_agent_install_log_windows}"
-    } catch {
-        "Monitoring agent installation failed: $_" | Out-File -Append "${local.monitoring_agent_install_log_windows}"
-        exit 1
-    }
-
-    "Complete. See C:\ProgramData\Sysdig\logs for agent logs." | Out-File -Append "${local.monitoring_agent_install_log_windows}"
+    Start-Sleep -Seconds 5
+    Get-Service -Name *prometheus*, *exporter* | Select-Object Name, Status
   EOT
-
-  # Select appropriate commands based on OS
-  monitoring_user_data_runcmd = local.is_windows ? [] : local.monitoring_user_data_runcmd_linux
 }
 
 ##############################################################################
@@ -250,33 +249,44 @@ kspm_analyzer:
 ##############################################################################
 
 locals {
-  # Linux user data handling (cloud-init format)
   # extract runcmd block from var.user_data if one exists, otherwise empty list
   provided_user_data_runcmd = try(yamldecode(var.user_data)["runcmd"], [])
 
   # conditionally merge all 3 of the run cmd lists (user, logging, monitoring) based on boolean switches
   merged_runcmd = concat(flatten([local.provided_user_data_runcmd, [var.install_logging_agent ? local.logging_agent_user_data_runcmd : []], [var.install_monitoring_agent ? local.monitoring_user_data_runcmd : []]]))
 
+  windows_combined_script = trimspace(join("\n\n", compact([
+    var.user_data != null ? trimspace(var.user_data) : "",
+    var.install_logging_agent ? trimspace(local.logging_windows_script) : "",
+    var.install_monitoring_agent ? trimspace(local.monitoring_windows_script) : "",
+  ])))
+  windows_runcmd    = <<-EOT
+  Content-Type: text/x-shellscript; charset="us-ascii"
+  MIME-Version: 1.0
+  Content-Transfer-Encoding: 7bit
+  Content-Disposition: attachment; filename="install-agents.ps1"
+
+  #ps1_sysnative
+  ${local.windows_combined_script}
+  EOT
+  windows_mime_part = local.is_windows && local.windows_combined_script != "" ? local.windows_runcmd : null
+
+  windows_user_data = local.windows_mime_part
   # re-encode the user data into yaml format after adding in the combined runcmd commands
   # note the comment to the top to let cloud-init know this is a cloud config file
-  user_data_yaml_linux = var.user_data != null || var.install_logging_agent || var.install_monitoring_agent ? join("\n", ["#cloud-config"], [yamlencode(merge(try(yamldecode(var.user_data), {}), { "runcmd" = local.merged_runcmd }))]) : null
-
-  # Windows user data handling (PowerShell format)
-  # Combine user-provided PowerShell with agent installation scripts
-  provided_user_data_powershell = var.user_data != null ? var.user_data : ""
-
-  # Build the complete PowerShell script for Windows
-  windows_powershell_script = join("\n\n", compact([
-    "# User-provided PowerShell script",
-    local.provided_user_data_powershell != "" ? local.provided_user_data_powershell : null,
-    var.install_logging_agent ? "# Logging Agent Installation\n${local.logging_agent_user_data_powershell_windows}" : null,
-    var.install_monitoring_agent ? "# Monitoring Agent Installation\n${local.monitoring_user_data_powershell_windows}" : null,
-  ]))
-
-  # Wrap PowerShell script in the required format for Windows user data
-  # Windows instances expect PowerShell scripts wrapped in <powershell> tags or as base64
-  user_data_yaml_windows = var.user_data != null || var.install_logging_agent || var.install_monitoring_agent ? "<powershell>\n${local.windows_powershell_script}\n</powershell>" : null
-
-  # Select the appropriate user data format based on OS
-  user_data_yaml = local.is_windows ? local.user_data_yaml_windows : local.user_data_yaml_linux
+  user_data_yaml = local.is_windows ? (
+    local.windows_user_data
+    ) : (
+    var.user_data != null ||
+    var.install_logging_agent ||
+    var.install_monitoring_agent
+    ) ? join("\n", [
+      "#cloud-config",
+      yamlencode(
+        merge(
+          try(yamldecode(var.user_data), {}),
+          { runcmd = local.merged_runcmd }
+        )
+      ),
+  ]) : null
 }

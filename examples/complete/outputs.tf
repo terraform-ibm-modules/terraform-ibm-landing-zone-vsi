@@ -32,3 +32,9 @@ output "lb_security_groups" {
   description = "Load Balancer security groups"
   value       = module.slz_vsi.lb_security_groups
 }
+
+output "ssh_private_key" {
+  value       = var.ssh_key == null ? tls_private_key.tls_key[0].private_key_pem : null
+  description = "The ssh private key data in [PEM (RFC 1421)](https://datatracker.ietf.org/doc/html/rfc1421) format."
+  sensitive   = true
+}
