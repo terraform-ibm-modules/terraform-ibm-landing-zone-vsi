@@ -259,7 +259,14 @@ resource "ibm_is_subnet_reserved_ip" "secondary_vni_ip" {
   auto_delete = false
 }
 
+# Check whether access tags are valid and exist in the account
+data "ibm_iam_access_tag" "access_tags" {
+  for_each = length(var.access_tags) != 0 ? toset(var.access_tags) : [] # Force dependency on data source validation to ensure access_tags exist and are valid before use.
+  name     = each.value
+}
+
 resource "ibm_is_instance" "vsi" {
+  depends_on      = [data.ibm_iam_access_tag.access_tags]
   for_each        = local.vsi_map
   name            = each.value.vsi_name
   image           = (local.vsi_boot_volume_snapshot_crn == null) ? var.image_id : null # image and snapshot are mutually exclusive

@@ -13,7 +13,7 @@ variable "prefix" {
 }
 
 variable "resource_tags" {
-  description = "Add user resource tags to the Virtual Server Instances (VSI) instance to organize, track, and manage costs. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#tag-types)."
+  description = "Add user resource tags to the Virtual Server instance (VSI) to organize, track, and manage costs. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#tag-types)."
   type        = list(string)
   default     = []
 }
@@ -221,7 +221,7 @@ variable "skip_iam_authorization_policy" {
 
 variable "access_tags" {
   type        = list(string)
-  description = "Add access management tags to the Virtual Server Instances (VSI) instance to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console)."
+  description = "Add access management tags to the Virtual Server instance (VSI) to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console)."
   default     = []
 }
 
