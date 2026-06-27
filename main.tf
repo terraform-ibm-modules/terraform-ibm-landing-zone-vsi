@@ -259,7 +259,14 @@ resource "ibm_is_subnet_reserved_ip" "secondary_vni_ip" {
   auto_delete = false
 }
 
+# Check whether access tags are valid and exist in the account
+data "ibm_iam_access_tag" "access_tags" {
+  for_each = length(var.access_tags) != 0 ? toset(var.access_tags) : [] # Force dependency on data source validation to ensure access_tags exist and are valid before use.
+  name     = each.value
+}
+
 resource "ibm_is_instance" "vsi" {
+  depends_on      = [data.ibm_iam_access_tag.access_tags]
   for_each        = local.vsi_map
   name            = each.value.vsi_name
   image           = (local.vsi_boot_volume_snapshot_crn == null) ? var.image_id : null # image and snapshot are mutually exclusive
@@ -271,7 +278,7 @@ resource "ibm_is_instance" "vsi" {
   keys            = var.ssh_key_ids
   placement_group = var.placement_group_id
   dedicated_host  = var.enable_dedicated_host ? var.dedicated_host_id : null
-  tags            = var.tags
+  tags            = var.resource_tags
   access_tags     = var.access_tags
   lifecycle {
     ignore_changes = [
@@ -384,7 +391,7 @@ resource "ibm_is_floating_ip" "vsi_fip" {
   for_each       = var.enable_floating_ip ? ibm_is_instance.vsi : {}
   name           = "${each.value.name}-fip"
   target         = var.use_legacy_network_interface ? each.value.primary_network_interface[0].id : each.value.primary_network_attachment[0].virtual_network_interface[0].id
-  tags           = var.tags
+  tags           = var.resource_tags
   access_tags    = var.access_tags
   resource_group = var.resource_group_id
 }
@@ -396,7 +403,7 @@ resource "ibm_is_floating_ip" "secondary_fip" {
   } : {}
   name           = each.key
   target         = each.value.target
-  tags           = var.tags
+  tags           = var.resource_tags
   access_tags    = var.access_tags
   resource_group = var.resource_group_id
 }
@@ -405,7 +412,7 @@ resource "ibm_is_floating_ip" "vni_secondary_fip" {
   for_each       = local.secondary_fip_map
   name           = "${each.value.vni_name}-fip"
   target         = each.value.vni_id
-  tags           = var.tags
+  tags           = var.resource_tags
   access_tags    = var.access_tags
   resource_group = var.resource_group_id
 }

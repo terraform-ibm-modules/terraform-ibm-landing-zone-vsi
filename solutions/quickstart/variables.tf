@@ -63,14 +63,14 @@ variable "provider_visibility" {
 }
 
 variable "resource_tags" {
-  description = "The list of tags to add to the Virtual server instance."
+  description = "Add user resource tags to the Virtual Server instance (VSI) to organize, track, and manage costs. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#tag-types)."
   type        = list(string)
   default     = []
 }
 
 variable "access_tags" {
   type        = list(string)
-  description = "The list of access tags to add to the Virtual server instance. For more information, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial."
+  description = "Add access management tags to the Virtual Server instance (VSI) to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console)."
   default     = []
 }
 

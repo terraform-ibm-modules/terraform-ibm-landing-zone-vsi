@@ -222,7 +222,7 @@ module "slz_vsi_cx" {
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = module.vsi_image_selector.latest_image_id
   create_security_group           = false
-  tags                            = var.resource_tags
+  resource_tags                   = var.resource_tags
   access_tags                     = var.access_tags
   subnets                         = module.slz_vpc.subnet_zone_list
   vpc_id                          = module.slz_vpc.vpc_id
@@ -301,7 +301,7 @@ module "slz_vsi_bx" {
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = module.vsi_image_selector.latest_image_id
   create_security_group           = false
-  tags                            = var.resource_tags
+  resource_tags                   = var.resource_tags
   access_tags                     = var.access_tags
   subnets                         = module.slz_vpc.subnet_zone_list
   vpc_id                          = module.slz_vpc.vpc_id
