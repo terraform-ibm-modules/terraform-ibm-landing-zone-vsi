@@ -34,7 +34,7 @@ resource "ibm_is_security_group" "security_group" {
   name           = each.value.name
   resource_group = var.resource_group_id
   vpc            = var.vpc_id
-  tags           = var.tags
+  tags           = var.resource_tags
   access_tags    = var.access_tags
 }
 

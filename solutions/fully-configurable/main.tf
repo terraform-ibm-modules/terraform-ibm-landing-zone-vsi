@@ -212,7 +212,7 @@ module "vsi" {
   depends_on                       = [time_sleep.wait_for_authorization_policy[0]]
   resource_group_id                = module.resource_group.resource_group_id
   prefix                           = "${local.prefix}${var.vsi_name}"
-  tags                             = var.vsi_resource_tags
+  resource_tags                    = var.vsi_resource_tags
   vpc_id                           = local.existing_vpc_id
   subnets                          = local.subnet
   image_id                         = var.image_id

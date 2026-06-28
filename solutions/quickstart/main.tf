@@ -185,7 +185,7 @@ module "vsi" {
   source                = "../../"
   resource_group_id     = module.resource_group.resource_group_id
   image_id              = data.ibm_is_image.image.id
-  tags                  = var.resource_tags
+  resource_tags         = var.resource_tags
   access_tags           = var.access_tags
   subnets               = local.subnet
   vpc_id                = local.vpc_id

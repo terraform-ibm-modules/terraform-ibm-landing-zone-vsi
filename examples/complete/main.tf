@@ -343,7 +343,7 @@ module "slz_vsi" {
   resource_group_id               = module.resource_group.resource_group_id
   image_id                        = local.selected_image_id
   create_security_group           = true
-  tags                            = var.resource_tags
+  resource_tags                   = var.resource_tags
   access_tags                     = var.access_tags
   subnets                         = module.slz_vpc.subnet_zone_list
   vpc_id                          = module.slz_vpc.vpc_id
@@ -514,7 +514,7 @@ module "slz_vsi_dh" {
       ip_version = "ipv4"
     }]
   }
-  tags                            = var.resource_tags
+  resource_tags                   = var.resource_tags
   access_tags                     = var.access_tags
   subnets                         = [for subnet in module.slz_vpc.subnet_zone_list : subnet if subnet.zone == "${var.region}-1"]
   vpc_id                          = module.slz_vpc.vpc_id

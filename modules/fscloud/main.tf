@@ -2,7 +2,7 @@ module "fscloud_vsi" {
   source                         = "../../"
   resource_group_id              = var.resource_group_id
   prefix                         = var.prefix
-  tags                           = var.tags
+  resource_tags                  = var.resource_tags
   vpc_id                         = var.vpc_id
   subnets                        = var.subnets
   image_id                       = var.image_id
