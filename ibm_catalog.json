@@ -184,8 +184,8 @@
                   "value": "ibm-centos-8-2-minimal-amd64-2"
                 },
                 {
-                  "displayname": "ibm-centos-stream-10-amd64-8",
-                  "value": "ibm-centos-stream-10-amd64-8"
+                  "displayname": "ibm-centos-stream-10-amd64-9",
+                  "value": "ibm-centos-stream-10-amd64-9"
                 },
                 {
                   "displayname": "ibm-centos-stream-8-amd64-1",
@@ -200,8 +200,8 @@
                   "value": "ibm-centos-stream-8-amd64-4"
                 },
                 {
-                  "displayname": "ibm-centos-stream-9-amd64-16",
-                  "value": "ibm-centos-stream-9-amd64-16"
+                  "displayname": "ibm-centos-stream-9-amd64-17",
+                  "value": "ibm-centos-stream-9-amd64-17"
                 },
                 {
                   "displayname": "ibm-debian-10-0-minimal-amd64-1",
@@ -288,8 +288,8 @@
                   "value": "ibm-debian-9-9-minimal-amd64-2"
                 },
                 {
-                  "displayname": "ibm-fedora-coreos-43-stable-2",
-                  "value": "ibm-fedora-coreos-43-stable-2"
+                  "displayname": "ibm-fedora-coreos-44-stable-1",
+                  "value": "ibm-fedora-coreos-44-stable-1"
                 },
                 {
                   "displayname": "ibm-redhat-7-6-minimal-amd64-1",
@@ -392,12 +392,12 @@
                   "value": "ibm-redhat-9-0-minimal-amd64-4"
                 },
                 {
-                  "displayname": "ibm-redhat-9-4-minimal-amd64-13",
-                  "value": "ibm-redhat-9-4-minimal-amd64-13"
-                },
-                {
                   "displayname": "ibm-redhat-9-6-minimal-amd64-11",
                   "value": "ibm-redhat-9-6-minimal-amd64-11"
+                },
+                {
+                  "displayname": "ibm-redhat-9-8-minimal-amd64-1",
+                  "value": "ibm-redhat-9-8-minimal-amd64-1"
                 },
                 {
                   "displayname": "ibm-ubuntu-16-04-5-minimal-amd64-1",
@@ -444,16 +444,16 @@
                   "value": "ibm-ubuntu-18-04-6-minimal-amd64-8"
                 },
                 {
-                  "displayname": "ibm-ubuntu-22-04-5-minimal-amd64-15",
-                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-15"
+                  "displayname": "ibm-ubuntu-22-04-5-minimal-amd64-16",
+                  "value": "ibm-ubuntu-22-04-5-minimal-amd64-16"
                 },
                 {
-                  "displayname": "ibm-ubuntu-24-04-4-minimal-amd64-4",
-                  "value": "ibm-ubuntu-24-04-4-minimal-amd64-4"
+                  "displayname": "ibm-ubuntu-24-04-4-minimal-amd64-5",
+                  "value": "ibm-ubuntu-24-04-4-minimal-amd64-5"
                 },
                 {
-                  "displayname": "ibm-ubuntu-26-04-minimal-amd64-2",
-                  "value": "ibm-ubuntu-26-04-minimal-amd64-2"
+                  "displayname": "ibm-ubuntu-26-04-minimal-amd64-3",
+                  "value": "ibm-ubuntu-26-04-minimal-amd64-3"
                 }
               ]
             },
