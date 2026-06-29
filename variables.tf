@@ -858,7 +858,7 @@ variable "monitoring_collector_port" {
 }
 
 variable "monitoring_windows_bundle_version" {
-  description = "Version of the Windows Prometheus Bundle MSI."
+  description = "Version of the Windows Prometheus Bundle MSI. For the latest version release, see https://github.com/sysdiglabs/Sysdig-Windows-Prometheus-Bundle/releases."
   type        = string
   default     = "1.9.0"
 }
