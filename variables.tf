@@ -695,7 +695,7 @@ variable "install_logging_agent" {
 
   validation {
     condition     = var.install_logging_agent ? local.package_name != "" : true
-    error_message = "The module currently does not support installing the Logging agent on ${local.os_image}. Currently only supports debian, ubuntu and redhat."
+    error_message = "The module currently does not support installing the Logging agent on ${local.os_image}. Currently only supports debian, ubuntu, redhat, and windows."
   }
 
   validation {
@@ -813,7 +813,7 @@ variable "install_monitoring_agent" {
 
   validation {
     condition     = var.install_monitoring_agent ? local.monitoring_kernel_header_install_cmd != "" : true
-    error_message = "This module currently does not support installing the Monitoring agent on ${local.os_image}. Currently only supports centos, federo, debian, ubuntu and redhat."
+    error_message = "This module currently does not support installing the Monitoring agent on ${local.os_image}. Currently only supports centos, fedora, debian, ubuntu, redhat, and windows."
   }
 }
 
@@ -855,6 +855,12 @@ variable "monitoring_collector_port" {
     condition     = var.install_monitoring_agent ? var.monitoring_collector_port != null && var.monitoring_collector_port != "" : true
     error_message = "Value for `monitoring_collector_port` must be provided when `install_monitoring_agent` is true."
   }
+}
+
+variable "monitoring_windows_bundle_version" {
+  description = "Version of the Windows Prometheus Bundle MSI. For the latest version release, see https://github.com/sysdiglabs/Sysdig-Windows-Prometheus-Bundle/releases."
+  type        = string
+  default     = "1.9.0" # github-releases: sysdiglabs/Sysdig-Windows-Prometheus-Bundle
 }
 
 variable "monitoring_tags" {
