@@ -60,6 +60,38 @@ output "fip_list" {
 ##############################################################################
 
 ##############################################################################
+# VNI Outputs
+##############################################################################
+
+output "primary_vni_details" {
+  description = "Detailed information about primary virtual network interfaces"
+  value = {
+    for key, vni in ibm_is_virtual_network_interface.secondary_vni : key => {
+      name       = vni.name
+      id         = vni.id
+      subnet     = vni.subnet
+      zone       = vni.zone
+      primary_ip = vni.primary_ip[0].address
+    }
+  }
+}
+
+output "secondary_vni_details" {
+  description = "Detailed information about secondary virtual network interfaces"
+  value = {
+    for key, vni in ibm_is_virtual_network_interface.secondary_vni : key => {
+      name       = vni.name
+      id         = vni.id
+      subnet     = vni.subnet
+      zone       = vni.zone
+      primary_ip = vni.primary_ip[0].address
+    }
+  }
+}
+
+##############################################################################
+
+##############################################################################
 # Load Balancer Outputs
 ##############################################################################
 
