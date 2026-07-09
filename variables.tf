@@ -788,7 +788,7 @@ variable "logging_secure_access_enabled" {
 variable "logging_application_name" {
   type        = bool
   default     = null
-  description = "The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `$HOSTNAME`."
+  description = "The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `HOSTNAME`."
 }
 
 variable "logging_subsystem_name" {
