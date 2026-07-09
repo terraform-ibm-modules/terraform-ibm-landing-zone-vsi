@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.13.12"
+  version           = "1.13.15"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan              = "graduated-tier"
-  version           = "1.15.8"
+  version           = "1.15.9"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -102,11 +102,11 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "9.0.9"
+  version           = "9.1.0"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
-  tags              = var.resource_tags
+  resource_tags     = var.resource_tags
   name              = "vpc"
   network_acls = [
     # For enabling rdp access for windows instances add rdp-inbound and rdp-inbound-response rules for prot 3389

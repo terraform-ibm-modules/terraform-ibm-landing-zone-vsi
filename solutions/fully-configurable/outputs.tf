@@ -22,6 +22,16 @@ output "fip_list" {
   value       = length(module.vsi.fip_list) > 0 ? module.vsi.fip_list : null
 }
 
+output "primary_vni" {
+  description = "A list of VNI details with name, id, zone, and primary ipv4 address."
+  value       = length(module.vsi.primary_vni_details) > 0 ? module.vsi.primary_vni_details : null
+}
+
+output "secondary_vni" {
+  description = "A list of VNI details with name, id, zone, and secondary ipv4 address."
+  value       = length(module.vsi.secondary_vni_details) > 0 ? module.vsi.secondary_vni_details : null
+}
+
 ##############################################################################
 
 ##############################################################################

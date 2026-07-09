@@ -309,6 +309,8 @@ You need the following permissions to run this module.
 | <a name="output_lb_security_groups"></a> [lb\_security\_groups](#output\_lb\_security\_groups) | Load Balancer security groups |
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
 | <a name="output_load_balancers_metadata"></a> [load\_balancers\_metadata](#output\_load\_balancers\_metadata) | Load Balancers metadata. |
+| <a name="output_primary_vni_details"></a> [primary\_vni\_details](#output\_primary\_vni\_details) | Detailed information about primary virtual network interfaces |
+| <a name="output_secondary_vni_details"></a> [secondary\_vni\_details](#output\_secondary\_vni\_details) | Detailed information about secondary virtual network interfaces |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 

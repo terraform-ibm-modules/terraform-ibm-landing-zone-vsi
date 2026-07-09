@@ -60,5 +60,7 @@ No resources.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_slz_primary_vni"></a> [slz\_primary\_vni](#output\_slz\_primary\_vni) | Primary VNI details |
+| <a name="output_slz_secondary_vni"></a> [slz\_secondary\_vni](#output\_slz\_secondary\_vni) | Secondary VNI details |
 | <a name="output_slz_vsi"></a> [slz\_vsi](#output\_slz\_vsi) | VSI module values |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
