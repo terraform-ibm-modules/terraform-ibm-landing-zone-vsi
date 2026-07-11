@@ -143,6 +143,22 @@ data "ibm_is_vpc" "vpc" {
   identifier = local.existing_vpc_id
 }
 
+resource "terraform_data" "auto_selected_subnet" {
+  count = var.existing_subnet_id == null ? 1 : 0
+
+  # Persist the initial fallback subnet choice so later VPC subnet changes do not
+  # implicitly move the VSI to a different subnet on re-apply.
+  input = {
+    name = data.ibm_is_vpc.vpc.subnets[0].name
+    id   = data.ibm_is_vpc.vpc.subnets[0].id
+    zone = data.ibm_is_vpc.vpc.subnets[0].zone
+  }
+
+  lifecycle {
+    ignore_changes = [input]
+  }
+}
+
 data "ibm_is_subnet" "secondary_subnet" {
   count      = var.existing_secondary_subnet_id != null ? 1 : 0
   identifier = var.existing_secondary_subnet_id
@@ -150,15 +166,16 @@ data "ibm_is_subnet" "secondary_subnet" {
 
 locals {
   prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
-  # When `existing_subnet_id` is not provided, use the first subnet from the existing VPC.
-  subnet = var.existing_subnet_id != null ? [{
+  selected_subnet = var.existing_subnet_id != null ? {
     name = data.ibm_is_subnet.subnet[0].name
     id   = data.ibm_is_subnet.subnet[0].id
     zone = data.ibm_is_subnet.subnet[0].zone
-    }] : [{
-    name = data.ibm_is_vpc.vpc.subnets[0].name
-    id   = data.ibm_is_vpc.vpc.subnets[0].id
-    zone = data.ibm_is_vpc.vpc.subnets[0].zone
+  } : terraform_data.auto_selected_subnet[0].input
+
+  subnet = [{
+    name = local.selected_subnet.name
+    id   = local.selected_subnet.id
+    zone = local.selected_subnet.zone
   }]
 
   secondary_subnet = var.existing_secondary_subnet_id != null ? [{
@@ -173,7 +190,7 @@ locals {
     var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : []
   )
 
-  custom_vsi_volume_names = { (var.existing_subnet_id != null ? data.ibm_is_subnet.subnet[0].name : data.ibm_is_vpc.vpc.subnets[0].name) = {
+  custom_vsi_volume_names = { (local.selected_subnet.name) = {
   "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
 }
 

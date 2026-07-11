@@ -63,7 +63,7 @@ variable "vsi_access_tags" {
 ##############################################################################
 
 variable "existing_vpc_crn" {
-  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the VSI will be provisioned in the first subnet of the VPC."
+  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn`, the VSI is initially provisioned in the first subnet returned for the VPC and that subnet selection is then preserved for future applies."
   type        = string
   nullable    = false
 
@@ -77,7 +77,7 @@ variable "existing_vpc_crn" {
 }
 
 variable "existing_subnet_id" {
-  description = "The ID of an existing subnet. If no value is passed, the Virtual server instance is deployed to the first subnet from the Virtual Private Cloud(VPC)."
+  description = "The ID of an existing subnet. If no value is passed, the Virtual server instance is initially deployed to the first subnet returned from the Virtual Private Cloud (VPC), and that selected subnet is preserved for future applies."
   type        = string
   default     = null
 }
