@@ -156,17 +156,23 @@ locals {
 
   resolved_vsi_subnets = var.existing_subnet_id != null ? [
     {
-      name = [for s in data.ibm_is_vpc.vpc.subnets : s.name if s.id == var.existing_subnet_id][0]
+      name = try([for s in data.ibm_is_vpc.vpc.subnets : s.name if s.id == var.existing_subnet_id][0], null)
       id   = var.existing_subnet_id
-      zone = [for s in data.ibm_is_vpc.vpc.subnets : s.zone if s.id == var.existing_subnet_id][0]
+      zone = try([for s in data.ibm_is_vpc.vpc.subnets : s.zone if s.id == var.existing_subnet_id][0], null)
     }
     ] : [
     for name in var.vsi_subnet_names :
-    coalesce(
-      lookup(local.vpc_subnets_by_name, name, null),
-      lookup(local.vpc_subnets_by_name, "${local.prefix}${name}", null)
+    try(
+      coalesce(
+        lookup(local.vpc_subnets_by_name, name, null),
+        lookup(local.vpc_subnets_by_name, "${local.prefix}${name}", null)
+      ),
+      null
     )
   ]
+
+  # Filter out nulls so the root module never receives them; precondition handles the error message
+  safe_vsi_subnets = [for s in local.resolved_vsi_subnets : s if s != null]
 }
 
 resource "terraform_data" "validate_vsi_subnet_name" {
@@ -229,7 +235,7 @@ module "vsi" {
   prefix                           = "${local.prefix}${var.vsi_name}"
   resource_tags                    = var.vsi_resource_tags
   vpc_id                           = local.existing_vpc_id
-  subnets                          = local.resolved_vsi_subnets
+  subnets                          = local.safe_vsi_subnets
   image_id                         = var.image_id
   ssh_key_ids                      = local.ssh_keys
   machine_type                     = var.machine_type
