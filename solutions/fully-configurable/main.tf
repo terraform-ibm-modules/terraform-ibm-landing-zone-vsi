@@ -165,7 +165,7 @@ locals {
     try(
       coalesce(
         lookup(local.vpc_subnets_by_name, name, null),
-        lookup(local.vpc_subnets_by_name, "${local.prefix}${name}", null)
+        lookup(local.vpc_subnets_by_name, "${data.ibm_is_vpc.vpc.name}-${name}", null)
       ),
       null
     )
