@@ -727,23 +727,48 @@
               }
             },
             {
-              "key": "existing_subnet_id",
-              "display_name": "existing_subnet",
+              "key": "subnets",
+              "default_value": "{\n    zone-1 = [\n      {\n        name           = \"subnet-a\"\n        cidr           = \"10.10.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-2 = [\n      {\n        name           = \"subnet-b\"\n        cidr           = \"10.20.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ],\n    zone-3 = [\n      {\n        name           = \"subnet-c\"\n        cidr           = \"10.30.10.0/24\"\n        public_gateway = true\n        acl_name       = \"vpc-acl\"\n        no_addr_prefix = false\n      }\n    ]\n  }",
+              "description": "List of subnets for the VPC. This hidden virtual input is used for top-level dependency wiring to the VPC deployment.",
+              "required": false,
+              "virtual": true,
+              "hidden": true,
               "custom_config": {
-                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "type": "code_editor",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
+            },
+            {
+              "key": "existing_subnet_id"
+            },
+            {
+              "key": "vsi_subnet_names",
+              "custom_config": {
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "resourceType": "subnet",
-                  "selection": "single_select",
-                  "valueType": "id"
-                },
-                "associations": {
-                  "parameters": [
-                    {
-                      "name": "region",
-                      "optionsRefresh": true
-                    }
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "vsi_per_subnet"
+            },
+            {
+              "key": "custom_vsi_volume_names",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
                   ]
                 }
               }
@@ -1267,6 +1292,11 @@
                 {
                   "dependency_input": "region",
                   "version_input": "region",
+                  "reference_version": true
+                },
+                {
+                  "dependency_input": "subnets",
+                  "version_input": "subnets",
                   "reference_version": true
                 },
                 {

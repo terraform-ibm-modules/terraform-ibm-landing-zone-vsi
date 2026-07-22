@@ -63,7 +63,7 @@ variable "vsi_access_tags" {
 ##############################################################################
 
 variable "existing_vpc_crn" {
-  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn`, the VSI is initially provisioned in the first subnet returned for the VPC and that subnet selection is then preserved for future applies."
+  description = "The CRN of an existing VPC. Use `vsi_subnet_names` to control which subnets the VSIs are placed in. If not set, the solution defaults to `subnet-a`."
   type        = string
   nullable    = false
 
@@ -77,9 +77,32 @@ variable "existing_vpc_crn" {
 }
 
 variable "existing_subnet_id" {
-  description = "The ID of an existing subnet. If no value is passed, the Virtual server instance is initially deployed to the first subnet returned from the Virtual Private Cloud (VPC), and that selected subnet is preserved for future applies."
+  description = "The ID of an existing subnet where the VSI will be deployed. Use this when you want to directly specify a subnet by ID. Mutually exclusive with `vsi_subnet_names`."
   type        = string
   default     = null
+
+  validation {
+    condition     = !(var.existing_subnet_id != null && length(var.vsi_subnet_names) > 0 && var.vsi_subnet_names != ["subnet-a"])
+    error_message = "Only one of `existing_subnet_id` or `vsi_subnet_names` may be specified, not both."
+  }
+}
+
+variable "vsi_subnet_names" {
+  description = "List of subnet names where VSIs will be deployed, for example `[\"subnet-a\", \"subnet-b\"]`. Do not include the prefix. Defaults to `[\"subnet-a\"]`. Ignored if `existing_subnet_id` is set."
+  type        = list(string)
+  default     = ["subnet-a"]
+}
+
+variable "vsi_per_subnet" {
+  description = "Number of VSI instances to create per subnet."
+  type        = number
+  default     = 1
+}
+
+variable "custom_vsi_volume_names" {
+  description = "A map of subnet names to VSI names to storage volume name lists. If not set, names are auto-generated using the prefix and last 4 characters of the subnet ID. VSI names must be unique across all subnets. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-custom-vsi-volume-names)."
+  type        = map(map(list(string)))
+  default     = {}
 }
 
 ##############################################################################
