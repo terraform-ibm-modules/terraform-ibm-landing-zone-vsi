@@ -727,7 +727,14 @@
               }
             },
             {
-              "key": "existing_subnet_id"
+              "key": "existing_subnet_ids",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
             },
             {
               "key": "vsi_subnet_names",

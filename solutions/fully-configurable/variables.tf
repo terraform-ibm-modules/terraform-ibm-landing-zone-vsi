@@ -76,14 +76,14 @@ variable "existing_vpc_crn" {
   }
 }
 
-variable "existing_subnet_id" {
-  description = "The ID of an existing subnet where the VSI will be deployed. Use this when you want to directly specify a subnet by ID. Mutually exclusive with `vsi_subnet_names`."
-  type        = string
-  default     = null
+variable "existing_subnet_ids" {
+  description = "A list of existing subnet IDs where VSIs will be deployed. Use this when you want to directly specify subnets by ID. Mutually exclusive with `vsi_subnet_names`."
+  type        = list(string)
+  default     = []
 
   validation {
-    condition     = !(var.existing_subnet_id != null && length(var.vsi_subnet_names) > 0 && var.vsi_subnet_names != ["subnet-a"])
-    error_message = "Only one of `existing_subnet_id` or `vsi_subnet_names` may be specified, not both."
+    condition     = !(length(var.existing_subnet_ids) > 0 && length(var.vsi_subnet_names) > 0 && var.vsi_subnet_names != ["subnet-a"])
+    error_message = "Only one of `existing_subnet_ids` or `vsi_subnet_names` may be specified, not both."
   }
 }
 

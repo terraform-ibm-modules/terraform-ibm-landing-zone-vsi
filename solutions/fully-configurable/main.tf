@@ -154,11 +154,11 @@ locals {
     }
   }
 
-  resolved_vsi_subnets = var.existing_subnet_id != null ? [
-    {
-      name = try([for s in data.ibm_is_vpc.vpc.subnets : s.name if s.id == var.existing_subnet_id][0], null)
-      id   = var.existing_subnet_id
-      zone = try([for s in data.ibm_is_vpc.vpc.subnets : s.zone if s.id == var.existing_subnet_id][0], null)
+  resolved_vsi_subnets = length(var.existing_subnet_ids) > 0 ? [
+    for id in var.existing_subnet_ids : {
+      name = try([for s in data.ibm_is_vpc.vpc.subnets : s.name if s.id == id][0], null)
+      id   = id
+      zone = try([for s in data.ibm_is_vpc.vpc.subnets : s.zone if s.id == id][0], null)
     }
     ] : [
     for name in var.vsi_subnet_names :
@@ -172,14 +172,14 @@ locals {
   ]
 
   # Filter out nulls so the root module never receives them; precondition handles the error message
-  safe_vsi_subnets = [for s in local.resolved_vsi_subnets : s if s != null]
+  vsi_subnets = [for s in local.resolved_vsi_subnets : s if s != null]
 }
 
 resource "terraform_data" "validate_vsi_subnet_name" {
   lifecycle {
     precondition {
-      condition     = var.existing_subnet_id != null ? contains([for s in data.ibm_is_vpc.vpc.subnets : s.id], var.existing_subnet_id) : alltrue([for s in local.resolved_vsi_subnets : s != null])
-      error_message = "The `existing_subnet_id` does not belong to the specified VPC, or one or more values in `vsi_subnet_names` could not be resolved to a matching subnet."
+      condition     = length(var.existing_subnet_ids) > 0 ? alltrue([for id in var.existing_subnet_ids : contains([for s in data.ibm_is_vpc.vpc.subnets : s.id], id)]) : alltrue([for s in local.resolved_vsi_subnets : s != null])
+      error_message = "One or more values in `existing_subnet_ids` do not belong to the specified VPC, or one or more values in `vsi_subnet_names` could not be resolved to a matching subnet."
     }
   }
 }
@@ -235,7 +235,7 @@ module "vsi" {
   prefix                           = "${local.prefix}${var.vsi_name}"
   resource_tags                    = var.vsi_resource_tags
   vpc_id                           = local.existing_vpc_id
-  subnets                          = local.safe_vsi_subnets
+  subnets                          = local.vsi_subnets
   image_id                         = var.image_id
   ssh_key_ids                      = local.ssh_keys
   machine_type                     = var.machine_type

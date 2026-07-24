@@ -160,31 +160,15 @@ data "ibm_is_vpc" "vpc" {
   identifier = local.vpc_id
 }
 
-resource "terraform_data" "auto_selected_subnet" {
-  count = var.existing_vpc_crn != null ? 1 : 0
-
-  # Persist the initial fallback subnet choice so later VPC subnet additions do not
-  # implicitly move the VSI to a different subnet on re-apply.
-  input = {
-    name = data.ibm_is_vpc.vpc[0].subnets[0].name
-    id   = data.ibm_is_vpc.vpc[0].subnets[0].id
-    zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
-  }
-
-  lifecycle {
-    ignore_changes = [input]
-  }
-}
-
 locals {
 
   vpc_region = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].region : var.vpc_region
   vpc_id     = var.existing_vpc_crn != null ? module.existing_vpc_crn_parser[0].resource : module.vpc[0].vpc_id
 
   subnet = var.existing_vpc_crn != null ? [{
-    name = terraform_data.auto_selected_subnet[0].input.name
-    id   = terraform_data.auto_selected_subnet[0].input.id
-    zone = terraform_data.auto_selected_subnet[0].input.zone
+    name = data.ibm_is_vpc.vpc[0].subnets[0].name
+    id   = data.ibm_is_vpc.vpc[0].subnets[0].id
+    zone = data.ibm_is_vpc.vpc[0].subnets[0].zone
   }] : module.vpc[0].subnet_zone_list
 
   machine_config = {
