@@ -22,6 +22,11 @@ output "subnet_id" {
   description = "A list containing subnet IDs and subnet zones."
 }
 
+output "subnet_names" {
+  value       = var.create_vpc ? [for s in module.vpc[0].subnet_zone_list : s.name] : null
+  description = "List of subnet names."
+}
+
 output "prefix" {
   description = "Prefix to append to all resources created by this example."
   value       = var.prefix

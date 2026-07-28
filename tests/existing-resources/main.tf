@@ -28,6 +28,14 @@ module "vpc" {
         acl_name       = "vpc-acl"
       }
     ]
+    zone-2 = [
+      {
+        name           = "subnet-b"
+        cidr           = "10.20.10.0/24"
+        public_gateway = true
+        acl_name       = "vpc-acl"
+      }
+    ]
   }
 }
 

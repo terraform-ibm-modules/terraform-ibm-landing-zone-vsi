@@ -5,6 +5,7 @@ Several optional input variables in the Virtual server instance [deployable arch
 - [Block Storage Volumes](#options-with-block-vol) (`block_storage_volumes`)
 - [Load Balancers](#options-with-load-balancers) (`load_balancers`)
 - [Secondary Security Groups](#options-with-secondary-security-groups) (`secondary_security_groups`)
+- [Custom VSI Volume Names](#options-with-custom-vsi-volume-names) (`custom_vsi_volume_names`)
 
 
 ## Options with Security Group <a name="options-with-security-group"></a>
@@ -176,4 +177,44 @@ This variable allows you to pass details of security group IDs to add to the Vir
     interface_name     = "example-vni"
   },
 ]
+```
+
+## Options with Custom VSI Volume Names <a name="options-with-custom-vsi-volume-names"></a>
+
+The `custom_vsi_volume_names` input variable allows you to provide explicit names for VSIs and their attached storage volumes. If not set, names are auto-generated in the format `{prefix}-{last4ofSubnetId}-{count}` which are guaranteed to be unique across all subnets.
+
+- Variable name: `custom_vsi_volume_names`
+- Type: `map(map(list(string)))`
+  - Top-level key: subnet name — must match a name in `vsi_subnet_names`
+  - Second-level key: VSI name
+  - Value: list of volume names — must match the order and count of `block_storage_volumes`
+- Default value: `{}`
+
+**Important**: VSI names must be unique across all subnets. If `block_storage_volumes` is empty, provide an empty list `[]` for the volume names.
+
+### Example
+
+Two subnets (`subnet-a`, `subnet-b`), two VSIs per subnet (`vsi_per_subnet = 2`), one block volume per VSI:
+
+```hcl
+{
+  "subnet-a" = {
+    "my-prefix-vsi-1" = ["my-prefix-vsi-1-data"]
+    "my-prefix-vsi-2" = ["my-prefix-vsi-2-data"]
+  }
+  "subnet-b" = {
+    "my-prefix-vsi-3" = ["my-prefix-vsi-3-data"]
+    "my-prefix-vsi-4" = ["my-prefix-vsi-4-data"]
+  }
+}
+```
+
+Single subnet, single VSI, no block volumes:
+
+```hcl
+{
+  "subnet-a" = {
+    "my-prefix-vsi-1" = []
+  }
+}
 ```

@@ -134,11 +134,6 @@ locals {
   existing_vpc_id = module.existing_vpc_crn_parser.resource
 }
 
-data "ibm_is_subnet" "subnet" {
-  count      = var.existing_subnet_id != null ? 1 : 0
-  identifier = var.existing_subnet_id
-}
-
 data "ibm_is_vpc" "vpc" {
   identifier = local.existing_vpc_id
 }
@@ -150,17 +145,46 @@ data "ibm_is_subnet" "secondary_subnet" {
 
 locals {
   prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
-  # When `existing_subnet_id` is not provided, use the first subnet from the existing VPC.
-  subnet = var.existing_subnet_id != null ? [{
-    name = data.ibm_is_subnet.subnet[0].name
-    id   = data.ibm_is_subnet.subnet[0].id
-    zone = data.ibm_is_subnet.subnet[0].zone
-    }] : [{
-    name = data.ibm_is_vpc.vpc.subnets[0].name
-    id   = data.ibm_is_vpc.vpc.subnets[0].id
-    zone = data.ibm_is_vpc.vpc.subnets[0].zone
-  }]
 
+  vpc_subnets_by_name = {
+    for subnet in data.ibm_is_vpc.vpc.subnets : subnet.name => {
+      name = subnet.name
+      id   = subnet.id
+      zone = subnet.zone
+    }
+  }
+
+  resolved_vsi_subnets = length(var.existing_subnet_ids) > 0 ? [
+    for id in var.existing_subnet_ids : {
+      name = try([for s in data.ibm_is_vpc.vpc.subnets : s.name if s.id == id][0], null)
+      id   = id
+      zone = try([for s in data.ibm_is_vpc.vpc.subnets : s.zone if s.id == id][0], null)
+    }
+    ] : [
+    for name in var.vsi_subnet_names :
+    try(
+      coalesce(
+        lookup(local.vpc_subnets_by_name, name, null),
+        lookup(local.vpc_subnets_by_name, "${data.ibm_is_vpc.vpc.name}-${name}", null)
+      ),
+      null
+    )
+  ]
+
+  # Filter out nulls so the root module never receives them; precondition handles the error message
+  vsi_subnets = [for s in local.resolved_vsi_subnets : s if s != null]
+}
+
+resource "terraform_data" "validate_vsi_subnet_name" {
+  lifecycle {
+    precondition {
+      condition     = length(var.existing_subnet_ids) > 0 ? alltrue([for id in var.existing_subnet_ids : contains([for s in data.ibm_is_vpc.vpc.subnets : s.id], id)]) : alltrue([for s in local.resolved_vsi_subnets : s != null])
+      error_message = "One or more values in `existing_subnet_ids` do not belong to the specified VPC, or one or more values in `vsi_subnet_names` could not be resolved to a matching subnet."
+    }
+  }
+}
+
+locals {
   secondary_subnet = var.existing_secondary_subnet_id != null ? [{
     name = data.ibm_is_subnet.secondary_subnet[0].name
     id   = data.ibm_is_subnet.secondary_subnet[0].id
@@ -172,9 +196,6 @@ locals {
     length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [],
     var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : []
   )
-
-  custom_vsi_volume_names = { (var.existing_subnet_id != null ? data.ibm_is_subnet.subnet[0].name : data.ibm_is_vpc.vpc.subnets[0].name) = {
-  "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
 }
 
 
@@ -214,11 +235,11 @@ module "vsi" {
   prefix                           = "${local.prefix}${var.vsi_name}"
   resource_tags                    = var.vsi_resource_tags
   vpc_id                           = local.existing_vpc_id
-  subnets                          = local.subnet
+  subnets                          = local.vsi_subnets
   image_id                         = var.image_id
   ssh_key_ids                      = local.ssh_keys
   machine_type                     = var.machine_type
-  vsi_per_subnet                   = 1
+  vsi_per_subnet                   = var.vsi_per_subnet
   user_data                        = var.user_data
   skip_iam_authorization_policy    = local.create_cross_account_auth_policy ? false : var.skip_block_storage_kms_iam_auth_policy
   boot_volume_encryption_key       = local.boot_volume_kms_key_crn
@@ -248,7 +269,7 @@ module "vsi" {
   secondary_subnets                = local.secondary_subnet
   placement_group_id               = var.placement_group_id
   primary_vni_additional_ip_count  = var.primary_virtual_network_interface_additional_ip_count
-  custom_vsi_volume_names          = local.custom_vsi_volume_names
+  custom_vsi_volume_names          = var.custom_vsi_volume_names
   install_logging_agent            = var.install_logging_agent
   logging_target_host              = var.logging_target_host
   logging_target_port              = var.logging_target_port
