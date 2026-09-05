@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.6.5"
+  version                   = "5.6.7"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "1.13.15"
+  version           = "1.15.5"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source            = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan              = "graduated-tier"
-  version           = "1.15.9"
+  version           = "1.15.13"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -102,7 +102,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "9.1.0"
+  version           = "10.0.6"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -305,7 +305,7 @@ module "slz_vsi" {
 module "dedicated_host" {
   count   = var.enable_dedicated_host ? 1 : 0
   source  = "terraform-ibm-modules/dedicated-host/ibm"
-  version = "2.0.20"
+  version = "2.0.21"
   dedicated_hosts = [
     {
       host_group_name     = "${var.prefix}-dhgroup"
