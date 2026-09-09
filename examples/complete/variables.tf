@@ -51,3 +51,9 @@ variable "enable_dedicated_host" {
   default     = false
   description = "Set the flag to true to provision a dedicated host and deploy VSIs on it. The default value is set to false. Refer [Understanding Dedicated Hosts](https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts) for more details."
 }
+
+variable "use_windows" {
+  type        = bool
+  default     = false
+  description = "Set to true to use Windows Server instead of Linux. When true, a Windows Server 2022 image will be used."
+}
