@@ -82,15 +82,31 @@ variable "existing_subnet_ids" {
   default     = []
 
   validation {
-    condition     = !(length(var.existing_subnet_ids) > 0 && length(var.vsi_subnet_names) > 0 && var.vsi_subnet_names != ["subnet-a"])
+    condition     = !(length(var.existing_subnet_ids) > 0 && length(var.vsi_subnet_names) > 0)
     error_message = "Only one of `existing_subnet_ids` or `vsi_subnet_names` may be specified, not both."
+  }
+
+  validation {
+    condition     = length(var.existing_subnet_ids) == 0 ? true : alltrue([for id in var.existing_subnet_ids : contains([for s in data.ibm_is_vpc.vpc.subnets : s.id], id)])
+    error_message = "One or more values in `existing_subnet_ids` do not belong to the specified VPC."
   }
 }
 
 variable "vsi_subnet_names" {
-  description = "List of subnet names where VSIs will be deployed, for example `[\"subnet-a\", \"subnet-b\"]`. Do not include the prefix. Defaults to `[\"subnet-a\"]`. Ignored if `existing_subnet_id` is set."
+  description = "List of subnet names where VSIs will be deployed, for example `[\"subnet-a\", \"subnet-b\"]`. Do not include the prefix. Defaults to `[\"subnet-a\"]`. Must be empty if `existing_subnet_ids` is set."
   type        = list(string)
   default     = ["subnet-a"]
+
+  validation {
+    condition = length(var.vsi_subnet_names) == 0 ? true : alltrue([
+      for name in var.vsi_subnet_names :
+      anytrue([
+        contains(keys({ for s in data.ibm_is_vpc.vpc.subnets : s.name => s }), name),
+        contains(keys({ for s in data.ibm_is_vpc.vpc.subnets : s.name => s }), "${data.ibm_is_vpc.vpc.name}-${name}")
+      ])
+    ])
+    error_message = "One or more values in `vsi_subnet_names` could not be resolved to a matching subnet in the specified VPC."
+  }
 }
 
 variable "vsi_per_subnet" {

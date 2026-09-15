@@ -171,17 +171,7 @@ locals {
     )
   ]
 
-  # Filter out nulls so the root module never receives them; precondition handles the error message
   vsi_subnets = [for s in local.resolved_vsi_subnets : s if s != null]
-}
-
-resource "terraform_data" "validate_vsi_subnet_name" {
-  lifecycle {
-    precondition {
-      condition     = length(var.existing_subnet_ids) > 0 ? alltrue([for id in var.existing_subnet_ids : contains([for s in data.ibm_is_vpc.vpc.subnets : s.id], id)]) : alltrue([for s in local.resolved_vsi_subnets : s != null])
-      error_message = "One or more values in `existing_subnet_ids` do not belong to the specified VPC, or one or more values in `vsi_subnet_names` could not be resolved to a matching subnet."
-    }
-  }
 }
 
 locals {
