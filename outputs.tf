@@ -20,12 +20,19 @@ output "list" {
   value = [
     for vsi_key, virtual_server in ibm_is_instance.vsi :
     {
-      name                               = virtual_server.name
-      id                                 = virtual_server.id
-      crn                                = virtual_server.crn
-      zone                               = virtual_server.zone
-      ipv4_address                       = virtual_server.primary_network_interface[0].primary_ip[0].address
-      primary_network_interface_detail   = virtual_server.primary_network_interface[0]
+      name         = virtual_server.name
+      id           = virtual_server.id
+      crn          = virtual_server.crn
+      zone         = virtual_server.zone
+      ipv4_address = virtual_server.primary_network_interface[0].primary_ip[0].address
+      primary_network_interface_detail = {
+        id                = virtual_server.primary_network_interface[0].id
+        name              = virtual_server.primary_network_interface[0].name
+        subnet            = virtual_server.primary_network_interface[0].subnet
+        primary_ip        = virtual_server.primary_network_interface[0].primary_ip
+        security_groups   = virtual_server.primary_network_interface[0].security_groups
+        allow_ip_spoofing = virtual_server.primary_network_interface[0].allow_ip_spoofing
+      }
       secondary_ipv4_address             = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0].primary_ip[0].address
       secondary_network_interface_detail = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0]
       floating_ip                        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
@@ -42,11 +49,18 @@ output "fip_list" {
   value = [
     for vsi_key, virtual_server in ibm_is_instance.vsi :
     {
-      name                               = virtual_server.name
-      id                                 = virtual_server.id
-      zone                               = virtual_server.zone
-      ipv4_address                       = virtual_server.primary_network_interface[0].primary_ip[0].address
-      primary_network_interface_detail   = virtual_server.primary_network_interface[0]
+      name         = virtual_server.name
+      id           = virtual_server.id
+      zone         = virtual_server.zone
+      ipv4_address = virtual_server.primary_network_interface[0].primary_ip[0].address
+      primary_network_interface_detail = {
+        id                = virtual_server.primary_network_interface[0].id
+        name              = virtual_server.primary_network_interface[0].name
+        subnet            = virtual_server.primary_network_interface[0].subnet
+        primary_ip        = virtual_server.primary_network_interface[0].primary_ip
+        security_groups   = virtual_server.primary_network_interface[0].security_groups
+        allow_ip_spoofing = virtual_server.primary_network_interface[0].allow_ip_spoofing
+      }
       secondary_ipv4_address             = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0].primary_ip[0].address
       secondary_network_interface_detail = length(virtual_server.network_interfaces) == 0 ? null : virtual_server.network_interfaces[0]
       floating_ip                        = var.enable_floating_ip ? ibm_is_floating_ip.vsi_fip[vsi_key].address : null
