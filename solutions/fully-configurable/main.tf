@@ -138,9 +138,9 @@ data "ibm_is_vpc" "vpc" {
   identifier = local.existing_vpc_id
 }
 
-data "ibm_is_subnet" "secondary_subnet" {
-  count      = var.existing_secondary_subnet_id != null ? 1 : 0
-  identifier = var.existing_secondary_subnet_id
+data "ibm_is_subnet" "existing_secondary_subnet" {
+  for_each   = toset(var.existing_secondary_subnet_ids)
+  identifier = each.value
 }
 
 locals {
@@ -175,11 +175,24 @@ locals {
 }
 
 locals {
-  secondary_subnet = var.existing_secondary_subnet_id != null ? [{
-    name = data.ibm_is_subnet.secondary_subnet[0].name
-    id   = data.ibm_is_subnet.secondary_subnet[0].id
-    zone = data.ibm_is_subnet.secondary_subnet[0].zone
-  }] : []
+  resolved_secondary_subnets = length(var.existing_secondary_subnet_ids) > 0 ? [
+    for id in var.existing_secondary_subnet_ids : {
+      name = data.ibm_is_subnet.existing_secondary_subnet[id].name
+      id   = data.ibm_is_subnet.existing_secondary_subnet[id].id
+      zone = data.ibm_is_subnet.existing_secondary_subnet[id].zone
+    }
+    ] : [
+    for name in var.secondary_subnet_names :
+    try(
+      coalesce(
+        lookup(local.vpc_subnets_by_name, name, null),
+        lookup(local.vpc_subnets_by_name, "${data.ibm_is_vpc.vpc.name}-${name}", null)
+      ),
+      null
+    )
+  ]
+
+  secondary_subnet = [for s in local.resolved_secondary_subnets : s if s != null]
 
   ssh_keys = concat(
     var.existing_ssh_key_ids != null ? var.existing_ssh_key_ids : [],

@@ -444,10 +444,21 @@ variable "load_balancers" {
 # Secondary Interface Variables
 ##############################################################################
 
-variable "existing_secondary_subnet_id" {
-  description = "A secondary network interfaces to add to Virtual server instance secondary subnets must be in the same zone as Virtual server instance. This is only recommended for use with a deployment of 1 Virtual server instance."
-  type        = string
-  default     = null
+variable "existing_secondary_subnet_ids" {
+  description = "A list of existing secondary subnet IDs to add secondary network interfaces to the Virtual server instances. Secondary subnets must be in the same zone as the primary subnet. Mutually exclusive with `secondary_subnet_names`."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = !(length(var.existing_secondary_subnet_ids) > 0 && length(var.secondary_subnet_names) > 0)
+    error_message = "Only one of `existing_secondary_subnet_ids` or `secondary_subnet_names` may be specified, not both."
+  }
+}
+
+variable "secondary_subnet_names" {
+  description = "List of secondary subnet names to add secondary network interfaces to the VSIs, for example `[\"subnet-b\"]`. Short names are resolved automatically (e.g. `\"subnet-b\"` → `\"<vpc-name>-subnet-b\"`). Secondary subnets must be in the same zone as the corresponding primary subnet. Mutually exclusive with `existing_secondary_subnet_ids`."
+  type        = list(string)
+  default     = []
 }
 
 variable "secondary_use_vsi_security_group" {

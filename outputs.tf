@@ -80,7 +80,7 @@ output "fip_list" {
 output "primary_vni_details" {
   description = "Detailed information about primary virtual network interfaces"
   value = {
-    for key, vni in ibm_is_virtual_network_interface.secondary_vni : key => {
+    for key, vni in ibm_is_virtual_network_interface.primary_vni : key => {
       name       = vni.name
       id         = vni.id
       subnet     = vni.subnet

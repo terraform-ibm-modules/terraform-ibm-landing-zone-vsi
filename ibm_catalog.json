@@ -835,25 +835,6 @@
               "hidden": true
             },
             {
-              "key": "secrets_manager_service_plan",
-              "type_metadata": "string",
-              "virtual": true,
-              "required": true,
-              "default_value": "standard",
-              "options": [
-                {
-                  "description": "Centrally manage secrets in a dedicated instance. Unlimited Secrets Manager instances per IBM Cloud account. Unlimited access to all service capabilities.",
-                  "displayname": "Standard",
-                  "value": "standard"
-                },
-                {
-                  "description": "Choose this option only if your account does not already have a Trial plan instance. Only one Trial plan instance is allowed per account. After it expires, upgrade to the Standard plan to keep using Secrets Manager.",
-                  "displayname": "Trial (30 days)",
-                  "value": "trial"
-                }
-              ]
-            },
-            {
               "key": "ssh_key_secret_group_name"
             },
             {
@@ -1017,23 +998,22 @@
               }
             },
             {
-              "key": "existing_secondary_subnet_id",
+              "key": "existing_secondary_subnet_ids",
               "custom_config": {
-                "type": "platform_resource",
                 "grouping": "deployment",
                 "original_grouping": "deployment",
                 "config_constraints": {
-                  "resourceType": "subnet",
-                  "selection": "single_select",
-                  "valueType": "id"
-                },
-                "associations": {
-                  "parameters": [
-                    {
-                      "name": "region",
-                      "optionsRefresh": true
-                    }
-                  ]
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "secondary_subnet_names",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
                 }
               }
             },
