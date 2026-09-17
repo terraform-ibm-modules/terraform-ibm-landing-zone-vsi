@@ -5,11 +5,11 @@ terraform {
   required_providers {
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = "2.5.0"
+      version = "2.6.1"
     }
     tls = {
       source  = "hashicorp/tls"
-      version = "4.3.0"
+      version = "4.4.1"
     }
   }
 }
