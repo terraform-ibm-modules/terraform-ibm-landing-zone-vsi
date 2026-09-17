@@ -538,14 +538,6 @@ variable "load_balancers" {
       load_balancer.listener_client_authentication == null || load_balancer.listener_protocol == "https"
     ])
   }
-
-  validation {
-    error_message = "proxy_protocol must be one of 'disabled', 'v1', or 'v2'."
-    condition = alltrue([
-      for load_balancer in var.load_balancers :
-      load_balancer.proxy_protocol == null ? true : contains(["disabled", "v1", "v2"], load_balancer.proxy_protocol)
-    ])
-  }
 }
 
 variable "custom_vsi_volume_names" {
