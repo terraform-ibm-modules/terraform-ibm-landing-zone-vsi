@@ -9,6 +9,13 @@ locals {
   }
 
   subnets_id = var.subnets[*].id
+
+  # Map of LB name → mtls_supported attribute (derived from the IBM Cloud API after
+  # the LB is created). ALBs return true; NLBs (network-fixed / network-private-path)
+  # return false. Used to gate mTLS-specific arguments so they are never sent to NLBs.
+  lb_mtls_supported = {
+    for k, lb in ibm_is_lb.lb : k => lb.mtls_supported
+  }
 }
 
 resource "ibm_is_lb" "lb" {
@@ -46,6 +53,22 @@ resource "ibm_is_lb_pool" "pool" {
   health_retries = each.value.health_retries
   health_timeout = each.value.health_timeout
   health_type    = each.value.health_type
+  proxy_protocol = local.lb_mtls_supported[each.value.name] ? each.value.proxy_protocol : null
+
+  dynamic "client_authentication" {
+    for_each = local.lb_mtls_supported[each.value.name] && each.value.pool_client_authentication != null ? [each.value.pool_client_authentication] : []
+    content {
+      certificate_instance = client_authentication.value["certificate_instance"]
+    }
+  }
+
+  dynamic "server_authentication" {
+    for_each = local.lb_mtls_supported[each.value.name] && each.value.pool_server_authentication != null ? [each.value.pool_server_authentication] : []
+    content {
+      certificate_authority = lookup(server_authentication.value, "certificate_authority", null)
+      verify_certificate    = lookup(server_authentication.value, "verify_certificate", null)
+    }
+  }
 }
 
 ##############################################################################
@@ -119,6 +142,14 @@ resource "ibm_is_lb_listener" "listener" {
   idle_connection_timeout = each.value.profile != "network-fixed" ? each.value.idle_connection_timeout : null
   accept_proxy_protocol   = each.value.accept_proxy_protocol
   depends_on              = [ibm_is_lb_pool_member.alb_pool_members, ibm_is_lb_pool_member.nlb_pool_members]
+
+  dynamic "client_authentication" {
+    for_each = local.lb_mtls_supported[each.value.name] && each.value.listener_client_authentication != null ? [each.value.listener_client_authentication] : []
+    content {
+      certificate_authority       = client_authentication.value["certificate_authority"]
+      certificate_revocation_list = lookup(client_authentication.value, "certificate_revocation_list", null)
+    }
+  }
 }
 
 ##############################################################################

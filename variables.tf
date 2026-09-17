@@ -375,6 +375,18 @@ variable "load_balancers" {
       profile                    = optional(string)
       accept_proxy_protocol      = optional(bool)
       subnet_id_to_provision_nlb = optional(string) # Required for Network Load Balancer. If no value is provided, the first one from the VPC subnet list will be selected.
+      proxy_protocol             = optional(string) # Proxy protocol to use for the pool. Supported values: disabled, v1, v2. Only applicable for ALBs when mTLS is supported.
+      listener_client_authentication = optional(object({
+        certificate_authority       = string           # CRN of the certificate authority used to verify client certificates
+        certificate_revocation_list = optional(string) # CRN of the certificate revocation list (CRL) used to verify client certificates
+      }))
+      pool_client_authentication = optional(object({
+        certificate_instance = string # CRN of a certificate instance for client authentication
+      }))
+      pool_server_authentication = optional(object({
+        certificate_authority = optional(string) # CRN of the certificate authority used to verify server certificates
+        verify_certificate    = optional(bool)   # Whether to verify the server certificate
+      }))
       dns = optional(
         object({
           instance_crn = string
@@ -508,6 +520,30 @@ variable "load_balancers" {
         (rule.protocol == "tcp" || rule.protocol == "udp") ? (rule.type == null && rule.code == null) :
         true
       ])
+    ])
+  }
+
+  validation {
+    error_message = "pool_client_authentication and pool_server_authentication require pool protocol to be 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      (load_balancer.pool_client_authentication == null && load_balancer.pool_server_authentication == null) || load_balancer.protocol == "https"
+    ])
+  }
+
+  validation {
+    error_message = "listener_client_authentication requires listener_protocol to be 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.listener_client_authentication == null || load_balancer.listener_protocol == "https"
+    ])
+  }
+
+  validation {
+    error_message = "proxy_protocol must be one of 'disabled', 'v1', or 'v2'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.proxy_protocol == null ? true : contains(["disabled", "v1", "v2"], load_balancer.proxy_protocol)
     ])
   }
 }
