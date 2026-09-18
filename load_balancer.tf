@@ -138,6 +138,7 @@ resource "ibm_is_lb_listener" "listener" {
   port_min                = (each.value.listener_port == null && each.value.profile == "network-fixed") ? each.value.listener_port_min : null
   port_max                = (each.value.listener_port == null && each.value.profile == "network-fixed") ? each.value.listener_port_max : null
   protocol                = each.value.listener_protocol
+  certificate_instance    = each.value.certificate_instance
   connection_limit        = each.value.profile != "network-fixed" ? (each.value.connection_limit > 0 ? each.value.connection_limit : null) : null
   idle_connection_timeout = each.value.profile != "network-fixed" ? each.value.idle_connection_timeout : null
   accept_proxy_protocol   = each.value.accept_proxy_protocol

@@ -363,6 +363,7 @@ variable "load_balancers" {
       listener_port_max          = optional(number)
       listener_port_min          = optional(number)
       listener_protocol          = string
+      certificate_instance       = optional(string) # CRN of a certificate instance for HTTPS listener TLS termination
       connection_limit           = optional(number)
       idle_connection_timeout    = optional(number)
       algorithm                  = string
@@ -524,6 +525,20 @@ variable "load_balancers" {
   }
 
   validation {
+    error_message = "mTLS and TLS parameters (certificate_instance, listener_client_authentication, pool_client_authentication, pool_server_authentication, proxy_protocol) cannot be passed for a Network Load Balancer (profile = 'network-fixed')."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.profile != "network-fixed" || (
+        load_balancer.certificate_instance == null &&
+        load_balancer.listener_client_authentication == null &&
+        load_balancer.pool_client_authentication == null &&
+        load_balancer.pool_server_authentication == null &&
+        load_balancer.proxy_protocol == null
+      )
+    ])
+  }
+
+  validation {
     error_message = "pool_client_authentication and pool_server_authentication require pool protocol to be 'https'."
     condition = alltrue([
       for load_balancer in var.load_balancers :
@@ -536,6 +551,22 @@ variable "load_balancers" {
     condition = alltrue([
       for load_balancer in var.load_balancers :
       load_balancer.listener_client_authentication == null || load_balancer.listener_protocol == "https"
+    ])
+  }
+
+  validation {
+    error_message = "certificate_instance requires listener_protocol to be 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.certificate_instance == null || load_balancer.listener_protocol == "https"
+    ])
+  }
+
+  validation {
+    error_message = "certificate_instance must not be null when listener_protocol is 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.listener_protocol != "https" || load_balancer.certificate_instance != null
     ])
   }
 }

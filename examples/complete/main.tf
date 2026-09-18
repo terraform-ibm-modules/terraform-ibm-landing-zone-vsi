@@ -283,30 +283,26 @@ module "slz_vsi" {
   }]
   load_balancers = [
     {
-      name                    = "example-alb"
-      type                    = "public"
-      listener_port           = 443
-      listener_protocol       = "https"
-      connection_limit        = 100
-      idle_connection_timeout = 50
-      algorithm               = "round_robin"
-      protocol                = "https"
-      health_delay            = 60
-      health_retries          = 5
-      health_timeout          = 30
-      health_type             = "https"
-      pool_member_port        = 8443
-      proxy_protocol          = "v2"
-      listener_client_authentication = var.existing_sm_instance_guid != null ? {
-        certificate_authority = module.server_cert[0].secret_crn
-      } : null
+      name                           = "example-alb"
+      type                           = "public"
+      listener_port                  = 443
+      listener_protocol              = "https"
+      certificate_instance           = var.existing_sm_instance_guid != null ? module.server_cert[0].secret_crn : null
+      connection_limit               = 100
+      idle_connection_timeout        = 50
+      algorithm                      = "round_robin"
+      protocol                       = "https"
+      health_delay                   = 60
+      health_retries                 = 5
+      health_timeout                 = 30
+      health_type                    = "https"
+      pool_member_port               = 8443
+      proxy_protocol                 = "v2"
+      listener_client_authentication = null
       pool_client_authentication = var.existing_sm_instance_guid != null ? {
         certificate_instance = module.server_cert[0].secret_crn
       } : null
-      pool_server_authentication = var.existing_sm_instance_guid != null ? {
-        certificate_authority = module.server_cert[0].secret_crn
-        verify_certificate    = true
-      } : null
+      pool_server_authentication = null
     },
     {
       name              = "example-nlb"
