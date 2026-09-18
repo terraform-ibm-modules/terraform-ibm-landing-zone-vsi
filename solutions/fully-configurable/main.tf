@@ -134,47 +134,71 @@ locals {
   existing_vpc_id = module.existing_vpc_crn_parser.resource
 }
 
-data "ibm_is_subnet" "subnet" {
-  count      = var.existing_subnet_id != null ? 1 : 0
-  identifier = var.existing_subnet_id
-}
-
 data "ibm_is_vpc" "vpc" {
   identifier = local.existing_vpc_id
 }
 
-data "ibm_is_subnet" "secondary_subnet" {
-  count      = var.existing_secondary_subnet_id != null ? 1 : 0
-  identifier = var.existing_secondary_subnet_id
+data "ibm_is_subnet" "existing_secondary_subnet" {
+  for_each   = toset(var.existing_secondary_subnet_ids)
+  identifier = each.value
 }
 
 locals {
   prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
-  # When `existing_subnet_id` is not provided, use the first subnet from the existing VPC.
-  subnet = var.existing_subnet_id != null ? [{
-    name = data.ibm_is_subnet.subnet[0].name
-    id   = data.ibm_is_subnet.subnet[0].id
-    zone = data.ibm_is_subnet.subnet[0].zone
-    }] : [{
-    name = data.ibm_is_vpc.vpc.subnets[0].name
-    id   = data.ibm_is_vpc.vpc.subnets[0].id
-    zone = data.ibm_is_vpc.vpc.subnets[0].zone
-  }]
 
-  secondary_subnet = var.existing_secondary_subnet_id != null ? [{
-    name = data.ibm_is_subnet.secondary_subnet[0].name
-    id   = data.ibm_is_subnet.secondary_subnet[0].id
-    zone = data.ibm_is_subnet.secondary_subnet[0].zone
-  }] : []
+  vpc_subnets_by_name = {
+    for subnet in data.ibm_is_vpc.vpc.subnets : subnet.name => {
+      name = subnet.name
+      id   = subnet.id
+      zone = subnet.zone
+    }
+  }
+
+  resolved_vsi_subnets = length(var.existing_subnet_ids) > 0 ? [
+    for id in var.existing_subnet_ids : {
+      name = try([for s in data.ibm_is_vpc.vpc.subnets : s.name if s.id == id][0], null)
+      id   = id
+      zone = try([for s in data.ibm_is_vpc.vpc.subnets : s.zone if s.id == id][0], null)
+    }
+    ] : [
+    for name in var.vsi_subnet_names :
+    try(
+      coalesce(
+        lookup(local.vpc_subnets_by_name, name, null),
+        lookup(local.vpc_subnets_by_name, "${data.ibm_is_vpc.vpc.name}-${name}", null)
+      ),
+      null
+    )
+  ]
+
+  vsi_subnets = [for s in local.resolved_vsi_subnets : s if s != null]
+}
+
+locals {
+  resolved_secondary_subnets = length(var.existing_secondary_subnet_ids) > 0 ? [
+    for id in var.existing_secondary_subnet_ids : {
+      name = data.ibm_is_subnet.existing_secondary_subnet[id].name
+      id   = data.ibm_is_subnet.existing_secondary_subnet[id].id
+      zone = data.ibm_is_subnet.existing_secondary_subnet[id].zone
+    }
+    ] : [
+    for name in var.secondary_subnet_names :
+    try(
+      coalesce(
+        lookup(local.vpc_subnets_by_name, name, null),
+        lookup(local.vpc_subnets_by_name, "${data.ibm_is_vpc.vpc.name}-${name}", null)
+      ),
+      null
+    )
+  ]
+
+  secondary_subnet = [for s in local.resolved_secondary_subnets : s if s != null]
 
   ssh_keys = concat(
     var.existing_ssh_key_ids != null ? var.existing_ssh_key_ids : [],
     length(var.ssh_public_keys) > 0 ? [for ssh in ibm_is_ssh_key.ssh_key : ssh.id] : [],
     var.auto_generate_ssh_key ? [ibm_is_ssh_key.auto_generate_ssh_key[0].id] : []
   )
-
-  custom_vsi_volume_names = { (var.existing_subnet_id != null ? data.ibm_is_subnet.subnet[0].name : data.ibm_is_vpc.vpc.subnets[0].name) = {
-  "${local.prefix}${var.vsi_name}" = [for block in var.block_storage_volumes : block.name] } }
 }
 
 
@@ -214,11 +238,11 @@ module "vsi" {
   prefix                           = "${local.prefix}${var.vsi_name}"
   resource_tags                    = var.vsi_resource_tags
   vpc_id                           = local.existing_vpc_id
-  subnets                          = local.subnet
+  subnets                          = local.vsi_subnets
   image_id                         = var.image_id
   ssh_key_ids                      = local.ssh_keys
   machine_type                     = var.machine_type
-  vsi_per_subnet                   = 1
+  vsi_per_subnet                   = var.vsi_per_subnet
   user_data                        = var.user_data
   skip_iam_authorization_policy    = local.create_cross_account_auth_policy ? false : var.skip_block_storage_kms_iam_auth_policy
   boot_volume_encryption_key       = local.boot_volume_kms_key_crn
@@ -248,7 +272,7 @@ module "vsi" {
   secondary_subnets                = local.secondary_subnet
   placement_group_id               = var.placement_group_id
   primary_vni_additional_ip_count  = var.primary_virtual_network_interface_additional_ip_count
-  custom_vsi_volume_names          = local.custom_vsi_volume_names
+  custom_vsi_volume_names          = var.custom_vsi_volume_names
   install_logging_agent            = var.install_logging_agent
   logging_target_host              = var.logging_target_host
   logging_target_port              = var.logging_target_port
