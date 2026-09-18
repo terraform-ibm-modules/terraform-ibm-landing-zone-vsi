@@ -305,7 +305,7 @@ module "slz_vsi" {
       } : null
       pool_server_authentication = var.existing_sm_instance_guid != null ? {
         certificate_authority = module.server_cert[0].secret_crn
-        verify_certificate    = false
+        verify_certificate    = true
       } : null
     },
     {
