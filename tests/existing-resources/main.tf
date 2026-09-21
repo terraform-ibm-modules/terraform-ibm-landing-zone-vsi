@@ -13,7 +13,7 @@ module "resource_group" {
 module "vpc" {
   count             = var.create_vpc ? 1 : 0
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "9.1.0"
+  version           = "10.0.10"
   resource_group_id = module.resource_group[0].resource_group_id
   region            = var.region
   name              = "vpc"
@@ -24,6 +24,14 @@ module "vpc" {
       {
         name           = "subnet-a"
         cidr           = "10.10.10.0/24"
+        public_gateway = true
+        acl_name       = "vpc-acl"
+      }
+    ]
+    zone-2 = [
+      {
+        name           = "subnet-b"
+        cidr           = "10.20.10.0/24"
         public_gateway = true
         acl_name       = "vpc-acl"
       }

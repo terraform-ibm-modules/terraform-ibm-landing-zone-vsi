@@ -63,7 +63,7 @@ variable "vsi_access_tags" {
 ##############################################################################
 
 variable "existing_vpc_crn" {
-  description = "The CRN of an existing VPC. If the user provides only the `existing_vpc_crn` the VSI will be provisioned in the first subnet of the VPC."
+  description = "The CRN of an existing VPC. Use `vsi_subnet_names` to control which subnets the VSIs are placed in. If not set, the solution defaults to `subnet-a`."
   type        = string
   nullable    = false
 
@@ -76,10 +76,49 @@ variable "existing_vpc_crn" {
   }
 }
 
-variable "existing_subnet_id" {
-  description = "The ID of an existing subnet. If no value is passed, the Virtual server instance is deployed to the first subnet from the Virtual Private Cloud(VPC)."
-  type        = string
-  default     = null
+variable "existing_subnet_ids" {
+  description = "A list of existing subnet IDs where VSIs will be deployed. Use this when you want to directly specify subnets by ID. Mutually exclusive with `vsi_subnet_names`."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = !(length(var.existing_subnet_ids) > 0 && length(var.vsi_subnet_names) > 0)
+    error_message = "Only one of `existing_subnet_ids` or `vsi_subnet_names` may be specified, not both."
+  }
+
+  validation {
+    condition     = length(var.existing_subnet_ids) == 0 ? true : alltrue([for id in var.existing_subnet_ids : contains([for s in data.ibm_is_vpc.vpc.subnets : s.id], id)])
+    error_message = "One or more values in `existing_subnet_ids` do not belong to the specified VPC."
+  }
+}
+
+variable "vsi_subnet_names" {
+  description = "List of subnet names where VSIs will be deployed, for example `[\"subnet-a\", \"subnet-b\"]`. Do not include the prefix. Defaults to `[\"subnet-a\"]`. Must be empty if `existing_subnet_ids` is set."
+  type        = list(string)
+  default     = ["subnet-a"]
+
+  validation {
+    condition = length(var.vsi_subnet_names) == 0 ? true : alltrue([
+      for name in var.vsi_subnet_names :
+      anytrue([
+        contains(keys({ for s in data.ibm_is_vpc.vpc.subnets : s.name => s }), name),
+        contains(keys({ for s in data.ibm_is_vpc.vpc.subnets : s.name => s }), "${data.ibm_is_vpc.vpc.name}-${name}")
+      ])
+    ])
+    error_message = "One or more values in `vsi_subnet_names` could not be resolved to a matching subnet in the specified VPC."
+  }
+}
+
+variable "vsi_per_subnet" {
+  description = "Number of VSI instances to create per subnet."
+  type        = number
+  default     = 1
+}
+
+variable "custom_vsi_volume_names" {
+  description = "A map of subnet names to VSI names to storage volume name lists. If not set, names are auto-generated using the prefix and last 4 characters of the subnet ID. VSI names must be unique across all subnets. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-landing-zone-vsi/tree/main/solutions/fully-configurable/DA_inputs.md#options-with-custom-vsi-volume-names)."
+  type        = map(map(list(string)))
+  default     = {}
 }
 
 ##############################################################################
@@ -405,10 +444,21 @@ variable "load_balancers" {
 # Secondary Interface Variables
 ##############################################################################
 
-variable "existing_secondary_subnet_id" {
-  description = "A secondary network interfaces to add to Virtual server instance secondary subnets must be in the same zone as Virtual server instance. This is only recommended for use with a deployment of 1 Virtual server instance."
-  type        = string
-  default     = null
+variable "existing_secondary_subnet_ids" {
+  description = "A list of existing secondary subnet IDs to add secondary network interfaces to the Virtual server instances. Secondary subnets must be in the same zone as the primary subnet. Mutually exclusive with `secondary_subnet_names`."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = !(length(var.existing_secondary_subnet_ids) > 0 && length(var.secondary_subnet_names) > 0)
+    error_message = "Only one of `existing_secondary_subnet_ids` or `secondary_subnet_names` may be specified, not both."
+  }
+}
+
+variable "secondary_subnet_names" {
+  description = "List of secondary subnet names to add secondary network interfaces to the VSIs, for example `[\"subnet-b\"]`. Short names are resolved automatically (e.g. `\"subnet-b\"` → `\"<vpc-name>-subnet-b\"`). Secondary subnets must be in the same zone as the corresponding primary subnet. Mutually exclusive with `existing_secondary_subnet_ids`."
+  type        = list(string)
+  default     = []
 }
 
 variable "secondary_use_vsi_security_group" {
@@ -545,7 +595,7 @@ variable "install_logging_agent" {
 
 variable "logging_agent_version" {
   type        = string
-  default     = "1.8.1" # datasource: icr.io/ibm-observe/logs-agent-helm
+  default     = "1.9.1" # datasource: icr.io/ibm-observe/logs-agent-helm
   description = "Version of the logging agent to install. See https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-release-notes-agent for list of versions. Only applies if `install_logging_agent` is true."
 }
 
@@ -642,7 +692,7 @@ variable "install_monitoring_agent" {
 
 variable "monitoring_agent_version" {
   type        = string
-  default     = "14.6.2" # datasource: icr.io/ext/sysdig/agent-slim
+  default     = "14.7.4" # datasource: icr.io/ext/sysdig/agent-slim
   description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 
