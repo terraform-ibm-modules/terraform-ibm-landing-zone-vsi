@@ -151,7 +151,7 @@ module vsi {
   version                          = "X.X.X" # Replace "X.X.X" with a release version to lock into a specific release
   resource_group_id                = var.resource_group_id
   prefix                           = var.prefix
-  tags                             = var.tags
+  resource_tags                    = var.resource_tags
   access_tags                      = var.access_tags
   vpc_id                           = var.vpc_id
   subnets                          = var.subnets
