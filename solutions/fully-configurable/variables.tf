@@ -700,7 +700,7 @@ variable "monitoring_access_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
+  description = "Access key used by the IBM Cloud Monitoring agent to forward data to your IBM Cloud Monitoring instance. Required if `install_monitoring_agent` is true. For Linux VSIs, pass the Sysdig access key. For Windows VSIs, pass the Prometheus Remote Write (PRWS) API token, which can be retrieved by calling the `/api/token` endpoint of the monitoring instance using an IAM token. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.monitoring_access_key != null && var.monitoring_access_key != "" : true
