@@ -77,6 +77,7 @@ module "monitoring" {
 
 # Fetch the Prometheus Remote Write (PRWS) API token for Windows monitoring agent.
 # Windows uses the PRWS token instead of the standard access key.
+# Currently terraform-ibm-cloud-monitoring do not expose this token. Tracking issue : https://github.ibm.com/GoldenEye/issues/issues/11315
 data "ibm_iam_auth_token" "tokendata" {
   count = var.use_windows ? 1 : 0
 }
