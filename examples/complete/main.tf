@@ -75,6 +75,27 @@ module "monitoring" {
   instance_name     = "${var.prefix}-vsi-agent-monitoring"
 }
 
+# Fetch the Prometheus Remote Write (PRWS) API token for Windows monitoring agent.
+# Windows uses the PRWS token instead of the standard access key.
+data "ibm_iam_auth_token" "tokendata" {
+  count = var.use_windows ? 1 : 0
+}
+
+data "http" "sysdig_prws_key" {
+  count = var.use_windows ? 1 : 0
+  url   = "https://${var.region}.monitoring.cloud.ibm.com/api/token"
+  request_headers = {
+    Accept        = "application/json"
+    Authorization = data.ibm_iam_auth_token.tokendata[0].iam_access_token
+    IBMInstanceID = module.monitoring.guid
+  }
+}
+
+locals {
+  # For Windows use the PRWS token, for Linux use the standard access key
+  monitoring_access_key = var.use_windows ? jsondecode(data.http.sysdig_prws_key[0].response_body).token.key : module.monitoring.access_key
+}
+
 ##############################################################################
 # Create new SSH key
 ##############################################################################
@@ -109,13 +130,37 @@ module "slz_vpc" {
   resource_tags     = var.resource_tags
   name              = "vpc"
   network_acls = [
-    # For enabling rdp access for windows instances add rdp-inbound and rdp-inbound-response rules for prot 3389
     {
       name                         = "vpc-acl"
       add_ibm_cloud_internal_rules = true
       add_vpc_connectivity_rules   = true
       prepend_ibm_rules            = true
       rules = [
+        # For enabling rdp access for windows instances add rdp-inbound and rdp-inbound-response rules for prot 3389 , like shown below
+        # {
+        #   name            = "rdp-inbound"
+        #   action          = "allow"
+        #   direction       = "inbound"
+        #   protocol        = "tcp"
+        #   port_min        = 3389
+        #   port_max        = 3389
+        #   source_port_min = null
+        #   source_port_max = null
+        #   destination     = "0.0.0.0/0"
+        #   source          = "0.0.0.0/0"
+        # },
+        # {
+        #   name            = "rdp-inbound-response"
+        #   action          = "allow"
+        #   direction       = "outbound"
+        #   protocol        = "tcp"
+        #   port_min        = null
+        #   port_max        = null
+        #   source_port_min = 3389
+        #   source_port_max = 3389
+        #   destination     = "0.0.0.0/0"
+        #   source          = "0.0.0.0/0"
+        # },
         {
           name            = "allow-all-22-inbound"
           action          = "allow"
@@ -371,8 +416,8 @@ module "slz_vsi" {
 
   # Enable monitoring agent
   install_monitoring_agent      = true
-  monitoring_access_key         = module.monitoring.access_key
-  monitoring_collector_endpoint = "ingest.${var.region}.monitoring.cloud.ibm.com"
+  monitoring_access_key         = local.monitoring_access_key
+  monitoring_collector_endpoint = var.use_windows ? "ingest.prws.${var.region}.monitoring.cloud.ibm.com" : "ingest.${var.region}.monitoring.cloud.ibm.com"
 
   # Create a floating IPs for the additional VNI
   secondary_floating_ips = [
@@ -422,7 +467,22 @@ module "slz_vsi" {
   security_group = {
     name = "vsi-security-group"
     rules = [
-      # For enabling rdp access for windows instances add a rule to allow rdp-inbound for prot 3389
+      # {
+      #   name      = "rdp-inbound"
+      #   direction = "inbound"
+      #   source    = "0.0.0.0/0"
+      #   protocol  = "tcp"
+      #   port_min  = 3389
+      #   port_max  = 3389
+      # },
+      {
+        name      = "allow-ntp-outbound"
+        direction = "outbound"
+        source    = "161.26.0.6/32"
+        protocol  = "udp"
+        port_min  = 123
+        port_max  = 123
+      },
       {
         name      = "allow-ssh-inbound"
         direction = "inbound"

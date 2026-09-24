@@ -66,92 +66,221 @@ locals {
 
   # list of commands that will be run to download, install and configure the logging agent for Windows
   logging_windows_script = <<-EOT
-    $logging_agent_download_url = "${local.logging_agent_download_url}"
-    $downloadDir = "${local.logging_windows_download_dir}"
-    $zipPath = "${local.logging_windows_zip_path}"
-    $installDir = "${local.logging_windows_install_dir}"
-    $configUrl = "${local.logging_windows_config_url}"
-    $configPath = "${local.logging_windows_config_path}"
-    $logPath = "${local.logging_windows_install_log}"
+  $ErrorActionPreference = "Stop"
 
-    New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
+  $logging_agent_download_url = "${local.logging_agent_download_url}"
+  $downloadDir = "${local.logging_windows_download_dir}"
+  $zipPath = "${local.logging_windows_zip_path}"
+  $installDir = "${local.logging_windows_install_dir}"
+  $configUrl = "${local.logging_windows_config_url}"
+  $configPath = "${local.logging_windows_config_path}"
+  $logPath = "${local.logging_windows_install_log}"
 
-    $maxRetries = 5
-    $retryCount = 0
-    $downloaded = $false
+  # Allow the downloaded IBM configuration script to run in this process.
+  Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
 
-    while (-not $downloaded -and $retryCount -lt $maxRetries) {
-        try {
-            Invoke-WebRequest `
-                -Uri $logging_agent_download_url `
-                -OutFile $zipPath `
-                -UseBasicParsing
-            $downloaded = $true
-        } catch {
-            $retryCount++
-            Start-Sleep -Seconds 5
-        }
+  ##########################################################################
+  # Ensure Windows time is synchronized before IAM authentication is used.
+  ##########################################################################
+
+  Set-Service -Name W32Time -StartupType Automatic
+
+  if ((Get-Service W32Time).Status -ne "Running") {
+      Start-Service W32Time
+  }
+
+  w32tm /config `
+      /manualpeerlist:"time.adn.networklayer.com,0x8" `
+      /syncfromflags:manual `
+      /update | Out-Null
+
+  Restart-Service W32Time
+
+  $timeSynced = $false
+
+  for ($i = 0; $i -lt 6; $i++) {
+      w32tm /resync /force | Out-Null
+
+      if ($LASTEXITCODE -eq 0) {
+          $timeSynced = $true
+          break
+      }
+
+      Start-Sleep -Seconds 10
+  }
+
+  if (-not $timeSynced) {
+      throw "Windows time could not be synchronized. Verify outbound UDP/123 access to time.adn.networklayer.com."
+  }
+
+  ##########################################################################
+  # Download logging agent.
+  ##########################################################################
+
+  New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
+
+  $maxRetries = 5
+  $retryCount = 0
+  $downloaded = $false
+
+  while (-not $downloaded -and $retryCount -lt $maxRetries) {
+      try {
+          Invoke-WebRequest `
+              -Uri $logging_agent_download_url `
+              -OutFile $zipPath `
+              -UseBasicParsing
+
+          $downloaded = $true
+      }
+      catch {
+          $retryCount++
+          Start-Sleep -Seconds 5
+      }
+  }
+
+  if (-not $downloaded) {
+      throw "Failed to download logging agent after $maxRetries attempts."
+  }
+
+  ##########################################################################
+  # Install logging agent.
+  ##########################################################################
+
+  Expand-Archive `
+      -Path $zipPath `
+      -DestinationPath "C:\Program Files" `
+      -Force
+
+  Invoke-WebRequest `
+      -Uri $configUrl `
+      -OutFile $configPath `
+      -UseBasicParsing
+
+  if (-not (Test-Path $configPath)) {
+      throw "configure-logs-agent.ps1 not found at $configPath"
+  }
+
+  ##########################################################################
+  # Configure logging agent.
+  ##########################################################################
+
+  $configArgs = @{
+      TargetHost = "${var.logging_target_host != null ? var.logging_target_host : ""}"
+      TargetPort = ${var.logging_target_port}
+      AuthMode   = "${var.logging_auth_mode}"
+      IAMEnv     = "${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"}"
+      Channels   = "Application,System,Security"
+  }
+
+  if ("${var.logging_auth_mode}" -eq "IAMAPIKey") {
+      $configArgs["IAMApiKey"] = "${var.logging_api_key != null ? var.logging_api_key : ""}"
+  }
+  elseif ("${var.logging_auth_mode}" -eq "VSITrustedProfile") {
+      $configArgs["TrustedProfile"] = "${var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : ""}"
+  }
+  else {
+      throw "Unsupported logging_auth_mode: ${var.logging_auth_mode}"
+  }
+
+  if ("${var.logging_secure_access_enabled}" -eq "true") {
+      $configArgs["VSISecureAccess"] = $true
+  }
+
+  Push-Location $installDir
+  try {
+      & $configPath @configArgs
+  }
+  finally {
+      Pop-Location
+  }
+  ##########################################################################
+  # Validate generated files.
+  ##########################################################################
+
+  $fluentBitExe = "C:\Program Files\logs-agent\bin\fluent-bit.exe"
+  $fluentBitConfig = "C:\Program Files\logs-agent\etc\fluent-bit.conf"
+
+  if (-not (Test-Path $fluentBitExe)) {
+      throw "fluent-bit.exe not found."
+  }
+
+  if (-not (Test-Path $fluentBitConfig)) {
+      throw "fluent-bit.conf not found."
+  }
+
+  ##########################################################################
+  # Create Windows service.
+  ##########################################################################
+
+  $serviceName = "fluent-bit"
+
+  # IMPORTANT:
+  # Quote the executable AND config path correctly.
+  $binaryPath = '"C:\Program Files\logs-agent\bin\fluent-bit.exe" -c "C:\Program Files\logs-agent\etc\fluent-bit.conf"'
+
+  if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+      Stop-Service -Name $serviceName -Force -ErrorAction SilentlyContinue
+
+      Set-ItemProperty `
+          -Path "HKLM:\SYSTEM\CurrentControlSet\Services\fluent-bit" `
+          -Name ImagePath `
+          -Value $binaryPath
+
+      Set-Service `
+          -Name $serviceName `
+          -StartupType Automatic
+  }
+  else {
+      New-Service `
+          -Name $serviceName `
+          -BinaryPathName $binaryPath `
+          -StartupType Automatic | Out-Null
+  }
+
+##########################################################################
+# IAM API key must exist in the service environment.
+##########################################################################
+
+if ("${var.logging_auth_mode}" -eq "IAMAPIKey") {
+
+    $serviceRegPath = "HKLM:\SYSTEM\CurrentControlSet\Services\fluent-bit"
+
+    New-ItemProperty `
+        -Path $serviceRegPath `
+        -Name "Environment" `
+        -Value @("IAM_API_KEY=${var.logging_api_key != null ? var.logging_api_key : ""}") `
+        -PropertyType MultiString `
+        -Force `
+        -ErrorAction Stop | Out-Null
+
+    $serviceEnvironment = (
+        Get-ItemProperty `
+            -Path $serviceRegPath `
+            -Name Environment `
+            -ErrorAction Stop
+    ).Environment
+
+    if (-not ($serviceEnvironment -match "^IAM_API_KEY=.+")) {
+        throw "IAM_API_KEY was not written to fluent-bit service environment."
     }
+}
 
-    if (-not $downloaded) {
-        throw "Failed to download logging agent after $maxRetries attempts."
-    }
+  ##########################################################################
+  # Start and verify service.
+  ##########################################################################
 
-    Expand-Archive -Path $zipPath -DestinationPath "C:\Program Files" -Force
+  Start-Service fluent-bit
 
-    Invoke-WebRequest -Uri $configUrl -OutFile $configPath -UseBasicParsing
+  Start-Sleep -Seconds 10
 
-    if (-not (Test-Path $configPath)) {
-        throw "configure-logs-agent.ps1 not found at $configPath"
-    }
+  $service = Get-Service fluent-bit
 
-    if ("${var.logging_auth_mode}" -eq "IAMAPIKey") {
-        & $configPath `
-            -TargetHost "${var.logging_target_host != null ? var.logging_target_host : ""}" `
-            -TargetPort ${var.logging_target_port} `
-            -AuthMode IAMAPIKey `
-            -IAMEnv ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} `
-            -IAMApiKey "${var.logging_api_key != null ? var.logging_api_key : ""}" `
-            ${var.logging_secure_access_enabled ? "-VSISecureAccess" : ""}
-    } elseif ("${var.logging_auth_mode}" -eq "VSITrustedProfile") {
-        & $configPath `
-            -TargetHost "${var.logging_target_host != null ? var.logging_target_host : ""}" `
-            -TargetPort ${var.logging_target_port} `
-            -AuthMode VSITrustedProfile `
-            -IAMEnv ${var.logging_use_private_endpoint ? "PrivateProduction" : "Production"} `
-            -TrustedProfile "${var.logging_trusted_profile_id != null ? var.logging_trusted_profile_id : ""}" `
-            ${var.logging_secure_access_enabled ? "-VSISecureAccess" : ""}
-    } else {
-        throw "Unsupported logging_auth_mode: ${var.logging_auth_mode}"
-    }
+  if ($service.Status -ne "Running") {
+      throw "fluent-bit service failed to remain running."
+  }
 
-    if (-not (Test-Path "C:\Program Files\logs-agent\bin\fluent-bit.exe")) {
-        throw "fluent-bit.exe not found."
-    }
-
-    if (-not (Test-Path "C:\Program Files\logs-agent\etc\fluent-bit.conf")) {
-        throw "fluent-bit.conf not found."
-    }
-
-    sc.exe create fluent-bit binpath= "C:\Program Files\logs-agent\bin\fluent-bit.exe -c \"C:\Program Files\logs-agent\etc\fluent-bit.conf\""
-    if ($LASTEXITCODE -ne 0) {
-        throw "Failed to create fluent-bit service. sc.exe exit code: $LASTEXITCODE"
-    }
-
-    if ("${var.logging_auth_mode}" -eq "IAMAPIKey") {
-        New-ItemProperty `
-            -Path "HKLM:\System\CurrentControlSet\Services\fluent-bit" `
-            -Name "Environment" `
-            -Value @("IAM_API_KEY=${var.logging_api_key != null ? var.logging_api_key : ""}") `
-            -PropertyType MultiString `
-            -Force | Out-Null
-    }
-
-    sc.exe start fluent-bit
-    if ($LASTEXITCODE -ne 0) {
-        throw "Failed to start fluent-bit service. sc.exe exit code: $LASTEXITCODE"
-    }
-  EOT
+  Write-Output "IBM Cloud Logs Windows agent installed successfully."
+EOT
 
 }
 
@@ -203,7 +332,7 @@ locals {
   monitoring_windows_script = <<-EOT
     $monitoring_windows_bundle_url = "${local.monitoring_windows_bundle_url}"
     $monitoring_collector_endpoint = "${local.monitoring_collector_full_endpoint}"
-    $monitoring_access_key         = "${var.monitoring_access_key != null ? var.monitoring_access_key : ""}"
+    $monitoring_api_token          = "${var.monitoring_access_key != null ? var.monitoring_access_key : ""}"
     $downloadDir = "${local.monitoring_windows_download_dir}"
     $msiPath     = "${local.monitoring_windows_msi_path}"
     $installDir  = "${local.monitoring_windows_install_dir}"
@@ -232,7 +361,7 @@ locals {
         "/i", "`"$msiPath`"",
         "ENABLED_COLLECTORS=$collectors",
         "SYSDIG_URL=$monitoring_collector_endpoint",
-        "SYSDIG_TOKEN=$monitoring_access_key",
+        "SYSDIG_TOKEN=$monitoring_api_token",
         "/qn", "/norestart", "/l*v", "`"$logPath`""
     )
 
