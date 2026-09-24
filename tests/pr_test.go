@@ -127,7 +127,7 @@ func setupFSCloudOptions(t *testing.T, prefix string) *testhelper.TestOptions {
 		Region:        region,
 		TerraformVars: map[string]interface{}{
 			"skip_iam_authorization_policy": true, // The test account already has got a s2s policy setup that would clash
-			"boot_volume_encryption_key":    permanentResources["hpcs_south_root_key_crn"],
+			"boot_volume_encryption_key":    permanentResources["kp_dedicated_us_south_root_key_crn"],
 			"access_tags":                   permanentResources["accessTags"],
 		},
 	})
@@ -359,7 +359,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
 			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
 			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
-			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["kp_dedicated_us_south_root_key_crn"], DataType: "string"},
 			{Name: "skip_block_storage_kms_iam_auth_policy", Value: true, DataType: "bool"}, // The test account already has got a s2s policy setup that would clash
 			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
 			{Name: "auto_generate_ssh_key", Value: false, DataType: "bool"},
@@ -424,7 +424,7 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
 			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
-			{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+			{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
 		}
 		err := options.RunSchematicUpgradeTest()
 		assert.Nil(t, err, "This should not have errored")
