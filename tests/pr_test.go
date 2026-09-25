@@ -218,7 +218,7 @@ func sshPublicKey(t *testing.T) string {
 	return pubKey
 }
 
-func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options, error) {
+func provisionPreReq(t *testing.T, create_vpc bool) (string, string, *terraform.Options, error) {
 	// ------------------------------------------------------------------------------------
 	// Provision existing resources first
 	// ------------------------------------------------------------------------------------
@@ -233,6 +233,12 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 	require.True(t, present, checkVariable+" environment variable not set")
 	require.NotEqual(t, "", val, checkVariable+" environment variable is empty")
 	region, _ := testhelper.GetBestVpcRegion(val, "../common-dev-assets/common-go-assets/cloudinfo-region-vpc-gen2-prefs.yaml", "eu-de")
+
+	// Retrieve the latest available Red Hat 8 minimal image ID for the selected region
+	// using the wrapper instead of the vsi_image_selector Terraform module.
+	imageID, imageErr := testhelper.GetLatestVSIImageID(val, region)
+	require.NoError(t, imageErr, "Failed to retrieve latest VSI image ID for region %s", region)
+	logger.Log(t, "Latest VSI image ID for region ", region, ": ", imageID)
 
 	logger.Log(t, "Tempdir: ", tempTerraformDir)
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
@@ -251,10 +257,9 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 	terraform.WorkspaceSelectOrNewContext(t, context.Background(), existingTerraformOptions, prefix)
 	_, existErr := terraform.InitAndApplyContextE(t, context.Background(), existingTerraformOptions)
 	if existErr != nil {
-		// assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-		return "", nil, existErr
+		return "", "", nil, existErr
 	}
-	return prefix, existingTerraformOptions, nil
+	return prefix, imageID, existingTerraformOptions, nil
 }
 
 // Test the fully-configurable DA with defaults
@@ -263,7 +268,7 @@ func TestFullyConfigurable(t *testing.T) {
 	acquireTestSlot()
 	defer releaseTestSlot()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+	prefix, imageID, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -295,7 +300,7 @@ func TestFullyConfigurable(t *testing.T) {
 			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
 			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
-			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
+			{Name: "image_id", Value: imageID, DataType: "string"},
 			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		}
 		err := options.RunSchematicTest()
@@ -323,7 +328,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 
 	sshPublicKey := sshPublicKey(t)
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+	prefix, imageID, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -355,7 +360,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
 			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
-			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
+			{Name: "image_id", Value: imageID, DataType: "string"},
 			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 			{Name: "skip_block_storage_kms_iam_auth_policy", Value: true, DataType: "bool"}, // The test account already has got a s2s policy setup that would clash
 			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
@@ -385,7 +390,7 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 	acquireTestSlot()
 	defer releaseTestSlot()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+	prefix, imageID, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
@@ -418,7 +423,7 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
 			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
-			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
+			{Name: "image_id", Value: imageID, DataType: "string"},
 			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
 			{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
@@ -470,7 +475,7 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 	defer releaseTestSlot()
 
 	// run this terraform code to return the latest ubuntu image ID
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t, false)
+	prefix, imageID, existingTerraformOptions, existErr := provisionPreReq(t, false)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of prereq script failed.")
@@ -490,7 +495,7 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 			"fully-configurable",
 			map[string]interface{}{
 				"region":   terraform.OutputContext(t, context.Background(), existingTerraformOptions, "region"),
-				"image_id": terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"),
+				"image_id": imageID,
 			},
 		)
 
@@ -591,7 +596,7 @@ func TestQuickstartExistingConfigSchematics(t *testing.T) {
 	acquireTestSlot()
 	defer releaseTestSlot()
 
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+	prefix, _, existingTerraformOptions, existErr := provisionPreReq(t, true)
 
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")

@@ -37,7 +37,3 @@ output "region" {
   description = "region."
 }
 
-output "image_id" {
-  value       = module.vsi_image_selector.latest_image_id
-  description = "Image ID."
-}
