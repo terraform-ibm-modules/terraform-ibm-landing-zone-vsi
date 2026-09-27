@@ -10,9 +10,8 @@ locals {
 
   subnets_id = var.subnets[*].id
 
-  # Map of LB name → mtls_supported attribute (derived from the IBM Cloud API after
-  # the LB is created). ALBs return true; NLBs (network-fixed / network-private-path)
-  # return false. Used to gate mTLS-specific arguments so they are never sent to NLBs.
+  # Map of load balancer name to its `mtls_supported` attribute computed by the IBM Cloud provider.
+  # Used to gate mTLS-specific arguments so they are only passed when supported by the load balancer.
   lb_mtls_supported = {
     for k, lb in ibm_is_lb.lb : k => lb.mtls_supported
   }
