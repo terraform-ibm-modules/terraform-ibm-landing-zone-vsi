@@ -56,7 +56,8 @@ variable "use_windows" {
   type        = bool
   default     = false
   description = "Set to true to use Windows Server instead of Linux. When true, a Windows Server 2022 image will be used."
- 
+}
+
 variable "existing_sm_instance_guid" {
   type        = string
   description = "GUID of an existing Secrets Manager instance that has a private certificate engine configured"
