@@ -56,4 +56,21 @@ variable "use_windows" {
   type        = bool
   default     = false
   description = "Set to true to use Windows Server instead of Linux. When true, a Windows Server 2022 image will be used."
+ 
+variable "existing_sm_instance_guid" {
+  type        = string
+  description = "GUID of an existing Secrets Manager instance that has a private certificate engine configured"
+  default     = null
+}
+
+variable "existing_sm_instance_region" {
+  type        = string
+  description = "Region of the existing Secrets Manager instance"
+  default     = null
+}
+
+variable "existing_sm_cert_template" {
+  type        = string
+  description = "Name of the private certificate template to use when issuing the server certificate from the Secrets Manager instance"
+  default     = null
 }
