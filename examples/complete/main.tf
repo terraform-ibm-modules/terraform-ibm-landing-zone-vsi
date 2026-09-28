@@ -76,6 +76,22 @@ module "monitoring" {
 }
 
 ##############################################################################
+# Server Certificate (from existing Secrets Manager instance)
+##############################################################################
+
+module "server_cert" {
+  count                  = var.existing_sm_instance_guid != null ? 1 : 0
+  source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
+  version                = "1.12.10"
+  cert_name              = "${var.prefix}-server-cert"
+  cert_description       = "Server certificate for LB listener TLS and pool client auth"
+  cert_common_name       = "${var.prefix}-server.example.com"
+  cert_template          = var.existing_sm_cert_template
+  secrets_manager_guid   = var.existing_sm_instance_guid
+  secrets_manager_region = var.existing_sm_instance_region
+}
+
+##############################################################################
 # Create new SSH key
 ##############################################################################
 
@@ -267,19 +283,26 @@ module "slz_vsi" {
   }]
   load_balancers = [
     {
-      name                    = "example-alb"
-      type                    = "public"
-      listener_port           = 9080
-      listener_protocol       = "http"
-      connection_limit        = 100
-      idle_connection_timeout = 50
-      algorithm               = "round_robin"
-      protocol                = "http"
-      health_delay            = 60
-      health_retries          = 5
-      health_timeout          = 30
-      health_type             = "http"
-      pool_member_port        = 8080
+      name                           = "example-alb"
+      type                           = "public"
+      listener_port                  = 443
+      listener_protocol              = "https"
+      certificate_instance           = var.existing_sm_instance_guid != null ? module.server_cert[0].secret_crn : null
+      connection_limit               = 100
+      idle_connection_timeout        = 50
+      algorithm                      = "round_robin"
+      protocol                       = "https"
+      health_delay                   = 60
+      health_retries                 = 5
+      health_timeout                 = 30
+      health_type                    = "https"
+      pool_member_port               = 8443
+      proxy_protocol                 = "v2"
+      listener_client_authentication = null
+      pool_client_authentication = var.existing_sm_instance_guid != null ? {
+        certificate_instance = module.server_cert[0].secret_crn
+      } : null
+      pool_server_authentication = null
     },
     {
       name              = "example-nlb"
