@@ -330,6 +330,8 @@ locals {
   monitoring_collector_full_endpoint = var.monitoring_collector_endpoint != null ? "https://${var.monitoring_collector_endpoint}/prometheus/remote/write" : ""
 
   monitoring_windows_script = <<-EOT
+    $ErrorActionPreference = "Stop"
+
     $monitoring_windows_bundle_url = "${local.monitoring_windows_bundle_url}"
     $monitoring_collector_endpoint = "${local.monitoring_collector_full_endpoint}"
     $monitoring_api_token          = "${var.monitoring_access_key != null ? var.monitoring_access_key : ""}"
@@ -366,7 +368,7 @@ locals {
     )
 
     $process = Start-Process -FilePath "msiexec.exe" -ArgumentList $arguments -Wait -PassThru -NoNewWindow
-    if ($process.ExitCode -ne 0) { Write-Error "Installation failed with exit code $($process.ExitCode). Check $logPath" }
+    if ($process.ExitCode -ne 0) { throw "Installation failed with exit code $($process.ExitCode). Check $logPath" }
 
     Start-Sleep -Seconds 5
     Get-Service -Name *prometheus*, *exporter* | Select-Object Name, Status
