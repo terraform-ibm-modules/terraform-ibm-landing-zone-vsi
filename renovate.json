@@ -14,6 +14,17 @@
       "matchStrings": [
         "default\\s*=\\s*\"(?<currentValue>.*)\"\\s*# datasource: (?<depName>[^\\s]+)"
       ]
+    },
+    {
+      "customType": "regex",
+      "description": "Update Windows Prometheus Bundle version from GitHub Releases.",
+      "fileMatch": [
+        "variables.tf$"
+      ],
+      "datasourceTemplate": "github-releases",
+      "matchStrings": [
+        "default\\s*=\\s*\"(?<currentValue>.*)\"\\s*# github-releases: (?<depName>[^\\s]+)"
+      ]
     }
   ]
 }
