@@ -62,7 +62,7 @@ module "slz_vsi" {
   source            = "../../"
   resource_group_id = module.resource_group.resource_group_id
   catalog_offering = {
-    version_crn = "crn:v1:bluemix:public:globalcatalog-collection:global::1082e7d2-5e2f-0a11-a3bc-f88a8e1931fc:version:74b4b3ba-2a05-460d-afba-98e4d012f53a-global/a420a6fc-99ce-4ebe-a6ac-10fc58d8d7db-global"
+    version_crn = "crn:v1:bluemix:public:globalcatalog-collection:global::1082e7d2-5e2f-0a11-a3bc-f88a8e1931fc:version:74b4b3ba-2a05-460d-afba-98e4d012f53a-global/46e3165e-87e8-4771-9e29-63755e78b38b-global"
     plan_crn    = ""
   }
   create_security_group = false
