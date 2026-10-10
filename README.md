@@ -192,7 +192,7 @@ You need the following permissions to run this module.
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 2.5.0, < 3.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
@@ -200,13 +200,13 @@ You need the following permissions to run this module.
 ### Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_existing_boot_volume_kms_key_crn_parser"></a> [existing\_boot\_volume\_kms\_key\_crn\_parser](#module\_existing\_boot\_volume\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.9.0 |
 
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ibm_iam_authorization_policy.block_storage_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_authorization_policy) | resource |
 | [ibm_is_floating_ip.secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
 | [ibm_is_floating_ip.vni_secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
@@ -235,7 +235,7 @@ You need the following permissions to run this module.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_tags"></a> [access\_tags](#input\_access\_tags) | Add access management tags to the Virtual Server Instances (VSI) resources to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console). | `list(string)` | `[]` | no |
 | <a name="input_allow_ip_spoofing"></a> [allow\_ip\_spoofing](#input\_allow\_ip\_spoofing) | Allow IP spoofing on the primary network interface | `bool` | `false` | no |
 | <a name="input_block_storage_volumes"></a> [block\_storage\_volumes](#input\_block\_storage\_volumes) | List describing the block storage volumes that will be attached to each vsi | <pre>list(<br/>    object({<br/>      name              = string<br/>      profile           = string<br/>      capacity          = optional(number)<br/>      iops              = optional(number)<br/>      bandwidth         = optional(number)<br/>      encryption_key    = optional(string)<br/>      resource_group_id = optional(string)<br/>      snapshot_crn      = optional(string) # set if you would like to base volume on a snapshot. If you plan to use a snapshot from another account, make sure that the right [IAM authorizations](https://cloud.ibm.com/docs/vpc?topic=vpc-block-s2s-auth&interface=terraform#block-s2s-auth-xaccountrestore-terraform) are in place.<br/>      tags              = optional(list(string), [])<br/>    })<br/>  )</pre> | `[]` | no |
@@ -270,7 +270,7 @@ You need the following permissions to run this module.
 | <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | VSI machine type. Run 'ibmcloud is instance-profiles' to get a list of regional profiles | `string` | n/a | yes |
 | <a name="input_manage_reserved_ips"></a> [manage\_reserved\_ips](#input\_manage\_reserved\_ips) | Set to `true` if you want this terraform module to manage the reserved IP addresses that are assigned to VSI instances. If this option is enabled, when any VSI is recreated it should retain its original IP. | `bool` | `false` | no |
 | <a name="input_monitoring_access_key"></a> [monitoring\_access\_key](#input\_monitoring\_access\_key) | Access key used by the IBM Cloud Monitoring agent to forward data to your IBM Cloud Monitoring instance. Required if `install_monitoring_agent` is true. For Linux VSIs, pass the Sysdig access key. For Windows VSIs, pass the Prometheus Remote Write (PRWS) API token, which can be retrieved by calling the `/api/token` endpoint of the monitoring instance using an IAM token. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key). | `string` | `null` | no |
-| <a name="input_monitoring_agent_version"></a> [monitoring\_agent\_version](#input\_monitoring\_agent\_version) | Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest. | `string` | `"14.7.4"` | no |
+| <a name="input_monitoring_agent_version"></a> [monitoring\_agent\_version](#input\_monitoring\_agent\_version) | Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest. | `string` | `"14.8.1"` | no |
 | <a name="input_monitoring_collector_endpoint"></a> [monitoring\_collector\_endpoint](#input\_monitoring\_collector\_endpoint) | Endpoint that the IBM Cloud Monitoring agent will forward data to. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-endpoints#endpoints_ingestion). | `string` | `null` | no |
 | <a name="input_monitoring_collector_port"></a> [monitoring\_collector\_port](#input\_monitoring\_collector\_port) | Port the agent targets when sending metrics or compliance data, defaults to `6443`. | `number` | `6443` | no |
 | <a name="input_monitoring_tags"></a> [monitoring\_tags](#input\_monitoring\_tags) | A list of tags in the form of `TAG_NAME:TAG_VALUE` to associate with the agent. | `list(string)` | `[]` | no |
@@ -301,7 +301,7 @@ You need the following permissions to run this module.
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_consistency_group_boot_snapshot_crn"></a> [consistency\_group\_boot\_snapshot\_crn](#output\_consistency\_group\_boot\_snapshot\_crn) | The Snapshot CRN used for the VSI boot volume, determined from an optionally supplied consistency group |
 | <a name="output_consistency_group_storage_snapshot_crns"></a> [consistency\_group\_storage\_snapshot\_crns](#output\_consistency\_group\_storage\_snapshot\_crns) | Map of attached storage volumes requested, and the Snapshot CRNs that will be used, determined from an optionally supplied consistency group, and mapped |
 | <a name="output_fip_list"></a> [fip\_list](#output\_fip\_list) | A list of VSI with name, id, zone, and primary ipv4 address, and floating IP. This list only contains instances with a floating IP attached. |
