@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "2.1.1"
+  version           = "2.1.2"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -104,7 +104,7 @@ locals {
 module "server_cert" {
   count                  = var.existing_sm_instance_guid != null ? 1 : 0
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.12.12"
+  version                = "1.12.13"
   cert_name              = "${var.prefix}-server-cert"
   cert_description       = "Server certificate for LB listener TLS and pool client auth"
   cert_common_name       = "${var.prefix}-server.example.com"
