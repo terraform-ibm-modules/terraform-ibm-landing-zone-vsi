@@ -36,7 +36,7 @@ const fullyConfigFlavorDir = "solutions/fully-configurable"
 const quickStartConfigFlavorDir = "solutions/quickstart"
 
 const resourceGroup = "geretain-test-resources"
-const region = "us-south"
+const region = "au-syd"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"

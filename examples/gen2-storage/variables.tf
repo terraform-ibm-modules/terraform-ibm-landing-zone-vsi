@@ -13,7 +13,7 @@ variable "resource_group" {
 variable "region" {
   description = "The region to which to deploy the VPC"
   type        = string
-  default     = "us-south"
+  default     = "au-syd"
 }
 
 variable "prefix" {
