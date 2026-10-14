@@ -359,8 +359,7 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
 			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
 			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
-			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["kp_dedicated_us_south_root_key_crn"], DataType: "string"},
-			{Name: "skip_block_storage_kms_iam_auth_policy", Value: true, DataType: "bool"}, // The test account already has got a s2s policy setup that would clash
+			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["hpcs_eufr2_root_key_crn"], DataType: "string"},
 			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
 			{Name: "auto_generate_ssh_key", Value: false, DataType: "bool"},
 			{Name: "ssh_public_keys", Value: []string{sshPublicKey}, DataType: "list(string)"},
