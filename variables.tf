@@ -363,6 +363,7 @@ variable "load_balancers" {
       listener_port_max          = optional(number)
       listener_port_min          = optional(number)
       listener_protocol          = string
+      certificate_instance       = optional(string) # CRN of a certificate instance for HTTPS listener TLS termination
       connection_limit           = optional(number)
       idle_connection_timeout    = optional(number)
       algorithm                  = string
@@ -375,6 +376,18 @@ variable "load_balancers" {
       profile                    = optional(string)
       accept_proxy_protocol      = optional(bool)
       subnet_id_to_provision_nlb = optional(string) # Required for Network Load Balancer. If no value is provided, the first one from the VPC subnet list will be selected.
+      proxy_protocol             = optional(string) # Proxy protocol to use for the pool. Supported values: disabled, v1, v2. Only applicable for ALBs when mTLS is supported.
+      listener_client_authentication = optional(object({
+        certificate_authority       = string           # CRN of the certificate authority used to verify client certificates
+        certificate_revocation_list = optional(string) # CRN of the certificate revocation list (CRL) used to verify client certificates
+      }))
+      pool_client_authentication = optional(object({
+        certificate_instance = string # CRN of a certificate instance for client authentication
+      }))
+      pool_server_authentication = optional(object({
+        certificate_authority = optional(string) # CRN of the certificate authority used to verify server certificates
+        verify_certificate    = optional(bool)   # Whether to verify the server certificate
+      }))
       dns = optional(
         object({
           instance_crn = string
@@ -508,6 +521,52 @@ variable "load_balancers" {
         (rule.protocol == "tcp" || rule.protocol == "udp") ? (rule.type == null && rule.code == null) :
         true
       ])
+    ])
+  }
+
+  validation {
+    error_message = "mTLS and TLS parameters (certificate_instance, listener_client_authentication, pool_client_authentication, pool_server_authentication, proxy_protocol) cannot be passed for a Network Load Balancer (profile = 'network-fixed')."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.profile != "network-fixed" || (
+        load_balancer.certificate_instance == null &&
+        load_balancer.listener_client_authentication == null &&
+        load_balancer.pool_client_authentication == null &&
+        load_balancer.pool_server_authentication == null &&
+        load_balancer.proxy_protocol == null
+      )
+    ])
+  }
+
+  validation {
+    error_message = "pool_client_authentication and pool_server_authentication require pool protocol to be 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      (load_balancer.pool_client_authentication == null && load_balancer.pool_server_authentication == null) || load_balancer.protocol == "https"
+    ])
+  }
+
+  validation {
+    error_message = "listener_client_authentication requires listener_protocol to be 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.listener_client_authentication == null || load_balancer.listener_protocol == "https"
+    ])
+  }
+
+  validation {
+    error_message = "certificate_instance requires listener_protocol to be 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.certificate_instance == null || load_balancer.listener_protocol == "https"
+    ])
+  }
+
+  validation {
+    error_message = "certificate_instance must not be null when listener_protocol is 'https'."
+    condition = alltrue([
+      for load_balancer in var.load_balancers :
+      load_balancer.listener_protocol != "https" || load_balancer.certificate_instance != null
     ])
   }
 }
@@ -695,7 +754,7 @@ variable "install_logging_agent" {
 
   validation {
     condition     = var.install_logging_agent ? local.package_name != "" : true
-    error_message = "The module currently does not support installing the Logging agent on ${local.os_image}. Currently only supports debian, ubuntu and redhat."
+    error_message = "The module currently does not support installing the Logging agent on ${local.os_image}. Currently only supports debian, ubuntu, redhat, and windows."
   }
 
   validation {
@@ -788,7 +847,7 @@ variable "logging_secure_access_enabled" {
 variable "logging_application_name" {
   type        = bool
   default     = null
-  description = "The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `$HOSTNAME`."
+  description = "The application name defines the environment that produces and sends logs to IBM Cloud Logs. If not provided, the value defaults to `HOSTNAME`."
 }
 
 variable "logging_subsystem_name" {
@@ -813,13 +872,13 @@ variable "install_monitoring_agent" {
 
   validation {
     condition     = var.install_monitoring_agent ? local.monitoring_kernel_header_install_cmd != "" : true
-    error_message = "This module currently does not support installing the Monitoring agent on ${local.os_image}. Currently only supports centos, federo, debian, ubuntu and redhat."
+    error_message = "This module currently does not support installing the Monitoring agent on ${local.os_image}. Currently only supports centos, fedora, debian, ubuntu, redhat, and windows."
   }
 }
 
 variable "monitoring_agent_version" {
   type        = string
-  default     = "14.7.4" # datasource: icr.io/ext/sysdig/agent-slim
+  default     = "14.8.1" # datasource: icr.io/ext/sysdig/agent-slim
   description = "Version of the monitoring agent to install. See https://docs.sysdig.com/en/release-notes/linux-host-shield-release-notes for list of versions. Only applies if `install_monitoring_agent` is true. Pass `null` to use latest."
 }
 
@@ -827,7 +886,7 @@ variable "monitoring_access_key" {
   type        = string
   default     = null
   sensitive   = true
-  description = "Access key used by the IBM Cloud Monitoring agent to successfully forward data to your IBM Cloud Monitoring and SCC Workload Protection instance. Required if `install_monitoring_agent` is true. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
+  description = "Access key used by the IBM Cloud Monitoring agent to forward data to your IBM Cloud Monitoring instance. Required if `install_monitoring_agent` is true. For Linux VSIs, pass the Sysdig access key. For Windows VSIs, pass the Prometheus Remote Write (PRWS) API token, which can be retrieved by calling the `/api/token` endpoint of the monitoring instance using an IAM token. [Learn more](https://cloud.ibm.com/docs/monitoring?topic=monitoring-access_key)."
 
   validation {
     condition     = var.install_monitoring_agent ? var.monitoring_access_key != null && var.monitoring_access_key != "" : true
@@ -855,6 +914,12 @@ variable "monitoring_collector_port" {
     condition     = var.install_monitoring_agent ? var.monitoring_collector_port != null && var.monitoring_collector_port != "" : true
     error_message = "Value for `monitoring_collector_port` must be provided when `install_monitoring_agent` is true."
   }
+}
+
+variable "monitoring_windows_bundle_version" {
+  description = "Version of the Windows Prometheus Bundle MSI. For the latest version release, see https://github.com/sysdiglabs/Sysdig-Windows-Prometheus-Bundle/releases."
+  type        = string
+  default     = "1.9.0" # github-releases: sysdiglabs/Sysdig-Windows-Prometheus-Bundle
 }
 
 variable "monitoring_tags" {

@@ -76,7 +76,10 @@ func setupOptions(t *testing.T, dir string, prefix string) *testhelper.TestOptio
 		ResourceGroup: resourceGroup,
 		Region:        region,
 		TerraformVars: map[string]interface{}{
-			"access_tags": permanentResources["accessTags"],
+			"access_tags":                 permanentResources["accessTags"],
+			"existing_sm_instance_guid":   permanentResources["secretsManagerGuid"],
+			"existing_sm_instance_region": permanentResources["secretsManagerRegion"],
+			"existing_sm_cert_template":   permanentResources["privateCertTemplateName"],
 		},
 	})
 	// need to ignore because of a provider issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5527

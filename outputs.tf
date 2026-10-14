@@ -114,12 +114,13 @@ output "load_balancers_metadata" {
   value = {
     for k, lb in ibm_is_lb.lb :
     k => {
-      name          = lb.name
-      crn           = lb.crn
-      hostname      = lb.hostname
-      public_ips    = lb.public_ips
-      private_ips   = lb.private_ips
-      udp_supported = lb.udp_supported
+      name           = lb.name
+      crn            = lb.crn
+      hostname       = lb.hostname
+      public_ips     = lb.public_ips
+      private_ips    = lb.private_ips
+      udp_supported  = lb.udp_supported
+      mtls_supported = lb.mtls_supported
     }
   }
 }
