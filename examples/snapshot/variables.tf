@@ -25,7 +25,7 @@ variable "prefix" {
 variable "resource_tags" {
   description = "List of Tags for the resource created"
   type        = list(string)
-  default     = null
+  default     = []
 }
 
 variable "access_tags" {
