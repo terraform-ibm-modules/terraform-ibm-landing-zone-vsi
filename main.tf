@@ -187,7 +187,11 @@ resource "ibm_is_virtual_network_interface" "secondary_vni" {
 check "warn_hpcs_deprecation" {
   assert {
     condition = !(
-      (var.boot_volume_encryption_key != null && can(regex(".*hs-crypto.*", var.boot_volume_encryption_key)))
+      (var.boot_volume_encryption_key != null && can(regex(".*hs-crypto.*", var.boot_volume_encryption_key))) ||
+      anytrue([
+        for volume in var.block_storage_volumes :
+        volume.encryption_key != null && can(regex(".*hs-crypto.*", volume.encryption_key))
+      ])
     )
     error_message = "WARNING (Non-fatal, execution will continue): An IBM Cloud Hyper Protect Crypto Services (hs-crypto) instance or key CRN was provided. Note that IBM Cloud Hyper Protect Crypto Services is deprecated. Consider migrating to a supported alternative."
   }
