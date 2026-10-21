@@ -65,36 +65,20 @@ module "logging" {
 }
 
 module "monitoring" {
-  source            = "terraform-ibm-modules/cloud-monitoring/ibm"
-  plan              = "graduated-tier"
-  version           = "1.16.3"
-  resource_group_id = module.resource_group.resource_group_id
-  region            = var.region
-  resource_tags     = var.resource_tags
-  access_tags       = var.access_tags
-  instance_name     = "${var.prefix}-vsi-agent-monitoring"
-}
-
-# Fetch the Prometheus Remote Write (PRWS) API token for Windows monitoring agent.
-# Windows uses the PRWS token instead of the standard access key.
-# Currently terraform-ibm-cloud-monitoring do not expose this token. Tracking issue : https://github.ibm.com/GoldenEye/issues/issues/11315
-data "ibm_iam_auth_token" "tokendata" {
-  count = var.use_windows ? 1 : 0
-}
-
-data "http" "sysdig_prws_key" {
-  count = var.use_windows ? 1 : 0
-  url   = "https://${var.region}.monitoring.cloud.ibm.com/api/token"
-  request_headers = {
-    Accept        = "application/json"
-    Authorization = data.ibm_iam_auth_token.tokendata[0].iam_access_token
-    IBMInstanceID = module.monitoring.guid
-  }
+  source                         = "terraform-ibm-modules/cloud-monitoring/ibm"
+  plan                           = "graduated-tier"
+  version                        = "1.16.3"
+  resource_group_id              = module.resource_group.resource_group_id
+  region                         = var.region
+  resource_tags                  = var.resource_tags
+  access_tags                    = var.access_tags
+  instance_name                  = "${var.prefix}-vsi-agent-monitoring"
+  fetch_sysdig_monitor_api_token = true
 }
 
 locals {
   # For Windows use the PRWS token, for Linux use the standard access key
-  monitoring_access_key = var.use_windows ? jsondecode(data.http.sysdig_prws_key[0].response_body).token.key : module.monitoring.access_key
+  monitoring_access_key = var.use_windows ? module.monitoring.sysdig_monitor_api_token : module.monitoring.access_key
 }
 
 ##############################################################################
