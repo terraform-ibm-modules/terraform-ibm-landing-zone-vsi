@@ -32,6 +32,11 @@ output "secondary_vni" {
   value       = length(module.vsi.secondary_vni_details) > 0 ? module.vsi.secondary_vni_details : null
 }
 
+output "reinitialize_status" {
+  description = "A map containing the status and ID of instances that have been reinitialized, keyed by VSI map key."
+  value       = module.vsi.reinitialize_status
+}
+
 ##############################################################################
 
 ##############################################################################

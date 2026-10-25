@@ -300,7 +300,12 @@ resource "ibm_is_instance" "vsi" {
   lifecycle {
     ignore_changes = [
       image,
-      user_data
+      user_data,
+      default_trusted_profile_auto_link,
+      default_trusted_profile_target,
+      boot_volume[0].snapshot,
+      boot_volume[0].snapshot_crn,
+      boot_volume[0].volume_id,
     ]
   }
 

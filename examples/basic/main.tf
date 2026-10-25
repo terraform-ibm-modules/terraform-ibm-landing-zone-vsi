@@ -95,4 +95,5 @@ module "slz_vsi" {
   boot_volume_encryption_key = var.boot_volume_encryption_key
   vsi_per_subnet             = var.vsi_per_subnet
   ssh_key_ids                = [local.ssh_key_id]
+  reinitialize               = var.reinitialize
 }

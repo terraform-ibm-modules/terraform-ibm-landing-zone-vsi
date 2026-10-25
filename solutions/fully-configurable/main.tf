@@ -291,6 +291,7 @@ module "vsi" {
   monitoring_collector_port        = var.monitoring_collector_port
   monitoring_tags                  = var.monitoring_tags
   monitoring_agent_version         = var.monitoring_agent_version
+  reinitialize                     = var.reinitialize
 }
 
 ########################################################################################################################

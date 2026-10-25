@@ -69,3 +69,9 @@ variable "vpc_name" {
   description = "Name for VPC"
   default     = "vpc"
 }
+
+variable "reinitialize" {
+  description = "Optional configuration to reinitialize virtual server instances created by this module."
+  type        = any
+  default     = null
+}

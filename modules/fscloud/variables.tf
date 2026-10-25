@@ -268,3 +268,55 @@ variable "dedicated_host_id" {
 }
 
 ##############################################################################
+
+##############################################################################
+# Reinitialization Variables
+##############################################################################
+
+variable "reinitialize" {
+  description = "Configuration for virtual server instance reinitialization. Instance reinitialization is a destructive operation that permanently deletes and recreates the instance's boot volume. Specify configuration to perform reinitialization on instances provisioned by this module."
+  type = object({
+    enabled   = optional(bool, true)
+    image     = optional(string)
+    keys      = optional(list(string))
+    user_data = optional(string)
+    vsi_names = optional(list(string))
+    boot_volume_attachment = optional(object({
+      name                             = optional(string)
+      delete_volume_on_instance_delete = optional(bool)
+      volume = optional(object({
+        id             = optional(string)
+        name           = optional(string)
+        capacity       = optional(number)
+        iops           = optional(number)
+        bandwidth      = optional(number)
+        resource_group = optional(string)
+        user_tags      = optional(list(string))
+        encryption_key = optional(object({
+          crn = string
+        }))
+        profile = optional(object({
+          name = string
+        }))
+        source_snapshot = optional(object({
+          id = string
+        }))
+        allowed_use = optional(object({
+          api_version       = string
+          bare_metal_server = optional(string)
+          instance          = optional(string)
+        }))
+      }))
+    }))
+    default_trusted_profile = optional(object({
+      auto_link = optional(bool, true)
+      target = optional(object({
+        id  = optional(string)
+        crn = optional(string)
+      }))
+    }))
+  })
+  default = null
+}
+
+##############################################################################
