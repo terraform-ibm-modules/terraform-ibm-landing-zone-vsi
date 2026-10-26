@@ -6,6 +6,7 @@ Several optional input variables in the Virtual server instance [deployable arch
 - [Load Balancers](#options-with-load-balancers) (`load_balancers`)
 - [Secondary Security Groups](#options-with-secondary-security-groups) (`secondary_security_groups`)
 - [Custom VSI Volume Names](#options-with-custom-vsi-volume-names) (`custom_vsi_volume_names`)
+- [Reinitialization](#options-with-reinitialize) (`reinitialize`)
 
 
 ## Options with Security Group <a name="options-with-security-group"></a>
@@ -216,5 +217,35 @@ Single subnet, single VSI, no block volumes:
   "subnet-a" = {
     "my-prefix-vsi-1" = []
   }
+}
+```
+
+## Options with Reinitialization <a name="options-with-reinitialize"></a>
+
+The `reinitialize` input variable allows you to reinitialize virtual server instances with a new image, boot volume, or snapshot.
+
+> [!WARNING]
+> Reinitialization permanently deletes the existing boot volume before attaching the new boot source. Ensure that any necessary data is backed up before reinitializing.
+
+- Variable name: `reinitialize`
+- Type: `object`
+  - `enabled` (optional): Set to `true` to enable reinitialization (defaults to `true`).
+  - `image` (optional): The unique identifier of the image to use when reinitializing. Mutually exclusive with `boot_volume_attachment`.
+  - `boot_volume_attachment` (optional): Boot volume attachment configuration. Mutually exclusive with `image`.
+    - `name` (optional): Name of the boot volume attachment.
+    - `delete_volume_on_instance_delete` (optional): Whether to delete volume on instance deletion.
+    - `volume` (optional): Boot volume configuration (`id` or `source_snapshot`, `profile`, `capacity`, `encryption_key`, etc.).
+  - `keys` (optional): List of SSH key IDs to attach after reinitialization.
+  - `user_data` (optional): User data script to inject during reinitialization.
+  - `vsi_names` (optional): List of specific VSI names to target. If omitted or empty, all instances are reinitialized.
+  - `default_trusted_profile` (optional): Trusted profile configuration (`auto_link`, `target`).
+- Default value: `null`
+
+### Example: Reinitialize by Image
+
+```hcl
+{
+  image     = "r006-8f7c5c3d-5b8c-4b8c-8b8c-8b8c8b8c8b8c"
+  user_data = "#!/bin/bash\necho reinitialized > /tmp/reinit.log"
 }
 ```

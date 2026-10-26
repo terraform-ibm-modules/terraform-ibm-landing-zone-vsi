@@ -143,6 +143,154 @@ NOTE: Snapshot and Consistency Group creation are not a part of this module and 
 
 ---
 
+### VPC Instance Reinitialization
+
+This module supports reinitializing virtual server instances through the `reinitialize` input variable using the `ibm_is_instance_reinitialize` resource.
+
+> [!WARNING]
+> **Destructive Operation - Existing Boot Volume is Permanently Deleted**
+> Reinitialization recreates the instance's boot volume and permanently deletes the existing boot volume before attaching the new boot source. The original boot volume is not detached or preserved; it is destroyed. Ensure that any critical data on the existing boot volume is backed up (e.g., by creating a snapshot) before triggering reinitialization.
+
+#### How It Works and Lifecycle Management
+
+When an instance is reinitialized:
+1. The instance reflects the new boot source (new image, boot volume, or snapshot), user data, SSH keys, or default trusted profile.
+2. The module configures `lifecycle.ignore_changes` on the underlying `ibm_is_instance` resource for `image`, `user_data`, `default_trusted_profile_auto_link`, `default_trusted_profile_target`, `boot_volume[0].snapshot`, `boot_volume[0].snapshot_crn`, and `boot_volume[0].volume_id`. This prevents Terraform from planning destructive recreation of the instance when reading post-reinitialization state drift.
+
+#### Limitations and Behaviors
+
+- **Catalog Offering Instances**: Instances provisioned from a catalog offering (`catalog_offering`) cannot be reinitialized by the IBM Cloud API.
+- **Instance State**: Reinitialization automatically stops the instance if running and restarts it after reinitialization completes.
+- **Boot Source Mutually Exclusive**: Specify either `image` or `boot_volume_attachment`, but not both.
+- **Volume ID vs Snapshot**: Within `boot_volume_attachment.volume`, specify either `id` or `source_snapshot`, but not both.
+- **Profile Generation Matching**: When `source_snapshot` is specified, `profile` is required and its storage generation must match the snapshot's generation (e.g., `general-purpose` for Gen1, `sdp` for Gen2).
+- **Targeting Specific VSIs**: Use `vsi_names` in the `reinitialize` configuration object to target specific VSIs by name or key. If omitted or empty, all VSIs managed by the module are reinitialized.
+
+#### Reinitialization Configuration Examples
+
+##### 1. Reinitialize by Image
+
+```terraform
+module "vsi" {
+  source = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  # ... other inputs ...
+
+  reinitialize = {
+    image     = "r006-8f7c5c3d-5b8c-4b8c-8b8c-8b8c8b8c8b8c"
+    user_data = "#!/bin/bash\necho reinitialized > /tmp/reinit.log"
+  }
+}
+```
+
+##### 2. Reinitialize from Snapshot
+
+```terraform
+module "vsi" {
+  source = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  # ... other inputs ...
+
+  reinitialize = {
+    boot_volume_attachment = {
+      name                             = "reinit-boot-volume"
+      delete_volume_on_instance_delete = true
+      volume = {
+        name = "reinit-volume"
+        source_snapshot = {
+          id = "r006-11111111-2222-3333-4444-555555555555"
+        }
+        profile = {
+          name = "general-purpose"
+        }
+      }
+    }
+  }
+}
+```
+
+##### 3. Reinitialize by Volume Attachment
+
+```terraform
+module "vsi" {
+  source = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  # ... other inputs ...
+
+  reinitialize = {
+    boot_volume_attachment = {
+      name                             = "reinit-boot-volume"
+      delete_volume_on_instance_delete = false
+      volume = {
+        id   = ibm_is_volume.reinit_vol.id
+        name = "reinit-boot-vol"
+      }
+    }
+  }
+}
+```
+
+##### 4. Reinitialize with Trusted Profile and Custom Keys
+
+```terraform
+module "vsi" {
+  source = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  # ... other inputs ...
+
+  reinitialize = {
+    image     = "r006-8f7c5c3d-5b8c-4b8c-8b8c-8b8c8b8c8b8c"
+    keys      = [ibm_is_ssh_key.new_key.id]
+    user_data = file("${path.module}/init.sh")
+    default_trusted_profile = {
+      auto_link = true
+      target = {
+        id = ibm_iam_trusted_profile.vsi_profile.id
+      }
+    }
+  }
+}
+```
+
+##### 5. Selective Reinitialization for Specific Instances
+
+```terraform
+module "vsi" {
+  source = "terraform-ibm-modules/landing-zone-vsi/ibm"
+  # ... other inputs ...
+
+  reinitialize = {
+    image     = "r006-8f7c5c3d-5b8c-4b8c-8b8c-8b8c8b8c8b8c"
+    vsi_names = ["my-prefix-subnet-a-001"] # Only reinitialize matching VSI
+  }
+}
+```
+
+#### Step-by-Step Migration Guide
+
+To reinitialize existing instances in a production environment:
+
+1. **Backup Existing Data**:
+   Create a snapshot of the instance's boot volume and any attached block storage volumes before proceeding:
+   ```sh
+   ibmcloud is instance-volume-snapshots <instance-id>
+   ```
+
+2. **Upgrade Provider and Module**:
+   Ensure your root module consumes IBM Provider `>= 2.6.0` and the updated `landing-zone-vsi` module. Run:
+   ```sh
+   terraform init -upgrade
+   ```
+
+3. **Configure Reinitialization in Module Inputs**:
+   Add the `reinitialize` configuration block to the module definition with your desired boot source (`image` or `boot_volume_attachment`), `user_data`, `keys`, or `default_trusted_profile`.
+
+4. **Review Plan**:
+   Run `terraform plan` to verify that:
+   - `ibm_is_instance_reinitialize` resources are scheduled for creation (`+`).
+   - The parent `ibm_is_instance` resources are **NOT** scheduled for replacement/recreation (ensured by `lifecycle.ignore_changes`).
+
+5. **Apply Reinitialization**:
+   Run `terraform apply` to perform the reinitialization. The instance will be stopped, its boot volume will be recreated with the new source, and the instance will be restarted.
+
+---
+
 ### Usage
 
 ```terraform
@@ -194,7 +342,7 @@ You need the following permissions to run this module.
 | Name | Version |
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 2.5.0, < 3.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 2.6.0, < 3.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
 
 ### Modules
@@ -212,6 +360,7 @@ You need the following permissions to run this module.
 | [ibm_is_floating_ip.vni_secondary_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
 | [ibm_is_floating_ip.vsi_fip](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_floating_ip) | resource |
 | [ibm_is_instance.vsi](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_instance) | resource |
+| [ibm_is_instance_reinitialize.reinitialize](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_instance_reinitialize) | resource |
 | [ibm_is_lb.lb](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_lb) | resource |
 | [ibm_is_lb_listener.listener](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_lb_listener) | resource |
 | [ibm_is_lb_pool.pool](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/is_lb_pool) | resource |
@@ -278,6 +427,7 @@ You need the following permissions to run this module.
 | <a name="input_placement_group_id"></a> [placement\_group\_id](#input\_placement\_group\_id) | Unique Identifier of the Placement Group for restricting the placement of the instance, default behaviour is placement on any host | `string` | `null` | no |
 | <a name="input_prefix"></a> [prefix](#input\_prefix) | The prefix to add to all resources created by this module. | `string` | n/a | yes |
 | <a name="input_primary_vni_additional_ip_count"></a> [primary\_vni\_additional\_ip\_count](#input\_primary\_vni\_additional\_ip\_count) | The number of secondary reversed IPs to attach to a Virtual Network Interface (VNI). Additional IPs are created only if `manage_reserved_ips` is set to true. | `number` | `0` | no |
+| <a name="input_reinitialize"></a> [reinitialize](#input\_reinitialize) | Configuration for virtual server instance reinitialization. Instance reinitialization is a destructive operation that permanently deletes and recreates the instance's boot volume. Specify configuration to perform reinitialization on instances provisioned by this module. | <pre>object({<br/>    enabled   = optional(bool, true)<br/>    image     = optional(string)<br/>    keys      = optional(list(string))<br/>    user_data = optional(string)<br/>    vsi_names = optional(list(string))<br/>    boot_volume_attachment = optional(object({<br/>      name                             = optional(string)<br/>      delete_volume_on_instance_delete = optional(bool)<br/>      volume = optional(object({<br/>        id             = optional(string)<br/>        name           = optional(string)<br/>        capacity       = optional(number)<br/>        iops           = optional(number)<br/>        bandwidth      = optional(number)<br/>        resource_group = optional(string)<br/>        user_tags      = optional(list(string))<br/>        encryption_key = optional(object({<br/>          crn = string<br/>        }))<br/>        profile = optional(object({<br/>          name = string<br/>        }))<br/>        source_snapshot = optional(object({<br/>          id = string<br/>        }))<br/>        allowed_use = optional(object({<br/>          api_version       = string<br/>          bare_metal_server = optional(string)<br/>          instance          = optional(string)<br/>        }))<br/>      }))<br/>    }))<br/>    default_trusted_profile = optional(object({<br/>      auto_link = optional(bool, true)<br/>      target = optional(object({<br/>        id  = optional(string)<br/>        crn = optional(string)<br/>      }))<br/>    }))<br/>  })</pre> | `null` | no |
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | ID of resource group to create VSI and block storage volumes. If you wish to create the block storage volumes in a different resource group, you can optionally set that directly in the 'block\_storage\_volumes' variable. | `string` | n/a | yes |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | Add user resource tags to the Virtual Server Instances (VSI) resources to organize, track, and manage costs. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#tag-types). | `list(string)` | `[]` | no |
 | <a name="input_secondary_allow_ip_spoofing"></a> [secondary\_allow\_ip\_spoofing](#input\_secondary\_allow\_ip\_spoofing) | Allow IP spoofing on additional network interfaces | `bool` | `false` | no |
@@ -310,6 +460,7 @@ You need the following permissions to run this module.
 | <a name="output_list"></a> [list](#output\_list) | A list of VSI with name, id, zone, and primary ipv4 address |
 | <a name="output_load_balancers_metadata"></a> [load\_balancers\_metadata](#output\_load\_balancers\_metadata) | Load Balancers metadata. |
 | <a name="output_primary_vni_details"></a> [primary\_vni\_details](#output\_primary\_vni\_details) | Detailed information about primary virtual network interfaces |
+| <a name="output_reinitialize_status"></a> [reinitialize\_status](#output\_reinitialize\_status) | A map containing the status and ID of instances that have been reinitialized, keyed by VSI map key. |
 | <a name="output_secondary_vni_details"></a> [secondary\_vni\_details](#output\_secondary\_vni\_details) | Detailed information about secondary virtual network interfaces |
 | <a name="output_vsi_security_group"></a> [vsi\_security\_group](#output\_vsi\_security\_group) | Security group for the VSI |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

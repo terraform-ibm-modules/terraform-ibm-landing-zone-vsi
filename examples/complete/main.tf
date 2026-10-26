@@ -423,6 +423,7 @@ module "slz_vsi" {
   secondary_subnets               = local.secondary_subnet_zone_list
   secondary_security_groups       = local.secondary_security_groups
   custom_vsi_volume_names         = local.custom_vsi_volume_names
+  reinitialize                    = var.reinitialize
 
   # Enable logging agent
   install_logging_agent        = true

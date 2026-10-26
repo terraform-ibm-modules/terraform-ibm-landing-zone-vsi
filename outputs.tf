@@ -150,3 +150,20 @@ output "consistency_group_storage_snapshot_crns" {
 }
 
 ##############################################################################
+
+##############################################################################
+# Reinitialization Outputs
+##############################################################################
+
+output "reinitialize_status" {
+  description = "A map containing the status and ID of instances that have been reinitialized, keyed by VSI map key."
+  value = {
+    for k, reinit in ibm_is_instance_reinitialize.reinitialize :
+    k => {
+      id     = reinit.id
+      status = reinit.status
+    }
+  }
+}
+
+##############################################################################
