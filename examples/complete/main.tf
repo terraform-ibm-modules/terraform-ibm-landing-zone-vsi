@@ -67,13 +67,13 @@ module "logging" {
 module "monitoring" {
   source                         = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan                           = "graduated-tier"
-  version                        = "1.16.3"
+  version                        = "1.17.0"
   resource_group_id              = module.resource_group.resource_group_id
   region                         = var.region
   resource_tags                  = var.resource_tags
   access_tags                    = var.access_tags
   instance_name                  = "${var.prefix}-vsi-agent-monitoring"
-  fetch_sysdig_monitor_api_token = true
+  fetch_sysdig_monitor_api_token = var.use_windows
 }
 
 locals {
