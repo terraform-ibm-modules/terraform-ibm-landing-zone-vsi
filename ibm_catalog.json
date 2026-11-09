@@ -1240,7 +1240,7 @@
               "name": "deploy-arch-ibm-slz-vpc",
               "description": " Defines the VPC instance and subnets where Virtual Server Instance will be created. ",
               "id": "9fc0fa64-27af-4fed-9dce-47b3640ba739-global",
-              "version": "v8.15.0",
+              "version": "v10.1.7",
               "flavors": [
                 "fully-configurable"
               ],
@@ -1392,7 +1392,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.11.3"
+              "version": "v2.1.10"
             },
             {
               "name": "deploy-arch-ibm-activity-tracker",
@@ -1421,7 +1421,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.6.13"
+              "version": "v2.1.9"
             },
             {
               "name": "deploy-arch-ibm-scc-workload-protection",
@@ -1450,13 +1450,13 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.17.4"
+              "version": "v1.22.22"
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
               "description": "Configure a Secrets Manager instance to manage the ssh private key for the virtual server instance.",
               "id": "6d6ebc76-7bbd-42f5-8bc7-78f4fabd5944-global",
-              "version": "v2.13.3",
+              "version": "v3.1.3",
               "flavors": [
                 "fully-configurable"
               ],

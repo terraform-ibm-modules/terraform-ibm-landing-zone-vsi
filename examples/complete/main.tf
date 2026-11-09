@@ -24,7 +24,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source                    = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                   = "5.6.14"
+  version                   = "5.6.20"
   resource_group_id         = module.resource_group.resource_group_id
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
@@ -57,7 +57,7 @@ module "key_protect_all_inclusive" {
 
 module "logging" {
   source            = "terraform-ibm-modules/cloud-logs/ibm"
-  version           = "2.1.6"
+  version           = "2.1.15"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   resource_tags     = var.resource_tags
@@ -67,7 +67,7 @@ module "logging" {
 module "monitoring" {
   source                         = "terraform-ibm-modules/cloud-monitoring/ibm"
   plan                           = "graduated-tier"
-  version                        = "1.17.0"
+  version                        = "1.17.2"
   resource_group_id              = module.resource_group.resource_group_id
   region                         = var.region
   resource_tags                  = var.resource_tags
@@ -88,7 +88,7 @@ locals {
 module "server_cert" {
   count                  = var.existing_sm_instance_guid != null ? 1 : 0
   source                 = "terraform-ibm-modules/secrets-manager-private-cert/ibm"
-  version                = "1.12.15"
+  version                = "1.12.19"
   cert_name              = "${var.prefix}-server-cert"
   cert_description       = "Server certificate for LB listener TLS and pool client auth"
   cert_common_name       = "${var.prefix}-server.example.com"
@@ -124,7 +124,7 @@ data "ibm_is_ssh_key" "existing_ssh_key" {
 
 module "slz_vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "10.1.5"
+  version           = "10.1.11"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
