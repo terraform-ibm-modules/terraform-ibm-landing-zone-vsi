@@ -221,6 +221,9 @@ func sshPublicKey(t *testing.T) string {
 	return pubKey
 }
 
+// provisionPreReq applies the terraform in ./existing-resources and returns its prefix and options.
+// The options are returned even when the apply fails, so the caller can still destroy anything
+// that was partially created. Always call cleanupPreReq (normally with defer) after this.
 func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options, error) {
 	// ------------------------------------------------------------------------------------
 	// Provision existing resources first
@@ -253,72 +256,69 @@ func provisionPreReq(t *testing.T, create_vpc bool) (string, *terraform.Options,
 
 	terraform.WorkspaceSelectOrNewContext(t, context.Background(), existingTerraformOptions, prefix)
 	_, existErr := terraform.InitAndApplyContextE(t, context.Background(), existingTerraformOptions)
-	if existErr != nil {
-		// assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-		return "", nil, existErr
-	}
-	return prefix, existingTerraformOptions, nil
+	return prefix, existingTerraformOptions, existErr
 }
 
-// Test the fully-configurable DA with defaults
-func TestFullyConfigurable(t *testing.T) {
-	t.Parallel()
-	acquireTestSlot()
-	defer releaseTestSlot()
-
-	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
-
-	if existErr != nil {
-		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-	} else {
-		// ------------------------------------------------------------------------------------
-		// Deploy DA
-		// ------------------------------------------------------------------------------------
-		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-			Testing: t,
-			Region:  region,
-			Prefix:  prefix,
-			TarIncludePatterns: []string{
-				"*.tf",
-				"modules/*/*.tf",
-				fullyConfigFlavorDir + "/*.tf",
-			},
-			TemplateFolder:         fullyConfigFlavorDir,
-			Tags:                   []string{"vsi-da-test"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 60,
-		})
-
-		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
-			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
-			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
-			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
-			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
-			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
-		}
-		err := options.RunSchematicTest()
-		assert.Nil(t, err, "This should not have errored")
+// cleanupPreReq destroys the resources created by provisionPreReq, unless the test failed and
+// DO_NOT_DESTROY_ON_FAILURE is set to true. It is safe to call with nil options.
+func cleanupPreReq(t *testing.T, prefix string, existingTerraformOptions *terraform.Options) {
+	if existingTerraformOptions == nil {
+		return
 	}
-
-	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
 	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
-	// Destroy the temporary existing resources if required
 	if t.Failed() && strings.ToLower(envVal) == "true" {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
-	} else {
-		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
-		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
-		logger.Log(t, "END: Destroy (prereq resources)")
+		return
+	}
+	logger.Log(t, "START: Destroy (prereq resources)")
+	// Use the E variants so a cleanup error is logged and does not hide the real test result.
+	if _, err := terraform.DestroyContextE(t, context.Background(), existingTerraformOptions); err != nil {
+		t.Errorf("Destroy of prereq resources failed, manual cleanup may be needed for prefix %s: %v", prefix, err)
+		return
+	}
+	if _, err := terraform.WorkspaceDeleteContextE(t, context.Background(), existingTerraformOptions, prefix); err != nil {
+		logger.Log(t, "Workspace delete of prereq resources failed: ", err)
+	}
+	logger.Log(t, "END: Destroy (prereq resources)")
+}
+
+// fullyConfigurableBaseVars returns the inputs shared by every fully-configurable DA test.
+func fullyConfigurableBaseVars(t *testing.T, options *testschematic.TestSchematicOptions, existingTerraformOptions *terraform.Options) []testschematic.TestSchematicTerraformVar {
+	return []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
+		{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
+		{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "prefix", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "prefix"), DataType: "string"},
+		{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
+		{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
+		{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
+		{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
 	}
 }
 
-// Test the fully-configurable DA using existing KMS key
+// fullyConfigurableSchematicOptions returns the schematics options shared by every fully-configurable DA test.
+func fullyConfigurableSchematicOptions(t *testing.T, prefix string, checkApplyResultForUpgrade bool) *testschematic.TestSchematicOptions {
+	return testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Region:  region,
+		Prefix:  prefix,
+		TarIncludePatterns: []string{
+			"*.tf",
+			"modules/*/*.tf",
+			fullyConfigFlavorDir + "/*.tf",
+		},
+		TemplateFolder:             fullyConfigFlavorDir,
+		Tags:                       []string{"vsi-da-test"},
+		DeleteWorkspaceOnFail:      false,
+		WaitJobCompleteMinutes:     60,
+		CheckApplyResultForUpgrade: checkApplyResultForUpgrade,
+	})
+}
+
+// Test the fully-configurable DA using an existing Key Protect root key and user supplied SSH keys.
+// A plain "defaults" fully-configurable test is not needed: TestUpgradeFullyConfigurable applies the
+// same inputs (plus KMS) and TestAddonDefaultConfiguration deploys the DA with catalog defaults.
 func TestExistingKeyFullyConfigurable(t *testing.T) {
 	t.Parallel()
 	acquireTestSlot()
@@ -327,58 +327,19 @@ func TestExistingKeyFullyConfigurable(t *testing.T) {
 	sshPublicKey := sshPublicKey(t)
 
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+	defer cleanupPreReq(t, prefix, existingTerraformOptions)
+	require.NoError(t, existErr, "Init and Apply of temp existing resource failed")
 
-	if existErr != nil {
-		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-	} else {
-		// ------------------------------------------------------------------------------------
-		// Deploy DA
-		// ------------------------------------------------------------------------------------
-		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-			Testing: t,
-			Region:  region,
-			Prefix:  prefix,
-			TarIncludePatterns: []string{
-				"*.tf",
-				"modules/*/*.tf",
-				fullyConfigFlavorDir + "/*.tf",
-			},
-			TemplateFolder:         fullyConfigFlavorDir,
-			Tags:                   []string{"vsi-da-test"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 60,
-		})
-
-		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
-			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
-			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
-			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
-			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
-			{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["hpcs_eufr2_root_key_crn"], DataType: "string"},
-			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
-			{Name: "auto_generate_ssh_key", Value: false, DataType: "bool"},
-			{Name: "ssh_public_keys", Value: []string{sshPublicKey}, DataType: "list(string)"},
-		}
-		err := options.RunSchematicTest()
-		assert.Nil(t, err, "This should not have errored")
-	}
-
-	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
-	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
-	// Destroy the temporary existing resources if required
-	if t.Failed() && strings.ToLower(envVal) == "true" {
-		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
-	} else {
-		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
-		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
-		logger.Log(t, "END: Destroy (prereq resources)")
-	}
+	options := fullyConfigurableSchematicOptions(t, prefix, false)
+	options.TerraformVars = append(fullyConfigurableBaseVars(t, options, existingTerraformOptions),
+		// Key Protect is used instead of Hyper Protect Crypto Services, which is deprecated.
+		testschematic.TestSchematicTerraformVar{Name: "existing_boot_volume_kms_key_crn", Value: permanentResources["kp_dedicated_us_south_root_key_crn"], DataType: "string"},
+		testschematic.TestSchematicTerraformVar{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
+		testschematic.TestSchematicTerraformVar{Name: "auto_generate_ssh_key", Value: false, DataType: "bool"},
+		testschematic.TestSchematicTerraformVar{Name: "ssh_public_keys", Value: []string{sshPublicKey}, DataType: "list(string)"},
+	)
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
 }
 
 // Run upgrade test on fully-configurable variation
@@ -388,57 +349,18 @@ func TestUpgradeFullyConfigurable(t *testing.T) {
 	defer releaseTestSlot()
 
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+	defer cleanupPreReq(t, prefix, existingTerraformOptions)
+	require.NoError(t, existErr, "Init and Apply of temp existing resource failed")
 
-	if existErr != nil {
-		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-	} else {
-		// ------------------------------------------------------------------------------------
-		// Deploy DA
-		// ------------------------------------------------------------------------------------
-		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-			Testing: t,
-			Region:  region,
-			Prefix:  prefix,
-			TarIncludePatterns: []string{
-				"*.tf",
-				"modules/*/*.tf",
-				fullyConfigFlavorDir + "/*.tf",
-			},
-			TemplateFolder:             fullyConfigFlavorDir,
-			Tags:                       []string{"vsi-da-test"},
-			DeleteWorkspaceOnFail:      false,
-			WaitJobCompleteMinutes:     60,
-			CheckApplyResultForUpgrade: true,
-		})
-
-		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_resource_group_name", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "resource_group_name"), DataType: "string"},
-			{Name: "vsi_resource_tags", Value: options.Tags, DataType: "list(string)"},
-			{Name: "vsi_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "prefix"), DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
-			{Name: "vsi_subnet_names", Value: terraform.OutputListContext(t, context.Background(), existingTerraformOptions, "subnet_names"), DataType: "list(string)"},
-			{Name: "vsi_per_subnet", Value: 2, DataType: "number"},
-			{Name: "image_id", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"), DataType: "string"},
-			{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
-			{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
-			{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
-		}
-		err := options.RunSchematicUpgradeTest()
+	options := fullyConfigurableSchematicOptions(t, prefix, true)
+	options.TerraformVars = append(fullyConfigurableBaseVars(t, options, existingTerraformOptions),
+		testschematic.TestSchematicTerraformVar{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
+		testschematic.TestSchematicTerraformVar{Name: "kms_encryption_enabled_boot_volume", Value: true, DataType: "bool"},
+		testschematic.TestSchematicTerraformVar{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
+	)
+	err := options.RunSchematicUpgradeTest()
+	if !options.UpgradeTestSkipped {
 		assert.Nil(t, err, "This should not have errored")
-	}
-
-	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
-	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
-	// Destroy the temporary existing resources if required
-	if t.Failed() && strings.ToLower(envVal) == "true" {
-		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
-	} else {
-		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
-		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
-		logger.Log(t, "END: Destroy (prereq resources)")
 	}
 }
 
@@ -473,91 +395,63 @@ func TestAddonDefaultConfiguration(t *testing.T) {
 
 	// run this terraform code to return the latest ubuntu image ID
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, false)
+	defer cleanupPreReq(t, prefix, existingTerraformOptions)
+	require.NoError(t, existErr, "Init and Apply of prereq script failed.")
 
-	if existErr != nil {
-		assert.True(t, existErr == nil, "Init and Apply of prereq script failed.")
-	} else {
-
-		options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
-			Testing:               t,
-			Prefix:                prefix,
-			ResourceGroup:         resourceGroup,
-			OverrideInputMappings: core.BoolPtr(true),
-			QuietMode:             false, // Suppress logs except on failure
-		})
-
-		options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
-			options.Prefix,
-			"deploy-arch-ibm-slz-vsi",
-			"fully-configurable",
-			map[string]interface{}{
-				"region":   terraform.OutputContext(t, context.Background(), existingTerraformOptions, "region"),
-				"image_id": terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"),
-			},
-		)
-
-		//	use existing secrets manager instance to help prevent hitting trial instance limit in account
-		options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
-			{
-				OfferingName:   "deploy-arch-ibm-secrets-manager",
-				OfferingFlavor: "fully-configurable",
-				Inputs: map[string]interface{}{
-					"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
-					"service_plan":                         "__NULL__", // no plan value needed when using existing SM
-					"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
-					"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
-				},
-			},
-			// Disable target / route creation to help prevent hitting quota in account
-			{
-				OfferingName:   "deploy-arch-ibm-cloud-monitoring",
-				OfferingFlavor: "fully-configurable",
-				Inputs: map[string]interface{}{
-					"enable_metrics_routing_to_cloud_monitoring": false,
-				},
-			},
-			{
-				OfferingName:   "deploy-arch-ibm-activity-tracker",
-				OfferingFlavor: "fully-configurable",
-				Inputs: map[string]interface{}{
-					"enable_activity_tracker_event_routing_to_cloud_logs": false,
-				},
-			},
-		}
-
-		err := options.RunAddonTest()
-		require.NoError(t, err)
-	}
-}
-
-func TestQuickstartDefaultConfigSchematics(t *testing.T) {
-	t.Parallel()
-	acquireTestSlot()
-	defer releaseTestSlot()
-
-	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing: t,
-		Prefix:  "vsi-qs",
-		TarIncludePatterns: []string{
-			"*.tf",
-			quickStartConfigFlavorDir + "/*.tf",
-		},
-		TemplateFolder:         quickStartConfigFlavorDir,
-		Tags:                   []string{"vsi-qs"},
-		DeleteWorkspaceOnFail:  true,
-		WaitJobCompleteMinutes: 60,
+	options := testaddons.TestAddonsOptionsDefault(&testaddons.TestAddonOptions{
+		Testing:               t,
+		Prefix:                prefix,
+		ResourceGroup:         resourceGroup,
+		OverrideInputMappings: core.BoolPtr(true),
+		QuietMode:             false, // Suppress logs except on failure
 	})
 
-	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
-		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+	options.AddonConfig = cloudinfo.NewAddonConfigTerraform(
+		options.Prefix,
+		"deploy-arch-ibm-slz-vsi",
+		"fully-configurable",
+		map[string]interface{}{
+			"region":   terraform.OutputContext(t, context.Background(), existingTerraformOptions, "region"),
+			"image_id": terraform.OutputContext(t, context.Background(), existingTerraformOptions, "image_id"),
+		},
+	)
+
+	//	use existing secrets manager instance to help prevent hitting trial instance limit in account
+	options.AddonConfig.Dependencies = []cloudinfo.AddonConfig{
+		{
+			OfferingName:   "deploy-arch-ibm-secrets-manager",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"existing_secrets_manager_crn":         permanentResources["privateOnlySecMgrCRN"],
+				"service_plan":                         "__NULL__", // no plan value needed when using existing SM
+				"skip_secrets_manager_iam_auth_policy": true,       // since using an existing Secrets Manager instance, attempting to re-create auth policy can cause conflicts if the policy already exists
+				"secret_groups":                        []string{}, // passing empty array for secret groups as default value is creating general group and it will cause conflicts as we are using an existing SM
+			},
+		},
+		// Disable target / route creation to help prevent hitting quota in account
+		{
+			OfferingName:   "deploy-arch-ibm-cloud-monitoring",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_metrics_routing_to_cloud_monitoring": false,
+			},
+		},
+		{
+			OfferingName:   "deploy-arch-ibm-activity-tracker",
+			OfferingFlavor: "fully-configurable",
+			Inputs: map[string]interface{}{
+				"enable_activity_tracker_event_routing_to_cloud_logs": false,
+			},
+		},
 	}
-	err := options.RunSchematicTest()
-	assert.Nil(t, err, "This should not have errored")
+
+	err := options.RunAddonTest()
+	require.NoError(t, err)
 }
 
+// A separate non-upgrade quickstart default test is not needed: the upgrade test below deploys the
+// same configuration, and TestQuickstartExistingConfigSchematics covers the quickstart flavor on
+// every run, including when the upgrade test is skipped.
 func TestQuickstartDefaultConfigUpgradeSchematics(t *testing.T) {
 	t.Parallel()
 	acquireTestSlot()
@@ -594,46 +488,32 @@ func TestQuickstartExistingConfigSchematics(t *testing.T) {
 	defer releaseTestSlot()
 
 	prefix, existingTerraformOptions, existErr := provisionPreReq(t, true)
+	defer cleanupPreReq(t, prefix, existingTerraformOptions)
+	require.NoError(t, existErr, "Init and Apply of temp existing resource failed")
+	// ------------------------------------------------------------------------------------
+	// Deploy DA
+	// ------------------------------------------------------------------------------------
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing: t,
+		Prefix:  prefix,
+		TarIncludePatterns: []string{
+			"*.tf",
+			quickStartConfigFlavorDir + "/*.tf",
+		},
+		TemplateFolder:         quickStartConfigFlavorDir,
+		Tags:                   []string{"vsi-qs-da"},
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 60,
+	})
 
-	if existErr != nil {
-		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
-	} else {
-		// ------------------------------------------------------------------------------------
-		// Deploy DA
-		// ------------------------------------------------------------------------------------
-		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-			Testing: t,
-			Prefix:  prefix,
-			TarIncludePatterns: []string{
-				"*.tf",
-				quickStartConfigFlavorDir + "/*.tf",
-			},
-			TemplateFolder:         quickStartConfigFlavorDir,
-			Tags:                   []string{"vsi-qs-da"},
-			DeleteWorkspaceOnFail:  false,
-			WaitJobCompleteMinutes: 60,
-		})
-
-		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
-			{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-			{Name: "prefix", Value: options.Prefix, DataType: "string"},
-			{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
-		}
-		err := options.RunSchematicTest()
-		assert.Nil(t, err, "This should not have errored")
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "resource_tags", Value: options.Tags, DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "prefix", Value: options.Prefix, DataType: "string"},
+		{Name: "existing_vpc_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "vpc_crn"), DataType: "string"},
 	}
+	err := options.RunSchematicTest()
+	assert.Nil(t, err, "This should not have errored")
 
-	// Check if "DO_NOT_DESTROY_ON_FAILURE" is set
-	envVal, _ := os.LookupEnv("DO_NOT_DESTROY_ON_FAILURE")
-	// Destroy the temporary existing resources if required
-	if t.Failed() && strings.ToLower(envVal) == "true" {
-		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
-	} else {
-		logger.Log(t, "START: Destroy (prereq resources)")
-		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
-		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
-		logger.Log(t, "END: Destroy (prereq resources)")
-	}
 }
