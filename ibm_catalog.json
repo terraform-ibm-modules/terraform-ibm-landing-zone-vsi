@@ -1450,7 +1450,7 @@
               ],
               "optional": true,
               "on_by_default": true,
-              "version": "v1.22.22"
+              "version": "v1.23.4"
             },
             {
               "name": "deploy-arch-ibm-secrets-manager",
